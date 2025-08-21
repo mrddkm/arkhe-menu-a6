@@ -2,84 +2,42 @@
 
 package com.arkhe.menu.data.remote
 
-import com.arkhe.menu.data.remote.dto.AuthResponse
-import com.arkhe.menu.data.remote.dto.LoginRequest
-import com.arkhe.menu.data.remote.dto.ReceiptDto
-import com.arkhe.menu.data.remote.dto.TripDataDto
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
-import io.ktor.http.*
+import com.arkhe.menu.data.remote.dto.TripkeunDto
+import com.arkhe.menu.data.remote.dto.ReceiptDto
+import com.arkhe.menu.presentation.utils.Constants
 
-class TripkeunApiService(private val client: HttpClient) {
+class TripkeunApiService(
+    private val httpClient: HttpClient
+) {
 
-    companion object {
-        private const val BASE_URL = "https://api.tripkeun.com/v1"
+    suspend fun getTripData(): List<TripkeunDto> {
+        return httpClient.get("${Constants.API_BASE_URL}/trips").body()
     }
 
-    // Trip endpoints
-    suspend fun getTrips(): Result<List<TripDataDto>> {
-        return try {
-            val response = client.get("$BASE_URL/trips")
-            Result.success(response.body())
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    suspend fun getTripById(id: Long): TripkeunDto {
+        return httpClient.get("${Constants.API_BASE_URL}/trips/$id").body()
     }
 
-    suspend fun getTripById(id: Long): Result<TripDataDto> {
-        return try {
-            val response = client.get("$BASE_URL/trips/$id")
-            Result.success(response.body())
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    suspend fun createTrip(trip: TripkeunDto): TripkeunDto {
+        return httpClient.post("${Constants.API_BASE_URL}/trips") {
+            setBody(trip)
+        }.body()
     }
 
-    suspend fun createTrip(trip: TripDataDto): Result<TripDataDto> {
-        return try {
-            val response = client.post("$BASE_URL/trips") {
-                contentType(ContentType.Application.Json)
-                setBody(trip)
-            }
-            Result.success(response.body())
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    suspend fun getReceipts(): List<ReceiptDto> {
+        return httpClient.get("${Constants.API_BASE_URL}/receipts").body()
     }
 
-    // Receipt endpoints
-    suspend fun getReceipts(): Result<List<ReceiptDto>> {
-        return try {
-            val response = client.get("$BASE_URL/receipts")
-            Result.success(response.body())
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    suspend fun createReceipt(receipt: ReceiptDto): ReceiptDto {
+        return httpClient.post("${Constants.API_BASE_URL}/receipts") {
+            setBody(receipt)
+        }.body()
     }
 
-    suspend fun createReceipt(receipt: ReceiptDto): Result<ReceiptDto> {
-        return try {
-            val response = client.post("$BASE_URL/receipts") {
-                contentType(ContentType.Application.Json)
-                setBody(receipt)
-            }
-            Result.success(response.body())
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    // Authentication
-    suspend fun login(username: String, password: String): Result<AuthResponse> {
-        return try {
-            val response = client.post("$BASE_URL/auth/login") {
-                contentType(ContentType.Application.Json)
-                setBody(LoginRequest(username, password))
-            }
-            Result.success(response.body())
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+    suspend fun getReceiptById(id: Long): ReceiptDto {
+        return httpClient.get("${Constants.API_BASE_URL}/receipts/$id").body()
     }
 }

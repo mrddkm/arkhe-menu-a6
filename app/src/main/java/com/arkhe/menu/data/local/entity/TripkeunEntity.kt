@@ -8,7 +8,7 @@ import com.arkhe.menu.domain.model.TripCategory
 import com.arkhe.menu.domain.model.TripStatus
 import java.util.Date
 
-@Entity(tableName = "trips")
+@Entity(tableName = "tripkeun")
 data class TripkeunEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
@@ -19,7 +19,7 @@ data class TripkeunEntity(
     val endDate: Date,
     val location: String,
     val maxParticipants: Int,
-    val currentParticipants: Int,
+    val currentParticipants: Int = 0,
     val price: Double,
     val status: TripStatus,
     val createdAt: Date,

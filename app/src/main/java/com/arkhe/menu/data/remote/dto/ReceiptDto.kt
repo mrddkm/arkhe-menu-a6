@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ReceiptDto(
-    val id: Long,
+    val id: Long = 0,
     val receiptNumber: String,
     val customerName: String,
     val customerEmail: String? = null,
@@ -12,7 +12,7 @@ data class ReceiptDto(
     val items: List<ReceiptItemDto>,
     val subtotal: Double,
     val tax: Double,
-    val discount: Double,
+    val discount: Double = 0.0,
     val total: Double,
     val paymentMethod: String,
     val paymentStatus: String,
@@ -20,14 +20,4 @@ data class ReceiptDto(
     val createdBy: String,
     val createdAt: String,
     val updatedAt: String
-)
-
-@Serializable
-data class ReceiptItemDto(
-    val id: Long,
-    val name: String,
-    val description: String? = null,
-    val quantity: Int,
-    val unitPrice: Double,
-    val totalPrice: Double
 )

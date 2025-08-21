@@ -1,3 +1,5 @@
+@file:Suppress("SpellCheckingInspection")
+
 package com.arkhe.menu.data.local.entity
 
 import androidx.room.Entity
@@ -16,7 +18,7 @@ data class ReceiptEntity(
     val customerPhone: String?,
     val subtotal: Double,
     val tax: Double,
-    val discount: Double,
+    val discount: Double = 0.0,
     val total: Double,
     val paymentMethod: PaymentMethod,
     val paymentStatus: PaymentStatus,
@@ -24,24 +26,4 @@ data class ReceiptEntity(
     val createdBy: String,
     val createdAt: Date,
     val updatedAt: Date
-)
-
-@Entity(
-    tableName = "receipt_items",
-    foreignKeys = [androidx.room.ForeignKey(
-        entity = ReceiptEntity::class,
-        parentColumns = ["id"],
-        childColumns = ["receiptId"],
-        onDelete = androidx.room.ForeignKey.CASCADE
-    )]
-)
-data class ReceiptItemEntity(
-    @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
-    val receiptId: Long,
-    val name: String,
-    val description: String?,
-    val quantity: Int,
-    val unitPrice: Double,
-    val totalPrice: Double
 )

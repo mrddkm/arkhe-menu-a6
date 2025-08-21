@@ -9,11 +9,11 @@ import com.arkhe.menu.domain.model.PaymentMethod
 import com.arkhe.menu.domain.model.PaymentStatus
 import com.arkhe.menu.domain.model.Receipt
 import com.arkhe.menu.domain.model.ReceiptItem
-import com.arkhe.menu.domain.model.TripStatus
 import com.arkhe.menu.domain.model.TripkeunData
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 // Date formatting
 fun formatDate(date: Date): String {
@@ -43,14 +43,14 @@ fun TripkeunData.toEntity(): TripkeunEntity {
         description = description,
         category = category,
         startDate = startDate,
-        endDate = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).parse(endDate) ?: Date(),
+        endDate = endDate,
         location = location,
         maxParticipants = maxParticipants,
         currentParticipants = currentParticipants,
         price = price,
-        status = TripStatus.valueOf(status.uppercase()),
-        createdAt = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).parse(createdAt) ?: Date(),
-        updatedAt = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).parse(updatedAt) ?: Date()
+        status = status,
+        createdAt = createdAt,
+        updatedAt = updatedAt
     )
 }
 

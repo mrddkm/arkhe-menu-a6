@@ -1,5 +1,6 @@
 package com.arkhe.menu.presentation.components.forms
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -12,7 +13,7 @@ fun FormTextField(
     label: String,
     isRequired: Boolean = false,
     minLines: Int = 1,
-    modifier: Modifier = Modifier
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
 ) {
     OutlinedTextField(
         value = value,

@@ -11,6 +11,7 @@ import com.arkhe.menu.presentation.components.MainContent
 import com.arkhe.menu.presentation.components.ProfileBottomSheet
 import com.arkhe.menu.presentation.components.TripkeunBottomBar
 import com.arkhe.menu.presentation.components.TripkeunTopBar
+import com.arkhe.menu.presentation.components.common.LoadingIndicator
 import com.arkhe.menu.presentation.viewmodel.MainViewModel
 import org.koin.androidx.compose.koinViewModel
 
