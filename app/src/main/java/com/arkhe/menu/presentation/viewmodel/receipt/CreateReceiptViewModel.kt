@@ -7,6 +7,7 @@ import com.arkhe.menu.domain.model.PaymentStatus
 import com.arkhe.menu.domain.model.Receipt
 import com.arkhe.menu.domain.model.ReceiptItem
 import com.arkhe.menu.domain.usecase.CreateReceiptUseCase
+import com.arkhe.menu.presentation.utils.generateReceiptNumber
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
