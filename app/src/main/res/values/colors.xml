@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="tripkeun_primary">#4CAF50</color>
+    <color name="tripkeun_primary_variant">#2E7D32</color>
+    <color name="tripkeun_secondary">#66BB6A</color>
+    <color name="tripkeun_secondary_variant">#388E3C</color>
+
+    <color name="tripkeun_error">#E53935</color>
+    <color name="tripkeun_warning">#FF9800</color>
+    <color name="tripkeun_success">#4CAF50</color>
+    <color name="tripkeun_info">#2196F3</color>
+
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="transparent">#00000000</color>
+</resources>
