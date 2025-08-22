@@ -12,7 +12,7 @@ import com.arkhe.menu.presentation.screen.receipt.CreateReceiptScreen
 import com.arkhe.menu.presentation.screen.receipt.ReceiptListScreen
 
 @Composable
-fun TripkeunNavigation(
+fun ArkheNavigation(
     navController: NavHostController = rememberNavController()
 ) {
     NavHost(
