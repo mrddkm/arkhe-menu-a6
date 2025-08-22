@@ -71,7 +71,7 @@ class MainViewModel(
 
 data class MainUiState(
     val userRole: UserRole = UserRole.FAGA,
-    val selectedBottomNavItem: BottomNavItem = BottomNavItem.TRIPKEUN,
+    val selectedBottomNavItem: BottomNavItem = BottomNavItem.DOCS,
     val isInMainContent: Boolean = false,
     val showBottomBar: Boolean = true,
     val showProfileBottomSheet: Boolean = false,

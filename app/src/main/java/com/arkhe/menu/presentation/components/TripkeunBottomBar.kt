@@ -4,6 +4,10 @@ package com.arkhe.menu.presentation.components
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.rounded.Dashboard
+import androidx.compose.material.icons.rounded.GroupWork
+import androidx.compose.material.icons.rounded.WorkHistory
+import androidx.compose.material.icons.rounded.WorkspacePremium
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -40,8 +44,8 @@ fun TripkeunBottomBar(
 
 private fun getIconForItem(item: BottomNavItem): ImageVector {
     return when (item) {
-        BottomNavItem.DOCS -> Icons.Default.Description
-        BottomNavItem.TRIPKEUN -> Icons.Default.Map
-        BottomNavItem.ACTIVITY -> Icons.Default.Event
+        BottomNavItem.DOCS -> Icons.Rounded.Dashboard
+        BottomNavItem.TRIPKEUN -> Icons.Rounded.GroupWork
+        BottomNavItem.ACTIVITY -> Icons.Rounded.WorkHistory
     }
 }

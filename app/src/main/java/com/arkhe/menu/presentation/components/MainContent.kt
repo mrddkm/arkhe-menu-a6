@@ -26,11 +26,11 @@ fun MainContent(
             .padding(horizontal = 16.dp)
     ) {
         when (selectedBottomNavItem) {
-            BottomNavItem.TRIPKEUN -> {
-                TripkeunContent(onNavigateToContent = onNavigateToContent)
-            }
             BottomNavItem.DOCS -> {
                 DocsContent(onNavigateToContent = onNavigateToContent)
+            }
+            BottomNavItem.TRIPKEUN -> {
+                TripkeunContent(onNavigateToContent = onNavigateToContent)
             }
             BottomNavItem.ACTIVITY -> {
                 ActivityContent(
