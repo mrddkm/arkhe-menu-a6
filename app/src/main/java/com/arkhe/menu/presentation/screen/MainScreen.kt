@@ -33,15 +33,13 @@ import org.koin.compose.KoinApplicationPreview
 @Composable
 fun MainScreen(
     navController: NavHostController,
-//    viewModel: MainViewModel = koinViewModel()
+    viewModel: MainViewModel = koinViewModel()
 ) {
-    val vm = koinViewModel<MainViewModel>()
-
-    val uiState by vm.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
     if (uiState.showProfileBottomSheet) {
         ModalBottomSheet(
-            onDismissRequest = { vm.toggleProfileBottomSheet() }
+            onDismissRequest = { viewModel.toggleProfileBottomSheet() }
         ) {
             ProfileBottomSheet()
         }
@@ -52,15 +50,15 @@ fun MainScreen(
             TripkeunTopBar(
                 isInMainContent = uiState.isInMainContent,
                 currentContentType = uiState.currentContentType,
-                onBackClick = { vm.navigateBack() },
-                onUserIconClick = { vm.toggleProfileBottomSheet() }
+                onBackClick = { viewModel.navigateBack() },
+                onUserIconClick = { viewModel.toggleProfileBottomSheet() }
             )
         },
         bottomBar = {
             if (uiState.showBottomBar) {
                 TripkeunBottomBar(
                     selectedItem = uiState.selectedBottomNavItem,
-                    onItemSelected = { vm.selectBottomNavItem(it) }
+                    onItemSelected = { viewModel.selectBottomNavItem(it) }
                 )
             }
         }
@@ -71,7 +69,7 @@ fun MainScreen(
             userRole = uiState.userRole,
             isInMainContent = uiState.isInMainContent,
             onNavigateToContent = { contentType ->
-                vm.navigateToMainContent(contentType)
+                viewModel.navigateToMainContent(contentType)
             }
         )
 
@@ -90,7 +88,7 @@ fun MainScreen(
         uiState.error?.let { error ->
             LaunchedEffect(error) {
                 // Show snackbar or error dialog
-                vm.setError(null)
+                viewModel.setError(null)
             }
         }
     }
