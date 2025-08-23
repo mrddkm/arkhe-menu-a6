@@ -1,4 +1,4 @@
-package com.arkhe.menu.presentation.screen.receipt
+package com.arkhe.menu.presentation.screen.activity.faga.receipt
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

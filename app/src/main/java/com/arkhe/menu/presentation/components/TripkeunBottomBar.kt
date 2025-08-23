@@ -3,14 +3,19 @@
 package com.arkhe.menu.presentation.components
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.rounded.Dashboard
 import androidx.compose.material.icons.rounded.GroupWork
 import androidx.compose.material.icons.rounded.WorkHistory
-import androidx.compose.material.icons.rounded.WorkspacePremium
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.tooling.preview.Preview
+import com.arkhe.menu.presentation.theme.AppTheme
 import com.arkhe.menu.presentation.viewmodel.BottomNavItem
 
 @Composable
@@ -47,5 +52,16 @@ private fun getIconForItem(item: BottomNavItem): ImageVector {
         BottomNavItem.DOCS -> Icons.Rounded.Dashboard
         BottomNavItem.TRIPKEUN -> Icons.Rounded.GroupWork
         BottomNavItem.ACTIVITY -> Icons.Rounded.WorkHistory
+    }
+}
+
+@Preview
+@Composable
+fun TripkeunBottomBarPreview() {
+    AppTheme {
+        TripkeunBottomBar(
+            selectedItem = BottomNavItem.DOCS,
+            onItemSelected = {}
+        )
     }
 }

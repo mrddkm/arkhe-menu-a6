@@ -1,20 +1,44 @@
 @file:Suppress("SpellCheckingInspection")
 
-package com.arkhe.menu.presentation.components
+package com.arkhe.menu.presentation.screen.activity
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Assignment
 import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
+import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.AccountBalance
+import androidx.compose.material.icons.filled.Analytics
+import androidx.compose.material.icons.filled.Assessment
+import androidx.compose.material.icons.filled.Backup
+import androidx.compose.material.icons.filled.BusinessCenter
+import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.Dashboard
+import androidx.compose.material.icons.filled.Receipt
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.SupervisorAccount
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.domain.model.UserRole
+import com.arkhe.menu.presentation.theme.AppTheme
 
 @Composable
 fun ActivityContent(
@@ -286,5 +310,16 @@ fun ActivityMenuCard(
                 )
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ActivityContentPreview() {
+    AppTheme {
+        ActivityContent(
+            userRole = UserRole.FAGA,
+            onNavigateToContent = {}
+        )
     }
 }

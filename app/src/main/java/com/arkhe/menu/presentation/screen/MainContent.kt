@@ -1,4 +1,4 @@
-package com.arkhe.menu.presentation.components
+package com.arkhe.menu.presentation.screen
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -7,6 +7,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.domain.model.UserRole
+import com.arkhe.menu.presentation.screen.activity.ActivityContent
+import com.arkhe.menu.presentation.screen.docs.DocsContent
+import com.arkhe.menu.presentation.screen.tripkeun.TripkeunContent
 import com.arkhe.menu.presentation.viewmodel.BottomNavItem
 
 @Composable

@@ -18,7 +18,6 @@ import androidx.navigation.NavHostController
 import com.arkhe.menu.di.appModule
 import com.arkhe.menu.di.dataModule
 import com.arkhe.menu.di.domainModule
-import com.arkhe.menu.presentation.components.MainContent
 import com.arkhe.menu.presentation.components.ProfileBottomSheet
 import com.arkhe.menu.presentation.components.TripkeunBottomBar
 import com.arkhe.menu.presentation.components.TripkeunTopBar

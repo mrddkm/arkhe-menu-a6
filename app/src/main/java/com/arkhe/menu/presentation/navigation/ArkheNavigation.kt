@@ -8,8 +8,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.arkhe.menu.presentation.screen.MainScreen
-import com.arkhe.menu.presentation.screen.receipt.CreateReceiptScreen
-import com.arkhe.menu.presentation.screen.receipt.ReceiptListScreen
+import com.arkhe.menu.presentation.screen.activity.faga.receipt.CreateReceiptScreen
+import com.arkhe.menu.presentation.screen.activity.faga.receipt.ReceiptListScreen
 
 @Composable
 fun ArkheNavigation(
