@@ -2,6 +2,7 @@
 
 package com.arkhe.menu.presentation.screen.docs
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,14 +26,29 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.arkhe.menu.presentation.screen.docs.team.ext.HeaderSection
+import com.arkhe.menu.presentation.screen.docs.team.ext.Personil
+import com.arkhe.menu.presentation.screen.docs.team.ext.PersonilDetailBottomSheet
+import com.arkhe.menu.presentation.screen.docs.team.ext.PersonilListBottomSheet
+import com.arkhe.menu.presentation.screen.docs.team.ext.PersonilSection
+import com.arkhe.menu.presentation.screen.docs.team.ext.samplePersonil
 
 @Composable
 fun DocsContent(onNavigateToContent: (String) -> Unit) {
+    var showBottomSheet by remember { mutableStateOf(false) }
+    var selectedPersonil by remember { mutableStateOf<Personil?>(null) }
+    var showPersonilList by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier.fillMaxSize(),
     ) {
@@ -85,6 +101,27 @@ fun DocsContent(onNavigateToContent: (String) -> Unit) {
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Row {
+                Card(
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        HeaderSection(
+                            onHeaderClick = { showPersonilList = true }
+                        )
+                        PersonilSection(
+                            personilList = samplePersonil,
+                            onPersonilClick = { personil ->
+                                selectedPersonil = personil
+                                showBottomSheet = true
+                            }
+                        )
+                    }
+                }
+            }
+            Row {
                 DocsCard(
                     title = "Profile Team",
                     description = "Tim Tripkeun",
@@ -121,6 +158,30 @@ fun DocsContent(onNavigateToContent: (String) -> Unit) {
                 )
             }
         }
+    }
+
+    // Bottom Sheet untuk informasi detail personil
+    if (showBottomSheet && selectedPersonil != null) {
+        PersonilDetailBottomSheet(
+            personil = selectedPersonil!!,
+            onDismiss = {
+                showBottomSheet = false
+                selectedPersonil = null
+            }
+        )
+    }
+
+    // Bottom Sheet untuk list personil dari header
+    if (showPersonilList) {
+        PersonilListBottomSheet(
+            personilList = samplePersonil,
+            onPersonilClick = { personil ->
+                selectedPersonil = personil
+                showPersonilList = false
+                showBottomSheet = true
+            },
+            onDismiss = { showPersonilList = false }
+        )
     }
 }
 
