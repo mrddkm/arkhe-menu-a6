@@ -8,7 +8,7 @@ data class Personil(
     val id: Int,
     val nama: String,
     val deskripsi: String,
-    val fotoRes: Int, // Resource ID untuk foto
+    val fotoRes: Int,
     val posisi: String,
     val pengalaman: String,
     val email: String,
@@ -21,7 +21,7 @@ val samplePersonil = listOf(
         id = 1,
         nama = "Andi Pratama",
         deskripsi = "UI/UX Designer dengan 5 tahun pengalaman",
-        fotoRes = R.drawable.ic_launcher_foreground, // Ganti dengan resource foto yang sesuai
+        fotoRes = R.drawable.ic_launcher_foreground,
         posisi = "UI/UX Designer",
         pengalaman = "5 tahun",
         email = "andi.pratama@tripkeun.com",

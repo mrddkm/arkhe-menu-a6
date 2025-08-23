@@ -8,7 +8,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -47,32 +46,6 @@ import androidx.compose.ui.unit.sp
 import com.arkhe.menu.presentation.theme.AppTheme
 
 @Composable
-fun HeaderSection(onHeaderClick: () -> Unit) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .clickable { onHeaderClick() },
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start
-        ) {
-            Text(
-                text = "Team Tripkeun",
-                style = MaterialTheme.typography.headlineSmall.copy(
-                    fontWeight = FontWeight.SemiBold
-                ),
-                color = MaterialTheme.colorScheme.primary
-            )
-        }
-    }
-}
-
-@Composable
 fun PersonilSection(
     personilList: List<Personil>,
     onPersonilClick: (Personil) -> Unit
@@ -80,11 +53,9 @@ fun PersonilSection(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp)
     ) {
         LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            contentPadding = PaddingValues(horizontal = 4.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             items(personilList) { personil ->
                 PersonilCard(
@@ -386,14 +357,6 @@ fun DetailInfoSection(label: String, value: String) {
 }
 
 @Preview(showBackground = true)
-@Composable
-fun HeaderSectionPreview() {
-    AppTheme {
-        HeaderSection { }
-    }
-}
-
-@Preview
 @Composable
 fun PersonilCardPreview() {
     AppTheme {

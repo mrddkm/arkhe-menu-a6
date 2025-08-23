@@ -2,7 +2,6 @@
 
 package com.arkhe.menu.presentation.screen.docs
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,16 +9,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Business
-import androidx.compose.material.icons.filled.Category
-import androidx.compose.material.icons.filled.EmojiEvents
-import androidx.compose.material.icons.filled.Group
-import androidx.compose.material.icons.filled.Inventory
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -33,15 +28,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.arkhe.menu.presentation.screen.docs.team.ext.HeaderSection
+import com.arkhe.menu.presentation.screen.docs.ext.HeaderSection
+import com.arkhe.menu.presentation.screen.docs.sobatkeun.ext.SobatkeunSection
+import com.arkhe.menu.presentation.screen.docs.sobatkeun.ext.sampleSobatkeun
 import com.arkhe.menu.presentation.screen.docs.team.ext.Personil
 import com.arkhe.menu.presentation.screen.docs.team.ext.PersonilDetailBottomSheet
 import com.arkhe.menu.presentation.screen.docs.team.ext.PersonilListBottomSheet
 import com.arkhe.menu.presentation.screen.docs.team.ext.PersonilSection
 import com.arkhe.menu.presentation.screen.docs.team.ext.samplePersonil
+import com.arkhe.menu.presentation.theme.AppTheme
 
 @Composable
 fun DocsContent(onNavigateToContent: (String) -> Unit) {
@@ -54,11 +52,14 @@ fun DocsContent(onNavigateToContent: (String) -> Unit) {
     ) {
         Text(
             text = "Docs",
-            style = MaterialTheme.typography.headlineMedium,
+            style = MaterialTheme.typography.headlineLarge.copy(
+                fontWeight = FontWeight.Bold
+            ),
+            color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.padding(vertical = 16.dp)
         )
 
-        /*Main Content: Profile Tripkeun*/
+        /*Main Content*/
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -96,66 +97,93 @@ fun DocsContent(onNavigateToContent: (String) -> Unit) {
             }
         }
 
-        /*Secondary Contents in Grid*/
+        /*Secondary Contents*/
         Column(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Row {
-                Card(
-                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.Transparent
+                ),
+                shape = RoundedCornerShape(4.dp),
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    ) {
-                        HeaderSection(
-                            onHeaderClick = { showPersonilList = true }
-                        )
-                        PersonilSection(
-                            personilList = samplePersonil,
-                            onPersonilClick = { personil ->
-                                selectedPersonil = personil
-                                showBottomSheet = true
-                            }
-                        )
-                    }
+                    HeaderSection(
+                        title = "Team",
+                        onHeaderClick = { showPersonilList = true }
+                    )
+                    PersonilSection(
+                        personilList = samplePersonil,
+                        onPersonilClick = { personil ->
+                            selectedPersonil = personil
+                            showBottomSheet = true
+                        }
+                    )
                 }
             }
-            Row {
-                DocsCard(
-                    title = "Profile Team",
-                    description = "Tim Tripkeun",
-                    icon = Icons.Default.Group,
-                    modifier = Modifier.weight(1f),
-                    onClick = { onNavigateToContent("Profile Team Tripkeun") }
-                )
+
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.Transparent
+                ),
+                shape = RoundedCornerShape(4.dp),
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                ) {
+                    HeaderSection(
+                        title = "Sobatkeun ―Top 7",
+                        onHeaderClick = { showPersonilList = true }
+                    )
+                    SobatkeunSection(
+                        sobatkeunList = sampleSobatkeun,
+                        onSobatkeunClick = { /* Handle Sobatkeun click if needed */ }
+                    )
+                }
             }
-            Row {
-                DocsCard(
-                    title = "Top 10 Sobatkeun",
-                    description = "Member terbaik",
-                    icon = Icons.Default.EmojiEvents,
-                    modifier = Modifier.weight(1f),
-                    onClick = { onNavigateToContent("Top 10 Sobatkeun") }
-                )
+
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.Transparent
+                ),
+                shape = RoundedCornerShape(4.dp),
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                ) {
+                    HeaderSection(
+                        title = "Product Categories",
+                        onHeaderClick = { showPersonilList = true }
+                    )
+
+                }
             }
-            Row {
-                DocsCard(
-                    title = "Product Category",
-                    description = "Kategori produk",
-                    icon = Icons.Default.Category,
-                    modifier = Modifier.weight(1f),
-                    onClick = { onNavigateToContent("Product Category") }
-                )
-            }
-            Row {
-                DocsCard(
-                    title = "Products",
-                    description = "Daftar produk",
-                    icon = Icons.Default.Inventory,
-                    modifier = Modifier.weight(1f),
-                    onClick = { onNavigateToContent("Products") }
-                )
+
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.Transparent
+                ),
+                shape = RoundedCornerShape(4.dp),
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                ) {
+                    HeaderSection(
+                        title = "Products",
+                        onHeaderClick = { showPersonilList = true }
+                    )
+
+                }
             }
         }
     }
@@ -185,44 +213,10 @@ fun DocsContent(onNavigateToContent: (String) -> Unit) {
     }
 }
 
-@Composable
-fun DocsCard(
-    title: String,
-    description: String,
-    icon: ImageVector,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit
-) {
-    Card(
-        modifier = modifier.clickable { onClick() },
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-    ) {
-        Column(
-            modifier = Modifier.padding(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = title,
-                tint = MaterialTheme.colorScheme.secondary,
-                modifier = Modifier.size(32.dp)
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Text(
-                text = description,
-                style = MaterialTheme.typography.bodySmall
-            )
-        }
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 fun DocsContentPreview() {
-    DocsContent(onNavigateToContent = {})
+    AppTheme(darkTheme = false) {
+        DocsContent(onNavigateToContent = {})
+    }
 }
