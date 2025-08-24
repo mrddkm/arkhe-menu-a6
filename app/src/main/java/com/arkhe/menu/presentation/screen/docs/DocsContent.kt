@@ -31,7 +31,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.arkhe.menu.presentation.screen.docs.category.ext.CategorySection
+import com.arkhe.menu.presentation.screen.docs.category.ext.sampleCategory
 import com.arkhe.menu.presentation.screen.docs.ext.HeaderSection
+import com.arkhe.menu.presentation.screen.docs.product.ext.ProductSection
+import com.arkhe.menu.presentation.screen.docs.product.ext.sampleProduct
 import com.arkhe.menu.presentation.screen.docs.sobatkeun.ext.SobatkeunSection
 import com.arkhe.menu.presentation.screen.docs.sobatkeun.ext.sampleSobatkeun
 import com.arkhe.menu.presentation.screen.docs.team.ext.Personil
@@ -160,10 +164,13 @@ fun DocsContent(onNavigateToContent: (String) -> Unit) {
                         .padding(8.dp)
                 ) {
                     HeaderSection(
-                        title = "Product Categories",
+                        title = "Categories",
                         onHeaderClick = { showPersonilList = true }
                     )
-
+                    CategorySection(
+                        categoryList = sampleCategory,
+                        onCategoryClick = { /* Handle Category click if needed */ }
+                    )
                 }
             }
 
@@ -182,7 +189,10 @@ fun DocsContent(onNavigateToContent: (String) -> Unit) {
                         title = "Products",
                         onHeaderClick = { showPersonilList = true }
                     )
-
+                    ProductSection(
+                        productList = sampleProduct,
+                        onProductClick = { /* Handle Product click if needed */ }
+                    )
                 }
             }
         }
