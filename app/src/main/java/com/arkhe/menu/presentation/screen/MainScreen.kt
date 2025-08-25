@@ -72,7 +72,6 @@ fun MainScreen(
             }
         )
 
-        // Loading overlay
         if (uiState.isLoading) {
             Box(
                 modifier = Modifier
@@ -83,10 +82,8 @@ fun MainScreen(
             }
         }
 
-        // Error handling
         uiState.error?.let { error ->
             LaunchedEffect(error) {
-                // Show snackbar or error dialog
                 viewModel.setError(null)
             }
         }
@@ -110,3 +107,32 @@ fun MainScreenPreview() {
         }
     }
 }
+
+/*
+@Preview(showBackground = true)
+@Composable
+fun MainScreenDebugPreview() {
+    AppTheme {
+        // Preview sederhana tanpa dependencies
+        Scaffold { paddingValues ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(16.dp)
+            ) {
+                Column {
+                    Text(
+                        text = "Main Screen Preview",
+                        style = MaterialTheme.typography.headlineMedium
+                    )
+                    Text(
+                        text = "Preview mode active",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            }
+        }
+    }
+}
+*/

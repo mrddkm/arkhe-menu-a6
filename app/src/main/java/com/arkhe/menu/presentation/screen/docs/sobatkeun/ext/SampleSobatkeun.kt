@@ -39,5 +39,14 @@ val sampleSobatkeun = listOf(
         email = "",
         instagram = "maya_culture",
         whatsapp = "+62 814-5678-9012"
+    ),
+    Sobatkeun(
+        id = "4",
+        nama = "Rina Kusuma",
+        tripCount = 15,
+        deskripsi = "Cultural Explorer & Foodie",
+        email = "",
+        instagram = "maya_culture",
+        whatsapp = "+62 814-5678-9012"
     )
 )

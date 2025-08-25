@@ -20,7 +20,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.CheckCircle
+import androidx.compose.material.icons.rounded.Egg
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,7 +31,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -45,8 +44,7 @@ fun CategorySection(
     onCategoryClick: (Category) -> Unit
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = Modifier.fillMaxWidth()
     ) {
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -70,11 +68,10 @@ fun CategoryCard(
 
     Card(
         modifier = Modifier
-            .width(180.dp)
+            .width(170.dp)
             .clickable { onClick() },
-        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Row(
             modifier = Modifier.padding(12.dp),
@@ -82,13 +79,13 @@ fun CategoryCard(
         ) {
             Box(
                 modifier = Modifier
-                    .size(40.dp)
+                    .size(50.dp)
                     .clip(CircleShape)
                     .background(categoryColor.backgroundColor),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = Icons.Rounded.CheckCircle,
+                    imageVector = Icons.Rounded.Egg,
                     contentDescription = category.nama,
                     modifier = Modifier.size(24.dp),
                     tint = categoryColor.iconColor
@@ -103,13 +100,12 @@ fun CategoryCard(
             ) {
                 Text(
                     text = category.nama,
-                    style = MaterialTheme.typography.titleSmall.copy(
-                        fontWeight = FontWeight.SemiBold
-                    ),
-                    textAlign = TextAlign.Left,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Medium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    color = Color(0xFF1B5E20)
+                    textAlign = TextAlign.Left,
+                    color = MaterialTheme.colorScheme.primary
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
@@ -118,7 +114,7 @@ fun CategoryCard(
                     textAlign = TextAlign.Left,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    color = Color(0xFF616161)
+                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)
                 )
             }
         }

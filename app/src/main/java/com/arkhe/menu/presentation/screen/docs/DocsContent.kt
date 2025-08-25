@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -51,9 +50,7 @@ fun DocsContent(onNavigateToContent: (String) -> Unit) {
     var selectedPersonil by remember { mutableStateOf<Personil?>(null) }
     var showPersonilList by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-    ) {
+    Column {
         Text(
             text = "Docs",
             style = MaterialTheme.typography.headlineLarge.copy(
@@ -142,7 +139,7 @@ fun DocsContent(onNavigateToContent: (String) -> Unit) {
                         .padding(8.dp)
                 ) {
                     HeaderSection(
-                        title = "Sobatkeun ―Top 7",
+                        title = "Sobatkeun",
                         onHeaderClick = { showPersonilList = true }
                     )
                     SobatkeunSection(
@@ -198,7 +195,6 @@ fun DocsContent(onNavigateToContent: (String) -> Unit) {
         }
     }
 
-    // Bottom Sheet untuk informasi detail personil
     if (showBottomSheet && selectedPersonil != null) {
         PersonilDetailBottomSheet(
             personil = selectedPersonil!!,
@@ -209,7 +205,6 @@ fun DocsContent(onNavigateToContent: (String) -> Unit) {
         )
     }
 
-    // Bottom Sheet untuk list personil dari header
     if (showPersonilList) {
         PersonilListBottomSheet(
             personilList = samplePersonil,

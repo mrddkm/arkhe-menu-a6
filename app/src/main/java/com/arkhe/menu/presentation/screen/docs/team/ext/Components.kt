@@ -51,8 +51,7 @@ fun PersonilSection(
     onPersonilClick: (Personil) -> Unit
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = Modifier.fillMaxWidth()
     ) {
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -74,51 +73,50 @@ fun PersonilCard(
 ) {
     Card(
         modifier = Modifier
-            .width(180.dp)
+            .width(200.dp)
             .clickable { onClick() },
-        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
-        Row {
+        Row(
+            modifier = Modifier.padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Box(
                 modifier = Modifier
-                    .size(80.dp)
-                    .clip(CircleShape)
-                    .background(Color(0xFFE8F5E8)),
+                    .size(50.dp)
+                    .clip(CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     painter = painterResource(id = personil.fotoRes),
-                    contentDescription = personil.nama,
+                    contentDescription = personil.name,
                     modifier = Modifier.size(50.dp),
-                    tint = Color(0xFF2E7D32)
                 )
             }
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp),
+                    .padding(4.dp),
                 horizontalAlignment = Alignment.Start
             ) {
                 Text(
-                    text = personil.nama,
-                    style = MaterialTheme.typography.titleSmall.copy(
-                        fontWeight = FontWeight.SemiBold
-                    ),
-                    textAlign = TextAlign.Left,
+                    text = personil.name,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Medium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    color = Color(0xFF1B5E20)
+                    textAlign = TextAlign.Left,
+                    color = MaterialTheme.colorScheme.primary
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = personil.deskripsi,
+                    text = "${personil.position} - ${personil.division}",
                     style = MaterialTheme.typography.bodySmall,
                     textAlign = TextAlign.Left,
-                    maxLines = 3,
+                    maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    color = Color(0xFF616161)
+                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)
                 )
             }
         }
@@ -160,7 +158,7 @@ fun PersonilDetailBottomSheet(
                     ) {
                         Icon(
                             painter = painterResource(id = personil.fotoRes),
-                            contentDescription = personil.nama,
+                            contentDescription = personil.name,
                             modifier = Modifier.size(50.dp),
                             tint = Color(0xFF2E7D32)
                         )
@@ -170,14 +168,14 @@ fun PersonilDetailBottomSheet(
 
                     Column {
                         Text(
-                            text = personil.nama,
+                            text = personil.name,
                             style = MaterialTheme.typography.headlineSmall.copy(
                                 fontWeight = FontWeight.Bold
                             ),
                             color = Color(0xFF1B5E20)
                         )
                         Text(
-                            text = personil.posisi,
+                            text = personil.position,
                             style = MaterialTheme.typography.titleMedium,
                             color = Color(0xFF2E7D32)
                         )
@@ -196,9 +194,9 @@ fun PersonilDetailBottomSheet(
             Spacer(modifier = Modifier.height(24.dp))
 
             // Informasi detail
-            DetailInfoSection(label = "Pengalaman", value = personil.pengalaman)
+            DetailInfoSection(label = "Pengalaman", value = personil.guideFor)
             DetailInfoSection(label = "Email", value = personil.email)
-            DetailInfoSection(label = "Telepon", value = personil.telepon)
+            DetailInfoSection(label = "Telepon", value = personil.whatsapp)
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -308,7 +306,7 @@ fun PersonilListItem(
             ) {
                 Icon(
                     painter = painterResource(id = personil.fotoRes),
-                    contentDescription = personil.nama,
+                    contentDescription = personil.name,
                     modifier = Modifier.size(30.dp),
                     tint = Color(0xFF2E7D32)
                 )
@@ -318,14 +316,14 @@ fun PersonilListItem(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = personil.nama,
+                    text = personil.name,
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.SemiBold
                     ),
                     color = Color(0xFF1B5E20)
                 )
                 Text(
-                    text = personil.posisi,
+                    text = personil.position,
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color(0xFF616161)
                 )
