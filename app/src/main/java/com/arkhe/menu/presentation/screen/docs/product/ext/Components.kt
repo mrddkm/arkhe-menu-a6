@@ -52,7 +52,7 @@ fun ProductSection(
             items(productList.chunked(2)) { productChunk ->
                 Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.width(200.dp)
+                    modifier = Modifier.width(200.dp).padding(start = 8.dp)
                 ) {
                     productChunk.forEach { product ->
                         ProductCard(
@@ -72,7 +72,6 @@ fun ProductCard(
     onClick: () -> Unit
 ) {
     val categoryColor = getCategoryColor(product.productCategoryId)
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -100,7 +99,6 @@ fun ProductCard(
                     color = MaterialTheme.colorScheme.primary
                 )
             }
-            Spacer(modifier = Modifier.width(4.dp))
             Column(
                 modifier = Modifier
                     .fillMaxWidth()

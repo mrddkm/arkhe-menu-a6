@@ -1,14 +1,13 @@
 @file:Suppress("SpellCheckingInspection")
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.arkhe.menu.presentation.screen.docs.ext
+package com.arkhe.menu.presentation.screen.docs.components
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ChevronRight
@@ -16,6 +15,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,8 +35,7 @@ fun HeaderSection(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 4.dp, top = 4.dp, end = 4.dp, bottom = 12.dp)
-            .clickable { onHeaderClick() },
+            .padding(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 12.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color.Transparent
         ),
@@ -55,15 +54,18 @@ fun HeaderSection(
                 ),
                 color = MaterialTheme.colorScheme.primary
             )
-            Icon(
-                imageVector = Icons.Rounded.ChevronRight,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier
-                    .padding(end = 2.dp)
-                    .align(Alignment.CenterVertically)
-                    .size(32.dp)
-            )
+            IconButton(onClick = onHeaderClick) {
+                println("HeaderSection clicked: $title")
+                Icon(
+                    imageVector = Icons.Rounded.ChevronRight,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(end = 2.dp)
+                        .align(Alignment.CenterVertically)
+                )
+            }
         }
     }
 }

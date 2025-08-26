@@ -1,3 +1,5 @@
+@file:Suppress("SpellCheckingInspection")
+
 package com.arkhe.menu.presentation.screen
 
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,18 +22,26 @@ fun MainContent(
     userRole: UserRole,
     navController: NavHostController,
     onNavigateToContent: (String) -> Unit,
-    onNavigateToProfile: (() -> Unit)? = null
+    onNavigateToProfile: (() -> Unit),
+    onNavigateToOrganization: (() -> Unit),
+    onNavigateToCustomer: (() -> Unit),
+    onNavigateToCategories: (() -> Unit),
+    onNavigateToProducts: (() -> Unit),
 ) {
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 0.dp)
     ) {
         item {
             when (selectedBottomNavItem) {
                 BottomNavItem.DOCS -> {
                     DocsContent(
-                        onNavigateToProfile = onNavigateToProfile ?: {}
+                        onNavigateToProfile = onNavigateToProfile,
+                        onNavigateToOrganization = onNavigateToOrganization,
+                        onNavigateToCustomer = onNavigateToCustomer,
+                        onNavigateToCategories = onNavigateToCategories,
+                        onNavigateToProducts = onNavigateToProducts
                     )
                 }
 

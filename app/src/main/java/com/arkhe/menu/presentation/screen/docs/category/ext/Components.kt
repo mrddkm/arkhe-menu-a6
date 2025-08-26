@@ -39,9 +39,9 @@ import androidx.compose.ui.unit.dp
 import com.arkhe.menu.presentation.theme.AppTheme
 
 @Composable
-fun CategorySection(
-    categoryList: List<Category>,
-    onCategoryClick: (Category) -> Unit
+fun CategoriesSection(
+    categoriesList: List<Categories>,
+    onCategoriesClick: (Categories) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth()
@@ -49,10 +49,10 @@ fun CategorySection(
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            items(categoryList) { category ->
-                CategoryCard(
-                    category = category,
-                    onClick = { onCategoryClick(category) }
+            items(categoriesList) { categories ->
+                CategoriesCard(
+                    categories = categories,
+                    onClick = { onCategoriesClick(categories) }
                 )
             }
         }
@@ -60,12 +60,12 @@ fun CategorySection(
 }
 
 @Composable
-fun CategoryCard(
-    category: Category,
+fun CategoriesCard(
+    categories: Categories,
     onClick: () -> Unit
 ) {
-    val categoryColor = getCategoryColor(category.nama)
-
+    val categoryColor = getCategoryColor(categories.nama)
+    Spacer(modifier = Modifier.width(8.dp))
     Card(
         modifier = Modifier
             .width(170.dp)
@@ -74,7 +74,7 @@ fun CategoryCard(
         shape = RoundedCornerShape(8.dp),
     ) {
         Row(
-            modifier = Modifier.padding(12.dp),
+            modifier = Modifier.padding(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
@@ -86,7 +86,7 @@ fun CategoryCard(
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Egg,
-                    contentDescription = category.nama,
+                    contentDescription = categories.nama,
                     modifier = Modifier.size(24.dp),
                     tint = categoryColor.iconColor
                 )
@@ -99,7 +99,7 @@ fun CategoryCard(
                 horizontalAlignment = Alignment.Start
             ) {
                 Text(
-                    text = category.nama,
+                    text = categories.nama,
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium,
                     maxLines = 1,
@@ -109,7 +109,7 @@ fun CategoryCard(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "${category.productCount} Products",
+                    text = "${categories.productCount} Products",
                     style = MaterialTheme.typography.bodySmall,
                     textAlign = TextAlign.Left,
                     maxLines = 1,
@@ -125,9 +125,9 @@ fun CategoryCard(
 @Composable
 fun CategoryCardPreview() {
     AppTheme {
-        CategorySection(
-            categoryList = sampleCategory,
-            onCategoryClick = {}
+        CategoriesSection(
+            categoriesList = sampleCategories,
+            onCategoriesClick = {}
         )
     }
 }

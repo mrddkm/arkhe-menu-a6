@@ -1,4 +1,6 @@
-package com.arkhe.menu.presentation.screen.docs.product
+@file:Suppress("SpellCheckingInspection")
+
+package com.arkhe.menu.presentation.screen.docs.organization
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,7 +13,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ProductsScreen(
+fun OrganizationScreen(
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -20,7 +22,7 @@ fun ProductsScreen(
             .padding(16.dp)
     ) {
         Text(
-            text = "Product Tripkeun",
+            text = "Organisasi Tripkeun",
             style = MaterialTheme.typography.headlineLarge.copy(
                 fontWeight = FontWeight.Bold
             ),

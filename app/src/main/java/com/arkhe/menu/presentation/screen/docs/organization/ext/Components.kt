@@ -1,7 +1,7 @@
 @file:Suppress("SpellCheckingInspection")
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.arkhe.menu.presentation.screen.docs.team.ext
+package com.arkhe.menu.presentation.screen.docs.organization.ext
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -46,9 +46,9 @@ import androidx.compose.ui.unit.sp
 import com.arkhe.menu.presentation.theme.AppTheme
 
 @Composable
-fun PersonilSection(
-    personilList: List<Personil>,
-    onPersonilClick: (Personil) -> Unit
+fun OrganizationSection(
+    organizationList: List<Organization>,
+    onOrganizationClick: (Organization) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth()
@@ -56,10 +56,10 @@ fun PersonilSection(
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            items(personilList) { personil ->
+            items(organizationList) { organization ->
                 PersonilCard(
-                    personil = personil,
-                    onClick = { onPersonilClick(personil) }
+                    organization = organization,
+                    onClick = { onOrganizationClick(organization) }
                 )
             }
         }
@@ -68,9 +68,10 @@ fun PersonilSection(
 
 @Composable
 fun PersonilCard(
-    personil: Personil,
+    organization: Organization,
     onClick: () -> Unit
 ) {
+    Spacer(modifier = Modifier.width(8.dp))
     Card(
         modifier = Modifier
             .width(200.dp)
@@ -89,8 +90,8 @@ fun PersonilCard(
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    painter = painterResource(id = personil.fotoRes),
-                    contentDescription = personil.name,
+                    painter = painterResource(id = organization.fotoRes),
+                    contentDescription = organization.name,
                     modifier = Modifier.size(50.dp),
                 )
             }
@@ -101,7 +102,7 @@ fun PersonilCard(
                 horizontalAlignment = Alignment.Start
             ) {
                 Text(
-                    text = personil.name,
+                    text = organization.name,
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium,
                     maxLines = 1,
@@ -111,7 +112,7 @@ fun PersonilCard(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "${personil.position} - ${personil.division}",
+                    text = "${organization.position} - ${organization.division}",
                     style = MaterialTheme.typography.bodySmall,
                     textAlign = TextAlign.Left,
                     maxLines = 1,
@@ -125,7 +126,7 @@ fun PersonilCard(
 
 @Composable
 fun PersonilDetailBottomSheet(
-    personil: Personil,
+    organization: Organization,
     onDismiss: () -> Unit
 ) {
     ModalBottomSheet(
@@ -157,8 +158,8 @@ fun PersonilDetailBottomSheet(
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
-                            painter = painterResource(id = personil.fotoRes),
-                            contentDescription = personil.name,
+                            painter = painterResource(id = organization.fotoRes),
+                            contentDescription = organization.name,
                             modifier = Modifier.size(50.dp),
                             tint = Color(0xFF2E7D32)
                         )
@@ -168,14 +169,14 @@ fun PersonilDetailBottomSheet(
 
                     Column {
                         Text(
-                            text = personil.name,
+                            text = organization.name,
                             style = MaterialTheme.typography.headlineSmall.copy(
                                 fontWeight = FontWeight.Bold
                             ),
                             color = Color(0xFF1B5E20)
                         )
                         Text(
-                            text = personil.position,
+                            text = organization.position,
                             style = MaterialTheme.typography.titleMedium,
                             color = Color(0xFF2E7D32)
                         )
@@ -194,9 +195,9 @@ fun PersonilDetailBottomSheet(
             Spacer(modifier = Modifier.height(24.dp))
 
             // Informasi detail
-            DetailInfoSection(label = "Pengalaman", value = personil.guideFor)
-            DetailInfoSection(label = "Email", value = personil.email)
-            DetailInfoSection(label = "Telepon", value = personil.whatsapp)
+            DetailInfoSection(label = "Pengalaman", value = organization.guideFor)
+            DetailInfoSection(label = "Email", value = organization.email)
+            DetailInfoSection(label = "Telepon", value = organization.whatsapp)
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -210,7 +211,7 @@ fun PersonilDetailBottomSheet(
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = personil.bio,
+                text = organization.bio,
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color(0xFF424242),
                 lineHeight = 20.sp
@@ -223,8 +224,8 @@ fun PersonilDetailBottomSheet(
 
 @Composable
 fun PersonilListBottomSheet(
-    personilList: List<Personil>,
-    onPersonilClick: (Personil) -> Unit,
+    organizationList: List<Organization>,
+    onPersonilClick: (Organization) -> Unit,
     onDismiss: () -> Unit
 ) {
     ModalBottomSheet(
@@ -265,9 +266,9 @@ fun PersonilListBottomSheet(
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                personilList.forEach { personil ->
+                organizationList.forEach { personil ->
                     PersonilListItem(
-                        personil = personil,
+                        organization = personil,
                         onClick = { onPersonilClick(personil) }
                     )
                 }
@@ -280,7 +281,7 @@ fun PersonilListBottomSheet(
 
 @Composable
 fun PersonilListItem(
-    personil: Personil,
+    organization: Organization,
     onClick: () -> Unit
 ) {
     Card(
@@ -305,8 +306,8 @@ fun PersonilListItem(
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    painter = painterResource(id = personil.fotoRes),
-                    contentDescription = personil.name,
+                    painter = painterResource(id = organization.fotoRes),
+                    contentDescription = organization.name,
                     modifier = Modifier.size(30.dp),
                     tint = Color(0xFF2E7D32)
                 )
@@ -316,14 +317,14 @@ fun PersonilListItem(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = personil.name,
+                    text = organization.name,
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.SemiBold
                     ),
                     color = Color(0xFF1B5E20)
                 )
                 Text(
-                    text = personil.position,
+                    text = organization.position,
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color(0xFF616161)
                 )
@@ -358,9 +359,9 @@ fun DetailInfoSection(label: String, value: String) {
 @Composable
 fun PersonilCardPreview() {
     AppTheme {
-        PersonilSection(
-            personilList = samplePersonil,
-            onPersonilClick = { }
+        OrganizationSection(
+            organizationList = sampleOrganizations,
+            onOrganizationClick = { }
         )
     }
 }

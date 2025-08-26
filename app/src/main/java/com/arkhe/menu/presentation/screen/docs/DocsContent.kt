@@ -27,46 +27,52 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.arkhe.menu.presentation.screen.docs.category.ext.CategorySection
-import com.arkhe.menu.presentation.screen.docs.category.ext.sampleCategory
-import com.arkhe.menu.presentation.screen.docs.ext.HeaderSection
+import com.arkhe.menu.R
+import com.arkhe.menu.presentation.screen.docs.category.ext.CategoriesSection
+import com.arkhe.menu.presentation.screen.docs.category.ext.sampleCategories
+import com.arkhe.menu.presentation.screen.docs.components.HeaderSection
+import com.arkhe.menu.presentation.screen.docs.organization.ext.Organization
+import com.arkhe.menu.presentation.screen.docs.organization.ext.PersonilDetailBottomSheet
+import com.arkhe.menu.presentation.screen.docs.organization.ext.PersonilListBottomSheet
+import com.arkhe.menu.presentation.screen.docs.organization.ext.OrganizationSection
+import com.arkhe.menu.presentation.screen.docs.organization.ext.sampleOrganizations
 import com.arkhe.menu.presentation.screen.docs.product.ext.ProductSection
 import com.arkhe.menu.presentation.screen.docs.product.ext.sampleProduct
-import com.arkhe.menu.presentation.screen.docs.sobatkeun.ext.SobatkeunSection
-import com.arkhe.menu.presentation.screen.docs.sobatkeun.ext.sampleSobatkeun
-import com.arkhe.menu.presentation.screen.docs.team.ext.Personil
-import com.arkhe.menu.presentation.screen.docs.team.ext.PersonilDetailBottomSheet
-import com.arkhe.menu.presentation.screen.docs.team.ext.PersonilListBottomSheet
-import com.arkhe.menu.presentation.screen.docs.team.ext.PersonilSection
-import com.arkhe.menu.presentation.screen.docs.team.ext.samplePersonil
+import com.arkhe.menu.presentation.screen.docs.customer.ext.CustomerSection
+import com.arkhe.menu.presentation.screen.docs.customer.ext.sampleCustomers
 import com.arkhe.menu.presentation.theme.AppTheme
 
 @Composable
 fun DocsContent(
-    onNavigateToProfile: () -> Unit
+    onNavigateToProfile: () -> Unit,
+    onNavigateToOrganization: () -> Unit = {},
+    onNavigateToCustomer: () -> Unit = {},
+    onNavigateToCategories: () -> Unit = {},
+    onNavigateToProducts: () -> Unit = {}
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
-    var selectedPersonil by remember { mutableStateOf<Personil?>(null) }
+    var selectedOrganization by remember { mutableStateOf<Organization?>(null) }
     var showPersonilList by remember { mutableStateOf(false) }
 
     Column {
         Text(
-            text = "Docs",
+            text = stringResource(R.string.docs),
             style = MaterialTheme.typography.headlineLarge.copy(
                 fontWeight = FontWeight.Bold
             ),
             color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(vertical = 16.dp)
+            modifier = Modifier.padding(vertical = 16.dp, horizontal = 4.dp)
         )
 
         /*Main Content*/
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp),
+                .padding(start = 4.dp, end = 8.dp, bottom = 16.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
         ) {
             Column(
@@ -83,14 +89,14 @@ fun DocsContent(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Business,
-                        contentDescription = "Profile Tripkeun",
+                        contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(48.dp)
                     )
                     Spacer(modifier = Modifier.width(16.dp))
                     Column {
                         Text(
-                            text = "Profile Tripkeun",
+                            text = stringResource(R.string.client_long_name),
                             style = MaterialTheme.typography.headlineSmall,
                             color = MaterialTheme.colorScheme.primary
                         )
@@ -116,16 +122,18 @@ fun DocsContent(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp)
+                        .padding(top = 8.dp, bottom = 8.dp)
                 ) {
                     HeaderSection(
-                        title = "Team",
-                        onHeaderClick = { showPersonilList = true }
+                        title = stringResource(R.string.organization),
+                        onHeaderClick = {
+                            onNavigateToOrganization()
+                        }
                     )
-                    PersonilSection(
-                        personilList = samplePersonil,
-                        onPersonilClick = { personil ->
-                            selectedPersonil = personil
+                    OrganizationSection(
+                        organizationList = sampleOrganizations,
+                        onOrganizationClick = { organization ->
+                            selectedOrganization = organization
                             showBottomSheet = true
                         }
                     )
@@ -141,15 +149,17 @@ fun DocsContent(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp)
+                        .padding(top = 8.dp, bottom = 8.dp)
                 ) {
                     HeaderSection(
-                        title = "Sobatkeun",
-                        onHeaderClick = { showPersonilList = true }
+                        title = stringResource(R.string.customer),
+                        onHeaderClick = {
+                            onNavigateToCustomer()
+                        }
                     )
-                    SobatkeunSection(
-                        sobatkeunList = sampleSobatkeun,
-                        onSobatkeunClick = { /* Handle Sobatkeun click if needed */ }
+                    CustomerSection(
+                        customerList = sampleCustomers,
+                        onCustomerClick = { /* Handle Sobatkeun click if needed */ }
                     )
                 }
             }
@@ -163,15 +173,17 @@ fun DocsContent(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp)
+                        .padding(top = 8.dp, bottom = 8.dp)
                 ) {
                     HeaderSection(
-                        title = "Categories",
-                        onHeaderClick = { showPersonilList = true }
+                        title = stringResource(R.string.categories),
+                        onHeaderClick = {
+                            onNavigateToCategories()
+                        }
                     )
-                    CategorySection(
-                        categoryList = sampleCategory,
-                        onCategoryClick = { /* Handle Category click if needed */ }
+                    CategoriesSection(
+                        categoriesList = sampleCategories,
+                        onCategoriesClick = { /* Handle Category click if needed */ }
                     )
                 }
             }
@@ -185,11 +197,13 @@ fun DocsContent(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp)
+                        .padding(top = 8.dp, bottom = 8.dp)
                 ) {
                     HeaderSection(
-                        title = "Products",
-                        onHeaderClick = { showPersonilList = true }
+                        title = stringResource(R.string.products),
+                        onHeaderClick = {
+                            onNavigateToProducts()
+                        }
                     )
                     ProductSection(
                         productList = sampleProduct,
@@ -200,21 +214,21 @@ fun DocsContent(
         }
     }
 
-    if (showBottomSheet && selectedPersonil != null) {
+    if (showBottomSheet && selectedOrganization != null) {
         PersonilDetailBottomSheet(
-            personil = selectedPersonil!!,
+            organization = selectedOrganization!!,
             onDismiss = {
                 showBottomSheet = false
-                selectedPersonil = null
+                selectedOrganization = null
             }
         )
     }
 
     if (showPersonilList) {
         PersonilListBottomSheet(
-            personilList = samplePersonil,
+            organizationList = sampleOrganizations,
             onPersonilClick = { personil ->
-                selectedPersonil = personil
+                selectedOrganization = personil
                 showPersonilList = false
                 showBottomSheet = true
             },

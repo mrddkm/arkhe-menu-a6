@@ -23,7 +23,11 @@ fun ArkheNavigation(
             MainScreen(navController = navController)
         }
 
-        composable(NavigationRoute.PROFILE_TRIPKEUN) {
+        composable(NavigationRoute.PROFILE) {
+            MainScreen(navController = navController)
+        }
+
+        composable(NavigationRoute.ORGANIZATION) {
             MainScreen(navController = navController)
         }
 

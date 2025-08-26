@@ -39,6 +39,7 @@ class MainViewModel(
         )
     }
 
+    /*Navigate to Screen*/
     fun navigateToMainContent(contentType: String) {
         _uiState.value = _uiState.value.copy(
             isInMainContent = true,
@@ -47,24 +48,66 @@ class MainViewModel(
         )
     }
 
-    fun navigateToProfile() {
-        _uiState.value = _uiState.value.copy(
-            isInMainContent = true,
-            showBottomBar = false,
-            currentContentType = "Profile Tripkeun",
-            currentScreen = "PROFILE_TRIPKEUN"
-        )
-    }
-
     fun navigateBackToMain() {
         _uiState.value = _uiState.value.copy(
             isInMainContent = false,
             showBottomBar = true,
             currentContentType = "",
-            currentScreen = "MAIN"
+            currentScreen = NavigationRoute.MAIN
         )
     }
 
+    fun navigateToProfile() {
+        val currentBottomNavTitle = _uiState.value.selectedBottomNavItem.title
+        _uiState.value = _uiState.value.copy(
+            isInMainContent = true,
+            showBottomBar = false,
+            currentContentType = currentBottomNavTitle,
+            currentScreen = NavigationRoute.PROFILE
+        )
+    }
+
+    fun navigateToOrganization() {
+        val currentBottomNavTitle = _uiState.value.selectedBottomNavItem.title
+        _uiState.value = _uiState.value.copy(
+            isInMainContent = true,
+            showBottomBar = false,
+            currentContentType = currentBottomNavTitle,
+            currentScreen = NavigationRoute.ORGANIZATION
+        )
+    }
+
+    fun navigateToCustomer() {
+        val currentBottomNavTitle = _uiState.value.selectedBottomNavItem.title
+        _uiState.value = _uiState.value.copy(
+            isInMainContent = true,
+            showBottomBar = false,
+            currentContentType = currentBottomNavTitle,
+            currentScreen = NavigationRoute.CUSTOMER
+        )
+    }
+
+    fun navigateToCategory() {
+        val currentBottomNavTitle = _uiState.value.selectedBottomNavItem.title
+        _uiState.value = _uiState.value.copy(
+            isInMainContent = true,
+            showBottomBar = false,
+            currentContentType = currentBottomNavTitle,
+            currentScreen = NavigationRoute.CATEGORIES
+        )
+    }
+
+    fun navigateToProducts() {
+        val currentBottomNavTitle = _uiState.value.selectedBottomNavItem.title
+        _uiState.value = _uiState.value.copy(
+            isInMainContent = true,
+            showBottomBar = false,
+            currentContentType = currentBottomNavTitle,
+            currentScreen = NavigationRoute.PRODUCTS
+        )
+    }
+
+    /*Navigate State*/
     fun updateNavigationState(currentRoute: String?) {
         val currentState = _uiState.value
 
@@ -79,38 +122,86 @@ class MainViewModel(
                 }
             }
 
-            NavigationRoute.PROFILE_TRIPKEUN -> {
-                if (!currentState.isInMainContent || currentState.showBottomBar || currentState.currentContentType != "Profile Tripkeun") {
+            NavigationRoute.PROFILE -> {
+                val bottomNavTitle = currentState.selectedBottomNavItem.title
+                if (!currentState.isInMainContent || currentState.showBottomBar || currentState.currentContentType != bottomNavTitle) {
                     _uiState.value = currentState.copy(
                         isInMainContent = true,
                         showBottomBar = false,
-                        currentContentType = "Profile Tripkeun"
+                        currentContentType = bottomNavTitle
+                    )
+                }
+            }
+
+            NavigationRoute.ORGANIZATION -> {
+                val bottomNavTitle = currentState.selectedBottomNavItem.title
+                if (!currentState.isInMainContent || currentState.showBottomBar || currentState.currentContentType != bottomNavTitle) {
+                    _uiState.value = currentState.copy(
+                        isInMainContent = true,
+                        showBottomBar = false,
+                        currentContentType = bottomNavTitle
+                    )
+                }
+            }
+
+            NavigationRoute.CUSTOMER -> {
+                val bottomNavTitle = currentState.selectedBottomNavItem.title
+                if (!currentState.isInMainContent || currentState.showBottomBar || currentState.currentContentType != bottomNavTitle) {
+                    _uiState.value = currentState.copy(
+                        isInMainContent = true,
+                        showBottomBar = false,
+                        currentContentType = bottomNavTitle
+                    )
+                }
+            }
+
+            NavigationRoute.CATEGORIES -> {
+                val bottomNavTitle = currentState.selectedBottomNavItem.title
+                if (!currentState.isInMainContent || currentState.showBottomBar || currentState.currentContentType != bottomNavTitle) {
+                    _uiState.value = currentState.copy(
+                        isInMainContent = true,
+                        showBottomBar = false,
+                        currentContentType = bottomNavTitle
+                    )
+                }
+            }
+
+            NavigationRoute.PRODUCTS -> {
+                val bottomNavTitle = currentState.selectedBottomNavItem.title
+                if (!currentState.isInMainContent || currentState.showBottomBar || currentState.currentContentType != bottomNavTitle) {
+                    _uiState.value = currentState.copy(
+                        isInMainContent = true,
+                        showBottomBar = false,
+                        currentContentType = bottomNavTitle
                     )
                 }
             }
 
             NavigationRoute.CREATE_RECEIPT -> {
-                if (!currentState.isInMainContent || currentState.showBottomBar || currentState.currentContentType != "Create Receipt") {
+                val bottomNavTitle = currentState.selectedBottomNavItem.title
+                if (!currentState.isInMainContent || currentState.showBottomBar || currentState.currentContentType != bottomNavTitle) {
                     _uiState.value = currentState.copy(
                         isInMainContent = true,
                         showBottomBar = false,
-                        currentContentType = "Create Receipt"
+                        currentContentType = bottomNavTitle
                     )
                 }
             }
 
             NavigationRoute.RECEIPT_LIST -> {
-                if (!currentState.isInMainContent || currentState.showBottomBar || currentState.currentContentType != "Receipt List") {
+                val bottomNavTitle = currentState.selectedBottomNavItem.title
+                if (!currentState.isInMainContent || currentState.showBottomBar || currentState.currentContentType != bottomNavTitle) {
                     _uiState.value = currentState.copy(
                         isInMainContent = true,
                         showBottomBar = false,
-                        currentContentType = "Receipt List"
+                        currentContentType = bottomNavTitle
                     )
                 }
             }
         }
     }
 
+    /*Other Functions*/
     fun toggleProfileBottomSheet() {
         _uiState.value = _uiState.value.copy(
             showProfileBottomSheet = !_uiState.value.showProfileBottomSheet
@@ -134,13 +225,13 @@ data class MainUiState(
     val showBottomBar: Boolean = true,
     val showProfileBottomSheet: Boolean = false,
     val currentContentType: String = "",
-    val currentScreen: String = "MAIN",
+    val currentScreen: String = NavigationRoute.MAIN,
     val isLoading: Boolean = false,
     val error: String? = null
 )
 
 enum class BottomNavItem(val title: String) {
     DOCS("Docs"),
-    TRIPKEUN("Tripkeun"),
+    TRIPKEUN("tripkeun"),
     ACTIVITY("Activity")
 }

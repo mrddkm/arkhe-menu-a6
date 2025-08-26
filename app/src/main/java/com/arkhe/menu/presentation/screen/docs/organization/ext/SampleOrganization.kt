@@ -1,10 +1,10 @@
 @file:Suppress("SpellCheckingInspection")
 
-package com.arkhe.menu.presentation.screen.docs.team.ext
+package com.arkhe.menu.presentation.screen.docs.organization.ext
 
 import com.arkhe.menu.R
 
-data class Personil(
+data class Organization(
     val id: Int,
     val name: String,
     val division: String,
@@ -17,8 +17,8 @@ data class Personil(
     val bio: String
 )
 
-val samplePersonil = listOf(
-    Personil(
+val sampleOrganizations = listOf(
+    Organization(
         id = 1,
         name = "Didik Muttaqien",
         division = "BROD",
@@ -30,7 +30,7 @@ val samplePersonil = listOf(
         instagram = "@didikmuttaqien",
         bio = "Passionate UI/UX Designer yang berfokus pada user experience dan desain yang menarik. Memiliki pengalaman dalam berbagai proyek aplikasi mobile dan web."
     ),
-    Personil(
+    Organization(
         id = 2,
         name = "Sari Indah",
         division = "Frontend Developer React & Vue",
@@ -42,7 +42,7 @@ val samplePersonil = listOf(
         instagram = "@sariindah",
         bio = "Frontend Developer yang ahli dalam React dan Vue.js. Senang mengimplementasikan desain menjadi kode yang clean dan responsive."
     ),
-    Personil(
+    Organization(
         id = 3,
         name = "Budi Santoso",
         division = "Backend Developer Java & Spring",
@@ -54,7 +54,7 @@ val samplePersonil = listOf(
         instagram = "@budisantoso",
         bio = "Backend Developer dengan keahlian dalam Java, Spring Boot, dan database management. Berpengalaman dalam membangun API yang scalable."
     ),
-    Personil(
+    Organization(
         id = 4,
         name = "Lisa Maharani",
         division = "Project Manager & Scrum Master",
@@ -66,7 +66,7 @@ val samplePersonil = listOf(
         instagram = "@lisamaharani",
         bio = "Berpengalaman dalam mengelola proyek teknologi dengan metodologi Agile dan Scrum. Memastikan delivery yang tepat waktu dan berkualitas."
     ),
-    Personil(
+    Organization(
         id = 5,
         name = "Raka Wijaya",
         division = "Mobile Developer Android & iOS",
@@ -78,7 +78,7 @@ val samplePersonil = listOf(
         instagram = "@rakawijaya",
         bio = "Mobile Developer yang mahir dalam pengembangan aplikasi Android native dan iOS. Fokus pada performance dan user experience yang optimal."
     ),
-    Personil(
+    Organization(
         id = 6,
         name = "Dina Pratiwi",
         division = "QA Engineer & Tester",
@@ -90,7 +90,7 @@ val samplePersonil = listOf(
         instagram = "@dinapratiwi",
         bio = "Quality Assurance Engineer yang detail dalam melakukan testing manual dan automation. Memastikan produk bebas dari bug sebelum release."
     ),
-    Personil(
+    Organization(
         id = 7,
         name = "Agus Setiawan",
         division = "DevOps Engineer & Cloud Specialist",
@@ -102,7 +102,7 @@ val samplePersonil = listOf(
         instagram = "@agussetiawan",
         bio = "DevOps Engineer dengan keahlian dalam AWS, Docker, dan Kubernetes. Fokus pada automation dan infrastructure yang reliable."
     ),
-    Personil(
+    Organization(
         id = 8,
         name = "Maya Sari",
         division = "Data Analyst & Business Intelligence",

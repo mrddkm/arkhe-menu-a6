@@ -16,10 +16,14 @@
 
 # Keep data classes used in serialization
 -keep @kotlinx.serialization.Serializable class com.tripkeun.android.data.remote.dto.** { *; }
--keep class com.tripkeun.android.domain.model.** { *; }
+-keep class com.arkhe.menu.domain.model.** { *; }
+
+# Keep CoreComponentFactory
+-keep class androidx.core.app.CoreComponentFactory { *; }
+-dontwarn androidx.core.app.CoreComponentFactory
 
 # Keep ViewModels
--keep class com.tripkeun.android.presentation.viewmodel.** { *; }
+-keep class com.arkhe.menu.presentation.viewmodel.** { *; }
 
 # Keep Compose classes
 -keep class androidx.compose.** { *; }
@@ -30,10 +34,10 @@
 -dontnote kotlinx.serialization.AnnotationsKt
 -dontnote kotlinx.serialization.SerializationKt
 
--keep,includedescriptorclasses class com.tripkeun.android.**$serializer { *; }
--keepclassmembers class com.tripkeun.android.** {
+-keep,includedescriptorclasses class com.arkhe.menu.**$serializer { *; }
+-keepclassmembers class com.arkhe.menu.** {
     *** Companion;
 }
--keepclasseswithmembers class com.tripkeun.android.** {
+-keepclasseswithmembers class com.arkhe.menu.** {
     kotlinx.serialization.KSerializer serializer(...);
 }

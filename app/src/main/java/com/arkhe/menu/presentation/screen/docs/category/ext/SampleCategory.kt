@@ -4,7 +4,7 @@ package com.arkhe.menu.presentation.screen.docs.category.ext
 
 import androidx.compose.ui.graphics.Color
 
-data class Category(
+data class Categories(
     val nama: String,
     val deskripsi: String,
     val productCount: Int,
@@ -34,38 +34,38 @@ fun getCategoryColor(categoryName: String): CategoryColor {
     }
 }
 
-val sampleCategory = listOf(
-    Category(
+val sampleCategories = listOf(
+    Categories(
         nama = "Series",
         deskripsi = "Pilihan tempat menginap terbaik untuk perjalanan Anda",
         productCount = 36
     ),
-    Category(
+    Categories(
         nama = "Workshop",
         deskripsi = "Berbagai opsi transportasi untuk memudahkan perjalanan Anda",
         productCount = 2
     ),
-    Category(
+    Categories(
         nama = "Other Side",
         deskripsi = "Destinasi wisata menarik yang wajib dikunjungi",
         productCount = 9
     ),
-    Category(
+    Categories(
         nama = "Chipkeun",
         deskripsi = "Tempat makan dan minum yang lezat dan populer",
         productCount = 12
     ),
-    Category(
+    Categories(
         nama = "Special",
         deskripsi = "Cendera mata khas daerah yang patut dibawa pulang",
         productCount = 3
     ),
-    Category(
+    Categories(
         nama = "Anniversary",
         deskripsi = "Tempat makan dan minum yang lezat dan populer",
         productCount = 1
     ),
-    Category(
+    Categories(
         nama = "Private",
         deskripsi = "Tempat makan dan minum yang lezat dan populer",
         productCount = 1

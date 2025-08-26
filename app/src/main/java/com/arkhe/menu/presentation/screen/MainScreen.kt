@@ -3,10 +3,6 @@
 package com.arkhe.menu.presentation.screen
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -31,7 +27,11 @@ import com.arkhe.menu.presentation.components.TripkeunBottomBar
 import com.arkhe.menu.presentation.components.TripkeunTopBar
 import com.arkhe.menu.presentation.components.common.LoadingIndicator
 import com.arkhe.menu.presentation.navigation.NavigationRoute
-import com.arkhe.menu.presentation.screen.docs.profile.ProfileTripkeunScreen
+import com.arkhe.menu.presentation.screen.docs.category.CategoriesScreen
+import com.arkhe.menu.presentation.screen.docs.customer.CustomerScreen
+import com.arkhe.menu.presentation.screen.docs.organization.OrganizationScreen
+import com.arkhe.menu.presentation.screen.docs.product.ProductsScreen
+import com.arkhe.menu.presentation.screen.docs.profile.ProfileScreen
 import com.arkhe.menu.presentation.theme.AppTheme
 import com.arkhe.menu.presentation.viewmodel.MainViewModel
 import org.koin.android.ext.koin.androidContext
@@ -88,32 +88,88 @@ fun MainScreen(
             targetState = uiState.currentScreen,
             transitionSpec = {
                 when {
-                    initialState == NavigationRoute.MAIN && targetState == NavigationRoute.PROFILE_TRIPKEUN -> {
-                        ScreenTransitions.slideFromRight()
-                    }
-                    initialState == NavigationRoute.PROFILE_TRIPKEUN && targetState == NavigationRoute.MAIN -> {
+                    initialState == NavigationRoute.MAIN && targetState == NavigationRoute.PROFILE -> {
                         ScreenTransitions.slideFromLeft()
                     }
+
+                    initialState == NavigationRoute.PROFILE && targetState == NavigationRoute.MAIN -> {
+                        ScreenTransitions.slideFromRight()
+                    }
+
+                    initialState == NavigationRoute.MAIN && targetState == NavigationRoute.ORGANIZATION -> {
+                        ScreenTransitions.slideFromLeft()
+                    }
+
+                    initialState == NavigationRoute.ORGANIZATION && targetState == NavigationRoute.MAIN -> {
+                        ScreenTransitions.slideFromRight()
+                    }
+
+                    initialState == NavigationRoute.MAIN && targetState == NavigationRoute.CUSTOMER -> {
+                        ScreenTransitions.slideFromLeft()
+                    }
+
+                    initialState == NavigationRoute.CUSTOMER && targetState == NavigationRoute.MAIN -> {
+                        ScreenTransitions.slideFromRight()
+                    }
+
+                    initialState == NavigationRoute.MAIN && targetState == NavigationRoute.CATEGORIES -> {
+                        ScreenTransitions.slideFromLeft()
+                    }
+
+                    initialState == NavigationRoute.CATEGORIES && targetState == NavigationRoute.MAIN -> {
+                        ScreenTransitions.slideFromRight()
+                    }
+
+                    initialState == NavigationRoute.MAIN && targetState == NavigationRoute.PRODUCTS -> {
+                        ScreenTransitions.slideFromLeft()
+                    }
+
+                    initialState == NavigationRoute.PRODUCTS && targetState == NavigationRoute.MAIN -> {
+                        ScreenTransitions.slideFromRight()
+                    }
+
                     else -> {
                         ScreenTransitions.crossFade()
                     }
                 }
             },
-            modifier = Modifier
-                .padding(paddingValues),
+            modifier = Modifier.fillMaxSize(),
             label = "screen_transition"
         ) { currentScreen ->
             when (currentScreen) {
-                NavigationRoute.PROFILE_TRIPKEUN -> {
-                    ProfileTripkeunScreen(
-                        modifier = Modifier
-                            .padding(paddingValues)
+                NavigationRoute.PROFILE -> {
+                    ProfileScreen(
+                        modifier = Modifier.padding(paddingValues)
                     )
                 }
+
+                NavigationRoute.ORGANIZATION -> {
+                    OrganizationScreen(
+                        modifier = Modifier.padding(paddingValues)
+                    )
+                }
+
+                NavigationRoute.CUSTOMER -> {
+                    CustomerScreen(
+                        modifier = Modifier.padding(paddingValues)
+                    )
+                }
+
+                NavigationRoute.CATEGORIES -> {
+                    CategoriesScreen(
+                        modifier = Modifier.padding(paddingValues)
+                    )
+                }
+
+                NavigationRoute.PRODUCTS -> {
+                    ProductsScreen(
+                        modifier = Modifier.padding(paddingValues)
+                    )
+                }
+
                 else -> {
                     MainContent(
-                        modifier = Modifier
-                            .padding(paddingValues),
+                        modifier = Modifier.padding(paddingValues),
                         selectedBottomNavItem = uiState.selectedBottomNavItem,
                         userRole = uiState.userRole,
                         navController = navController,
@@ -122,6 +178,18 @@ fun MainScreen(
                         },
                         onNavigateToProfile = {
                             viewModel.navigateToProfile()
+                        },
+                        onNavigateToOrganization = {
+                            viewModel.navigateToOrganization()
+                        },
+                        onNavigateToCustomer = {
+                            viewModel.navigateToCustomer()
+                        },
+                        onNavigateToCategories = {
+                            viewModel.navigateToCategory()
+                        },
+                        onNavigateToProducts = {
+                            viewModel.navigateToProducts()
                         }
                     )
                 }
@@ -149,10 +217,10 @@ fun MainScreen(
 @Preview(showBackground = true)
 @Composable
 fun MainScreenPreview() {
-    val previewContext = androidx.compose.ui.platform.LocalContext.current // Get context here
+    val previewContext = androidx.compose.ui.platform.LocalContext.current
     KoinApplicationPreview(
         application = {
-            androidContext(previewContext) // Pass the context
+            androidContext(previewContext)
             modules(
                 appModule, dataModule, domainModule
             )

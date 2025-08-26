@@ -1,12 +1,19 @@
 <resources>
+    <!--Main-->
     <string name="app_name">ArkheMenu</string>
-    <string name="tripkeun">Tripkeun</string>
-    <string name="docs">Docs</string>
-    <string name="activity">Activity</string>
+    <string name="client_short_name">tripkeun</string>
+    <string name="client_long_name">tripkeun Indonesia</string>
+
+    <!--TopBar-->
     <string name="profile">Profile</string>
     <string name="settings">Settings</string>
-    <string name="create_receipt">Create Receipt</string>
-    <string name="view_receipts">View Receipts</string>
+
+    <!--BottomBar-->
+    <string name="docs">Docs</string>
+    <string name="tripkeun">tripkeun</string>
+    <string name="activity">Activity</string>
+
+    <!--Common-->
     <string name="loading">Loading…</string>
     <string name="error_occurred">An error occurred</string>
     <string name="retry">Retry</string>
@@ -14,4 +21,16 @@
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
     <string name="back">Back</string>
+
+    <!--Docs Menu-->
+    <string name="organization">Organization</string>
+    <string name="customer">Sobatkeun</string>
+    <string name="categories">Categories</string>
+    <string name="products">Products</string>
+
+    <!--tripkeun Menu-->
+    <string name="create_receipt">Create Receipt</string>
+    <string name="view_receipts">View Receipts</string>
+
+    <!--Activity Menu-->
 </resources>

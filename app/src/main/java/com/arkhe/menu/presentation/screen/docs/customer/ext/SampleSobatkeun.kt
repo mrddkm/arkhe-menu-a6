@@ -1,8 +1,8 @@
 @file:Suppress("SpellCheckingInspection")
 
-package com.arkhe.menu.presentation.screen.docs.sobatkeun.ext
+package com.arkhe.menu.presentation.screen.docs.customer.ext
 
-data class Sobatkeun(
+data class Customer(
     val id: String,
     val nama: String,
     val tripCount: Int,
@@ -12,8 +12,8 @@ data class Sobatkeun(
     val whatsapp: String,
 )
 
-val sampleSobatkeun = listOf(
-    Sobatkeun(
+val sampleCustomers = listOf(
+    Customer(
         id = "1",
         nama = "Rina Kusuma",
         tripCount = 25,
@@ -22,7 +22,7 @@ val sampleSobatkeun = listOf(
         instagram = "rina_travels",
         whatsapp = "+62 812-3456-7890"
     ),
-    Sobatkeun(
+    Customer(
         id = "2",
         nama = "Dedi Saputra",
         tripCount = 40,
@@ -31,7 +31,7 @@ val sampleSobatkeun = listOf(
         instagram = "dedi_adventures",
         whatsapp = "+62 813-4567-8901"
     ),
-    Sobatkeun(
+    Customer(
         id = "3",
         nama = "Maya Lestari",
         tripCount = 15,
@@ -40,7 +40,7 @@ val sampleSobatkeun = listOf(
         instagram = "maya_culture",
         whatsapp = "+62 814-5678-9012"
     ),
-    Sobatkeun(
+    Customer(
         id = "4",
         nama = "Rina Kusuma",
         tripCount = 15,

@@ -1,7 +1,7 @@
 @file:Suppress("SpellCheckingInspection")
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.arkhe.menu.presentation.screen.docs.sobatkeun.ext
+package com.arkhe.menu.presentation.screen.docs.customer.ext
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -34,28 +34,29 @@ import androidx.compose.ui.unit.dp
 import com.arkhe.menu.presentation.theme.AppTheme
 
 @Composable
-fun SobatkeunSection(
-    sobatkeunList: List<Sobatkeun>,
-    onSobatkeunClick: (Sobatkeun) -> Unit
+fun CustomerSection(
+    customerList: List<Customer>,
+    onCustomerClick: (Customer) -> Unit
 ) {
     val maxVisibleItems = 3
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.padding(horizontal = 8.dp)
     ) {
-        sobatkeunList.take(maxVisibleItems).forEachIndexed { index, sobatkeun ->
-            SobatkeunCard(
+        customerList.take(maxVisibleItems).forEachIndexed { index, customer ->
+            CostumerCard(
                 rank = index + 1,
-                sobatkeun = sobatkeun,
-                onClick = { onSobatkeunClick(sobatkeun) }
+                customer = customer,
+                onClick = { onCustomerClick(customer) }
             )
         }
     }
 }
 
 @Composable
-fun SobatkeunCard(
+fun CostumerCard(
     rank: Int,
-    sobatkeun: Sobatkeun,
+    customer: Customer,
     onClick: () -> Unit
 ) {
     Card(
@@ -76,7 +77,7 @@ fun SobatkeunCard(
                 contentAlignment = Alignment.Center
             ) {
                 Card(
-                    modifier = Modifier.size(32.dp),
+                    modifier = Modifier.size(40.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = when {
                             rank <= 3 -> MaterialTheme.colorScheme.primary
@@ -86,12 +87,12 @@ fun SobatkeunCard(
                     shape = CircleShape
                 ) {
                     Box(
-                        modifier = Modifier.size(32.dp),
+                        modifier = Modifier.size(40.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = "#$rank",
-                            style = MaterialTheme.typography.labelSmall,
+                            style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
                             color = when {
                                 rank <= 3 -> MaterialTheme.colorScheme.onPrimary
@@ -106,7 +107,7 @@ fun SobatkeunCard(
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = sobatkeun.nama,
+                    text = customer.nama,
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium,
                     maxLines = 1,
@@ -127,7 +128,7 @@ fun SobatkeunCard(
                             modifier = Modifier.size(14.dp)
                         )
                         Text(
-                            text = "${sobatkeun.tripCount} trips",
+                            text = "${customer.tripCount} trips",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             maxLines = 1,
@@ -136,7 +137,7 @@ fun SobatkeunCard(
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = sobatkeun.whatsapp,
+                        text = customer.whatsapp,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
@@ -144,7 +145,7 @@ fun SobatkeunCard(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "@${sobatkeun.instagram}",
+                        text = "@${customer.instagram}",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
@@ -160,9 +161,9 @@ fun SobatkeunCard(
 @Composable
 fun SobatkeunCardPreview() {
     AppTheme {
-        SobatkeunSection(
-            sobatkeunList = sampleSobatkeun,
-            onSobatkeunClick = {}
+        CustomerSection(
+            customerList = sampleCustomers,
+            onCustomerClick = {}
         )
     }
 }

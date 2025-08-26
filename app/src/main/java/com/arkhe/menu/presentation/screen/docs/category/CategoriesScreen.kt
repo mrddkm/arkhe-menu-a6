@@ -1,4 +1,4 @@
-package com.arkhe.menu.presentation.screen.docs.product
+package com.arkhe.menu.presentation.screen.docs.category
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,7 +11,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ProductsScreen(
+fun CategoriesScreen(
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -20,7 +20,7 @@ fun ProductsScreen(
             .padding(16.dp)
     ) {
         Text(
-            text = "Product Tripkeun",
+            text = "Category Tripkeun",
             style = MaterialTheme.typography.headlineLarge.copy(
                 fontWeight = FontWeight.Bold
             ),

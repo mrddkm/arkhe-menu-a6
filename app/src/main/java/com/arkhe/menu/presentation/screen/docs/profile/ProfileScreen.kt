@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.arkhe.menu.presentation.theme.AppTheme
 
 @Composable
-fun ProfileTripkeunScreen(
+fun ProfileScreen(
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -49,6 +49,6 @@ fun ProfileTripkeunScreen(
 @Composable
 fun ProfileTripkeunScreenPreview() {
     AppTheme {
-        ProfileTripkeunScreen()
+        ProfileScreen()
     }
 }
