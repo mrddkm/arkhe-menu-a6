@@ -2,6 +2,11 @@
 
 package com.arkhe.menu.presentation.screen
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -20,10 +25,12 @@ import androidx.navigation.NavHostController
 import com.arkhe.menu.di.appModule
 import com.arkhe.menu.di.dataModule
 import com.arkhe.menu.di.domainModule
+import com.arkhe.menu.presentation.animation.ScreenTransitions
 import com.arkhe.menu.presentation.components.ProfileBottomSheet
 import com.arkhe.menu.presentation.components.TripkeunBottomBar
 import com.arkhe.menu.presentation.components.TripkeunTopBar
 import com.arkhe.menu.presentation.components.common.LoadingIndicator
+import com.arkhe.menu.presentation.navigation.NavigationRoute
 import com.arkhe.menu.presentation.screen.docs.profile.ProfileTripkeunScreen
 import com.arkhe.menu.presentation.theme.AppTheme
 import com.arkhe.menu.presentation.viewmodel.MainViewModel
@@ -77,26 +84,47 @@ fun MainScreen(
             }
         }
     ) { paddingValues ->
-        when (uiState.currentScreen) {
-            "PROFILE_TRIPKEUN" -> {
-                ProfileTripkeunScreen(
-                    modifier = Modifier.padding(paddingValues)
-                )
-            }
-
-            else -> {
-                MainContent(
-                    modifier = Modifier.padding(paddingValues),
-                    selectedBottomNavItem = uiState.selectedBottomNavItem,
-                    userRole = uiState.userRole,
-                    navController = navController,
-                    onNavigateToContent = { contentType ->
-                        viewModel.navigateToMainContent(contentType)
-                    },
-                    onNavigateToProfile = {
-                        viewModel.navigateToProfile()
+        AnimatedContent(
+            targetState = uiState.currentScreen,
+            transitionSpec = {
+                when {
+                    initialState == NavigationRoute.MAIN && targetState == NavigationRoute.PROFILE_TRIPKEUN -> {
+                        ScreenTransitions.slideFromRight()
                     }
-                )
+                    initialState == NavigationRoute.PROFILE_TRIPKEUN && targetState == NavigationRoute.MAIN -> {
+                        ScreenTransitions.slideFromLeft()
+                    }
+                    else -> {
+                        ScreenTransitions.crossFade()
+                    }
+                }
+            },
+            modifier = Modifier
+                .padding(paddingValues),
+            label = "screen_transition"
+        ) { currentScreen ->
+            when (currentScreen) {
+                NavigationRoute.PROFILE_TRIPKEUN -> {
+                    ProfileTripkeunScreen(
+                        modifier = Modifier
+                            .padding(paddingValues)
+                    )
+                }
+                else -> {
+                    MainContent(
+                        modifier = Modifier
+                            .padding(paddingValues),
+                        selectedBottomNavItem = uiState.selectedBottomNavItem,
+                        userRole = uiState.userRole,
+                        navController = navController,
+                        onNavigateToContent = { contentType ->
+                            viewModel.navigateToMainContent(contentType)
+                        },
+                        onNavigateToProfile = {
+                            viewModel.navigateToProfile()
+                        }
+                    )
+                }
             }
         }
 
@@ -135,32 +163,3 @@ fun MainScreenPreview() {
         }
     }
 }
-
-/*
-@Preview(showBackground = true)
-@Composable
-fun MainScreenDebugPreview() {
-    AppTheme {
-        // Preview sederhana tanpa dependencies
-        Scaffold { paddingValues ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(16.dp)
-            ) {
-                Column {
-                    Text(
-                        text = "Main Screen Preview",
-                        style = MaterialTheme.typography.headlineMedium
-                    )
-                    Text(
-                        text = "Preview mode active",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-            }
-        }
-    }
-}
-*/
