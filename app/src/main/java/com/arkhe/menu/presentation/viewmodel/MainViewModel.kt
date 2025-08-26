@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arkhe.menu.domain.model.UserRole
 import com.arkhe.menu.domain.usecase.GetUserRoleUseCase
+import com.arkhe.menu.presentation.navigation.NavigationRoute
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -46,12 +47,68 @@ class MainViewModel(
         )
     }
 
-    fun navigateBack() {
+    fun navigateToProfile() {
+        _uiState.value = _uiState.value.copy(
+            isInMainContent = true,
+            showBottomBar = false,
+            currentContentType = "Profile Tripkeun",
+            currentScreen = "PROFILE_TRIPKEUN"
+        )
+    }
+
+    fun navigateBackToMain() {
         _uiState.value = _uiState.value.copy(
             isInMainContent = false,
             showBottomBar = true,
-            currentContentType = ""
+            currentContentType = "",
+            currentScreen = "MAIN"
         )
+    }
+
+    fun updateNavigationState(currentRoute: String?) {
+        val currentState = _uiState.value
+
+        when (currentRoute) {
+            NavigationRoute.MAIN -> {
+                if (currentState.isInMainContent || !currentState.showBottomBar) {
+                    _uiState.value = currentState.copy(
+                        isInMainContent = false,
+                        showBottomBar = true,
+                        currentContentType = ""
+                    )
+                }
+            }
+
+            NavigationRoute.PROFILE_TRIPKEUN -> {
+                if (!currentState.isInMainContent || currentState.showBottomBar || currentState.currentContentType != "Profile Tripkeun") {
+                    _uiState.value = currentState.copy(
+                        isInMainContent = true,
+                        showBottomBar = false,
+                        currentContentType = "Profile Tripkeun"
+                    )
+                }
+            }
+
+            NavigationRoute.CREATE_RECEIPT -> {
+                if (!currentState.isInMainContent || currentState.showBottomBar || currentState.currentContentType != "Create Receipt") {
+                    _uiState.value = currentState.copy(
+                        isInMainContent = true,
+                        showBottomBar = false,
+                        currentContentType = "Create Receipt"
+                    )
+                }
+            }
+
+            NavigationRoute.RECEIPT_LIST -> {
+                if (!currentState.isInMainContent || currentState.showBottomBar || currentState.currentContentType != "Receipt List") {
+                    _uiState.value = currentState.copy(
+                        isInMainContent = true,
+                        showBottomBar = false,
+                        currentContentType = "Receipt List"
+                    )
+                }
+            }
+        }
     }
 
     fun toggleProfileBottomSheet() {
@@ -60,6 +117,7 @@ class MainViewModel(
         )
     }
 
+    @Suppress("Unused")
     fun setLoading(isLoading: Boolean) {
         _uiState.value = _uiState.value.copy(isLoading = isLoading)
     }
@@ -76,6 +134,7 @@ data class MainUiState(
     val showBottomBar: Boolean = true,
     val showProfileBottomSheet: Boolean = false,
     val currentContentType: String = "",
+    val currentScreen: String = "MAIN",
     val isLoading: Boolean = false,
     val error: String? = null
 )

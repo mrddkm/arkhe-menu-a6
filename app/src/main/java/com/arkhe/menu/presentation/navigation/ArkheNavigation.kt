@@ -23,6 +23,10 @@ fun ArkheNavigation(
             MainScreen(navController = navController)
         }
 
+        composable(NavigationRoute.PROFILE_TRIPKEUN) {
+            MainScreen(navController = navController)
+        }
+
         composable(NavigationRoute.CREATE_RECEIPT) {
             CreateReceiptScreen(navController = navController)
         }

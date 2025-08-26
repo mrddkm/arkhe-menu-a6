@@ -45,7 +45,9 @@ import com.arkhe.menu.presentation.screen.docs.team.ext.samplePersonil
 import com.arkhe.menu.presentation.theme.AppTheme
 
 @Composable
-fun DocsContent(onNavigateToContent: (String) -> Unit) {
+fun DocsContent(
+    onNavigateToProfile: () -> Unit
+) {
     var showBottomSheet by remember { mutableStateOf(false) }
     var selectedPersonil by remember { mutableStateOf<Personil?>(null) }
     var showPersonilList by remember { mutableStateOf(false) }
@@ -68,12 +70,15 @@ fun DocsContent(onNavigateToContent: (String) -> Unit) {
             elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
         ) {
             Column(
+                modifier = Modifier
+                    .clickable {
+                        onNavigateToProfile()
+                    },
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Row(
                     modifier = Modifier
-                        .padding(16.dp)
-                        .clickable { onNavigateToContent("Profile Tripkeun") },
+                        .padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
@@ -222,6 +227,8 @@ fun DocsContent(onNavigateToContent: (String) -> Unit) {
 @Composable
 fun DocsContentPreview() {
     AppTheme(darkTheme = false) {
-        DocsContent(onNavigateToContent = {})
+        DocsContent(
+            onNavigateToProfile = {}
+        )
     }
 }

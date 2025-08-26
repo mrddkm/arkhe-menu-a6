@@ -9,11 +9,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.arkhe.menu.di.appModule
 import com.arkhe.menu.di.dataModule
@@ -22,6 +24,7 @@ import com.arkhe.menu.presentation.components.ProfileBottomSheet
 import com.arkhe.menu.presentation.components.TripkeunBottomBar
 import com.arkhe.menu.presentation.components.TripkeunTopBar
 import com.arkhe.menu.presentation.components.common.LoadingIndicator
+import com.arkhe.menu.presentation.screen.docs.profile.ProfileTripkeunScreen
 import com.arkhe.menu.presentation.theme.AppTheme
 import com.arkhe.menu.presentation.viewmodel.MainViewModel
 import org.koin.android.ext.koin.androidContext
@@ -36,6 +39,16 @@ fun MainScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    DisposableEffect(navController) {
+        val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
+            viewModel.updateNavigationState(destination.route)
+        }
+        navController.addOnDestinationChangedListener(listener)
+        onDispose {
+            navController.removeOnDestinationChangedListener(listener)
+        }
+    }
+
     if (uiState.showProfileBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { viewModel.toggleProfileBottomSheet() }
@@ -49,7 +62,9 @@ fun MainScreen(
             TripkeunTopBar(
                 isInMainContent = uiState.isInMainContent,
                 currentContentType = uiState.currentContentType,
-                onBackClick = { viewModel.navigateBack() },
+                onBackClick = {
+                    viewModel.navigateBackToMain()
+                },
                 onUserIconClick = { viewModel.toggleProfileBottomSheet() }
             )
         },
@@ -62,15 +77,28 @@ fun MainScreen(
             }
         }
     ) { paddingValues ->
-        MainContent(
-            modifier = Modifier.padding(paddingValues),
-            selectedBottomNavItem = uiState.selectedBottomNavItem,
-            userRole = uiState.userRole,
-            isInMainContent = uiState.isInMainContent,
-            onNavigateToContent = { contentType ->
-                viewModel.navigateToMainContent(contentType)
+        when (uiState.currentScreen) {
+            "PROFILE_TRIPKEUN" -> {
+                ProfileTripkeunScreen(
+                    modifier = Modifier.padding(paddingValues)
+                )
             }
-        )
+
+            else -> {
+                MainContent(
+                    modifier = Modifier.padding(paddingValues),
+                    selectedBottomNavItem = uiState.selectedBottomNavItem,
+                    userRole = uiState.userRole,
+                    navController = navController,
+                    onNavigateToContent = { contentType ->
+                        viewModel.navigateToMainContent(contentType)
+                    },
+                    onNavigateToProfile = {
+                        viewModel.navigateToProfile()
+                    }
+                )
+            }
+        }
 
         if (uiState.isLoading) {
             Box(

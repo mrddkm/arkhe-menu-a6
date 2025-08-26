@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.arkhe.menu.domain.model.UserRole
 import com.arkhe.menu.presentation.screen.activity.ActivityContent
 import com.arkhe.menu.presentation.screen.docs.DocsContent
@@ -17,8 +18,9 @@ fun MainContent(
     modifier: Modifier = Modifier,
     selectedBottomNavItem: BottomNavItem,
     userRole: UserRole,
-    isInMainContent: Boolean,
-    onNavigateToContent: (String) -> Unit
+    navController: NavHostController,
+    onNavigateToContent: (String) -> Unit,
+    onNavigateToProfile: (() -> Unit)? = null
 ) {
     LazyColumn(
         modifier = modifier
@@ -29,7 +31,7 @@ fun MainContent(
             when (selectedBottomNavItem) {
                 BottomNavItem.DOCS -> {
                     DocsContent(
-                        onNavigateToContent = onNavigateToContent
+                        onNavigateToProfile = onNavigateToProfile ?: {}
                     )
                 }
 
