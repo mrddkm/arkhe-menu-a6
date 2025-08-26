@@ -1,4 +1,3 @@
-// AppModule.kt (Updated)
 package com.arkhe.menu.di
 
 import com.arkhe.menu.presentation.viewmodel.MainViewModel
@@ -12,6 +11,8 @@ import org.koin.dsl.module
 @Suppress("DEPRECATION")
 val appModule = module {
     viewModel { MainViewModel(get()) }
+    viewModel { ProfileViewModel(get()) }
+    /*Examples*/
     viewModel { DocsViewModel(get()) }
     viewModel { ProfileViewModel(get()) }
     viewModel { CreateReceiptViewModel(get()) }

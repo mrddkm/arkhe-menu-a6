@@ -1,0 +1,25 @@
+package com.arkhe.menu.data.local.entity
+
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "profiles")
+data class ProfileEntity(
+    @PrimaryKey
+    val nameShort: String,
+    val nameLong: String,
+    val birthDate: String,
+    val googleMaps: String,
+    val instagram: String,
+    val tiktok: String,
+    val youtube: String,
+    val tagline: String,
+    val quotes: String,
+    val informationId: String,
+    val informationEn: String,
+    val createdAt: String = "",
+    val updatedAt: String = "",
+    val createdByUserId: String = "",
+    val updatedByUserId: String = "",
+    val lastSyncTime: Long = System.currentTimeMillis()
+)

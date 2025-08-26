@@ -2,17 +2,19 @@
 
 package com.arkhe.menu.di
 
-import android.content.Context
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
-import com.arkhe.menu.data.local.TripkeunDatabase
-import com.arkhe.menu.data.remote.TripkeunApiService
-import com.arkhe.menu.data.repository.TripkeunRepositoryImpl
-import com.arkhe.menu.domain.repository.TripkeunRepository
+import com.arkhe.menu.data.local.LocalDataSource
+import com.arkhe.menu.data.local.database.AppDatabase
+import com.arkhe.menu.data.local.preferences.SessionManager
+import com.arkhe.menu.data.local.preferences.dataStore
+import com.arkhe.menu.data.remote.RemoteDataSource
+import com.arkhe.menu.data.remote.api.TripkeunApiService
+import com.arkhe.menu.data.remote.api.TripkeunApiServiceImpl
+import com.arkhe.menu.data.repository.ProfileRepositoryImpl
+import com.arkhe.menu.domain.repository.ProfileRepository
 import io.ktor.client.*
 import io.ktor.client.engine.android.*
+import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.serialization.kotlinx.json.*
@@ -20,10 +22,13 @@ import kotlinx.serialization.json.Json
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
-val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "tripkeun_settings")
-
 val dataModule = module {
-    // HttpClient
+
+    // DataStore
+    single { androidContext().dataStore }
+    single { SessionManager(get()) }
+
+    // Ktor HTTP Client
     single<HttpClient> {
         HttpClient(Android) {
             install(ContentNegotiation) {
@@ -33,39 +38,49 @@ val dataModule = module {
                     ignoreUnknownKeys = true
                 })
             }
+
             install(Logging) {
-                level = LogLevel.ALL
+                level = LogLevel.BODY
+                logger = Logger.DEFAULT
             }
+
+            install(HttpTimeout) {
+                requestTimeoutMillis = 30000
+                connectTimeoutMillis = 30000
+                socketTimeoutMillis = 30000
+            }
+
+            install(DefaultRequest) {
+                headers.append("Content-Type", "application/json")
+                headers.append("Accept", "application/json")
+            }
+
+            // Add error handling
+            expectSuccess = false
         }
     }
 
-    // Database
-    single<TripkeunDatabase> {
+    // Room Database
+    single<AppDatabase> {
         Room.databaseBuilder(
-                androidContext(),
-                TripkeunDatabase::class.java,
-                "tripkeun_database"
-            ).fallbackToDestructiveMigration(false)
+            androidContext(),
+            AppDatabase::class.java,
+            AppDatabase.DATABASE_NAME
+        )
+            .fallbackToDestructiveMigration()
             .build()
     }
 
-    // DAOs
-    single { get<TripkeunDatabase>().tripkeunDao() }
-    single { get<TripkeunDatabase>().receiptDao() }
+    // Room DAOs
+    single { get<AppDatabase>().profileDao() }
 
-    // DataStore
-    single { androidContext().dataStore }
+    // API Services
+    single<TripkeunApiService> { TripkeunApiServiceImpl(get()) }
 
-    // API Service
-    single { TripkeunApiService(get()) }
+    // Data Sources
+    single { RemoteDataSource(get()) }
+    single { LocalDataSource(get()) }
 
-    // Repository
-    single<TripkeunRepository> {
-        TripkeunRepositoryImpl(
-            tripkeunDao = get(),
-            receiptDao = get(),
-            apiService = get(),
-            dataStore = get()
-        )
-    }
+    // Repositories
+    single<ProfileRepository> { ProfileRepositoryImpl(get(), get()) }
 }
