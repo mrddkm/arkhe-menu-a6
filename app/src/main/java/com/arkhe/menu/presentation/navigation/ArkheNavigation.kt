@@ -19,10 +19,12 @@ fun ArkheNavigation(
         navController = navController,
         startDestination = NavigationRoute.MAIN
     ) {
+        /*Main*/
         composable(NavigationRoute.MAIN) {
             MainScreen(navController = navController)
         }
 
+        /*Docs*/
         composable(NavigationRoute.PROFILE) {
             MainScreen(navController = navController)
         }
@@ -31,6 +33,21 @@ fun ArkheNavigation(
             MainScreen(navController = navController)
         }
 
+        composable(NavigationRoute.CUSTOMER) {
+            MainScreen(navController = navController)
+        }
+
+        composable(NavigationRoute.CATEGORIES) {
+            MainScreen(navController = navController)
+        }
+
+        composable(NavigationRoute.PRODUCTS) {
+            MainScreen(navController = navController)
+        }
+
+        /*tripkeun*/
+
+        /*Activity*/
         composable(NavigationRoute.CREATE_RECEIPT) {
             CreateReceiptScreen(navController = navController)
         }

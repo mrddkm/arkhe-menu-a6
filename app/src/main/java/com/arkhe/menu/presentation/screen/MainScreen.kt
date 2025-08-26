@@ -22,9 +22,9 @@ import com.arkhe.menu.di.appModule
 import com.arkhe.menu.di.dataModule
 import com.arkhe.menu.di.domainModule
 import com.arkhe.menu.presentation.animation.ScreenTransitions
-import com.arkhe.menu.presentation.components.ProfileBottomSheet
-import com.arkhe.menu.presentation.components.TripkeunBottomBar
-import com.arkhe.menu.presentation.components.TripkeunTopBar
+import com.arkhe.menu.presentation.components.UserBottomSheet
+import com.arkhe.menu.presentation.components.ArkheBottomBar
+import com.arkhe.menu.presentation.components.ArkheTopBar
 import com.arkhe.menu.presentation.components.common.LoadingIndicator
 import com.arkhe.menu.presentation.navigation.NavigationRoute
 import com.arkhe.menu.presentation.screen.docs.category.CategoriesScreen
@@ -60,13 +60,13 @@ fun MainScreen(
         ModalBottomSheet(
             onDismissRequest = { viewModel.toggleProfileBottomSheet() }
         ) {
-            ProfileBottomSheet()
+            UserBottomSheet()
         }
     }
 
     Scaffold(
         topBar = {
-            TripkeunTopBar(
+            ArkheTopBar(
                 isInMainContent = uiState.isInMainContent,
                 currentContentType = uiState.currentContentType,
                 onBackClick = {
@@ -77,7 +77,7 @@ fun MainScreen(
         },
         bottomBar = {
             if (uiState.showBottomBar) {
-                TripkeunBottomBar(
+                ArkheBottomBar(
                     selectedItem = uiState.selectedBottomNavItem,
                     onItemSelected = { viewModel.selectBottomNavItem(it) }
                 )

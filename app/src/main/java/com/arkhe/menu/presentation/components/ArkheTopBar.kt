@@ -4,7 +4,6 @@ package com.arkhe.menu.presentation.components
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.ChevronLeft
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -21,7 +20,7 @@ import com.arkhe.menu.presentation.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TripkeunTopBar(
+fun ArkheTopBar(
     isInMainContent: Boolean,
     currentContentType: String,
     onBackClick: () -> Unit,
@@ -65,7 +64,7 @@ fun TripkeunTopBar(
 @Composable
 fun TripkeunTopBarPreview() {
     AppTheme {
-        TripkeunTopBar(
+        ArkheTopBar(
             isInMainContent = false,
             currentContentType = "Home",
             onBackClick = {},

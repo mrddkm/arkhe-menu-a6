@@ -19,7 +19,7 @@ import com.arkhe.menu.presentation.theme.AppTheme
 import com.arkhe.menu.presentation.viewmodel.BottomNavItem
 
 @Composable
-fun TripkeunBottomBar(
+fun ArkheBottomBar(
     selectedItem: BottomNavItem,
     onItemSelected: (BottomNavItem) -> Unit
 ) {
@@ -59,7 +59,7 @@ private fun getIconForItem(item: BottomNavItem): ImageVector {
 @Composable
 fun TripkeunBottomBarPreview() {
     AppTheme {
-        TripkeunBottomBar(
+        ArkheBottomBar(
             selectedItem = BottomNavItem.DOCS,
             onItemSelected = {}
         )
