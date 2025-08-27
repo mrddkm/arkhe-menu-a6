@@ -8,11 +8,11 @@ enum class UserRole(val displayName: String, val code: String) {
     MCC("Marketing & Content Creator", "mcc"),
     BROD("Business, Research, Operational & Development", "brod"),
     PRESDIR("President Director", "presdir"),
-    UNSPECIFIED("Employee", "unspecified");
+    EMPLOYEE("Employee", "employee");
 
     companion object {
         fun fromCode(code: String): UserRole {
-            return entries.find { it.code == code } ?: UNSPECIFIED
+            return entries.find { it.code == code } ?: EMPLOYEE
         }
     }
 }

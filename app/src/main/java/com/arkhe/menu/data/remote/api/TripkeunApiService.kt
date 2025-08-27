@@ -20,7 +20,8 @@ class TripkeunApiServiceImpl(
 ) : TripkeunApiService {
 
     companion object {
-        private const val BASE_URL = "https://script.google.com/macros/s/AKfycbxzU5sK4C50geQL1-PWtFm8NeQTErOcY0QGw8XvMfFUOTPKgAYYBZO8p5UuAMVeJ1PCQw/exec"
+        private const val BASE_URL =
+            "https://script.google.com/macros/s/AKfycbxzU5sK4C50geQL1-PWtFm8NeQTErOcY0QGw8XvMfFUOTPKgAYYBZO8p5UuAMVeJ1PCQw/exec"
     }
 
     override suspend fun getProfiles(sessionToken: String): ProfileResponseDto {

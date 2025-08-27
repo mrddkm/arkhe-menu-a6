@@ -16,6 +16,5 @@ object NavigationRoute {
     /*Tripkeun*/
 
     /*Activity*/
-    const val CREATE_RECEIPT = "create_receipt"
-    const val RECEIPT_LIST = "receipt_list"
+
 }

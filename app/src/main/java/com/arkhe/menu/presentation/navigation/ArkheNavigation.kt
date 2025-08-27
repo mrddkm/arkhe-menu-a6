@@ -8,8 +8,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.arkhe.menu.presentation.screen.MainScreen
-import com.arkhe.menu.presentation.screen.activity.faga.receipt.CreateReceiptScreen
-import com.arkhe.menu.presentation.screen.activity.faga.receipt.ReceiptListScreen
 
 @Composable
 fun ArkheNavigation(
@@ -48,12 +46,5 @@ fun ArkheNavigation(
         /*tripkeun*/
 
         /*Activity*/
-        composable(NavigationRoute.CREATE_RECEIPT) {
-            CreateReceiptScreen(navController = navController)
-        }
-
-        composable(NavigationRoute.RECEIPT_LIST) {
-            ReceiptListScreen(navController = navController)
-        }
     }
 }

@@ -82,7 +82,7 @@ fun ActivityContent(
             UserRole.MCC -> MCCContent(onNavigateToContent)
             UserRole.BROD -> BRODContent(onNavigateToContent)
             UserRole.PRESDIR -> PresdirContent(onNavigateToContent)
-            UserRole.UNSPECIFIED -> UnspecifiedContent(onNavigateToContent)
+            UserRole.EMPLOYEE -> UnspecifiedContent(onNavigateToContent)
         }
     }
 }

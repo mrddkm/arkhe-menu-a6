@@ -9,8 +9,4 @@ import org.koin.dsl.module
 val appModule = module {
     viewModel { MainViewModel(get()) }
     viewModel { ProfileViewModel(get(), get()) }
-    /*Examples*/
-//    viewModel { DocsViewModel(get()) }
-//    viewModel { CreateReceiptViewModel(get()) }
-//    viewModel { ReceiptListViewModel(get()) }
 }

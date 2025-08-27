@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import java.text.SimpleDateFormat
 import java.util.*
 
+@Suppress("UNUSED")
 object DateUtils {
 
     @SuppressLint("ConstantLocale")

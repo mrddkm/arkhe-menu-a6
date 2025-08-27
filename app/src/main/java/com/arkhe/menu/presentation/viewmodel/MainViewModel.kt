@@ -176,28 +176,6 @@ class MainViewModel(
                     )
                 }
             }
-
-            NavigationRoute.CREATE_RECEIPT -> {
-                val bottomNavTitle = currentState.selectedBottomNavItem.title
-                if (!currentState.isInMainContent || currentState.showBottomBar || currentState.currentContentType != bottomNavTitle) {
-                    _uiState.value = currentState.copy(
-                        isInMainContent = true,
-                        showBottomBar = false,
-                        currentContentType = bottomNavTitle
-                    )
-                }
-            }
-
-            NavigationRoute.RECEIPT_LIST -> {
-                val bottomNavTitle = currentState.selectedBottomNavItem.title
-                if (!currentState.isInMainContent || currentState.showBottomBar || currentState.currentContentType != bottomNavTitle) {
-                    _uiState.value = currentState.copy(
-                        isInMainContent = true,
-                        showBottomBar = false,
-                        currentContentType = bottomNavTitle
-                    )
-                }
-            }
         }
     }
 
