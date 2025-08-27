@@ -9,24 +9,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class MainViewModel(
-//    private val getUserRoleUseCase: GetUserRoleUseCase
-) : ViewModel() {
+class MainViewModel() : ViewModel() {
 
     private val _uiState = MutableStateFlow(MainUiState())
     val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
-
-//    init {
-//        loadUserRole()
-//    }
-
-//    private fun loadUserRole() {
-//        viewModelScope.launch {
-//            getUserRoleUseCase().collect { role ->
-//                _uiState.value = _uiState.value.copy(userRole = role)
-//            }
-//        }
-//    }
 
     fun selectBottomNavItem(item: BottomNavItem) {
         _uiState.value = _uiState.value.copy(

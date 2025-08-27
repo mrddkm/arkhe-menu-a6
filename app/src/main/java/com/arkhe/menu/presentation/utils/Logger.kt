@@ -3,7 +3,7 @@ package com.arkhe.menu.presentation.utils
 import android.util.Log
 
 object Logger {
-    private const val TAG = "TripkeunApp"
+    private const val TAG = "ArkheApp"
 
     fun d(message: String) {
         Log.d(TAG, message)

@@ -29,7 +29,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DividerDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -55,17 +54,19 @@ import com.arkhe.menu.domain.model.ProfileInformation
 import com.arkhe.menu.domain.model.SocialMedia
 import com.arkhe.menu.presentation.components.common.LoadingIndicator
 import com.arkhe.menu.presentation.theme.AppTheme
+import com.arkhe.menu.presentation.utils.Logger
 import com.arkhe.menu.presentation.viewmodel.ProfileViewModel
 import org.koin.androidx.compose.koinViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
     modifier: Modifier = Modifier,
     viewModel: ProfileViewModel = koinViewModel()
 ) {
+    Logger.i("Rendering ProfileScreen")
+
     val uiState by viewModel.uiState.collectAsState()
     val scrollState = rememberScrollState()
     val uriHandler = LocalUriHandler.current

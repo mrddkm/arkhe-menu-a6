@@ -56,7 +56,6 @@ class ProfileViewModel(
                         }
                     }
                 } else {
-                    // Use default token if not available
                     val defaultToken = "WWUmyoU9yWjVUsn8"
                     sessionManager.saveSession(defaultToken)
                 }
