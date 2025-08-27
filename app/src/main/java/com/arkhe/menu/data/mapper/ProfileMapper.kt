@@ -74,10 +74,12 @@ fun List<ProfileDataDto>.toEntityList(): List<ProfileEntity> {
     return this.map { it.toEntity() }
 }
 
+@JvmName("toDomainListFromEntity")
 fun List<ProfileEntity>.toDomainList(): List<Profile> {
     return this.map { it.toDomain() }
 }
 
+@JvmName("toDomainListFromDto")
 fun List<ProfileDataDto>.toDomainList(): List<Profile> {
     return this.map { it.toDomain() }
 }

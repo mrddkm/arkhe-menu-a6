@@ -1,6 +1,5 @@
 package com.arkhe.menu.di
 
-import com.arkhe.menu.domain.usecase.GetProfileUseCase
 import com.arkhe.menu.domain.usecase.GetProfilesUseCase
 import com.arkhe.menu.domain.usecase.GetUserRoleUseCase
 import com.arkhe.menu.domain.usecase.ProfileUseCases
