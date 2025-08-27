@@ -55,7 +55,6 @@ fun HeaderSection(
                 color = MaterialTheme.colorScheme.primary
             )
             IconButton(onClick = onHeaderClick) {
-                println("HeaderSection clicked: $title")
                 Icon(
                     imageVector = Icons.Rounded.ChevronRight,
                     contentDescription = null,

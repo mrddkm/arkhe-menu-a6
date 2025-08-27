@@ -11,7 +11,8 @@ import java.net.UnknownHostException
 
 object NetworkErrorHandler {
 
-    suspend fun handleException(exception: Throwable): NetworkException {
+    @Suppress("KotlinConstantConditions")
+    fun handleException(exception: Throwable): NetworkException {
         return when (exception) {
             is ConnectException,
             is UnknownHostException,
@@ -22,6 +23,10 @@ object NetworkErrorHandler {
 
             is ResponseException -> {
                 when (exception.response.status.value) {
+                    302 -> {
+                        // Handle Google Apps Script redirects
+                        NetworkException.ParseError("API returned redirect instead of JSON. Check Google Apps Script configuration.")
+                    }
                     401 -> NetworkException.Unauthorized
                     in 500..599 -> NetworkException.ServerError
                     else -> NetworkException.HttpError(
@@ -31,9 +36,22 @@ object NetworkErrorHandler {
                 }
             }
 
-            is SerializationException -> NetworkException.ParseError(
-                message = "Failed to parse server response"
-            )
+            is SerializationException -> {
+                val message = when {
+                    exception.message?.contains("Expected response body of the type") == true -> {
+                        "API returned HTML instead of JSON. This usually means:\n" +
+                                "1. Google Apps Script URL is incorrect\n" +
+                                "2. Script is not deployed as web app\n" +
+                                "3. Script permissions are not set correctly\n" +
+                                "4. Request format is not what the script expects"
+                    }
+                    exception.message?.contains("NoTransformationFoundException") == true -> {
+                        "Cannot parse API response. Server returned unexpected format."
+                    }
+                    else -> "Failed to parse server response: ${exception.message}"
+                }
+                NetworkException.ParseError(message)
+            }
 
             else -> NetworkException.Unknown(
                 message = exception.message ?: "Unknown network error"
@@ -52,9 +70,9 @@ object NetworkErrorHandler {
             NetworkException.Unauthorized ->
                 "Session expired. Please login again."
             is NetworkException.HttpError ->
-                "Network error: ${exception.message}"
+                "Network error (${exception.code}): ${exception.message}"
             is NetworkException.ParseError ->
-                "Data parsing error: ${exception.message}"
+                exception.message
             is NetworkException.Unknown ->
                 "Unexpected error: ${exception.message}"
         }
