@@ -1,7 +1,6 @@
 package com.arkhe.menu.di
 
 import com.arkhe.menu.domain.usecase.GetProfilesUseCase
-import com.arkhe.menu.domain.usecase.GetUserRoleUseCase
 import com.arkhe.menu.domain.usecase.ProfileUseCases
 import com.arkhe.menu.domain.usecase.RefreshProfilesUseCase
 import org.koin.dsl.module
@@ -9,7 +8,7 @@ import org.koin.dsl.module
 val domainModule = module {
 
     /*Use Cases*/
-    factory { GetUserRoleUseCase(get()) }
+//    factory { GetUserRoleUseCase(get()) }
     factory { GetProfilesUseCase(get()) }
     factory { RefreshProfilesUseCase(get()) }
 

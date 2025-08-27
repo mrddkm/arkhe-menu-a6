@@ -7,6 +7,6 @@ import org.koin.dsl.module
 
 @Suppress("DEPRECATION")
 val appModule = module {
-    viewModel { MainViewModel(get()) }
+    viewModel { MainViewModel() }
     viewModel { ProfileViewModel(get(), get()) }
 }
