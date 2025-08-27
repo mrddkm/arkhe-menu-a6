@@ -1,5 +1,3 @@
-@file:Suppress("SpellCheckingInspection")
-
 package com.arkhe.menu.di
 
 import androidx.room.Room
@@ -12,23 +10,27 @@ import com.arkhe.menu.data.remote.api.TripkeunApiService
 import com.arkhe.menu.data.remote.api.TripkeunApiServiceImpl
 import com.arkhe.menu.data.repository.ProfileRepositoryImpl
 import com.arkhe.menu.domain.repository.ProfileRepository
-import io.ktor.client.*
-import io.ktor.client.engine.android.*
-import io.ktor.client.plugins.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.plugins.logging.*
-import io.ktor.serialization.kotlinx.json.*
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.android.Android
+import io.ktor.client.plugins.DefaultRequest
+import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.logging.DEFAULT
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
 val dataModule = module {
 
-    // DataStore
+    /*DataStore*/
     single { androidContext().dataStore }
     single { SessionManager(get()) }
 
-    // Ktor HTTP Client
+    /*Ktor HTTP Client*/
     single<HttpClient> {
         HttpClient(Android) {
             install(ContentNegotiation) {
@@ -55,32 +57,32 @@ val dataModule = module {
                 headers.append("Accept", "application/json")
             }
 
-            // Add error handling
+            /*Add error handling*/
             expectSuccess = false
         }
     }
 
-    // Room Database
+    /*Room Database*/
     single<AppDatabase> {
         Room.databaseBuilder(
             androidContext(),
             AppDatabase::class.java,
             AppDatabase.DATABASE_NAME
         )
-            .fallbackToDestructiveMigration()
+            .fallbackToDestructiveMigration(false)
             .build()
     }
 
-    // Room DAOs
+    /*Room DAOs*/
     single { get<AppDatabase>().profileDao() }
 
-    // API Services
+    /*API Services*/
     single<TripkeunApiService> { TripkeunApiServiceImpl(get()) }
 
-    // Data Sources
+    /*Data Sources*/
     single { RemoteDataSource(get()) }
     single { LocalDataSource(get()) }
 
-    // Repositories
+    /*Repositories*/
     single<ProfileRepository> { ProfileRepositoryImpl(get(), get()) }
 }

@@ -33,4 +33,17 @@
     <string name="view_receipts">View Receipts</string>
 
     <!--Activity Menu-->
+
+    <!-- Profile related strings -->
+    <string name="profile_title">Profile</string>
+    <string name="loading_profile">Loading profile…</string>
+    <string name="error_loading_profile">Failed to load profile</string>
+    <string name="retries">Retry</string>
+    <string name="refresh">Refresh</string>
+
+    <!-- Network error messages -->
+    <string name="error_no_internet">No internet connection</string>
+    <string name="error_timeout">Request timed out</string>
+    <string name="error_server">Server error</string>
+    <string name="error_unknown">Unknown error occurred</string>
 </resources>
