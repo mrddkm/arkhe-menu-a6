@@ -3,7 +3,7 @@ package com.arkhe.menu.data.remote.api
 import android.util.Log
 import com.arkhe.menu.data.remote.dto.ProfileRequestDto
 import com.arkhe.menu.data.remote.dto.ProfileResponseDto
-import com.arkhe.menu.presentation.utils.Constants
+import com.arkhe.menu.utils.Constants
 import io.ktor.client.HttpClient
 import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.parameter

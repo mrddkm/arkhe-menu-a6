@@ -1,4 +1,4 @@
-package com.arkhe.menu.presentation.utils
+package com.arkhe.menu.utils
 
 import android.annotation.SuppressLint
 import java.text.SimpleDateFormat

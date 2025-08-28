@@ -17,8 +17,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,7 +42,6 @@ import com.arkhe.menu.presentation.screen.docs.profile.ext.ProfileHeader
 import com.arkhe.menu.presentation.screen.docs.profile.ext.SocialMediaCard
 import com.arkhe.menu.presentation.screen.docs.profile.ext.TaglineQuotesCard
 import com.arkhe.menu.presentation.theme.AppTheme
-import com.arkhe.menu.presentation.utils.Logger
 import com.arkhe.menu.presentation.viewmodel.ProfileViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -69,33 +68,21 @@ fun ProfileScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
-            ) {
-                if (uiState.isRefreshing) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(16.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "Refreshing...",
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-                } else {
-                    IconButton(
-                        onClick = { viewModel.refreshProfiles() }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Refresh,
-                            contentDescription = "Refresh",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
+            // Tampilkan indikator refreshing di bagian atas jika sedang refresh
+            if (uiState.isRefreshing) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Refreshing...",
+                        style = MaterialTheme.typography.bodySmall
+                    )
                 }
             }
 
@@ -129,6 +116,20 @@ fun ProfileScreen(
                     onDismissClick = { viewModel.clearError() }
                 )
             }
+        }
+
+        FloatingActionButton(
+            onClick = { viewModel.refreshProfiles() },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp),
+            containerColor = MaterialTheme.colorScheme.primary
+        ) {
+            Icon(
+                imageVector = Icons.Default.Refresh,
+                contentDescription = "Refresh",
+                tint = MaterialTheme.colorScheme.onPrimary
+            )
         }
     }
 }

@@ -11,7 +11,7 @@ import com.arkhe.menu.data.remote.api.TripkeunApiService
 import com.arkhe.menu.data.remote.api.TripkeunApiServiceImpl
 import com.arkhe.menu.data.repository.ProfileRepositoryImpl
 import com.arkhe.menu.domain.repository.ProfileRepository
-import com.arkhe.menu.presentation.utils.Constants
+import com.arkhe.menu.utils.Constants
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.HttpTimeout

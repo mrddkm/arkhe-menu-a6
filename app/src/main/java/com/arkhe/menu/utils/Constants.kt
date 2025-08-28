@@ -1,6 +1,6 @@
 @file:Suppress("SpellCheckingInspection")
 
-package com.arkhe.menu.presentation.utils
+package com.arkhe.menu.utils
 
 object Constants {
     const val URL_BASE = "https://script.google.com/macros/s/AKfycbxzU5sK4C50geQL1-PWtFm8NeQTErOcY0QGw8XvMfFUOTPKgAYYBZO8p5UuAMVeJ1PCQw/exec"

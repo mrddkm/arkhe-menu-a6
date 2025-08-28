@@ -1,6 +1,6 @@
 @file:Suppress("SpellCheckingInspection")
 
-package com.arkhe.menu.presentation.utils
+package com.arkhe.menu.utils
 
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
