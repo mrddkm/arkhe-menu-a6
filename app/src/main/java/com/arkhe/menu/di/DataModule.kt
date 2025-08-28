@@ -11,18 +11,19 @@ import com.arkhe.menu.data.remote.api.TripkeunApiService
 import com.arkhe.menu.data.remote.api.TripkeunApiServiceImpl
 import com.arkhe.menu.data.repository.ProfileRepositoryImpl
 import com.arkhe.menu.domain.repository.ProfileRepository
+import com.arkhe.menu.presentation.utils.Constants
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.cio.CIO
-import io.ktor.client.plugins.DefaultRequest
-import io.ktor.client.plugins.HttpRedirect
+import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
+import io.ktor.http.URLProtocol
 import io.ktor.http.contentType
-import io.ktor.http.userAgent
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import org.koin.android.ext.koin.androidContext
@@ -34,13 +35,20 @@ val dataModule = module {
     single { androidContext().dataStore }
     single { SessionManager(get()) }
 
-    /*Ktor HTTP Client*/
+    /*Ktor HTTP Client - OkHttp Engine untuk GAS*/
     single<HttpClient> {
-        HttpClient(CIO) {
-            install(DefaultRequest) {
+        HttpClient(OkHttp) {
+            defaultRequest {
+                url {
+                    protocol = URLProtocol.HTTPS
+                    host = Constants.URL_HOST
+                }
+                headers.append(HttpHeaders.UserAgent, Constants.HTTP_HEADER_USER_AGENT)
+                headers.append(HttpHeaders.Accept, "application/json")
+                headers.append(HttpHeaders.CacheControl, "no-cache")
                 contentType(ContentType.Application.Json)
-                userAgent("TripkeunApp/1.0 (Android)")
             }
+
             install(ContentNegotiation) {
                 json(Json {
                     prettyPrint = true
@@ -50,6 +58,7 @@ val dataModule = module {
                     encodeDefaults = true
                 })
             }
+
             install(Logging) {
                 level = LogLevel.ALL
                 logger = object : Logger {
@@ -59,17 +68,31 @@ val dataModule = module {
                 }
                 sanitizeHeader { header -> header == "Authorization" }
             }
+
             install(HttpTimeout) {
                 requestTimeoutMillis = 60000
                 connectTimeoutMillis = 60000
                 socketTimeoutMillis = 60000
             }
-            install(HttpRedirect) {
-                checkHttpMethod = false
-                allowHttpsDowngrade = false
-            }
+
+            // Biarkan OkHttp handle redirect secara native
+            // install(HttpRedirect) tidak diperlukan karena OkHttp sudah handle
+
             expectSuccess = false
             followRedirects = true
+
+            // OkHttp specific configuration - redirect handled by engine
+            engine {
+                config {
+                    followRedirects(true)
+                    followSslRedirects(true)
+                    retryOnConnectionFailure(true)
+                    // Timeout configuration
+                    connectTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
+                    readTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
+                    writeTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
+                }
+            }
         }
     }
 

@@ -3,6 +3,11 @@
 package com.arkhe.menu.presentation.utils
 
 object Constants {
+    const val URL_BASE = "https://script.google.com/macros/s/AKfycbxzU5sK4C50geQL1-PWtFm8NeQTErOcY0QGw8XvMfFUOTPKgAYYBZO8p5UuAMVeJ1PCQw/exec"
+    const val URL_HOST = "script.google.com"
+    const val PARAMETER_KEY = "action"
+    const val PARAMETER_VALUE_PROFILES = "profiles"
+    const val HTTP_HEADER_USER_AGENT = "arkhe/dvl/1.0.0"
     const val DATABASE_NAME = "tripkeun_database"
     const val DATABASE_VERSION = 1
 
