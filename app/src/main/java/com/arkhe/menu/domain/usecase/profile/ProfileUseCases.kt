@@ -1,4 +1,4 @@
-package com.arkhe.menu.domain.usecase
+package com.arkhe.menu.domain.usecase.profile
 
 data class ProfileUseCases(
     val getProfiles: GetProfilesUseCase,

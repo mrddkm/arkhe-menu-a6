@@ -54,7 +54,10 @@ class ProfileRepositoryImpl(
         Log.d(TAG, "Fetching data from remote API...")
         when (val remoteResult = remoteDataSource.getProfiles(sessionToken)) {
             is ApiResult.Success -> {
-                Log.d(TAG, "Remote API success - status: ${remoteResult.data.status}, message: ${remoteResult.data.message}")
+                Log.d(
+                    TAG,
+                    "Remote API success - status: ${remoteResult.data.status}, message: ${remoteResult.data.message}"
+                )
                 Log.d(TAG, "Data count: ${remoteResult.data.data.size}")
 
                 when {
@@ -62,17 +65,17 @@ class ProfileRepositoryImpl(
                         Log.d(TAG, "Processing successful response with data")
                         try {
                             // Save to local database
-                            val entities = remoteResult.data.data.toEntityList()
+                            val entities = remoteResult.data.toEntityList()
                             Log.d(TAG, "Saving ${entities.size} entities to local database")
                             localDataSource.deleteAllProfiles()
                             localDataSource.insertProfiles(entities)
 
                             // Emit fresh data
-                            emit(ApiResult.Success(remoteResult.data.data.toDomainList()))
+                            emit(ApiResult.Success(remoteResult.data.toDomainList()))
                         } catch (e: Exception) {
                             Log.e(TAG, "Failed to save to local database: ${e.message}", e)
                             // Even if local save fails, still return remote data
-                            emit(ApiResult.Success(remoteResult.data.data.toDomainList()))
+                            emit(ApiResult.Success(remoteResult.data.toDomainList()))
                         }
                     }
 
@@ -138,21 +141,24 @@ class ProfileRepositoryImpl(
         Log.d(TAG, "refreshProfiles called with token: $sessionToken")
         return when (val remoteResult = remoteDataSource.getProfiles(sessionToken)) {
             is ApiResult.Success -> {
-                Log.d(TAG, "Refresh success - status: ${remoteResult.data.status}, data count: ${remoteResult.data.data.size}")
+                Log.d(
+                    TAG,
+                    "Refresh success - status: ${remoteResult.data.status}, data count: ${remoteResult.data.data.size}"
+                )
 
                 when {
                     remoteResult.data.status == "success" && remoteResult.data.data.isNotEmpty() -> {
                         try {
                             // Save to local database
-                            val entities = remoteResult.data.data.toEntityList()
+                            val entities = remoteResult.data.toEntityList()
                             localDataSource.deleteAllProfiles()
                             localDataSource.insertProfiles(entities)
 
-                            ApiResult.Success(remoteResult.data.data.toDomainList())
+                            ApiResult.Success(remoteResult.data.toDomainList())
                         } catch (e: Exception) {
                             Log.e(TAG, "Failed to save refreshed data: ${e.message}", e)
                             // Even if local save fails, still return remote data
-                            ApiResult.Success(remoteResult.data.data.toDomainList())
+                            ApiResult.Success(remoteResult.data.toDomainList())
                         }
                     }
 

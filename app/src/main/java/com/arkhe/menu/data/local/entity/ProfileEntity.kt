@@ -6,6 +6,9 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "profiles")
 data class ProfileEntity(
     @PrimaryKey
+    val action: String,
+    val actionInformationId: String,
+    val actionInformationEn: String,
     val nameShort: String,
     val nameLong: String,
     val birthDate: String,

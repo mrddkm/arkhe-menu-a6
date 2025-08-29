@@ -35,7 +35,7 @@ val dataModule = module {
     single { androidContext().dataStore }
     single { SessionManager(get()) }
 
-    /*Ktor HTTP Client - OkHttp Engine untuk GAS*/
+    /*Ktor HTTP Client - OkHttp Engine for GAS*/
     single<HttpClient> {
         HttpClient(OkHttp) {
             defaultRequest {
@@ -74,9 +74,6 @@ val dataModule = module {
                 connectTimeoutMillis = 60000
                 socketTimeoutMillis = 60000
             }
-
-            // Biarkan OkHttp handle redirect secara native
-            // install(HttpRedirect) tidak diperlukan karena OkHttp sudah handle
 
             expectSuccess = false
             followRedirects = true

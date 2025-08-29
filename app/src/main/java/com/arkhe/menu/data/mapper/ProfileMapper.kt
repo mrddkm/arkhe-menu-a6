@@ -1,14 +1,20 @@
 package com.arkhe.menu.data.mapper
 
 import com.arkhe.menu.data.local.entity.ProfileEntity
+import com.arkhe.menu.data.remote.dto.InfoDataDto
 import com.arkhe.menu.data.remote.dto.ProfileDataDto
+import com.arkhe.menu.data.remote.dto.ProfileResponseDto
+import com.arkhe.menu.domain.model.ActionInfo
 import com.arkhe.menu.domain.model.Profile
 import com.arkhe.menu.domain.model.ProfileInformation
 import com.arkhe.menu.domain.model.SocialMedia
 
-// DTO to Entity
-fun ProfileDataDto.toEntity(): ProfileEntity {
+/*DTO to Entity*/
+fun ProfileDataDto.toEntity(infoData: InfoDataDto): ProfileEntity {
     return ProfileEntity(
+        action = infoData.action,
+        actionInformationId = infoData.actionInformationId,
+        actionInformationEn = infoData.actionInformationEn,
         nameShort = nameShort,
         nameLong = nameLong,
         birthDate = birthDate,
@@ -27,7 +33,7 @@ fun ProfileDataDto.toEntity(): ProfileEntity {
     )
 }
 
-// Entity to Domain
+/*Entity to Domain*/
 fun ProfileEntity.toDomain(): Profile {
     return Profile(
         nameShort = nameShort,
@@ -44,12 +50,19 @@ fun ProfileEntity.toDomain(): Profile {
         information = ProfileInformation(
             indonesian = informationId,
             english = informationEn
+        ),
+        actionInfo = ActionInfo(
+            action = action,
+            information = ProfileInformation(
+                indonesian = actionInformationId,
+                english = actionInformationEn
+            )
         )
     )
 }
 
-// DTO to Domain (direct conversion)
-fun ProfileDataDto.toDomain(): Profile {
+/*DTO to Domain (direct conversion)*/
+fun ProfileDataDto.toDomain(infoData: InfoDataDto): Profile {
     return Profile(
         nameShort = nameShort,
         nameLong = nameLong,
@@ -65,13 +78,21 @@ fun ProfileDataDto.toDomain(): Profile {
         information = ProfileInformation(
             indonesian = informationId,
             english = informationEn
+        ),
+        actionInfo = ActionInfo(
+            action = infoData.action,
+            information = ProfileInformation(
+                indonesian = infoData.actionInformationId,
+                english = infoData.actionInformationEn
+            )
         )
     )
 }
 
-// List extensions
-fun List<ProfileDataDto>.toEntityList(): List<ProfileEntity> {
-    return this.map { it.toEntity() }
+
+/*List extensions with ProfileResponseDto*/
+fun ProfileResponseDto.toEntityList(): List<ProfileEntity> {
+    return this.data.map { it.toEntity(this.info) }
 }
 
 @JvmName("toDomainListFromEntity")
@@ -79,7 +100,7 @@ fun List<ProfileEntity>.toDomainList(): List<Profile> {
     return this.map { it.toDomain() }
 }
 
-@JvmName("toDomainListFromDto")
-fun List<ProfileDataDto>.toDomainList(): List<Profile> {
-    return this.map { it.toDomain() }
+@JvmName("toDomainListFromResponse")
+fun ProfileResponseDto.toDomainList(): List<Profile> {
+    return this.data.map { it.toDomain(this.info) }
 }

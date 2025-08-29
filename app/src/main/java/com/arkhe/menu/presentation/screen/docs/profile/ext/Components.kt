@@ -1,3 +1,5 @@
+@file:Suppress("SpellCheckingInspection")
+
 package com.arkhe.menu.presentation.screen.docs.profile.ext
 
 import androidx.compose.foundation.layout.Arrangement
@@ -37,10 +39,63 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.arkhe.menu.domain.model.ActionInfo
 import com.arkhe.menu.domain.model.Profile
 import com.arkhe.menu.domain.model.SocialMedia
 import java.text.SimpleDateFormat
 import java.util.Locale
+
+@Composable
+fun InfoMenu(actionInfo: ActionInfo) {
+    var showEnglish by remember { mutableStateOf(false) }
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "About Us",
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.Bold
+                    ),
+                    color = MaterialTheme.colorScheme.primary
+                )
+
+                // Only show language toggle if both languages have content
+                if (actionInfo.information.indonesian.isNotBlank() && actionInfo.information.english.isNotBlank()) {
+                    TextButton(
+                        onClick = { showEnglish = !showEnglish }
+                    ) {
+                        Text(if (showEnglish) "Bahasa Indonesia" else "English")
+                    }
+                }
+            }
+
+            val displayText = when {
+                showEnglish && actionInfo.information.english.isNotBlank() -> actionInfo.information.english
+                actionInfo.information.indonesian.isNotBlank() -> actionInfo.information.indonesian
+                actionInfo.information.english.isNotBlank() -> actionInfo.information.english
+                else -> "No information available"
+            }
+
+            Text(
+                text = displayText,
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Justify,
+                lineHeight = MaterialTheme.typography.bodyMedium.lineHeight.times(1.4)
+            )
+        }
+    }
+}
 
 @Composable
 fun ProfileHeader(profile: Profile) {
@@ -69,18 +124,19 @@ fun ProfileHeader(profile: Profile) {
 
             // FIXED: Safer date formatting with better error handling
             val birthDateFormatted = try {
-                val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+                val inputFormat =
+                    SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
                 val outputFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
                 val date = inputFormat.parse(profile.birthDate)
                 date?.let { outputFormat.format(it) } ?: profile.birthDate
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 // If date parsing fails, try alternative format
                 try {
                     val altFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                     val outputFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
                     val date = altFormat.parse(profile.birthDate)
                     date?.let { outputFormat.format(it) } ?: profile.birthDate
-                } catch (e2: Exception) {
+                } catch (_: Exception) {
                     profile.birthDate // Return original if all parsing fails
                 }
             }

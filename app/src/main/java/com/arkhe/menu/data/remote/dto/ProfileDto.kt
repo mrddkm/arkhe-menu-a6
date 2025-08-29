@@ -13,27 +13,49 @@ data class ProfileRequestDto(
 data class ProfileResponseDto(
     val status: String,
     val message: String,
-    val data: List<ProfileDataDto>
+    val data: List<ProfileDataDto>,
+    val info: InfoDataDto,
 )
 
 @Serializable
+data class InfoDataDto(
+    val action: String,
+    val actionInformationId: String,
+    val actionInformationEn: String,
+) {
+    companion object {
+        fun empty() = InfoDataDto(
+            action = "",
+            actionInformationId = "",
+            actionInformationEn = ""
+        )
+
+        fun parseError() = InfoDataDto(
+            action = "parse_error",
+            actionInformationId = "JSON parsing failed",
+            actionInformationEn = "JSON parsing failed"
+        )
+
+        fun networkError() = InfoDataDto(
+            action = "network_error",
+            actionInformationId = "Network request failed",
+            actionInformationEn = "Network request failed"
+        )
+    }
+}
+
+@Serializable
 data class ProfileDataDto(
-    @SerialName("name_short")
     val nameShort: String,
-    @SerialName("name_long")
     val nameLong: String,
-    @SerialName("birth_date")
     val birthDate: String,
-    @SerialName("google_maps")
     val googleMaps: String,
     val instagram: String,
     val tiktok: String,
     val youtube: String,
     val tagline: String,
     val quotes: String,
-    @SerialName("information_id")
     val informationId: String,
-    @SerialName("information_en")
     val informationEn: String,
     @SerialName("created_at")
     val createdAt: String,

@@ -11,7 +11,8 @@ data class ProfileRequest(
 data class ProfileResponse(
     val status: String,
     val message: String,
-    val data: List<ProfileData>
+    val data: List<ProfileData>,
+    val info: InfoData
 )
 
 @Serializable
@@ -33,7 +34,14 @@ data class ProfileData(
     val updatedByUserId: String
 )
 
-// Domain model for UI
+@Serializable
+data class InfoData(
+    val action: String,
+    val actionInformationId: String,
+    val actionInformationEn: String
+)
+
+/*Domain model for UI*/
 data class Profile(
     val nameShort: String,
     val nameLong: String,
@@ -41,6 +49,12 @@ data class Profile(
     val socialMedia: SocialMedia,
     val tagline: String,
     val quotes: String,
+    val information: ProfileInformation,
+    val actionInfo: ActionInfo
+)
+
+data class ActionInfo(
+    val action: String,
     val information: ProfileInformation
 )
 
@@ -56,7 +70,7 @@ data class ProfileInformation(
     val english: String
 )
 
-// Result wrapper for API responses
+/*Result wrapper for API responses*/
 sealed class ApiResult<out T> {
     data class Success<out T>(val data: T) : ApiResult<T>()
     data class Error(val exception: Throwable) : ApiResult<Nothing>()

@@ -5,9 +5,10 @@ package com.arkhe.menu.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arkhe.menu.data.local.preferences.SessionManager
+import com.arkhe.menu.domain.model.ActionInfo
 import com.arkhe.menu.domain.model.ApiResult
 import com.arkhe.menu.domain.model.Profile
-import com.arkhe.menu.domain.usecase.ProfileUseCases
+import com.arkhe.menu.domain.usecase.profile.ProfileUseCases
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -144,7 +145,11 @@ class ProfileViewModel(
         _uiState.value = _uiState.value.copy(error = null)
     }
 
-    fun getTripkeunProfile(): Profile? {
+    fun getActionInfo(): ActionInfo? {
+        return _uiState.value.actionInfo.find { it.action == "profile" }
+    }
+
+    fun getProfile(): Profile? {
         return _uiState.value.profiles.find { it.nameShort == "tripkeun" }
     }
 
@@ -158,5 +163,6 @@ data class ProfileUiState(
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
     val profiles: List<Profile> = emptyList(),
+    val actionInfo: List<ActionInfo> = emptyList(),
     val error: String? = null
 )

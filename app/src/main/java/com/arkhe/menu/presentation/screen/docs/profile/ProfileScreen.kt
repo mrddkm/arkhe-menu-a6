@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.arkhe.menu.domain.model.ActionInfo
 import com.arkhe.menu.domain.model.Profile
 import com.arkhe.menu.domain.model.ProfileInformation
 import com.arkhe.menu.domain.model.SocialMedia
@@ -38,6 +39,7 @@ import com.arkhe.menu.presentation.screen.docs.profile.ext.CompanyDescriptionCar
 import com.arkhe.menu.presentation.screen.docs.profile.ext.CompanyInfoCard
 import com.arkhe.menu.presentation.screen.docs.profile.ext.EmptyProfileState
 import com.arkhe.menu.presentation.screen.docs.profile.ext.ErrorCard
+import com.arkhe.menu.presentation.screen.docs.profile.ext.InfoMenu
 import com.arkhe.menu.presentation.screen.docs.profile.ext.ProfileHeader
 import com.arkhe.menu.presentation.screen.docs.profile.ext.SocialMediaCard
 import com.arkhe.menu.presentation.screen.docs.profile.ext.TaglineQuotesCard
@@ -89,11 +91,11 @@ fun ProfileScreen(
             if (uiState.isLoading) {
                 LoadingIndicator()
             } else {
-                val tripkeunProfile = viewModel.getTripkeunProfile()
+                val profile = viewModel.getProfile()
 
-                if (tripkeunProfile != null) {
+                if (profile != null) {
                     ProfileContent(
-                        profile = tripkeunProfile,
+                        profile = profile,
                         onSocialMediaClick = { url ->
                             try {
                                 uriHandler.openUri(url)
@@ -142,6 +144,9 @@ private fun ProfileContent(
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        InfoMenu(
+            actionInfo = profile.actionInfo
+        )
         ProfileHeader(profile = profile)
         CompanyInfoCard(profile = profile)
         SocialMediaCard(
@@ -172,6 +177,13 @@ fun ProfileScreenPreview() {
             information = ProfileInformation(
                 indonesian = "Tripkeun Indonesia adalah gerbang menuju petualangan tanpa batas.",
                 english = "Tripkeun Indonesia is your gateway to limitless adventures."
+            ),
+            actionInfo = ActionInfo(
+                action = "profile",
+                information = ProfileInformation(
+                    indonesian = "Perbarui informasi perusahaan Anda untuk tetap terhubung dengan pelanggan.",
+                    english = "Update your company information to stay connected with customers."
+                )
             )
         )
 

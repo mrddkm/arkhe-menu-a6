@@ -1,6 +1,7 @@
 package com.arkhe.menu.data.remote.api
 
 import android.util.Log
+import com.arkhe.menu.data.remote.dto.InfoDataDto
 import com.arkhe.menu.data.remote.dto.ProfileRequestDto
 import com.arkhe.menu.data.remote.dto.ProfileResponseDto
 import com.arkhe.menu.utils.Constants
@@ -47,24 +48,13 @@ class TripkeunApiServiceImpl(
             Log.d(TAG, "   Action: ${Constants.PARAMETER_VALUE_PROFILES}")
             Log.d(TAG, "   Payload: $requestJson")
 
-            // Method 1: Gunakan URL lengkap dengan POST body
             val response: HttpResponse = httpClient.post {
                 url(Constants.URL_BASE)
                 parameter(Constants.PARAMETER_KEY, Constants.PARAMETER_VALUE_PROFILES)
                 setBody(requestJson)
             }
 
-            // Alternative Method 2: Jika method 1 gagal, coba submitForm
-            // val response: HttpResponse = httpClient.submitForm(
-            //     url = Constants.URL_BASE,
-            //     formParameters = Parameters.build {
-            //         append(Constants.PARAMETER_KEY, Constants.PARAMETER_VALUE_PROFILES)
-            //     }
-            // ) {
-            //     setBody(requestJson)
-            // }
-
-            // LOG REQUEST DETAILS
+            /*LOG REQUEST DETAILS*/
             Log.d(TAG, "📤 REQUEST SENT:")
             Log.d(TAG, "   Method: ${response.request.method.value}")
             Log.d(TAG, "   URL: ${response.request.url}")
@@ -75,7 +65,7 @@ class TripkeunApiServiceImpl(
                 }
             }
 
-            // LOG RESPONSE DETAILS
+            /*LOG RESPONSE DETAILS*/
             Log.d(TAG, "📥 RESPONSE RECEIVED:")
             Log.d(TAG, "   Status Code: ${response.status.value}")
             Log.d(TAG, "   Status Description: ${response.status.description}")
@@ -95,10 +85,13 @@ class TripkeunApiServiceImpl(
             // Handle different status codes
             when (response.status) {
                 HttpStatusCode.OK -> {
-                    if (responseText.trim().startsWith("{") || responseText.trim().startsWith("[")) {
+                    if (responseText.trim().startsWith("{") || responseText.trim()
+                            .startsWith("[")
+                    ) {
                         Log.d(TAG, "✅ JSON Response detected, parsing...")
                         try {
-                            val parsedResponse = json.decodeFromString<ProfileResponseDto>(responseText)
+                            val parsedResponse =
+                                json.decodeFromString<ProfileResponseDto>(responseText)
                             Log.d(TAG, "✅ JSON Parsing SUCCESS:")
                             Log.d(TAG, "   Status: ${parsedResponse.status}")
                             Log.d(TAG, "   Message: ${parsedResponse.message}")
@@ -106,12 +99,17 @@ class TripkeunApiServiceImpl(
                             Log.d(TAG, "========== API REQUEST SUCCESS ==========")
                             parsedResponse
                         } catch (parseException: Exception) {
-                            Log.e(TAG, "❌ JSON Parsing FAILED: ${parseException.message}", parseException)
+                            Log.e(
+                                TAG,
+                                "❌ JSON Parsing FAILED: ${parseException.message}",
+                                parseException
+                            )
                             Log.e(TAG, "========== API REQUEST PARSE ERROR ==========")
                             ProfileResponseDto(
                                 status = "parse_error",
                                 message = "JSON parsing failed: ${parseException.message}. Raw response: $responseText",
-                                data = emptyList()
+                                data = emptyList(),
+                                info = InfoDataDto.parseError()
                             )
                         }
                     } else {
@@ -120,7 +118,8 @@ class TripkeunApiServiceImpl(
                         ProfileResponseDto(
                             status = "invalid_response",
                             message = "Server returned non-JSON response: $responseText",
-                            data = emptyList()
+                            data = emptyList(),
+                            info = InfoDataDto.parseError()
                         )
                     }
                 }
@@ -143,7 +142,8 @@ class TripkeunApiServiceImpl(
                         ProfileResponseDto(
                             status = "redirect_no_location",
                             message = "Redirect without location header. Response: $responseText",
-                            data = emptyList()
+                            data = emptyList(),
+                            info = InfoDataDto.networkError()
                         )
                     }
                 }
@@ -166,7 +166,8 @@ class TripkeunApiServiceImpl(
                     ProfileResponseDto(
                         status = "unexpected_status",
                         message = "Status ${response.status}: $responseText",
-                        data = emptyList()
+                        data = emptyList(),
+                        info = InfoDataDto.networkError()
                     )
                 }
             }
@@ -181,7 +182,8 @@ class TripkeunApiServiceImpl(
             ProfileResponseDto(
                 status = "network_error",
                 message = "Network error: ${e.message}",
-                data = emptyList()
+                data = emptyList(),
+                info = InfoDataDto.networkError()
             )
         }
     }
@@ -207,21 +209,26 @@ class TripkeunApiServiceImpl(
 
             when (response.status) {
                 HttpStatusCode.OK -> {
-                    if (responseText.trim().startsWith("{") || responseText.trim().startsWith("[")) {
+                    if (responseText.trim().startsWith("{") || responseText.trim()
+                            .startsWith("[")
+                    ) {
                         json.decodeFromString<ProfileResponseDto>(responseText)
                     } else {
                         ProfileResponseDto(
                             status = "invalid_response",
                             message = "Server returned non-JSON response: $responseText",
-                            data = emptyList()
+                            data = emptyList(),
+                            info = InfoDataDto.networkError()
                         )
                     }
                 }
+
                 else -> {
                     ProfileResponseDto(
                         status = "alternative_failed",
                         message = "Alternative method also failed with status ${response.status}: $responseText",
-                        data = emptyList()
+                        data = emptyList(),
+                        info = InfoDataDto.networkError()
                     )
                 }
             }
@@ -230,12 +237,16 @@ class TripkeunApiServiceImpl(
             ProfileResponseDto(
                 status = "alternative_error",
                 message = "Alternative method error: ${e.message}",
-                data = emptyList()
+                data = emptyList(),
+                info = InfoDataDto.networkError()
             )
         }
     }
 
-    private suspend fun followRedirectManually(location: String, requestDto: ProfileRequestDto): ProfileResponseDto {
+    private suspend fun followRedirectManually(
+        location: String,
+        requestDto: ProfileRequestDto
+    ): ProfileResponseDto {
         Log.d(TAG, "🔄 MANUAL REDIRECT: Following to $location")
 
         return try {
@@ -253,21 +264,26 @@ class TripkeunApiServiceImpl(
 
             when (response.status) {
                 HttpStatusCode.OK -> {
-                    if (responseText.trim().startsWith("{") || responseText.trim().startsWith("[")) {
+                    if (responseText.trim().startsWith("{") || responseText.trim()
+                            .startsWith("[")
+                    ) {
                         json.decodeFromString<ProfileResponseDto>(responseText)
                     } else {
                         ProfileResponseDto(
                             status = "redirect_invalid_response",
                             message = "Redirect returned non-JSON response: $responseText",
-                            data = emptyList()
+                            data = emptyList(),
+                            info = InfoDataDto.networkError()
                         )
                     }
                 }
+
                 else -> {
                     ProfileResponseDto(
                         status = "redirect_failed",
                         message = "Redirect failed with status ${response.status}: $responseText",
-                        data = emptyList()
+                        data = emptyList(),
+                        info = InfoDataDto.networkError()
                     )
                 }
             }
@@ -276,7 +292,8 @@ class TripkeunApiServiceImpl(
             ProfileResponseDto(
                 status = "redirect_error",
                 message = "Manual redirect error: ${e.message}",
-                data = emptyList()
+                data = emptyList(),
+                info = InfoDataDto.networkError()
             )
         }
     }
