@@ -1,10 +1,22 @@
 package com.arkhe.menu.data.remote.api
 
-import android.util.Log
 import com.arkhe.menu.data.remote.dto.InfoDataDto
 import com.arkhe.menu.data.remote.dto.ProfileRequestDto
 import com.arkhe.menu.data.remote.dto.ProfileResponseDto
 import com.arkhe.menu.utils.Constants
+import com.arkhe.menu.utils.Logger.asLogDetailsResponse
+import com.arkhe.menu.utils.Logger.asLogJsonResponseException
+import com.arkhe.menu.utils.Logger.asLogJsonResponseSuccess
+import com.arkhe.menu.utils.Logger.asLogNetworkException
+import com.arkhe.menu.utils.Logger.asLogNonJsonResponse
+import com.arkhe.menu.utils.Logger.asLogResponseFollowRedirectManually
+import com.arkhe.menu.utils.Logger.asLogResponseFollowRedirectManuallyFailed
+import com.arkhe.menu.utils.Logger.asLogResponseHttpStatusCode303
+import com.arkhe.menu.utils.Logger.asLogResponseHttpStatusCode405
+import com.arkhe.menu.utils.Logger.asLogResponseRetryWithAlternativeMethod
+import com.arkhe.menu.utils.Logger.asLogResponseRetryWithAlternativeMethodFailed
+import com.arkhe.menu.utils.Logger.asLogResponseUnexpectedHttpStatusCode
+import com.arkhe.menu.utils.Logger.asLogSendingRequest
 import io.ktor.client.HttpClient
 import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.parameter
@@ -13,7 +25,6 @@ import io.ktor.client.request.setBody
 import io.ktor.client.request.url
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
-import io.ktor.client.statement.request
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.parametersOf
 import kotlinx.serialization.json.Json
@@ -37,74 +48,41 @@ class TripkeunApiServiceImpl(
     }
 
     override suspend fun getProfiles(sessionToken: String): ProfileResponseDto {
-        Log.d(TAG, "========== API REQUEST START ==========")
-
         return try {
             val requestDto = ProfileRequestDto(sessionToken = sessionToken)
             val requestJson = json.encodeToString(requestDto)
-
-            Log.d(TAG, "🚀 SENDING REQUEST:")
-            Log.d(TAG, "   URL: ${Constants.URL_BASE}")
-            Log.d(TAG, "   Action: ${Constants.PARAMETER_VALUE_PROFILES}")
-            Log.d(TAG, "   Payload: $requestJson")
 
             val response: HttpResponse = httpClient.post {
                 url(Constants.URL_BASE)
                 parameter(Constants.PARAMETER_KEY, Constants.PARAMETER_VALUE_PROFILES)
                 setBody(requestJson)
             }
-
-            /*LOG REQUEST DETAILS*/
-            Log.d(TAG, "📤 REQUEST SENT:")
-            Log.d(TAG, "   Method: ${response.request.method.value}")
-            Log.d(TAG, "   URL: ${response.request.url}")
-            Log.d(TAG, "   Headers:")
-            response.request.headers.entries().forEach { (key, values) ->
-                values.forEach { value ->
-                    Log.d(TAG, "      $key: $value")
-                }
-            }
-
-            /*LOG RESPONSE DETAILS*/
-            Log.d(TAG, "📥 RESPONSE RECEIVED:")
-            Log.d(TAG, "   Status Code: ${response.status.value}")
-            Log.d(TAG, "   Status Description: ${response.status.description}")
-            Log.d(TAG, "   Response Headers:")
-
-            response.headers.entries().forEach { (key, values) ->
-                values.forEach { value ->
-                    Log.d(TAG, "      $key: $value")
-                }
-            }
+            /*------LOG REQUEST DETAILS*/
+            asLogSendingRequest(TAG, requestJson, Constants, response)
 
             val responseText = response.bodyAsText()
-            Log.d(TAG, "📄 RESPONSE BODY:")
-            Log.d(TAG, "   Body Length: ${responseText.length} characters")
-            Log.d(TAG, "   Raw Response: $responseText")
 
-            // Handle different status codes
+            /*------LOG RESPONSE DETAILS*/
+            asLogDetailsResponse(TAG, response, responseText)
+            /*Handle different status codes*/
             when (response.status) {
                 HttpStatusCode.OK -> {
                     if (responseText.trim().startsWith("{") || responseText.trim()
                             .startsWith("[")
                     ) {
-                        Log.d(TAG, "✅ JSON Response detected, parsing...")
                         try {
                             val parsedResponse =
-                                json.decodeFromString<ProfileResponseDto>(responseText)
-                            Log.d(TAG, "✅ JSON Parsing SUCCESS:")
-                            Log.d(TAG, "   Status: ${parsedResponse.status}")
-                            Log.d(TAG, "   Message: ${parsedResponse.message}")
-                            Log.d(TAG, "   Data Count: ${parsedResponse.data.size}")
-                            Log.d(TAG, "========== API REQUEST SUCCESS ==========")
+                                json.decodeFromString<ProfileResponseDto>(
+                                    responseText
+                                )
+                            /*------LOG RESPONSE JSON Parsing SUCCESS*/
+                            asLogJsonResponseSuccess(TAG, parsedResponse)
+
                             parsedResponse
                         } catch (parseException: Exception) {
-                            Log.e(
-                                TAG,
-                                "❌ JSON Parsing FAILED: ${parseException.message}",
-                                parseException
-                            )
-                            Log.e(TAG, "========== API REQUEST PARSE ERROR ==========")
+                            /*------LOG RESPONSE JSON Parsing EXCEPTION*/
+                            asLogJsonResponseException(TAG, parseException)
+
                             ProfileResponseDto(
                                 status = "parse_error",
                                 message = "JSON parsing failed: ${parseException.message}. Raw response: $responseText",
@@ -113,8 +91,9 @@ class TripkeunApiServiceImpl(
                             )
                         }
                     } else {
-                        Log.w(TAG, "⚠️ Non-JSON Response received")
-                        Log.w(TAG, "========== API REQUEST NON-JSON ==========")
+                        /*------LOG RESPONSE non-JSON*/
+                        asLogNonJsonResponse(TAG)
+
                         ProfileResponseDto(
                             status = "invalid_response",
                             message = "Server returned non-JSON response: $responseText",
@@ -124,19 +103,15 @@ class TripkeunApiServiceImpl(
                     }
                 }
 
-                HttpStatusCode.Found, // 302
-                HttpStatusCode.MovedPermanently, // 301
-                HttpStatusCode.SeeOther -> { // 303
-                    Log.w(TAG, "🔄 Redirect Response received")
+                HttpStatusCode.Found, /*302*/
+                HttpStatusCode.MovedPermanently, /*301*/
+                HttpStatusCode.SeeOther -> { /*303*/
                     val location = response.headers["Location"]
-                    Log.w(TAG, "   Redirect Location: $location")
-                    Log.w(TAG, "   Original URL: ${response.request.url}")
-                    Log.w(TAG, "   Response Body: $responseText")
-                    Log.w(TAG, "========== API REQUEST REDIRECT ==========")
+                    /*------LOG RESPONSE HttpStatusCode 303*/
+                    asLogResponseHttpStatusCode303(TAG, location, response, responseText)
 
-                    // Try to follow redirect manually if needed
+                    /*Try to follow redirect manually if needed*/
                     if (location != null && location.isNotEmpty()) {
-                        Log.w(TAG, "🔄 Following redirect manually...")
                         return followRedirectManually(location, requestDto)
                     } else {
                         ProfileResponseDto(
@@ -148,21 +123,17 @@ class TripkeunApiServiceImpl(
                     }
                 }
 
-                HttpStatusCode.MethodNotAllowed -> { // 405
-                    Log.e(TAG, "❌ Method Not Allowed (405)")
-                    Log.e(TAG, "   Server only allows: ${response.headers["Allow"]}")
-                    Log.e(TAG, "   Current method: ${response.request.method.value}")
-                    Log.e(TAG, "   Request URL: ${response.request.url}")
-                    Log.e(TAG, "========== API REQUEST METHOD NOT ALLOWED ==========")
+                HttpStatusCode.MethodNotAllowed -> { /*405*/
+                    /*------LOG RESPONSE HttpStatusCode 405*/
+                    asLogResponseHttpStatusCode405(TAG, response)
 
-                    // Try alternative method
-                    Log.w(TAG, "🔄 Retrying with alternative method...")
                     return retryWithAlternativeMethod(sessionToken)
                 }
 
                 else -> {
-                    Log.e(TAG, "❌ Unexpected Status Code: ${response.status}")
-                    Log.e(TAG, "========== API REQUEST UNEXPECTED STATUS ==========")
+                    /*------LOG RESPONSE Unexpected Status Codes*/
+                    asLogResponseUnexpectedHttpStatusCode(TAG, response)
+
                     ProfileResponseDto(
                         status = "unexpected_status",
                         message = "Status ${response.status}: $responseText",
@@ -172,13 +143,9 @@ class TripkeunApiServiceImpl(
                 }
             }
         } catch (e: Exception) {
-            Log.e(TAG, "💥 API CALL EXCEPTION: ${e.message}", e)
-            Log.e(TAG, "   Exception Type: ${e.javaClass.simpleName}")
-            Log.e(TAG, "   Stack Trace:")
-            e.stackTrace.take(10).forEach { stackElement ->
-                Log.e(TAG, "      at $stackElement")
-            }
-            Log.e(TAG, "========== API REQUEST FAILED ==========")
+            /*------LOG RESPONSE Network Exception*/
+            asLogNetworkException(TAG, e)
+
             ProfileResponseDto(
                 status = "network_error",
                 message = "Network error: ${e.message}",
@@ -189,8 +156,6 @@ class TripkeunApiServiceImpl(
     }
 
     private suspend fun retryWithAlternativeMethod(sessionToken: String): ProfileResponseDto {
-        Log.d(TAG, "🔄 ALTERNATIVE METHOD: Using submitForm")
-
         return try {
             val requestDto = ProfileRequestDto(sessionToken = sessionToken)
             val requestJson = json.encodeToString(requestDto)
@@ -205,7 +170,8 @@ class TripkeunApiServiceImpl(
             }
 
             val responseText = response.bodyAsText()
-            Log.d(TAG, "📥 ALTERNATIVE RESPONSE: $responseText")
+            /*------LOG ALTERNATIVE METHOD*/
+            asLogResponseRetryWithAlternativeMethod(TAG, responseText)
 
             when (response.status) {
                 HttpStatusCode.OK -> {
@@ -233,7 +199,9 @@ class TripkeunApiServiceImpl(
                 }
             }
         } catch (e: Exception) {
-            Log.e(TAG, "💥 ALTERNATIVE METHOD FAILED: ${e.message}", e)
+            /*------LOG ALTERNATIVE METHOD EXCEPTION*/
+            asLogResponseRetryWithAlternativeMethodFailed(TAG, e)
+
             ProfileResponseDto(
                 status = "alternative_error",
                 message = "Alternative method error: ${e.message}",
@@ -247,8 +215,6 @@ class TripkeunApiServiceImpl(
         location: String,
         requestDto: ProfileRequestDto
     ): ProfileResponseDto {
-        Log.d(TAG, "🔄 MANUAL REDIRECT: Following to $location")
-
         return try {
             val requestJson = json.encodeToString(requestDto)
 
@@ -259,8 +225,8 @@ class TripkeunApiServiceImpl(
             }
 
             val responseText = response.bodyAsText()
-            Log.d(TAG, "📥 REDIRECT RESPONSE: Status ${response.status.value}")
-            Log.d(TAG, "📥 REDIRECT BODY: $responseText")
+            /*------LOG REDIRECT METHOD*/
+            asLogResponseFollowRedirectManually(TAG, location, response, responseText)
 
             when (response.status) {
                 HttpStatusCode.OK -> {
@@ -288,7 +254,8 @@ class TripkeunApiServiceImpl(
                 }
             }
         } catch (e: Exception) {
-            Log.e(TAG, "💥 MANUAL REDIRECT FAILED: ${e.message}", e)
+            /*------LOG REDIRECT METHOD FAILED*/
+            asLogResponseFollowRedirectManuallyFailed(TAG, e)
             ProfileResponseDto(
                 status = "redirect_error",
                 message = "Manual redirect error: ${e.message}",

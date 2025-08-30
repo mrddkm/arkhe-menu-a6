@@ -78,13 +78,13 @@ val dataModule = module {
             expectSuccess = false
             followRedirects = true
 
-            // OkHttp specific configuration - redirect handled by engine
+            /*OkHttp specific configuration - redirect handled by engine*/
             engine {
                 config {
                     followRedirects(true)
                     followSslRedirects(true)
                     retryOnConnectionFailure(true)
-                    // Timeout configuration
+                    /*Timeout configuration*/
                     connectTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
                     readTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
                     writeTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
