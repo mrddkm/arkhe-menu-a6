@@ -1,11 +1,9 @@
 package com.arkhe.menu.data.remote.dto
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class ProfileRequestDto(
-    @SerialName("session_token")
     val sessionToken: String
 )
 
@@ -24,6 +22,7 @@ data class InfoDataDto(
     val actionInformationEn: String,
 ) {
     companion object {
+        @Suppress("Unused")
         fun empty() = InfoDataDto(
             action = "",
             actionInformationId = "",
@@ -57,12 +56,8 @@ data class ProfileDataDto(
     val quotes: String,
     val informationId: String,
     val informationEn: String,
-    @SerialName("created_at")
     val createdAt: String,
-    @SerialName("updated_at")
     val updatedAt: String,
-    @SerialName("created_by_user_id")
     val createdByUserId: String,
-    @SerialName("updated_by_user_id")
     val updatedByUserId: String
 )
