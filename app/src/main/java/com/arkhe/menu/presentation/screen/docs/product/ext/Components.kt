@@ -35,7 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.arkhe.menu.presentation.screen.docs.category.ext.getCategoryColor
+import com.arkhe.menu.presentation.screen.docs.categories.ext.getCategoryColor
 import com.arkhe.menu.presentation.theme.AppTheme
 
 @Composable

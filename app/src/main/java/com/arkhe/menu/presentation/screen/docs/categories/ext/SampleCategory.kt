@@ -1,6 +1,6 @@
 @file:Suppress("SpellCheckingInspection")
 
-package com.arkhe.menu.presentation.screen.docs.category.ext
+package com.arkhe.menu.presentation.screen.docs.categories.ext
 
 import androidx.compose.ui.graphics.Color
 

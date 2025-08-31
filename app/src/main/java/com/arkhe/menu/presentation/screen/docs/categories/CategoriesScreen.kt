@@ -1,4 +1,4 @@
-package com.arkhe.menu.presentation.screen.docs.category
+package com.arkhe.menu.presentation.screen.docs.categories
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize

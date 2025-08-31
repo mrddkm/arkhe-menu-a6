@@ -1,7 +1,7 @@
 @file:Suppress("SpellCheckingInspection")
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.arkhe.menu.presentation.screen.docs.category.ext
+package com.arkhe.menu.presentation.screen.docs.categories.ext
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

@@ -32,8 +32,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.R
-import com.arkhe.menu.presentation.screen.docs.category.ext.CategoriesSection
-import com.arkhe.menu.presentation.screen.docs.category.ext.sampleCategories
+import com.arkhe.menu.presentation.screen.docs.categories.ext.CategoriesSection
+import com.arkhe.menu.presentation.screen.docs.categories.ext.sampleCategories
 import com.arkhe.menu.presentation.screen.docs.components.HeaderSection
 import com.arkhe.menu.presentation.screen.docs.organization.ext.Organization
 import com.arkhe.menu.presentation.screen.docs.organization.ext.PersonilDetailBottomSheet
