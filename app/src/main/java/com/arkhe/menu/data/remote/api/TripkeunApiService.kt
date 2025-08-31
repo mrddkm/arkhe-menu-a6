@@ -1,5 +1,8 @@
 package com.arkhe.menu.data.remote.api
 
+import com.arkhe.menu.data.remote.dto.CategoryInfoDto
+import com.arkhe.menu.data.remote.dto.CategoryRequestDto
+import com.arkhe.menu.data.remote.dto.CategoryResponseDto
 import com.arkhe.menu.data.remote.dto.InfoDataDto
 import com.arkhe.menu.data.remote.dto.ProfileRequestDto
 import com.arkhe.menu.data.remote.dto.ProfileResponseDto
@@ -31,6 +34,7 @@ import kotlinx.serialization.json.Json
 
 interface TripkeunApiService {
     suspend fun getProfiles(sessionToken: String): ProfileResponseDto
+    suspend fun getCategories(sessionToken: String): CategoryResponseDto
 }
 
 class TripkeunApiServiceImpl(
@@ -261,6 +265,61 @@ class TripkeunApiServiceImpl(
                 message = "Manual redirect error: ${e.message}",
                 data = emptyList(),
                 info = InfoDataDto.networkError()
+            )
+        }
+    }
+
+    override suspend fun getCategories(sessionToken: String): CategoryResponseDto {
+        return try {
+            val requestDto = CategoryRequestDto(sessionToken = sessionToken)
+            val requestJson = json.encodeToString(requestDto)
+
+            val response: HttpResponse = httpClient.post {
+                url(Constants.URL_BASE)
+                parameter(Constants.PARAMETER_KEY, Constants.PARAMETER_VALUE_CATEGORY)
+                setBody(requestJson)
+            }
+
+            val responseText = response.bodyAsText()
+
+            when (response.status) {
+                HttpStatusCode.OK -> {
+                    if (responseText.trim().startsWith("{") || responseText.trim().startsWith("[")) {
+                        try {
+                            val parsedResponse = json.decodeFromString<CategoryResponseDto>(responseText)
+                            parsedResponse
+                        } catch (parseException: Exception) {
+                            CategoryResponseDto(
+                                status = "parse_error",
+                                message = "JSON parsing failed: ${parseException.message}",
+                                data = emptyList(),
+                                info = CategoryInfoDto.parseError()
+                            )
+                        }
+                    } else {
+                        CategoryResponseDto(
+                            status = "invalid_response",
+                            message = "Server returned non-JSON response: $responseText",
+                            data = emptyList(),
+                            info = CategoryInfoDto.parseError()
+                        )
+                    }
+                }
+                else -> {
+                    CategoryResponseDto(
+                        status = "unexpected_status",
+                        message = "Status ${response.status}: $responseText",
+                        data = emptyList(),
+                        info = CategoryInfoDto.networkError()
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            CategoryResponseDto(
+                status = "network_error",
+                message = "Network error: ${e.message}",
+                data = emptyList(),
+                info = CategoryInfoDto.networkError()
             )
         }
     }

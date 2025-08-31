@@ -9,7 +9,9 @@ import com.arkhe.menu.data.local.preferences.dataStore
 import com.arkhe.menu.data.remote.RemoteDataSource
 import com.arkhe.menu.data.remote.api.TripkeunApiService
 import com.arkhe.menu.data.remote.api.TripkeunApiServiceImpl
+import com.arkhe.menu.data.repository.CategoryRepositoryImpl
 import com.arkhe.menu.data.repository.ProfileRepositoryImpl
+import com.arkhe.menu.domain.repository.CategoryRepository
 import com.arkhe.menu.domain.repository.ProfileRepository
 import com.arkhe.menu.utils.Constants
 import io.ktor.client.HttpClient
@@ -106,14 +108,16 @@ val dataModule = module {
 
     /*Room DAOs*/
     single { get<AppDatabase>().profileDao() }
+    single { get<AppDatabase>().categoryDao() }
 
     /*API Services*/
     single<TripkeunApiService> { TripkeunApiServiceImpl(get()) }
 
     /*Data Sources*/
     single { RemoteDataSource(get()) }
-    single { LocalDataSource(get()) }
+    single { LocalDataSource(get(), get()) }
 
     /*Repositories*/
     single<ProfileRepository> { ProfileRepositoryImpl(get(), get()) }
+    single<CategoryRepository> { CategoryRepositoryImpl(get(), get()) }
 }
