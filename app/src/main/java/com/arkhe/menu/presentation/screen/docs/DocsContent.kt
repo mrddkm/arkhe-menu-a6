@@ -39,8 +39,7 @@ import com.arkhe.menu.R
 import com.arkhe.menu.domain.model.ApiResult
 import com.arkhe.menu.domain.model.Category
 import com.arkhe.menu.domain.model.Product
-import com.arkhe.menu.presentation.screen.docs.categories.ext.CategoriesSection
-import com.arkhe.menu.presentation.screen.docs.categories.ext.CategoryDetailBottomSheet
+import com.arkhe.menu.presentation.screen.docs.categories.ext.CategoriesSectionContent
 import com.arkhe.menu.presentation.screen.docs.components.HeaderSection
 import com.arkhe.menu.presentation.screen.docs.customer.ext.CustomerSection
 import com.arkhe.menu.presentation.screen.docs.customer.ext.sampleCustomers
@@ -49,8 +48,7 @@ import com.arkhe.menu.presentation.screen.docs.organization.ext.OrganizationSect
 import com.arkhe.menu.presentation.screen.docs.organization.ext.PersonilDetailBottomSheet
 import com.arkhe.menu.presentation.screen.docs.organization.ext.PersonilListBottomSheet
 import com.arkhe.menu.presentation.screen.docs.organization.ext.sampleOrganizations
-import com.arkhe.menu.presentation.screen.docs.product.ext.ProductDetailBottomSheet
-import com.arkhe.menu.presentation.screen.docs.product.ext.ProductSection
+import com.arkhe.menu.presentation.screen.docs.product.ext.ProductSectionContent
 import com.arkhe.menu.presentation.theme.AppTheme
 import com.arkhe.menu.presentation.viewmodel.CategoryViewModel
 import com.arkhe.menu.presentation.viewmodel.ProductViewModel
@@ -69,12 +67,6 @@ fun DocsContent(
     var showBottomSheet by remember { mutableStateOf(false) }
     var selectedOrganization by remember { mutableStateOf<Organization?>(null) }
     var showPersonilList by remember { mutableStateOf(false) }
-
-    var showCategoryBottomSheet by remember { mutableStateOf(false) }
-    var selectedCategory by remember { mutableStateOf<Category?>(null) }
-
-    var showProductBottomSheet by remember { mutableStateOf(false) }
-    var selectedProduct by remember { mutableStateOf<Product?>(null) }
 
     val categoriesState by categoryViewModel.categoriesState.collectAsState()
     val productsState by productViewModel.productsState.collectAsState()
@@ -217,17 +209,12 @@ fun DocsContent(
                         }
 
                         is ApiResult.Success -> {
-                            CategoriesSection(
-                                categoriesList = (categoriesState as ApiResult.Success<List<Category>>).data,
-                                onCategoriesClick = { category ->
-                                    selectedCategory = category
-                                    showCategoryBottomSheet = true
-                                }
+                            CategoriesSectionContent(
+                                categoriesList = (categoriesState as ApiResult.Success<List<Category>>).data
                             )
                         }
 
                         is ApiResult.Error -> {
-                            // Fallback to sample data or show error
                             Text(
                                 text = "Failed to load categories",
                                 style = MaterialTheme.typography.bodyMedium,
@@ -270,12 +257,8 @@ fun DocsContent(
                         }
 
                         is ApiResult.Success -> {
-                            ProductSection(
-                                productList = (productsState as ApiResult.Success<List<Product>>).data,
-                                onProductClick = { product ->
-                                    selectedProduct = product
-                                    showProductBottomSheet = true
-                                }
+                            ProductSectionContent(
+                                productList = (productsState as ApiResult.Success<List<Product>>).data
                             )
                         }
 
@@ -291,28 +274,6 @@ fun DocsContent(
                 }
             }
         }
-    }
-
-    /*Category Detail BottomSheet*/
-    if (showCategoryBottomSheet && selectedCategory != null) {
-        CategoryDetailBottomSheet(
-            category = selectedCategory!!,
-            onDismiss = {
-                showCategoryBottomSheet = false
-                selectedCategory = null
-            }
-        )
-    }
-
-    /*Product Detail BottomSheet*/
-    if (showProductBottomSheet && selectedProduct != null) {
-        ProductDetailBottomSheet(
-            product = selectedProduct!!,
-            onDismiss = {
-                showProductBottomSheet = false
-                selectedProduct = null
-            }
-        )
     }
 
     if (showBottomSheet && selectedOrganization != null) {

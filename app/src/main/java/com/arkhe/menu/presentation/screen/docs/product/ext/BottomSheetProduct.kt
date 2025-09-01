@@ -29,9 +29,8 @@ import androidx.compose.ui.unit.dp
 import com.arkhe.menu.domain.model.Product
 
 @Composable
-fun ProductDetailBottomSheet(
-    product: Product,
-    onDismiss: () -> Unit
+fun BottomSheetProduct(
+    product: Product
 ) {
     var currentLanguage by remember { mutableStateOf("en") }
 
