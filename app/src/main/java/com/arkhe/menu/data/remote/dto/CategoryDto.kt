@@ -37,6 +37,7 @@ data class CategoryInfoDto(
     val actionInformationEn: String
 ) {
     companion object {
+        @Suppress("Unused")
         fun empty() = CategoryInfoDto(
             action = "",
             actionInformationId = "",

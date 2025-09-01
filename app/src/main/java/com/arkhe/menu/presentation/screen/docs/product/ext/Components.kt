@@ -35,7 +35,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.arkhe.menu.presentation.screen.docs.categories.ext.getCategoryColor
 import com.arkhe.menu.presentation.theme.AppTheme
 
 @Composable
@@ -52,7 +51,9 @@ fun ProductSection(
             items(productList.chunked(2)) { productChunk ->
                 Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.width(200.dp).padding(start = 8.dp)
+                    modifier = Modifier
+                        .width(200.dp)
+                        .padding(start = 8.dp)
                 ) {
                     productChunk.forEach { product ->
                         ProductCard(
@@ -71,7 +72,6 @@ fun ProductCard(
     product: Product,
     onClick: () -> Unit
 ) {
-    val categoryColor = getCategoryColor(product.productCategoryId)
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -130,7 +130,6 @@ fun ProductCard(
                         imageVector = Icons.Rounded.Egg,
                         contentDescription = product.productDestination,
                         modifier = Modifier.size(16.dp),
-                        tint = categoryColor.iconColor.copy(alpha = 0.8f),
                     )
                     Text(
                         text = product.productCategoryId,
@@ -138,7 +137,6 @@ fun ProductCard(
                         textAlign = TextAlign.Left,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        color = categoryColor.iconColor.copy(alpha = 0.8f)
                     )
                 }
             }
