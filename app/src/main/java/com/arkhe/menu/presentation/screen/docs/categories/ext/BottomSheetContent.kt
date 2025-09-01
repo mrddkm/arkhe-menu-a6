@@ -25,8 +25,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.domain.model.Category
+import com.arkhe.menu.presentation.theme.AppTheme
 
 @Composable
 fun BottomSheetCategory(
@@ -202,5 +204,37 @@ fun StatisticItem(
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
         )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun BottomSheetCategoryPreview() {
+    val sampleCategory = Category(
+        id = "1",
+        name = "Fruits",
+        type = "Food",
+        productCount = 120,
+        initiation = 10,
+        research = 20,
+        ready = 90,
+        information = com.arkhe.menu.domain.model.CategoryInformation(
+            indonesian = "Kategori Buah",
+            english = "Fruit Category"
+        ),
+        colors = com.arkhe.menu.domain.model.CategoryColors(
+            backgroundColor = "#FFEB3B",
+            iconColor = "#F57C00"
+        ),
+        actionInfo = com.arkhe.menu.domain.model.CategoryActionInfo(
+            action = "View More",
+            information = com.arkhe.menu.domain.model.CategoryInformation(
+                indonesian = "Lihat Selengkapnya",
+                english = "View More Details"
+            )
+        )
+    )
+    AppTheme {
+        BottomSheetCategory(category = sampleCategory)
     }
 }

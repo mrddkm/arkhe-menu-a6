@@ -25,8 +25,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.domain.model.Product
+import com.arkhe.menu.presentation.theme.AppTheme
 
 @Composable
 fun BottomSheetProduct(
@@ -39,7 +41,6 @@ fun BottomSheetProduct(
             .fillMaxWidth()
             .padding(24.dp)
     ) {
-        // Header with language toggle
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -52,7 +53,6 @@ fun BottomSheetProduct(
                 color = MaterialTheme.colorScheme.primary
             )
 
-            // Show language toggle only if both languages have content
             if (product.information.indonesian.isNotEmpty() &&
                 product.information.english.isNotEmpty()
             ) {
@@ -71,7 +71,6 @@ fun BottomSheetProduct(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Product Code and Status
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -111,7 +110,6 @@ fun BottomSheetProduct(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Product Full Name
         Text(
             text = product.productFullName,
             style = MaterialTheme.typography.titleLarge,
@@ -121,7 +119,6 @@ fun BottomSheetProduct(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Product Destination
         Text(
             text = product.productDestination,
             style = MaterialTheme.typography.bodyLarge,
@@ -130,7 +127,6 @@ fun BottomSheetProduct(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Category Information
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
@@ -160,7 +156,6 @@ fun BottomSheetProduct(
             }
         }
 
-        // Product Information (if available)
         val information = if (currentLanguage == "id") {
             product.information.indonesian
         } else {
@@ -200,7 +195,33 @@ fun BottomSheetProduct(
             }
         }
 
-        // Add some bottom padding for better UX
         Spacer(modifier = Modifier.height(24.dp))
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun BottomSheetProductPreview() {
+    val sampleProduct = Product(
+        id = "wF9aImQjHcg2qqSB",
+        productCode = "WP1",
+        productFullName = "Workshop Series #01",
+        productCategoryId = "WSP",
+        productDestination = "Photography",
+        status = "Ready",
+        information = com.arkhe.menu.domain.model.ProductInformation(
+            indonesian = "Lorem Ipsum adalah contoh teks atau dummy dalam industri percetakan dan penataan huruf atau typesetting. Lorem Ipsum telah menjadi standar contoh teks sejak tahun 1500an",
+            english = "Lorem ipsum dolor sit amet consectetur adipiscing elit. Sit amet consectetur adipiscing elit quisque faucibus ex. Adipiscing elit quisque faucibus ex sapien vitae pellentesque."
+        ),
+        actionInfo = com.arkhe.menu.domain.model.ProductActionInfo(
+            action = "product",
+            information = com.arkhe.menu.domain.model.ProductInformation(
+                indonesian = "Lorem Ipsum hanyalah contoh teks dalam industri percetakan dan penataan huruf. Lorem Ipsum telah menjadi contoh teks standar industri sejak tahun 1500-an.",
+                english = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s."
+            )
+        )
+    )
+    AppTheme {
+        BottomSheetProduct(product = sampleProduct)
     }
 }
