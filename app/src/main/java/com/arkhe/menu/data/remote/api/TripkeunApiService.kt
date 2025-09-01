@@ -4,6 +4,9 @@ import com.arkhe.menu.data.remote.dto.CategoryInfoDto
 import com.arkhe.menu.data.remote.dto.CategoryRequestDto
 import com.arkhe.menu.data.remote.dto.CategoryResponseDto
 import com.arkhe.menu.data.remote.dto.InfoDataDto
+import com.arkhe.menu.data.remote.dto.ProductInfoDto
+import com.arkhe.menu.data.remote.dto.ProductRequestDto
+import com.arkhe.menu.data.remote.dto.ProductResponseDto
 import com.arkhe.menu.data.remote.dto.ProfileRequestDto
 import com.arkhe.menu.data.remote.dto.ProfileResponseDto
 import com.arkhe.menu.utils.Constants
@@ -35,6 +38,10 @@ import kotlinx.serialization.json.Json
 interface TripkeunApiService {
     suspend fun getProfiles(sessionToken: String): ProfileResponseDto
     suspend fun getCategories(sessionToken: String): CategoryResponseDto
+    suspend fun getProducts(
+        sessionToken: String,
+        productCategoryId: String = "ALL"
+    ): ProductResponseDto
 }
 
 class TripkeunApiServiceImpl(
@@ -284,9 +291,12 @@ class TripkeunApiServiceImpl(
 
             when (response.status) {
                 HttpStatusCode.OK -> {
-                    if (responseText.trim().startsWith("{") || responseText.trim().startsWith("[")) {
+                    if (responseText.trim().startsWith("{") || responseText.trim()
+                            .startsWith("[")
+                    ) {
                         try {
-                            val parsedResponse = json.decodeFromString<CategoryResponseDto>(responseText)
+                            val parsedResponse =
+                                json.decodeFromString<CategoryResponseDto>(responseText)
                             parsedResponse
                         } catch (parseException: Exception) {
                             CategoryResponseDto(
@@ -305,6 +315,7 @@ class TripkeunApiServiceImpl(
                         )
                     }
                 }
+
                 else -> {
                     CategoryResponseDto(
                         status = "unexpected_status",
@@ -320,6 +331,64 @@ class TripkeunApiServiceImpl(
                 message = "Network error: ${e.message}",
                 data = emptyList(),
                 info = CategoryInfoDto.networkError()
+            )
+        }
+    }
+
+    override suspend fun getProducts(sessionToken: String, productCategoryId: String): ProductResponseDto {
+        return try {
+            val requestDto = ProductRequestDto(
+                sessionToken = sessionToken,
+                productCategoryId = productCategoryId
+            )
+            val requestJson = json.encodeToString(requestDto)
+
+            val response: HttpResponse = httpClient.post {
+                url(Constants.URL_BASE)
+                parameter(Constants.PARAMETER_KEY, Constants.PARAMETER_VALUE_PRODUCTS)
+                setBody(requestJson)
+            }
+
+            val responseText = response.bodyAsText()
+
+            when (response.status) {
+                HttpStatusCode.OK -> {
+                    if (responseText.trim().startsWith("{") || responseText.trim().startsWith("[")) {
+                        try {
+                            val parsedResponse = json.decodeFromString<ProductResponseDto>(responseText)
+                            parsedResponse
+                        } catch (parseException: Exception) {
+                            ProductResponseDto(
+                                status = "parse_error",
+                                message = "JSON parsing failed: ${parseException.message}",
+                                data = emptyList(),
+                                info = ProductInfoDto.parseError()
+                            )
+                        }
+                    } else {
+                        ProductResponseDto(
+                            status = "invalid_response",
+                            message = "Server returned non-JSON response: $responseText",
+                            data = emptyList(),
+                            info = ProductInfoDto.parseError()
+                        )
+                    }
+                }
+                else -> {
+                    ProductResponseDto(
+                        status = "unexpected_status",
+                        message = "Status ${response.status}: $responseText",
+                        data = emptyList(),
+                        info = ProductInfoDto.networkError()
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            ProductResponseDto(
+                status = "network_error",
+                message = "Network error: ${e.message}",
+                data = emptyList(),
+                info = ProductInfoDto.networkError()
             )
         }
     }

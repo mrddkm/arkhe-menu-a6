@@ -4,6 +4,13 @@ import com.arkhe.menu.domain.usecase.category.CategoryUseCases
 import com.arkhe.menu.domain.usecase.category.GetCategoriesUseCase
 import com.arkhe.menu.domain.usecase.category.GetCategoryUseCase
 import com.arkhe.menu.domain.usecase.category.RefreshCategoriesUseCase
+import com.arkhe.menu.domain.usecase.product.GetProductGroupsUseCase
+import com.arkhe.menu.domain.usecase.product.GetProductUseCase
+import com.arkhe.menu.domain.usecase.product.GetProductsByCategoryUseCase
+import com.arkhe.menu.domain.usecase.product.GetProductsByNamePrefixUseCase
+import com.arkhe.menu.domain.usecase.product.GetProductsUseCase
+import com.arkhe.menu.domain.usecase.product.ProductUseCases
+import com.arkhe.menu.domain.usecase.product.RefreshProductsUseCase
 import com.arkhe.menu.domain.usecase.profile.GetProfileUseCase
 import com.arkhe.menu.domain.usecase.profile.GetProfilesUseCase
 import com.arkhe.menu.domain.usecase.profile.ProfileUseCases
@@ -37,6 +44,26 @@ val domainModule = module {
             getCategories = get(),
             getCategory = get(),
             refreshCategories = get()
+        )
+    }
+
+    /*Product Use Cases*/
+    factory { GetProductsUseCase(get()) }
+    factory { GetProductUseCase(get()) }
+    factory { GetProductsByCategoryUseCase(get()) }
+    factory { GetProductsByNamePrefixUseCase(get()) }
+    factory { GetProductGroupsUseCase(get()) }
+    factory { RefreshProductsUseCase(get()) }
+
+    /*Product Use Cases Bundle*/
+    factory {
+        ProductUseCases(
+            getProducts = get(),
+            getProduct = get(),
+            getProductsByCategory = get(),
+            getProductsByNamePrefix = get(),
+            getProductGroups = get(),
+            refreshProducts = get()
         )
     }
 }

@@ -12,6 +12,7 @@ object Constants {
     /*Action Params*/
     const val PARAMETER_VALUE_PROFILES = "profiles"
     const val PARAMETER_VALUE_CATEGORY = "productcategory"
+    const val PARAMETER_VALUE_PRODUCTS = "products"
 
     const val DATABASE_NAME = "tripkeun_database"
     const val DATABASE_VERSION = 1

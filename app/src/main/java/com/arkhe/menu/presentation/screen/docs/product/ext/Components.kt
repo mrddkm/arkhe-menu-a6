@@ -33,9 +33,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.arkhe.menu.presentation.theme.AppTheme
+import com.arkhe.menu.domain.model.Product
 
 @Composable
 fun ProductSection(
@@ -132,7 +131,7 @@ fun ProductCard(
                         modifier = Modifier.size(16.dp),
                     )
                     Text(
-                        text = product.productCategoryId,
+                        text = product.status,
                         style = MaterialTheme.typography.bodySmall,
                         textAlign = TextAlign.Left,
                         maxLines = 1,
@@ -144,13 +143,120 @@ fun ProductCard(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun ProductSectionPreview() {
-    AppTheme {
-        ProductSection(
-            productList = sampleProduct,
-            onProductClick = {}
-        )
-    }
-}
+//@Composable
+//fun ProductSection(
+//    productList: List<Product>,
+//    onProductClick: (Product) -> Unit
+//) {
+//    Column(
+//        modifier = Modifier.fillMaxWidth()
+//    ) {
+//        LazyRow(
+//            horizontalArrangement = Arrangement.spacedBy(12.dp),
+//        ) {
+//            items(productList.chunked(2)) { productChunk ->
+//                Column(
+//                    verticalArrangement = Arrangement.spacedBy(8.dp),
+//                    modifier = Modifier
+//                        .width(200.dp)
+//                        .padding(start = 8.dp)
+//                ) {
+//                    productChunk.forEach { product ->
+//                        ProductCard(
+//                            product = product,
+//                            onClick = { onProductClick(product) }
+//                        )
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
+//
+//@Composable
+//fun ProductCard(
+//    product: Product,
+//    onClick: () -> Unit
+//) {
+//    Card(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .height(70.dp)
+//            .clickable { onClick() },
+//        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+//        shape = RoundedCornerShape(8.dp),
+//    ) {
+//        Row(
+//            modifier = Modifier.fillMaxWidth(),
+//            verticalAlignment = Alignment.CenterVertically,
+//            horizontalArrangement = Arrangement.End
+//        ) {
+//            Box(
+//                modifier = Modifier
+//                    .size(50.dp)
+//                    .clip(CircleShape),
+//                contentAlignment = Alignment.Center
+//            ) {
+//                Text(
+//                    text = product.productCode,
+//                    style = MaterialTheme.typography.titleSmall,
+//                    maxLines = 2,
+//                    overflow = TextOverflow.Ellipsis,
+//                    color = MaterialTheme.colorScheme.primary
+//                )
+//            }
+//            Column(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .padding(8.dp),
+//                horizontalAlignment = Alignment.Start
+//            ) {
+//                Text(
+//                    text = product.productDestination,
+//                    style = MaterialTheme.typography.bodyMedium,
+//                    fontWeight = FontWeight.Medium,
+//                    maxLines = 1,
+//                    overflow = TextOverflow.Ellipsis,
+//                    color = MaterialTheme.colorScheme.primary
+//                )
+//                Spacer(modifier = Modifier.height(4.dp))
+//                Text(
+//                    text = product.productFullName,
+//                    style = MaterialTheme.typography.bodySmall,
+//                    maxLines = 1,
+//                    overflow = TextOverflow.Ellipsis,
+//                    color = MaterialTheme.colorScheme.onSurfaceVariant
+//                )
+//                Spacer(modifier = Modifier.height(4.dp))
+//                Row(
+//                    verticalAlignment = Alignment.CenterVertically,
+//                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+//                ) {
+//                    Icon(
+//                        imageVector = Icons.Rounded.Egg,
+//                        contentDescription = product.productDestination,
+//                        modifier = Modifier.size(16.dp),
+//                    )
+//                    Text(
+//                        text = product.productCategoryId,
+//                        style = MaterialTheme.typography.bodySmall,
+//                        textAlign = TextAlign.Left,
+//                        maxLines = 1,
+//                        overflow = TextOverflow.Ellipsis,
+//                    )
+//                }
+//            }
+//        }
+//    }
+//}
+
+//@Preview(showBackground = true)
+//@Composable
+//fun ProductSectionPreview() {
+//    AppTheme {
+//        ProductSection(
+//            productList = sampleProduct,
+//            onProductClick = {}
+//        )
+//    }
+//}

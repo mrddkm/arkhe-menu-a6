@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import com.arkhe.menu.R
 import com.arkhe.menu.domain.model.ApiResult
 import com.arkhe.menu.domain.model.Category
+import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.presentation.screen.docs.categories.ext.CategoriesSection
 import com.arkhe.menu.presentation.screen.docs.categories.ext.CategoryDetailBottomSheet
 import com.arkhe.menu.presentation.screen.docs.components.HeaderSection
@@ -48,10 +49,11 @@ import com.arkhe.menu.presentation.screen.docs.organization.ext.OrganizationSect
 import com.arkhe.menu.presentation.screen.docs.organization.ext.PersonilDetailBottomSheet
 import com.arkhe.menu.presentation.screen.docs.organization.ext.PersonilListBottomSheet
 import com.arkhe.menu.presentation.screen.docs.organization.ext.sampleOrganizations
+import com.arkhe.menu.presentation.screen.docs.product.ext.ProductDetailBottomSheet
 import com.arkhe.menu.presentation.screen.docs.product.ext.ProductSection
-import com.arkhe.menu.presentation.screen.docs.product.ext.sampleProduct
 import com.arkhe.menu.presentation.theme.AppTheme
 import com.arkhe.menu.presentation.viewmodel.CategoryViewModel
+import com.arkhe.menu.presentation.viewmodel.ProductViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -61,7 +63,8 @@ fun DocsContent(
     onNavigateToCustomer: () -> Unit = {},
     onNavigateToCategories: () -> Unit = {},
     onNavigateToProducts: () -> Unit = {},
-    categoryViewModel: CategoryViewModel = koinViewModel()
+    categoryViewModel: CategoryViewModel = koinViewModel(),
+    productViewModel: ProductViewModel = koinViewModel()
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
     var selectedOrganization by remember { mutableStateOf<Organization?>(null) }
@@ -70,7 +73,11 @@ fun DocsContent(
     var showCategoryBottomSheet by remember { mutableStateOf(false) }
     var selectedCategory by remember { mutableStateOf<Category?>(null) }
 
+    var showProductBottomSheet by remember { mutableStateOf(false) }
+    var selectedProduct by remember { mutableStateOf<Product?>(null) }
+
     val categoriesState by categoryViewModel.categoriesState.collectAsState()
+    val productsState by productViewModel.productsState.collectAsState()
 
     Column {
         Text(
@@ -123,10 +130,10 @@ fun DocsContent(
             }
         }
 
-        /*Secondary Contents*/
         Column(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            /*Organization Section*/
             Card(
                 colors = CardDefaults.cardColors(
                     containerColor = Color.Transparent
@@ -154,6 +161,7 @@ fun DocsContent(
                 }
             }
 
+            /*Customer Section (unchanged)*/
             Card(
                 colors = CardDefaults.cardColors(
                     containerColor = Color.Transparent
@@ -178,6 +186,7 @@ fun DocsContent(
                 }
             }
 
+            /*Categories Section (with API)*/
             Card(
                 colors = CardDefaults.cardColors(
                     containerColor = Color.Transparent
@@ -230,6 +239,7 @@ fun DocsContent(
                 }
             }
 
+            /*Products Section (with API - productCategoryId = "ALL")*/
             Card(
                 colors = CardDefaults.cardColors(
                     containerColor = Color.Transparent
@@ -247,10 +257,37 @@ fun DocsContent(
                             onNavigateToProducts()
                         }
                     )
-                    ProductSection(
-                        productList = sampleProduct,
-                        onProductClick = { /* Handle Product click if needed */ }
-                    )
+                    when (productsState) {
+                        is ApiResult.Loading -> {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(100.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator()
+                            }
+                        }
+
+                        is ApiResult.Success -> {
+                            ProductSection(
+                                productList = (productsState as ApiResult.Success<List<Product>>).data,
+                                onProductClick = { product ->
+                                    selectedProduct = product
+                                    showProductBottomSheet = true
+                                }
+                            )
+                        }
+
+                        is ApiResult.Error -> {
+                            Text(
+                                text = "Failed to load products",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.padding(16.dp)
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -263,6 +300,17 @@ fun DocsContent(
             onDismiss = {
                 showCategoryBottomSheet = false
                 selectedCategory = null
+            }
+        )
+    }
+
+    /*Product Detail BottomSheet*/
+    if (showProductBottomSheet && selectedProduct != null) {
+        ProductDetailBottomSheet(
+            product = selectedProduct!!,
+            onDismiss = {
+                showProductBottomSheet = false
+                selectedProduct = null
             }
         )
     }
