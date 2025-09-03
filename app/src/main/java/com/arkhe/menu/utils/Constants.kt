@@ -39,6 +39,11 @@ object Constants {
         const val STATUS_READY = "ready"
     }
 
+    object Category{
+        const val CATEGORY_LABEL = "Category"
+        const val STATISTICS_LABEL = "Statistics"
+    }
+
     object UserRoles {
         const val SUPERUSER = "superuser"
         const val FAGA = "faga"
