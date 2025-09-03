@@ -8,6 +8,8 @@ data class ProductEntity(
     @PrimaryKey
     val id: String,
     val productCategoryId: String,
+    val categoryName: String,
+    val categoryType: String,
     val productCode: String,
     val productFullName: String,
     val productDestination: String,

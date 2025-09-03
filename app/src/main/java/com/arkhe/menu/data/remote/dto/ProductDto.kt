@@ -20,6 +20,8 @@ data class ProductResponseDto(
 data class ProductDataDto(
     val id: String,
     val productCategoryId: String,
+    val categoryName: String,
+    val categoryType: String,
     val productCode: String,
     val productFullName: String,
     val productDestination: String,
@@ -35,6 +37,7 @@ data class ProductInfoDto(
     val actionInformationEn: String
 ) {
     companion object {
+        @Suppress("Unused")
         fun empty() = ProductInfoDto(
             action = "",
             actionInformationId = "",

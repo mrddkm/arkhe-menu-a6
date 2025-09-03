@@ -27,6 +27,18 @@ object Constants {
     const val MAX_RECEIPT_ITEMS = 50
     const val MIN_CUSTOMER_NAME_LENGTH = 2
 
+    object CurrentLanguage {
+        const val INDONESIAN = "id"
+        const val ENGLISH = "en"
+    }
+
+    object Product {
+        const val PRODUCT_LABEL = "Product"
+        const val STATUS_INITIATION = "initiation"
+        const val STATUS_RESEARCH = "research"
+        const val STATUS_READY = "ready"
+    }
+
     object UserRoles {
         const val SUPERUSER = "superuser"
         const val FAGA = "faga"

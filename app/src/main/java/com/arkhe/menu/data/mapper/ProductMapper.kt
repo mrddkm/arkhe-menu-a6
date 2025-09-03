@@ -1,4 +1,3 @@
-// data/mapper/ProductMapper.kt
 package com.arkhe.menu.data.mapper
 
 import com.arkhe.menu.data.local.entity.ProductEntity
@@ -9,11 +8,13 @@ import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.domain.model.ProductActionInfo
 import com.arkhe.menu.domain.model.ProductInformation
 
-// DTO to Entity
+/*DTO to Entity*/
 fun ProductDataDto.toEntity(infoData: ProductInfoDto): ProductEntity {
     return ProductEntity(
         id = id,
         productCategoryId = productCategoryId,
+        categoryName = categoryName,
+        categoryType = categoryType,
         productCode = productCode,
         productFullName = productFullName,
         productDestination = productDestination,
@@ -26,11 +27,13 @@ fun ProductDataDto.toEntity(infoData: ProductInfoDto): ProductEntity {
     )
 }
 
-// Entity to Domain
+/*Entity to Domain*/
 fun ProductEntity.toDomain(): Product {
     return Product(
         id = id,
         productCategoryId = productCategoryId,
+        categoryName = categoryName,
+        categoryType = categoryType,
         productCode = productCode,
         productFullName = productFullName,
         productDestination = productDestination,
@@ -49,11 +52,13 @@ fun ProductEntity.toDomain(): Product {
     )
 }
 
-// DTO to Domain (direct conversion)
+/*DTO to Domain (direct conversion)*/
 fun ProductDataDto.toDomain(infoData: ProductInfoDto): Product {
     return Product(
         id = id,
         productCategoryId = productCategoryId,
+        categoryName = categoryName,
+        categoryType = categoryType,
         productCode = productCode,
         productFullName = productFullName,
         productDestination = productDestination,
@@ -72,7 +77,7 @@ fun ProductDataDto.toDomain(infoData: ProductInfoDto): Product {
     )
 }
 
-// List extensions with ProductResponseDto
+/*List extensions with ProductResponseDto*/
 fun ProductResponseDto.toEntityList(): List<ProductEntity> {
     return this.data.map { it.toEntity(this.info) }
 }

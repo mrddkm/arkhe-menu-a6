@@ -7,9 +7,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.rounded.Language
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -29,26 +30,39 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.presentation.theme.AppTheme
+import com.arkhe.menu.utils.Constants
 
 @Composable
 fun BottomSheetProduct(
     product: Product
 ) {
-    var currentLanguage by remember { mutableStateOf("en") }
-
+    var currentLanguage by remember { mutableStateOf(Constants.CurrentLanguage.ENGLISH) }
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(24.dp)
+            .padding(16.dp)
     ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = Constants.Product.PRODUCT_LABEL,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Product Details",
-                style = MaterialTheme.typography.headlineSmall,
+                text = "“${product.productDestination}”",
+                style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -58,31 +72,54 @@ fun BottomSheetProduct(
             ) {
                 IconButton(
                     onClick = {
-                        currentLanguage = if (currentLanguage == "en") "id" else "en"
+                        currentLanguage =
+                            if (currentLanguage == Constants.CurrentLanguage.ENGLISH)
+                                Constants.CurrentLanguage.INDONESIAN
+                            else Constants.CurrentLanguage.ENGLISH
                     }
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Language,
+                        imageVector = Icons.Rounded.Language,
                         contentDescription = "Toggle Language"
                     )
                 }
             }
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = product.productFullName,
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
+        )
+        Spacer(modifier = Modifier.height(4.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = product.productCode,
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
             )
-
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = product.categoryName,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+            )
+            Text(
+                text = "/",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+            )
+            Text(
+                text = product.categoryType,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
             Card(
                 colors = CardDefaults.cardColors(
                     containerColor = when (product.status) {
@@ -107,85 +144,25 @@ fun BottomSheetProduct(
                 )
             }
         }
-
         Spacer(modifier = Modifier.height(12.dp))
-
-        Text(
-            text = product.productFullName,
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.onSurface
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = product.productDestination,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant
-            ),
-            shape = RoundedCornerShape(12.dp)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Text(
-                    text = "Category",
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.SemiBold
-                )
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Text(
-                    text = product.productCategoryId,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
-        }
-
-        val information = if (currentLanguage == "id") {
+        val information = if (currentLanguage == Constants.CurrentLanguage.INDONESIAN) {
             product.information.indonesian
         } else {
             product.information.english
         }
-
         if (information.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(12.dp))
-
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.surfaceVariant
                 ),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(8.dp)
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp)
                 ) {
-                    Text(
-                        text = "Information",
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.SemiBold
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
                     Text(
                         text = information,
                         style = MaterialTheme.typography.bodyMedium,
@@ -194,7 +171,6 @@ fun BottomSheetProduct(
                 }
             }
         }
-
         Spacer(modifier = Modifier.height(24.dp))
     }
 }
@@ -203,11 +179,13 @@ fun BottomSheetProduct(
 @Composable
 fun BottomSheetProductPreview() {
     val sampleProduct = Product(
-        id = "wF9aImQjHcg2qqSB",
-        productCode = "WP1",
-        productFullName = "Workshop Series #01",
-        productCategoryId = "WSP",
-        productDestination = "Photography",
+        id = "rtg6wm5iijqC5WIl",
+        productCategoryId = "SRS",
+        categoryName = "Series",
+        categoryType = "Reguler",
+        productCode = "MN04",
+        productFullName = "Mountain Series #04",
+        productDestination = "Gn. Papandayan",
         status = "Ready",
         information = com.arkhe.menu.domain.model.ProductInformation(
             indonesian = "Lorem Ipsum adalah contoh teks atau dummy dalam industri percetakan dan penataan huruf atau typesetting. Lorem Ipsum telah menjadi standar contoh teks sejak tahun 1500an",

@@ -22,6 +22,8 @@ data class ProductResponse(
 data class ProductData(
     val id: String,
     val productCategoryId: String,
+    val categoryName: String,
+    val categoryType: String,
     val productCode: String,
     val productFullName: String,
     val productDestination: String,
@@ -37,10 +39,12 @@ data class ProductInfo(
     val actionInformationEn: String
 )
 
-// Domain model for UI
+/*Domain model for UI*/
 data class Product(
     val id: String,
     val productCategoryId: String,
+    val categoryName: String,
+    val categoryType: String,
     val productCode: String,
     val productFullName: String,
     val productDestination: String,
@@ -48,7 +52,7 @@ data class Product(
     val information: ProductInformation,
     val actionInfo: ProductActionInfo
 ) {
-    // Extract series prefix from productFullName (e.g., "Chipkeun" from "Chipkeun #01")
+    /*Extract series prefix from productFullName (e.g., "Chipkeun" from "Chipkeun #01")*/
     val seriesPrefix: String
         get() {
             val fullName = productFullName
@@ -74,7 +78,7 @@ data class ProductActionInfo(
     val information: ProductInformation
 )
 
-// UI grouping model
+/*UI grouping model*/
 data class ProductGroup(
     val seriesName: String,
     val products: List<Product>
