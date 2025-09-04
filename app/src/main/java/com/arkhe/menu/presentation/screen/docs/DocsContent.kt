@@ -23,6 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -70,6 +71,12 @@ fun DocsContent(
 
     val categoriesState by categoryViewModel.categoriesState.collectAsState()
     val productsState by productViewModel.productsState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        categoryViewModel.ensureDataLoaded()
+        // Assuming this method exists in ProductViewModel
+//        productViewModel.ensureDataLoaded()
+    }
 
     Column {
         Text(

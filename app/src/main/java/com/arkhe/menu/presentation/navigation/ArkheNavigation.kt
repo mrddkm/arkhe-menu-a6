@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.arkhe.menu.presentation.screen.MainScreen
+import com.arkhe.menu.presentation.screen.docs.categories.CategoryDetailScreen
 
 @Composable
 fun ArkheNavigation(
@@ -37,6 +38,14 @@ fun ArkheNavigation(
 
         composable(NavigationRoute.CATEGORIES) {
             MainScreen(navController = navController)
+        }
+
+        composable(NavigationRoute.CATEGORY_DETAIL) {
+            CategoryDetailScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
         }
 
         composable(NavigationRoute.PRODUCTS) {

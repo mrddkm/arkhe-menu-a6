@@ -150,15 +150,6 @@ fun CategoryCardContent(
     }
 }
 
-fun parseColorFromHex(hexColor: String): Color {
-    return try {
-        val cleanHex = hexColor.removePrefix("0x").removePrefix("#")
-        Color(cleanHex.toLong(16) or 0x00000000FF000000)
-    } catch (_: Exception) {
-        Color.Gray
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 fun CategoryCardPreview() {

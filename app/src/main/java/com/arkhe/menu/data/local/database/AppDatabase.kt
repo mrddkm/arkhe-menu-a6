@@ -11,7 +11,7 @@ import com.arkhe.menu.data.local.entity.ProfileEntity
 
 @Database(
     entities = [ProfileEntity::class, CategoryEntity::class, ProductEntity::class],
-    version = 3,
+    version = 1,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

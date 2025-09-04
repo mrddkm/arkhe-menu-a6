@@ -22,9 +22,9 @@ import com.arkhe.menu.di.appModule
 import com.arkhe.menu.di.dataModule
 import com.arkhe.menu.di.domainModule
 import com.arkhe.menu.presentation.animation.ScreenTransitions
-import com.arkhe.menu.presentation.components.UserBottomSheet
 import com.arkhe.menu.presentation.components.ArkheBottomBar
 import com.arkhe.menu.presentation.components.ArkheTopBar
+import com.arkhe.menu.presentation.components.UserBottomSheet
 import com.arkhe.menu.presentation.components.common.LoadingIndicator
 import com.arkhe.menu.presentation.navigation.NavigationRoute
 import com.arkhe.menu.presentation.screen.docs.categories.CategoriesScreen
@@ -120,6 +120,14 @@ fun MainScreen(
                         ScreenTransitions.slideFromRight()
                     }
 
+                    initialState == NavigationRoute.CATEGORIES && targetState.startsWith("category_detail") -> {
+                        ScreenTransitions.slideFromLeft()
+                    }
+
+                    initialState.startsWith("category_detail") && targetState == NavigationRoute.CATEGORIES -> {
+                        ScreenTransitions.slideFromRight()
+                    }
+
                     initialState == NavigationRoute.MAIN && targetState == NavigationRoute.PRODUCTS -> {
                         ScreenTransitions.slideFromLeft()
                     }
@@ -157,7 +165,10 @@ fun MainScreen(
 
                 NavigationRoute.CATEGORIES -> {
                     CategoriesScreen(
-                        modifier = Modifier.padding(paddingValues)
+                        modifier = Modifier.padding(paddingValues),
+                        onNavigateToDetail = {
+                            navController.navigate(NavigationRoute.categoryDetail())
+                        }
                     )
                 }
 

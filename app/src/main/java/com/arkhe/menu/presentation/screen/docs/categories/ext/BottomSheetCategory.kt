@@ -1,3 +1,5 @@
+@file:Suppress("SpellCheckingInspection")
+
 package com.arkhe.menu.presentation.screen.docs.categories.ext
 
 import androidx.compose.foundation.background
@@ -227,7 +229,7 @@ fun BottomSheetCategoryPreview() {
     val sampleCategory = Category(
         id = "SRS",
         name = "Series",
-        type = "Reguler",
+        type = "Regular",
         productCount = 26,
         initiation = 0,
         research = 0,

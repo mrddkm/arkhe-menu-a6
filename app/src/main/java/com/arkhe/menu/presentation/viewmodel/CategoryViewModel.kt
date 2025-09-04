@@ -23,6 +23,12 @@ class CategoryViewModel(
     private val _selectedCategory = MutableStateFlow<Category?>(null)
     val selectedCategory: StateFlow<Category?> = _selectedCategory.asStateFlow()
 
+    // For maintaining scroll position
+    private val _lastScrollPosition = MutableStateFlow(0)
+    val lastScrollPosition: StateFlow<Int> = _lastScrollPosition.asStateFlow()
+
+    private var isInitialized = false
+
     init {
         loadCategories()
     }
@@ -46,6 +52,13 @@ class CategoryViewModel(
         }
     }
 
+    fun ensureDataLoaded() {
+        if (!isInitialized || _categoriesState.value is ApiResult.Error) {
+            loadCategories()
+            isInitialized = true
+        }
+    }
+
     fun refreshCategories() {
         loadCategories(forceRefresh = true)
     }
@@ -57,6 +70,12 @@ class CategoryViewModel(
     fun clearSelectedCategory() {
         _selectedCategory.value = null
     }
+
+    fun updateScrollPosition(position: Int) {
+        _lastScrollPosition.value = position
+    }
+
+    fun getScrollPosition(): Int = _lastScrollPosition.value
 
     suspend fun getCategoryById(id: String): Category? {
         return categoryUseCases.getCategory(id)
