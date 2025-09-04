@@ -11,8 +11,8 @@ class SessionManager(
     private val dataStore: DataStore<Preferences>
 ) {
     companion object {
-        private val SESSION_TOKEN_KEY = stringPreferencesKey("session_token")
-        private val USER_ID_KEY = stringPreferencesKey("user_id")
+        private val SESSION_TOKEN_KEY = stringPreferencesKey("sessionToken")
+        private val USER_ID_KEY = stringPreferencesKey("userId")
         private val USERNAME_KEY = stringPreferencesKey("username")
     }
 

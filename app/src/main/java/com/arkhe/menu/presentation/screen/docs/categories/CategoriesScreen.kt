@@ -59,10 +59,6 @@ fun CategoriesScreen(
         categoryViewModel.ensureDataLoaded()
     }
 
-    LaunchedEffect(listState.firstVisibleItemIndex) {
-        categoryViewModel.updateScrollPosition(listState.firstVisibleItemIndex)
-    }
-
     LaunchedEffect(categoriesState) {
         if (categoriesState !is ApiResult.Loading) {
             isRefreshing = false

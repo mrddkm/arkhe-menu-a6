@@ -33,10 +33,20 @@ class CategoryRepositoryImpl(
         Log.d(TAG, "getCategories called - forceRefresh: $forceRefresh, token: $sessionToken")
         emit(ApiResult.Loading)
 
+        // Check if we have local data first
+        val hasLocalData = try {
+            localDataSource.hasCategories()
+        } catch (e: Exception) {
+            Log.w(TAG, "Failed to check local categories data: ${e.message}")
+            false
+        }
+
+        Log.d(TAG, "Has local categories data: $hasLocalData")
+
         // Emit cached data first if available and not forcing refresh
-        if (!forceRefresh) {
+        if (!forceRefresh && hasLocalData) {
             try {
-                Log.d(TAG, "Attempting to load cached categories...")
+                Log.d(TAG, "Loading cached categories...")
                 localDataSource.getAllCategories()
                     .take(1)
                     .collect { entities ->
@@ -50,65 +60,59 @@ class CategoryRepositoryImpl(
             }
         }
 
-        // Fetch fresh data from remote
-        Log.d(TAG, "Fetching categories from remote API...")
-        when (val remoteResult = remoteDataSource.getCategories(sessionToken)) {
-            is ApiResult.Success -> {
-                Log.d(
-                    TAG,
-                    "Remote API success - status: ${remoteResult.data.status}, message: ${remoteResult.data.message}"
-                )
-                Log.d(TAG, "Categories count: ${remoteResult.data.data.size}")
+        // Always fetch fresh data from remote if:
+        // 1. Force refresh is requested, OR
+        // 2. No local data exists (first install)
+        if (forceRefresh || !hasLocalData) {
+            Log.d(TAG, "Fetching categories from remote API... (forceRefresh: $forceRefresh, hasLocalData: $hasLocalData)")
+            when (val remoteResult = remoteDataSource.getCategories(sessionToken)) {
+                is ApiResult.Success -> {
+                    Log.d(
+                        TAG,
+                        "Remote API success - status: ${remoteResult.data.status}, message: ${remoteResult.data.message}"
+                    )
+                    Log.d(TAG, "Categories count: ${remoteResult.data.data.size}")
 
-                when {
-                    remoteResult.data.status == "success" && remoteResult.data.data.isNotEmpty() -> {
-                        Log.d(TAG, "Processing successful response with categories data")
-                        try {
-                            // Save to local database
-                            val entities = remoteResult.data.toEntityList()
-                            Log.d(TAG, "Saving ${entities.size} category entities to local database")
-                            localDataSource.deleteAllCategories()
-                            localDataSource.insertCategories(entities)
+                    when {
+                        remoteResult.data.status == "success" && remoteResult.data.data.isNotEmpty() -> {
+                            Log.d(TAG, "Processing successful response with categories data")
+                            try {
+                                // Save to local database
+                                val entities = remoteResult.data.toEntityList()
+                                Log.d(TAG, "Saving ${entities.size} category entities to local database")
+                                localDataSource.deleteAllCategories()
+                                localDataSource.insertCategories(entities)
 
-                            // Emit fresh data
-                            emit(ApiResult.Success(remoteResult.data.toDomainList()))
-                        } catch (e: Exception) {
-                            Log.e(TAG, "Failed to save categories to local database: ${e.message}", e)
-                            // Even if local save fails, still return remote data
-                            emit(ApiResult.Success(remoteResult.data.toDomainList()))
+                                // Emit fresh data
+                                emit(ApiResult.Success(remoteResult.data.toDomainList()))
+                            } catch (e: Exception) {
+                                Log.e(TAG, "Failed to save categories to local database: ${e.message}", e)
+                                // Even if local save fails, still return remote data
+                                emit(ApiResult.Success(remoteResult.data.toDomainList()))
+                            }
+                        }
+
+                        remoteResult.data.status == "debug" -> {
+                            Log.w(TAG, "API returned debug response: ${remoteResult.data.message}")
+                            emit(ApiResult.Error(Exception("Debug: ${remoteResult.data.message}")))
+                        }
+
+                        remoteResult.data.data.isEmpty() -> {
+                            Log.w(TAG, "API returned empty categories array")
+                            emit(ApiResult.Error(Exception("API returned empty categories array. Status: ${remoteResult.data.status}, Message: ${remoteResult.data.message}")))
+                        }
+
+                        else -> {
+                            Log.w(TAG, "API returned unsuccessful status: ${remoteResult.data.status}")
+                            emit(ApiResult.Error(Exception("API error - Status: ${remoteResult.data.status}, Message: ${remoteResult.data.message}")))
                         }
                     }
-
-                    remoteResult.data.status == "debug" -> {
-                        Log.w(TAG, "API returned debug response: ${remoteResult.data.message}")
-                        emit(ApiResult.Error(Exception("Debug: ${remoteResult.data.message}")))
-                    }
-
-                    remoteResult.data.data.isEmpty() -> {
-                        Log.w(TAG, "API returned empty categories array")
-                        emit(ApiResult.Error(Exception("API returned empty categories array. Status: ${remoteResult.data.status}, Message: ${remoteResult.data.message}")))
-                    }
-
-                    else -> {
-                        Log.w(TAG, "API returned unsuccessful status: ${remoteResult.data.status}")
-                        emit(ApiResult.Error(Exception("API error - Status: ${remoteResult.data.status}, Message: ${remoteResult.data.message}")))
-                    }
-                }
-            }
-
-            is ApiResult.Error -> {
-                Log.e(TAG, "Remote API error: ${remoteResult.exception.message}")
-                // If we have cached data and remote fails, don't emit error unless forced refresh
-                val hasLocalData = try {
-                    localDataSource.hasCategories()
-                } catch (e: Exception) {
-                    Log.w(TAG, "Failed to check local categories data: ${e.message}")
-                    false
                 }
 
-                Log.d(TAG, "Has local categories data: $hasLocalData, force refresh: $forceRefresh")
+                is ApiResult.Error -> {
+                    Log.e(TAG, "Remote API error: ${remoteResult.exception.message}")
 
-                if (forceRefresh || !hasLocalData) {
+                    // Always emit error if it's the first install or force refresh
                     val errorMessage = if (remoteResult.exception is NetworkException) {
                         NetworkErrorHandler.getErrorMessage(remoteResult.exception)
                     } else {
@@ -116,11 +120,12 @@ class CategoryRepositoryImpl(
                     }
                     Log.e(TAG, "Emitting error: $errorMessage")
                     emit(ApiResult.Error(Exception(errorMessage)))
+                    // If we have local data and it's not a forced refresh, we already emitted the cached data above
                 }
-            }
 
-            ApiResult.Loading -> {
-                Log.w(TAG, "Remote API returned Loading state - this shouldn't happen")
+                ApiResult.Loading -> {
+                    Log.w(TAG, "Remote API returned Loading state - this shouldn't happen")
+                }
             }
         }
     }.flowOn(Dispatchers.IO)

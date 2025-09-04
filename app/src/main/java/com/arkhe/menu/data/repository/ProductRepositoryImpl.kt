@@ -36,10 +36,20 @@ class ProductRepositoryImpl(
         Log.d(TAG, "getProducts called - categoryId: $productCategoryId, forceRefresh: $forceRefresh")
         emit(ApiResult.Loading)
 
+        // Check if we have local data first
+        val hasLocalData = try {
+            localDataSource.hasProducts()
+        } catch (e: Exception) {
+            Log.w(TAG, "Failed to check local products data: ${e.message}")
+            false
+        }
+
+        Log.d(TAG, "Has local products data: $hasLocalData")
+
         // Emit cached data first if available and not forcing refresh
-        if (!forceRefresh) {
+        if (!forceRefresh && hasLocalData) {
             try {
-                Log.d(TAG, "Attempting to load cached products...")
+                Log.d(TAG, "Loading cached products...")
                 localDataSource.getAllProducts()
                     .take(1)
                     .collect { entities ->
@@ -53,72 +63,70 @@ class ProductRepositoryImpl(
             }
         }
 
-        // Fetch fresh data from remote
-        Log.d(TAG, "Fetching products from remote API...")
-        when (val remoteResult = remoteDataSource.getProducts(sessionToken, productCategoryId)) {
-            is ApiResult.Success -> {
-                Log.d(TAG, "Remote API success - status: ${remoteResult.data.status}")
-                Log.d(TAG, "Products count: ${remoteResult.data.data.size}")
+        // Always fetch fresh data from remote if:
+        // 1. Force refresh is requested, OR
+        // 2. No local data exists (first install)
+        if (forceRefresh || !hasLocalData) {
+            Log.d(TAG, "Fetching products from remote API... (forceRefresh: $forceRefresh, hasLocalData: $hasLocalData)")
+            when (val remoteResult = remoteDataSource.getProducts(sessionToken, productCategoryId)) {
+                is ApiResult.Success -> {
+                    Log.d(TAG, "Remote API success - status: ${remoteResult.data.status}")
+                    Log.d(TAG, "Products count: ${remoteResult.data.data.size}")
 
-                when {
-                    remoteResult.data.status == "success" && remoteResult.data.data.isNotEmpty() -> {
-                        Log.d(TAG, "Processing successful response with products data")
-                        try {
-                            // Save to local database
-                            val entities = remoteResult.data.toEntityList()
-                            Log.d(TAG, "Saving ${entities.size} product entities to local database")
-                            if (productCategoryId == "ALL") {
-                                localDataSource.deleteAllProducts()
+                    when {
+                        remoteResult.data.status == "success" && remoteResult.data.data.isNotEmpty() -> {
+                            Log.d(TAG, "Processing successful response with products data")
+                            try {
+                                // Save to local database
+                                val entities = remoteResult.data.toEntityList()
+                                Log.d(TAG, "Saving ${entities.size} product entities to local database")
+                                if (productCategoryId == "ALL") {
+                                    localDataSource.deleteAllProducts()
+                                }
+                                localDataSource.insertProducts(entities)
+
+                                // Emit fresh data
+                                emit(ApiResult.Success(remoteResult.data.toDomainList()))
+                            } catch (e: Exception) {
+                                Log.e(TAG, "Failed to save products to local database: ${e.message}", e)
+                                // Even if local save fails, still return remote data
+                                emit(ApiResult.Success(remoteResult.data.toDomainList()))
                             }
-                            localDataSource.insertProducts(entities)
+                        }
 
-                            // Emit fresh data
-                            emit(ApiResult.Success(remoteResult.data.toDomainList()))
-                        } catch (e: Exception) {
-                            Log.e(TAG, "Failed to save products to local database: ${e.message}", e)
-                            // Even if local save fails, still return remote data
-                            emit(ApiResult.Success(remoteResult.data.toDomainList()))
+                        remoteResult.data.status == "debug" -> {
+                            Log.w(TAG, "API returned debug response: ${remoteResult.data.message}")
+                            emit(ApiResult.Error(Exception("Debug: ${remoteResult.data.message}")))
+                        }
+
+                        remoteResult.data.data.isEmpty() -> {
+                            Log.w(TAG, "API returned empty products array")
+                            emit(ApiResult.Error(Exception("API returned empty products array")))
+                        }
+
+                        else -> {
+                            Log.w(TAG, "API returned unsuccessful status: ${remoteResult.data.status}")
+                            emit(ApiResult.Error(Exception("API error - Status: ${remoteResult.data.status}, Message: ${remoteResult.data.message}")))
                         }
                     }
-
-                    remoteResult.data.status == "debug" -> {
-                        Log.w(TAG, "API returned debug response: ${remoteResult.data.message}")
-                        emit(ApiResult.Error(Exception("Debug: ${remoteResult.data.message}")))
-                    }
-
-                    remoteResult.data.data.isEmpty() -> {
-                        Log.w(TAG, "API returned empty products array")
-                        emit(ApiResult.Error(Exception("API returned empty products array")))
-                    }
-
-                    else -> {
-                        Log.w(TAG, "API returned unsuccessful status: ${remoteResult.data.status}")
-                        emit(ApiResult.Error(Exception("API error - Status: ${remoteResult.data.status}, Message: ${remoteResult.data.message}")))
-                    }
-                }
-            }
-
-            is ApiResult.Error -> {
-                Log.e(TAG, "Remote API error: ${remoteResult.exception.message}")
-                val hasLocalData = try {
-                    localDataSource.hasProducts()
-                } catch (e: Exception) {
-                    Log.w(TAG, "Failed to check local products data: ${e.message}")
-                    false
                 }
 
-                if (forceRefresh || !hasLocalData) {
+                is ApiResult.Error -> {
+                    Log.e(TAG, "Remote API error: ${remoteResult.exception.message}")
+
+                    // Always emit error if it's the first install or force refresh
                     val errorMessage = if (remoteResult.exception is NetworkException) {
                         NetworkErrorHandler.getErrorMessage(remoteResult.exception)
                     } else {
                         remoteResult.exception.message ?: "Unknown error occurred"
                     }
                     emit(ApiResult.Error(Exception(errorMessage)))
+                    // If we have local data and it's not a forced refresh, we already emitted the cached data above
                 }
-            }
 
-            ApiResult.Loading -> {
-                Log.w(TAG, "Remote API returned Loading state - this shouldn't happen")
+                ApiResult.Loading -> {
+                    Log.w(TAG, "Remote API returned Loading state - this shouldn't happen")
+                }
             }
         }
     }.flowOn(Dispatchers.IO)
