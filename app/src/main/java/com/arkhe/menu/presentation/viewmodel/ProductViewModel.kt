@@ -1,5 +1,6 @@
 package com.arkhe.menu.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arkhe.menu.data.local.preferences.SessionManager
@@ -10,13 +11,16 @@ import com.arkhe.menu.domain.usecase.product.ProductUseCases
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class ProductViewModel(
     private val productUseCases: ProductUseCases,
     private val sessionManager: SessionManager
 ) : ViewModel() {
+
+    companion object {
+        private const val TAG = "ProductViewModel"
+    }
 
     private val _productsState = MutableStateFlow<ApiResult<List<Product>>>(ApiResult.Loading)
     val productsState: StateFlow<ApiResult<List<Product>>> = _productsState.asStateFlow()
@@ -37,16 +41,29 @@ class ProductViewModel(
     val currentProductCategoryId: StateFlow<String> = _currentProductCategoryId.asStateFlow()
 
     init {
-        loadProducts()
+        Log.d("init", "## ProductViewModel::initialized ##")
+        viewModelScope.launch {
+            sessionManager.sessionToken.collect { token ->
+                if (token != null) {
+                    Log.d(TAG, "✅ Token $TAG: $token")
+                    loadProducts(token)
+                } else {
+                    Log.w(TAG, "⚠️ Token $TAG: null")
+                }
+            }
+        }
     }
 
-    fun loadProducts(productCategoryId: String = "ALL", forceRefresh: Boolean = false) {
+    fun loadProducts(
+        token: String? = null,
+        productCategoryId: String = "ALL",
+        forceRefresh: Boolean = false
+    ) {
         viewModelScope.launch {
             try {
                 _currentProductCategoryId.value = productCategoryId
-                val sessionToken = sessionManager.sessionToken.first()
-                if (sessionToken != null) {
-                    productUseCases.getProducts(sessionToken, productCategoryId, forceRefresh)
+                if (token != null) {
+                    productUseCases.getProducts(token, productCategoryId, forceRefresh)
                         .collect { result ->
                             _productsState.value = result
 
@@ -69,7 +86,7 @@ class ProductViewModel(
             try {
                 val groups = productUseCases.getProductGroups()
                 _productGroups.value = groups
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 // Handle error if needed
             }
         }

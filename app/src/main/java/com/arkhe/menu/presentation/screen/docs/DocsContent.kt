@@ -2,6 +2,7 @@
 
 package com.arkhe.menu.presentation.screen.docs
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,12 +15,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Business
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,11 +30,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.R
+import com.arkhe.menu.di.appModule
+import com.arkhe.menu.di.dataModule
+import com.arkhe.menu.di.domainModule
 import com.arkhe.menu.domain.model.ApiResult
 import com.arkhe.menu.domain.model.Category
 import com.arkhe.menu.domain.model.Product
@@ -53,6 +55,9 @@ import com.arkhe.menu.presentation.screen.docs.product.ext.ProductSectionContent
 import com.arkhe.menu.presentation.theme.AppTheme
 import com.arkhe.menu.presentation.viewmodel.CategoryViewModel
 import com.arkhe.menu.presentation.viewmodel.ProductViewModel
+import com.arkhe.menu.presentation.viewmodel.ProfileViewModel
+import org.koin.android.ext.koin.androidContext
+import org.koin.compose.KoinApplicationPreview
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -62,6 +67,7 @@ fun DocsContent(
     onNavigateToCustomer: () -> Unit = {},
     onNavigateToCategories: () -> Unit = {},
     onNavigateToProducts: () -> Unit = {},
+    profileViewModel: ProfileViewModel = koinViewModel(),
     categoryViewModel: CategoryViewModel = koinViewModel(),
     productViewModel: ProductViewModel = koinViewModel()
 ) {
@@ -69,12 +75,12 @@ fun DocsContent(
     var selectedOrganization by remember { mutableStateOf<Organization?>(null) }
     var showPersonilList by remember { mutableStateOf(false) }
 
+    val profileState by profileViewModel.uiState.collectAsState()
     val categoriesState by categoryViewModel.categoriesState.collectAsState()
     val productsState by productViewModel.productsState.collectAsState()
 
     LaunchedEffect(Unit) {
         categoryViewModel.ensureDataLoaded()
-        // Assuming this method exists in ProductViewModel
 //        productViewModel.ensureDataLoaded()
     }
 
@@ -107,10 +113,9 @@ fun DocsContent(
                         .padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Business,
+                    Image(
+                        painter = painterResource(R.drawable.tripkeun_official),
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(48.dp)
                     )
                     Spacer(modifier = Modifier.width(16.dp))
@@ -309,9 +314,19 @@ fun DocsContent(
 @Preview(showBackground = true)
 @Composable
 fun DocsContentPreview() {
-    AppTheme(darkTheme = false) {
-        DocsContent(
-            onNavigateToProfile = {}
-        )
+    val previewContext = androidx.compose.ui.platform.LocalContext.current
+    KoinApplicationPreview(
+        application = {
+            androidContext(previewContext)
+            modules(
+                appModule, dataModule, domainModule
+            )
+        }
+    ) {
+        AppTheme {
+            DocsContent(
+                onNavigateToProfile = {}
+            )
+        }
     }
 }

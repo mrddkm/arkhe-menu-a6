@@ -4,8 +4,13 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 class SessionManager(
     private val dataStore: DataStore<Preferences>
@@ -16,10 +21,20 @@ class SessionManager(
         private val USERNAME_KEY = stringPreferencesKey("username")
     }
 
-    // Get session token
-    val sessionToken: Flow<String?> = dataStore.data.map { preferences ->
-        preferences[SESSION_TOKEN_KEY]
+    private val _sessionToken: MutableStateFlow<String?> = MutableStateFlow(null)
+    val sessionToken: StateFlow<String?> = _sessionToken
+
+    init {
+        CoroutineScope(Dispatchers.IO).launch {
+            dataStore.data.map { prefs -> prefs[SESSION_TOKEN_KEY] }
+                .collect { token -> _sessionToken.value = token }
+        }
     }
+
+    // Get session token
+    /*    val sessionToken: Flow<String?> = dataStore.data.map { preferences ->
+            preferences[SESSION_TOKEN_KEY]
+        }*/
 
     // Get user ID
     val userId: Flow<String?> = dataStore.data.map { preferences ->

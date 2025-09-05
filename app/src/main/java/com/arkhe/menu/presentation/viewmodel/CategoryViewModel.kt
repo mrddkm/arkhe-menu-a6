@@ -10,7 +10,6 @@ import com.arkhe.menu.domain.usecase.category.CategoryUseCases
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class CategoryViewModel(
@@ -35,34 +34,49 @@ class CategoryViewModel(
     private var isInitialized = false
 
     init {
-        Log.d(TAG, "CategoryViewModel initialized")
+        Log.d("init", "## CategoryViewModel::initialized ##")
+        viewModelScope.launch {
+            sessionManager.sessionToken.collect { token ->
+                if (token != null) {
+                    Log.d(TAG, "✅ Token $TAG: $token")
+                    loadCategories(token)
+                } else {
+                    Log.w(TAG, "⚠️ Token $TAG: null")
+                }
+            }
+        }
     }
 
-    fun loadCategories(forceRefresh: Boolean = false) {
+    fun loadCategories(token: String? = null, forceRefresh: Boolean = false) {
+        Log.d(TAG, "loadCategories token: $token")
+
         Log.d(TAG, "loadCategories called with forceRefresh: $forceRefresh")
         viewModelScope.launch {
             try {
                 Log.d(TAG, "Getting session token...")
-                val sessionToken = sessionManager.sessionToken.first()
-                Log.d(TAG, "Session token: ${sessionToken?.take(20)}...")
 
-                if (sessionToken != null) {
+                if (token != null) {
                     Log.d(TAG, "Starting categories fetch...")
                     _categoriesState.value = ApiResult.Loading
 
-                    categoryUseCases.getCategories(sessionToken, forceRefresh)
+                    categoryUseCases.getCategories(token, forceRefresh)
                         .collect { result ->
                             Log.d(TAG, "Categories result received: ${result::class.simpleName}")
                             when (result) {
                                 is ApiResult.Loading -> {
                                     Log.d(TAG, "Categories loading...")
                                 }
+
                                 is ApiResult.Success -> {
-                                    Log.d(TAG, "Categories loaded successfully: ${result.data.size} items")
+                                    Log.d(
+                                        TAG,
+                                        "Categories loaded successfully: ${result.data.size} items"
+                                    )
                                     result.data.forEach { category ->
                                         Log.d(TAG, "Category: ${category.id} - ${category.name}")
                                     }
                                 }
+
                                 is ApiResult.Error -> {
                                     Log.e(TAG, "Categories error: ${result.exception.message}")
                                 }
@@ -71,7 +85,8 @@ class CategoryViewModel(
                         }
                 } else {
                     Log.e(TAG, "No session token available")
-                    _categoriesState.value = ApiResult.Error(Exception("No session token available"))
+                    _categoriesState.value =
+                        ApiResult.Error(Exception("No session token available"))
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Exception in loadCategories: ${e.message}", e)
@@ -81,7 +96,10 @@ class CategoryViewModel(
     }
 
     fun ensureDataLoaded() {
-        Log.d(TAG, "ensureDataLoaded called - isInitialized: $isInitialized, currentState: ${_categoriesState.value::class.simpleName}")
+        Log.d(
+            TAG,
+            "ensureDataLoaded called - isInitialized: $isInitialized, currentState: ${_categoriesState.value::class.simpleName}"
+        )
 
         if (!isInitialized) {
             Log.d(TAG, "First time loading data...")

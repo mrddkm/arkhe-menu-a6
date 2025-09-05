@@ -70,7 +70,6 @@ fun ProfileScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Tampilkan indikator refreshing di bagian atas jika sedang refresh
             if (uiState.isRefreshing) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),

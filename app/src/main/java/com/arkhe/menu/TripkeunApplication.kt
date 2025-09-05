@@ -14,7 +14,7 @@ class TripkeunApplication : Application() {
         super.onCreate()
 
         startKoin {
-            androidLogger(Level.DEBUG)
+            androidLogger(Level.ERROR)
             androidContext(this@TripkeunApplication)
             modules(
                 appModule,

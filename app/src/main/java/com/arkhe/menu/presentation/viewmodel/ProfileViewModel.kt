@@ -2,6 +2,7 @@
 
 package com.arkhe.menu.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arkhe.menu.data.local.preferences.SessionManager
@@ -9,6 +10,7 @@ import com.arkhe.menu.domain.model.ActionInfo
 import com.arkhe.menu.domain.model.ApiResult
 import com.arkhe.menu.domain.model.Profile
 import com.arkhe.menu.domain.usecase.profile.ProfileUseCases
+import com.arkhe.menu.utils.Constants
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,11 +29,12 @@ class ProfileViewModel(
     private var loadProfilesJob: Job? = null
 
     init {
+        Log.d("init", "## ProfileViewModel::initialized ##")
         loadProfiles()
     }
 
     fun loadProfiles(forceRefresh: Boolean = false) {
-        // Cancel previous job to prevent multiple concurrent calls
+        Log.d("ProfileViewModel", "========== START ==========")
         loadProfilesJob?.cancel()
 
         loadProfilesJob = viewModelScope.launch {
@@ -39,6 +42,9 @@ class ProfileViewModel(
                 val token = sessionManager.sessionToken.first()
 
                 if (token != null) {
+                    Log.d("ProfileViewModel", "========== USE TOKEN ==========")
+                    Log.d("ProfileViewModel", "✅ USE TOKEN: $token")
+
                     profileUseCases.getProfiles(token, forceRefresh).collect { result ->
                         when (result) {
                             is ApiResult.Loading -> {
@@ -65,11 +71,12 @@ class ProfileViewModel(
                         }
                     }
                 } else {
-                    // Set default token and retry
-                    val defaultToken = "WWUmyoU9yWjVUsn8"
+                    Log.d("ProfileViewModel", "========== DEFAULT TOKEN ==========")
+                    val defaultToken = Constants.Simulation.TOKEN
                     sessionManager.saveSession(defaultToken)
+                    Log.d("ProfileViewModel", "⚠️ DEFAULT TOKEN: $defaultToken")
+                    Log.d("ProfileViewModel", "===================================")
 
-                    // Retry with default token
                     profileUseCases.getProfiles(defaultToken, forceRefresh).collect { result ->
                         when (result) {
                             is ApiResult.Loading -> {

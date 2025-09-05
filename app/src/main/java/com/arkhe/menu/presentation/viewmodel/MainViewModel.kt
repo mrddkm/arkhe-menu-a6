@@ -2,17 +2,41 @@
 
 package com.arkhe.menu.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.arkhe.menu.data.local.preferences.SessionManager
 import com.arkhe.menu.domain.model.UserRole
 import com.arkhe.menu.presentation.navigation.NavigationRoute
+import com.arkhe.menu.utils.Constants
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
-class MainViewModel() : ViewModel() {
-
+class MainViewModel(
+    private val sessionManager: SessionManager
+) : ViewModel() {
     private val _uiState = MutableStateFlow(MainUiState())
     val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
+
+    init {
+        Log.d("init", "## MainViewModel::initialized First Timw ##")
+        viewModelScope.launch {
+            val token = sessionManager.sessionToken.first()
+            if (token == null) {
+                val defaultToken = Constants.Simulation.TOKEN
+                sessionManager.saveSession(defaultToken)
+                Log.d("MainViewModel", "⚠️ Using sessionToken from Constant: $defaultToken")
+
+                val saved = sessionManager.sessionToken.first()
+                Log.d("MainViewModel", "✅ Token tersimpan di DataStore: $saved")
+            } else {
+                Log.d("MainViewModel", "✅ Using sessionToken from SessionManager: $token")
+            }
+        }
+    }
 
     fun selectBottomNavItem(item: BottomNavItem) {
         _uiState.value = _uiState.value.copy(

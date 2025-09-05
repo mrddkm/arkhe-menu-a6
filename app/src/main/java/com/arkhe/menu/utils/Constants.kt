@@ -22,8 +22,6 @@ object Constants {
     const val DATETIME_FORMAT = "dd MMM yyyy, HH:mm"
     const val ISO_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss"
 
-    const val CURRENCY_CODE = "IDR"
-
     const val MAX_RECEIPT_ITEMS = 50
     const val MIN_CUSTOMER_NAME_LENGTH = 2
 
@@ -34,30 +32,14 @@ object Constants {
 
     object Product {
         const val PRODUCT_LABEL = "Product"
-        const val STATUS_INITIATION = "initiation"
-        const val STATUS_RESEARCH = "research"
-        const val STATUS_READY = "ready"
     }
 
-    object Category{
+    object Category {
         const val CATEGORY_LABEL = "Category"
         const val STATISTICS_LABEL = "Statistics"
     }
 
-    object UserRoles {
-        const val SUPERUSER = "superuser"
-        const val FAGA = "faga"
-        const val MCC = "mcc"
-        const val BROD = "brod"
-        const val PRESDIR = "presdir"
-        const val UNSPECIFIED = "unspecified"
-    }
-
-    object SharedPrefsKeys {
-        const val USER_ROLE = "user_role"
-        const val AUTH_TOKEN = "auth_token"
-        const val REFRESH_TOKEN = "refresh_token"
-        const val USER_ID = "user_id"
-        const val USER_NAME = "user_name"
+    object Simulation {
+        const val TOKEN = "WWUmyoU9yWjVUsn8"
     }
 }
