@@ -2,7 +2,9 @@ package com.arkhe.menu.utils
 
 import android.annotation.SuppressLint
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 @Suppress("UNUSED")
 object DateUtils {
