@@ -1,6 +1,6 @@
 @file:Suppress("SpellCheckingInspection")
 
-package com.arkhe.menu.presentation.screen.tripkeun
+package com.arkhe.menu.presentation.screen.institution
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

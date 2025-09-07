@@ -113,22 +113,47 @@ fun DocsContent(
                         .padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Image(
-                        painter = painterResource(R.drawable.tripkeun_official),
-                        contentDescription = null,
-                        modifier = Modifier.size(48.dp)
-                    )
                     Spacer(modifier = Modifier.width(16.dp))
                     Column {
-                        Text(
-                            text = stringResource(R.string.client_long_name),
-                            style = MaterialTheme.typography.headlineSmall,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                        Text(
-                            text = "Informasi lengkap tentang perusahaan",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
+                        if (profileState.isLoading) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(100.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator()
+                            }
+                        } else {
+                            val profile = profileViewModel.getProfile()
+                            if (profile != null) {
+                                Image(
+                                    painter = painterResource(R.drawable.tripkeun_official),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(48.dp)
+                                )
+                                Text(
+                                    text = profile.nameShort,
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            } else {
+                                Text(
+                                    text = "Failed to load profiles",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.error,
+                                    modifier = Modifier.padding(16.dp)
+                                )
+                            }
+                        }
+                        profileState.error?.let { error ->
+                            Text(
+                                text = error,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.padding(16.dp)
+                            )
+                        }
                     }
                 }
             }

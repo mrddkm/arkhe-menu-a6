@@ -2,8 +2,9 @@ package com.arkhe.menu.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.arkhe.menu.utils.Constants
 
-@Entity(tableName = "categories")
+@Entity(tableName = Constants.Database.CATEGORY_TABLE)
 data class CategoryEntity(
     @PrimaryKey
     val id: String,

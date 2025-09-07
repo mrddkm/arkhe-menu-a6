@@ -4,5 +4,6 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import com.arkhe.menu.utils.Constants
 
-val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "app_preferences")
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = Constants.Database.DATASTORE_NAME)

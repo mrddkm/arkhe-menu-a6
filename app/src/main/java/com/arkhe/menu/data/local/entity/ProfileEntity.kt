@@ -2,8 +2,9 @@ package com.arkhe.menu.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.arkhe.menu.utils.Constants
 
-@Entity(tableName = "profiles")
+@Entity(tableName = Constants.Database.PROFILE_TABLE)
 data class ProfileEntity(
     @PrimaryKey
     val action: String,

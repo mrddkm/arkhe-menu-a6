@@ -23,6 +23,10 @@ class ProfileViewModel(
     private val sessionManager: SessionManager
 ) : ViewModel() {
 
+    companion object {
+        private const val TAG = "ProfileViewModel"
+    }
+
     private val _uiState = MutableStateFlow(ProfileUiState())
     val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
 
@@ -34,7 +38,7 @@ class ProfileViewModel(
     }
 
     fun loadProfiles(forceRefresh: Boolean = false) {
-        Log.d("ProfileViewModel", "========== START ==========")
+        Log.d(TAG, "========== START ==========")
         loadProfilesJob?.cancel()
 
         loadProfilesJob = viewModelScope.launch {

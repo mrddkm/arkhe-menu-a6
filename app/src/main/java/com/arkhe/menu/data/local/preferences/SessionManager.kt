@@ -31,22 +31,16 @@ class SessionManager(
         }
     }
 
-    // Get session token
-    /*    val sessionToken: Flow<String?> = dataStore.data.map { preferences ->
-            preferences[SESSION_TOKEN_KEY]
-        }*/
-
-    // Get user ID
+    @Suppress("Unused")
     val userId: Flow<String?> = dataStore.data.map { preferences ->
         preferences[USER_ID_KEY]
     }
 
-    // Get username
+    @Suppress("Unused")
     val username: Flow<String?> = dataStore.data.map { preferences ->
         preferences[USERNAME_KEY]
     }
 
-    // Save session data
     suspend fun saveSession(token: String, userId: String? = null, username: String? = null) {
         dataStore.edit { preferences ->
             preferences[SESSION_TOKEN_KEY] = token
@@ -55,7 +49,7 @@ class SessionManager(
         }
     }
 
-    // Clear session
+    @Suppress("Unused")
     suspend fun clearSession() {
         dataStore.edit { preferences ->
             preferences.remove(SESSION_TOKEN_KEY)
@@ -64,7 +58,7 @@ class SessionManager(
         }
     }
 
-    // Check if user is logged in
+    @Suppress("Unused")
     val isLoggedIn: Flow<Boolean> = dataStore.data.map { preferences ->
         preferences[SESSION_TOKEN_KEY] != null
     }

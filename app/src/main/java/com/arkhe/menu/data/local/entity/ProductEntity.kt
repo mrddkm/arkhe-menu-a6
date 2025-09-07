@@ -2,8 +2,9 @@ package com.arkhe.menu.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.arkhe.menu.utils.Constants
 
-@Entity(tableName = "products")
+@Entity(tableName = Constants.Database.PRODUCT_TABLE)
 data class ProductEntity(
     @PrimaryKey
     val id: String,

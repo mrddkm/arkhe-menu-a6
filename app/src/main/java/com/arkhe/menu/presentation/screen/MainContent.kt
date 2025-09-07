@@ -12,7 +12,7 @@ import androidx.navigation.NavHostController
 import com.arkhe.menu.domain.model.UserRole
 import com.arkhe.menu.presentation.screen.activity.ActivityContent
 import com.arkhe.menu.presentation.screen.docs.DocsContent
-import com.arkhe.menu.presentation.screen.tripkeun.TripkeunContent
+import com.arkhe.menu.presentation.screen.institution.TripkeunContent
 import com.arkhe.menu.presentation.viewmodel.BottomNavItem
 
 @Composable

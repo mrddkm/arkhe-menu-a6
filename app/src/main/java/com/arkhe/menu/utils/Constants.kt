@@ -14,16 +14,21 @@ object Constants {
     const val PARAMETER_VALUE_CATEGORY = "productcategory"
     const val PARAMETER_VALUE_PRODUCTS = "products"
 
-    const val DATABASE_NAME = "tripkeun_database"
-    const val DATABASE_VERSION = 1
-    const val DATASTORE_NAME = "tripkeun_settings"
-
     const val DATE_FORMAT = "dd MMM yyyy"
     const val DATETIME_FORMAT = "dd MMM yyyy, HH:mm"
     const val ISO_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss"
 
     const val MAX_RECEIPT_ITEMS = 50
     const val MIN_CUSTOMER_NAME_LENGTH = 2
+
+    object Database {
+        const val DATABASE_NAME = "arkhe_menu_database"
+        const val DATABASE_VERSION = 1
+        const val PROFILE_TABLE = "profiles"
+        const val CATEGORY_TABLE = "categories"
+        const val PRODUCT_TABLE = "products"
+        const val DATASTORE_NAME = "app_preferences"
+    }
 
     object CurrentLanguage {
         const val INDONESIAN = "id"

@@ -35,14 +35,10 @@ import com.arkhe.menu.domain.model.Profile
 import com.arkhe.menu.domain.model.ProfileInformation
 import com.arkhe.menu.domain.model.SocialMedia
 import com.arkhe.menu.presentation.components.common.LoadingIndicator
-import com.arkhe.menu.presentation.screen.docs.profile.ext.CompanyDescriptionCard
-import com.arkhe.menu.presentation.screen.docs.profile.ext.CompanyInfoCard
 import com.arkhe.menu.presentation.screen.docs.profile.ext.EmptyProfileState
 import com.arkhe.menu.presentation.screen.docs.profile.ext.ErrorCard
-import com.arkhe.menu.presentation.screen.docs.profile.ext.InfoMenu
-import com.arkhe.menu.presentation.screen.docs.profile.ext.ProfileHeader
+import com.arkhe.menu.presentation.screen.docs.profile.ext.ProfileDescription
 import com.arkhe.menu.presentation.screen.docs.profile.ext.SocialMediaCard
-import com.arkhe.menu.presentation.screen.docs.profile.ext.TaglineQuotesCard
 import com.arkhe.menu.presentation.theme.AppTheme
 import com.arkhe.menu.presentation.viewmodel.ProfileViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -143,17 +139,11 @@ private fun ProfileContent(
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        InfoMenu(
-            actionInfo = profile.actionInfo
-        )
-        ProfileHeader(profile = profile)
-        CompanyInfoCard(profile = profile)
+        ProfileDescription(profile = profile)
         SocialMediaCard(
             socialMedia = profile.socialMedia,
             onSocialMediaClick = onSocialMediaClick
         )
-        TaglineQuotesCard(profile = profile)
-        CompanyDescriptionCard(profile = profile)
     }
 }
 

@@ -115,11 +115,11 @@ class LocalDataSource(
         }
     }
 
-    suspend fun getProductsByCategory(categoryId: String): Flow<List<ProductEntity>> {
+    fun getProductsByCategory(categoryId: String): Flow<List<ProductEntity>> {
         return productDao.getProductsByCategory(categoryId)
     }
 
-    suspend fun getProductsByNamePrefix(namePrefix: String): Flow<List<ProductEntity>> {
+    fun getProductsByNamePrefix(namePrefix: String): Flow<List<ProductEntity>> {
         return productDao.getProductsByNamePrefix(namePrefix)
     }
 
