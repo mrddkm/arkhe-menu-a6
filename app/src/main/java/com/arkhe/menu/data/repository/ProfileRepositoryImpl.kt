@@ -7,7 +7,7 @@ import com.arkhe.menu.data.mapper.toDomainList
 import com.arkhe.menu.data.mapper.toEntityList
 import com.arkhe.menu.data.remote.RemoteDataSource
 import com.arkhe.menu.data.remote.api.NetworkErrorHandler
-import com.arkhe.menu.domain.model.ApiResult
+import com.arkhe.menu.data.remote.api.SafeApiResult
 import com.arkhe.menu.domain.model.NetworkException
 import com.arkhe.menu.domain.model.Profile
 import com.arkhe.menu.domain.repository.ProfileRepository
@@ -29,9 +29,9 @@ class ProfileRepositoryImpl(
     override suspend fun getProfiles(
         sessionToken: String,
         forceRefresh: Boolean
-    ): Flow<ApiResult<List<Profile>>> = flow {
+    ): Flow<SafeApiResult<List<Profile>>> = flow {
         Log.d(TAG, "getProfiles called - forceRefresh: $forceRefresh, token: $sessionToken")
-        emit(ApiResult.Loading)
+        emit(SafeApiResult.Loading)
 
         // Emit cached data first if available and not forcing refresh
         if (!forceRefresh) {
@@ -42,7 +42,7 @@ class ProfileRepositoryImpl(
                     .collect { entities ->
                         Log.d(TAG, "Found ${entities.size} cached profiles")
                         if (entities.isNotEmpty()) {
-                            emit(ApiResult.Success(entities.toDomainList()))
+                            emit(SafeApiResult.Success(entities.toDomainList()))
                         }
                     }
             } catch (e: Exception) {
@@ -53,7 +53,7 @@ class ProfileRepositoryImpl(
         // Fetch fresh data from remote
         Log.d(TAG, "Fetching data from remote API...")
         when (val remoteResult = remoteDataSource.getProfiles(sessionToken)) {
-            is ApiResult.Success -> {
+            is SafeApiResult.Success -> {
                 Log.d(
                     TAG,
                     "Remote API success - status: ${remoteResult.data.status}, message: ${remoteResult.data.message}"
@@ -71,32 +71,32 @@ class ProfileRepositoryImpl(
                             localDataSource.insertProfiles(entities)
 
                             // Emit fresh data
-                            emit(ApiResult.Success(remoteResult.data.toDomainList()))
+                            emit(SafeApiResult.Success(remoteResult.data.toDomainList()))
                         } catch (e: Exception) {
                             Log.e(TAG, "Failed to save to local database: ${e.message}", e)
                             // Even if local save fails, still return remote data
-                            emit(ApiResult.Success(remoteResult.data.toDomainList()))
+                            emit(SafeApiResult.Success(remoteResult.data.toDomainList()))
                         }
                     }
 
                     remoteResult.data.status == "debug" -> {
                         Log.w(TAG, "API returned debug response: ${remoteResult.data.message}")
-                        emit(ApiResult.Error(Exception("Debug: ${remoteResult.data.message}")))
+                        emit(SafeApiResult.Error(Exception("Debug: ${remoteResult.data.message}")))
                     }
 
                     remoteResult.data.data.isEmpty() -> {
                         Log.w(TAG, "API returned empty data array")
-                        emit(ApiResult.Error(Exception("API returned empty data array. Status: ${remoteResult.data.status}, Message: ${remoteResult.data.message}")))
+                        emit(SafeApiResult.Error(Exception("API returned empty data array. Status: ${remoteResult.data.status}, Message: ${remoteResult.data.message}")))
                     }
 
                     else -> {
                         Log.w(TAG, "API returned unsuccessful status: ${remoteResult.data.status}")
-                        emit(ApiResult.Error(Exception("API error - Status: ${remoteResult.data.status}, Message: ${remoteResult.data.message}")))
+                        emit(SafeApiResult.Error(Exception("API error - Status: ${remoteResult.data.status}, Message: ${remoteResult.data.message}")))
                     }
                 }
             }
 
-            is ApiResult.Error -> {
+            is SafeApiResult.Error -> {
                 Log.e(TAG, "Remote API error: ${remoteResult.exception.message}")
                 // If we have cached data and remote fails, don't emit error unless forced refresh
                 val hasLocalData = try {
@@ -115,11 +115,11 @@ class ProfileRepositoryImpl(
                         remoteResult.exception.message ?: "Unknown error occurred"
                     }
                     Log.e(TAG, "Emitting error: $errorMessage")
-                    emit(ApiResult.Error(Exception(errorMessage)))
+                    emit(SafeApiResult.Error(Exception(errorMessage)))
                 }
             }
 
-            ApiResult.Loading -> {
+            SafeApiResult.Loading -> {
                 Log.w(TAG, "Remote API returned Loading state - this shouldn't happen")
             }
         }
@@ -137,10 +137,10 @@ class ProfileRepositoryImpl(
         }
     }
 
-    override suspend fun refreshProfiles(sessionToken: String): ApiResult<List<Profile>> {
+    override suspend fun refreshProfiles(sessionToken: String): SafeApiResult<List<Profile>> {
         Log.d(TAG, "refreshProfiles called with token: $sessionToken")
         return when (val remoteResult = remoteDataSource.getProfiles(sessionToken)) {
-            is ApiResult.Success -> {
+            is SafeApiResult.Success -> {
                 Log.d(
                     TAG,
                     "Refresh success - status: ${remoteResult.data.status}, data count: ${remoteResult.data.data.size}"
@@ -154,37 +154,37 @@ class ProfileRepositoryImpl(
                             localDataSource.deleteAllProfiles()
                             localDataSource.insertProfiles(entities)
 
-                            ApiResult.Success(remoteResult.data.toDomainList())
+                            SafeApiResult.Success(remoteResult.data.toDomainList())
                         } catch (e: Exception) {
                             Log.e(TAG, "Failed to save refreshed data: ${e.message}", e)
                             // Even if local save fails, still return remote data
-                            ApiResult.Success(remoteResult.data.toDomainList())
+                            SafeApiResult.Success(remoteResult.data.toDomainList())
                         }
                     }
 
                     remoteResult.data.status == "debug" -> {
-                        ApiResult.Error(Exception("Debug response: ${remoteResult.data.message}"))
+                        SafeApiResult.Error(Exception("Debug response: ${remoteResult.data.message}"))
                     }
 
                     else -> {
-                        ApiResult.Error(Exception("Refresh failed - Status: ${remoteResult.data.status}, Message: ${remoteResult.data.message}"))
+                        SafeApiResult.Error(Exception("Refresh failed - Status: ${remoteResult.data.status}, Message: ${remoteResult.data.message}"))
                     }
                 }
             }
 
-            is ApiResult.Error -> {
+            is SafeApiResult.Error -> {
                 Log.e(TAG, "Refresh error: ${remoteResult.exception.message}")
                 val errorMessage = if (remoteResult.exception is NetworkException) {
                     NetworkErrorHandler.getErrorMessage(remoteResult.exception)
                 } else {
                     remoteResult.exception.message ?: "Unknown error occurred"
                 }
-                ApiResult.Error(Exception(errorMessage))
+                SafeApiResult.Error(Exception(errorMessage))
             }
 
-            ApiResult.Loading -> {
+            SafeApiResult.Loading -> {
                 Log.w(TAG, "Refresh returned Loading state - this shouldn't happen")
-                ApiResult.Error(Exception("Unexpected loading state"))
+                SafeApiResult.Error(Exception("Unexpected loading state"))
             }
         }
     }

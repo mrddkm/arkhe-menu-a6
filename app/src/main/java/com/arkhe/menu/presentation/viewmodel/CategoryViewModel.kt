@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arkhe.menu.data.local.preferences.SessionManager
-import com.arkhe.menu.domain.model.ApiResult
+import com.arkhe.menu.data.remote.api.SafeApiResult
 import com.arkhe.menu.domain.model.Category
 import com.arkhe.menu.domain.usecase.category.CategoryUseCases
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,8 +21,9 @@ class CategoryViewModel(
         private const val TAG = "CategoryViewModel"
     }
 
-    private val _categoriesState = MutableStateFlow<ApiResult<List<Category>>>(ApiResult.Loading)
-    val categoriesState: StateFlow<ApiResult<List<Category>>> = _categoriesState.asStateFlow()
+    private val _categoriesState =
+        MutableStateFlow<SafeApiResult<List<Category>>>(SafeApiResult.Loading)
+    val categoriesState: StateFlow<SafeApiResult<List<Category>>> = _categoriesState.asStateFlow()
 
     private val _selectedCategory = MutableStateFlow<Category?>(null)
     val selectedCategory: StateFlow<Category?> = _selectedCategory.asStateFlow()
@@ -57,17 +58,17 @@ class CategoryViewModel(
 
                 if (token != null) {
                     Log.d(TAG, "Starting categories fetch...")
-                    _categoriesState.value = ApiResult.Loading
+                    _categoriesState.value = SafeApiResult.Loading
 
                     categoryUseCases.getCategories(token, forceRefresh)
                         .collect { result ->
                             Log.d(TAG, "Categories result received: ${result::class.simpleName}")
                             when (result) {
-                                is ApiResult.Loading -> {
+                                is SafeApiResult.Loading -> {
                                     Log.d(TAG, "Categories loading...")
                                 }
 
-                                is ApiResult.Success -> {
+                                is SafeApiResult.Success -> {
                                     Log.d(
                                         TAG,
                                         "Categories loaded successfully: ${result.data.size} items"
@@ -77,7 +78,7 @@ class CategoryViewModel(
                                     }
                                 }
 
-                                is ApiResult.Error -> {
+                                is SafeApiResult.Error -> {
                                     Log.e(TAG, "Categories error: ${result.exception.message}")
                                 }
                             }
@@ -86,11 +87,11 @@ class CategoryViewModel(
                 } else {
                     Log.e(TAG, "No session token available")
                     _categoriesState.value =
-                        ApiResult.Error(Exception("No session token available"))
+                        SafeApiResult.Error(Exception("No session token available"))
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Exception in loadCategories: ${e.message}", e)
-                _categoriesState.value = ApiResult.Error(e)
+                _categoriesState.value = SafeApiResult.Error(e)
             }
         }
     }
@@ -105,7 +106,7 @@ class CategoryViewModel(
             Log.d(TAG, "First time loading data...")
             loadCategories(forceRefresh = false)
             isInitialized = true
-        } else if (_categoriesState.value is ApiResult.Error) {
+        } else if (_categoriesState.value is SafeApiResult.Error) {
             Log.d(TAG, "Retrying after error...")
             loadCategories(forceRefresh = false)
         } else {

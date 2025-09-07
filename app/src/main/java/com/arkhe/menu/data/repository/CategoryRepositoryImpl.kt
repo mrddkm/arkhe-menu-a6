@@ -7,7 +7,7 @@ import com.arkhe.menu.data.mapper.toDomainList
 import com.arkhe.menu.data.mapper.toEntityList
 import com.arkhe.menu.data.remote.RemoteDataSource
 import com.arkhe.menu.data.remote.api.NetworkErrorHandler
-import com.arkhe.menu.domain.model.ApiResult
+import com.arkhe.menu.data.remote.api.SafeApiResult
 import com.arkhe.menu.domain.model.Category
 import com.arkhe.menu.domain.model.NetworkException
 import com.arkhe.menu.domain.repository.CategoryRepository
@@ -29,9 +29,9 @@ class CategoryRepositoryImpl(
     override suspend fun getCategories(
         sessionToken: String,
         forceRefresh: Boolean
-    ): Flow<ApiResult<List<Category>>> = flow {
+    ): Flow<SafeApiResult<List<Category>>> = flow {
         Log.d(TAG, "getCategories called - forceRefresh: $forceRefresh, token: $sessionToken")
-        emit(ApiResult.Loading)
+        emit(SafeApiResult.Loading)
 
         // Check if we have local data first
         val hasLocalData = try {
@@ -52,7 +52,7 @@ class CategoryRepositoryImpl(
                     .collect { entities ->
                         Log.d(TAG, "Found ${entities.size} cached categories")
                         if (entities.isNotEmpty()) {
-                            emit(ApiResult.Success(entities.toDomainList()))
+                            emit(SafeApiResult.Success(entities.toDomainList()))
                         }
                     }
             } catch (e: Exception) {
@@ -64,9 +64,12 @@ class CategoryRepositoryImpl(
         // 1. Force refresh is requested, OR
         // 2. No local data exists (first install)
         if (forceRefresh || !hasLocalData) {
-            Log.d(TAG, "Fetching categories from remote API... (forceRefresh: $forceRefresh, hasLocalData: $hasLocalData)")
+            Log.d(
+                TAG,
+                "Fetching categories from remote API... (forceRefresh: $forceRefresh, hasLocalData: $hasLocalData)"
+            )
             when (val remoteResult = remoteDataSource.getCategories(sessionToken)) {
-                is ApiResult.Success -> {
+                is SafeApiResult.Success -> {
                     Log.d(
                         TAG,
                         "Remote API success - status: ${remoteResult.data.status}, message: ${remoteResult.data.message}"
@@ -79,37 +82,47 @@ class CategoryRepositoryImpl(
                             try {
                                 // Save to local database
                                 val entities = remoteResult.data.toEntityList()
-                                Log.d(TAG, "Saving ${entities.size} category entities to local database")
+                                Log.d(
+                                    TAG,
+                                    "Saving ${entities.size} category entities to local database"
+                                )
                                 localDataSource.deleteAllCategories()
                                 localDataSource.insertCategories(entities)
 
                                 // Emit fresh data
-                                emit(ApiResult.Success(remoteResult.data.toDomainList()))
+                                emit(SafeApiResult.Success(remoteResult.data.toDomainList()))
                             } catch (e: Exception) {
-                                Log.e(TAG, "Failed to save categories to local database: ${e.message}", e)
+                                Log.e(
+                                    TAG,
+                                    "Failed to save categories to local database: ${e.message}",
+                                    e
+                                )
                                 // Even if local save fails, still return remote data
-                                emit(ApiResult.Success(remoteResult.data.toDomainList()))
+                                emit(SafeApiResult.Success(remoteResult.data.toDomainList()))
                             }
                         }
 
                         remoteResult.data.status == "debug" -> {
                             Log.w(TAG, "API returned debug response: ${remoteResult.data.message}")
-                            emit(ApiResult.Error(Exception("Debug: ${remoteResult.data.message}")))
+                            emit(SafeApiResult.Error(Exception("Debug: ${remoteResult.data.message}")))
                         }
 
                         remoteResult.data.data.isEmpty() -> {
                             Log.w(TAG, "API returned empty categories array")
-                            emit(ApiResult.Error(Exception("API returned empty categories array. Status: ${remoteResult.data.status}, Message: ${remoteResult.data.message}")))
+                            emit(SafeApiResult.Error(Exception("API returned empty categories array. Status: ${remoteResult.data.status}, Message: ${remoteResult.data.message}")))
                         }
 
                         else -> {
-                            Log.w(TAG, "API returned unsuccessful status: ${remoteResult.data.status}")
-                            emit(ApiResult.Error(Exception("API error - Status: ${remoteResult.data.status}, Message: ${remoteResult.data.message}")))
+                            Log.w(
+                                TAG,
+                                "API returned unsuccessful status: ${remoteResult.data.status}"
+                            )
+                            emit(SafeApiResult.Error(Exception("API error - Status: ${remoteResult.data.status}, Message: ${remoteResult.data.message}")))
                         }
                     }
                 }
 
-                is ApiResult.Error -> {
+                is SafeApiResult.Error -> {
                     Log.e(TAG, "Remote API error: ${remoteResult.exception.message}")
 
                     // Always emit error if it's the first install or force refresh
@@ -119,11 +132,11 @@ class CategoryRepositoryImpl(
                         remoteResult.exception.message ?: "Unknown error occurred"
                     }
                     Log.e(TAG, "Emitting error: $errorMessage")
-                    emit(ApiResult.Error(Exception(errorMessage)))
+                    emit(SafeApiResult.Error(Exception(errorMessage)))
                     // If we have local data and it's not a forced refresh, we already emitted the cached data above
                 }
 
-                ApiResult.Loading -> {
+                SafeApiResult.Loading -> {
                     Log.w(TAG, "Remote API returned Loading state - this shouldn't happen")
                 }
             }
@@ -142,10 +155,10 @@ class CategoryRepositoryImpl(
         }
     }
 
-    override suspend fun refreshCategories(sessionToken: String): ApiResult<List<Category>> {
+    override suspend fun refreshCategories(sessionToken: String): SafeApiResult<List<Category>> {
         Log.d(TAG, "refreshCategories called with token: $sessionToken")
         return when (val remoteResult = remoteDataSource.getCategories(sessionToken)) {
-            is ApiResult.Success -> {
+            is SafeApiResult.Success -> {
                 Log.d(
                     TAG,
                     "Refresh success - status: ${remoteResult.data.status}, data count: ${remoteResult.data.data.size}"
@@ -159,37 +172,37 @@ class CategoryRepositoryImpl(
                             localDataSource.deleteAllCategories()
                             localDataSource.insertCategories(entities)
 
-                            ApiResult.Success(remoteResult.data.toDomainList())
+                            SafeApiResult.Success(remoteResult.data.toDomainList())
                         } catch (e: Exception) {
                             Log.e(TAG, "Failed to save refreshed categories data: ${e.message}", e)
                             // Even if local save fails, still return remote data
-                            ApiResult.Success(remoteResult.data.toDomainList())
+                            SafeApiResult.Success(remoteResult.data.toDomainList())
                         }
                     }
 
                     remoteResult.data.status == "debug" -> {
-                        ApiResult.Error(Exception("Debug response: ${remoteResult.data.message}"))
+                        SafeApiResult.Error(Exception("Debug response: ${remoteResult.data.message}"))
                     }
 
                     else -> {
-                        ApiResult.Error(Exception("Refresh failed - Status: ${remoteResult.data.status}, Message: ${remoteResult.data.message}"))
+                        SafeApiResult.Error(Exception("Refresh failed - Status: ${remoteResult.data.status}, Message: ${remoteResult.data.message}"))
                     }
                 }
             }
 
-            is ApiResult.Error -> {
+            is SafeApiResult.Error -> {
                 Log.e(TAG, "Refresh error: ${remoteResult.exception.message}")
                 val errorMessage = if (remoteResult.exception is NetworkException) {
                     NetworkErrorHandler.getErrorMessage(remoteResult.exception)
                 } else {
                     remoteResult.exception.message ?: "Unknown error occurred"
                 }
-                ApiResult.Error(Exception(errorMessage))
+                SafeApiResult.Error(Exception(errorMessage))
             }
 
-            ApiResult.Loading -> {
+            SafeApiResult.Loading -> {
                 Log.w(TAG, "Refresh returned Loading state - this shouldn't happen")
-                ApiResult.Error(Exception("Unexpected loading state"))
+                SafeApiResult.Error(Exception("Unexpected loading state"))
             }
         }
     }

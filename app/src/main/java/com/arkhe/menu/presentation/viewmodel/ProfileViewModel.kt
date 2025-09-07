@@ -6,8 +6,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arkhe.menu.data.local.preferences.SessionManager
+import com.arkhe.menu.data.remote.api.SafeApiResult
 import com.arkhe.menu.domain.model.ActionInfo
-import com.arkhe.menu.domain.model.ApiResult
 import com.arkhe.menu.domain.model.Profile
 import com.arkhe.menu.domain.usecase.profile.ProfileUseCases
 import com.arkhe.menu.utils.Constants
@@ -47,14 +47,14 @@ class ProfileViewModel(
 
                     profileUseCases.getProfiles(token, forceRefresh).collect { result ->
                         when (result) {
-                            is ApiResult.Loading -> {
+                            is SafeApiResult.Loading -> {
                                 _uiState.value = _uiState.value.copy(
                                     isLoading = true,
                                     error = null
                                 )
                             }
 
-                            is ApiResult.Success -> {
+                            is SafeApiResult.Success -> {
                                 _uiState.value = _uiState.value.copy(
                                     isLoading = false,
                                     profiles = result.data,
@@ -62,7 +62,7 @@ class ProfileViewModel(
                                 )
                             }
 
-                            is ApiResult.Error -> {
+                            is SafeApiResult.Error -> {
                                 _uiState.value = _uiState.value.copy(
                                     isLoading = false,
                                     error = result.exception.message ?: "Unknown error occurred"
@@ -79,14 +79,14 @@ class ProfileViewModel(
 
                     profileUseCases.getProfiles(defaultToken, forceRefresh).collect { result ->
                         when (result) {
-                            is ApiResult.Loading -> {
+                            is SafeApiResult.Loading -> {
                                 _uiState.value = _uiState.value.copy(
                                     isLoading = true,
                                     error = null
                                 )
                             }
 
-                            is ApiResult.Success -> {
+                            is SafeApiResult.Success -> {
                                 _uiState.value = _uiState.value.copy(
                                     isLoading = false,
                                     profiles = result.data,
@@ -94,7 +94,7 @@ class ProfileViewModel(
                                 )
                             }
 
-                            is ApiResult.Error -> {
+                            is SafeApiResult.Error -> {
                                 _uiState.value = _uiState.value.copy(
                                     isLoading = false,
                                     error = result.exception.message ?: "Unknown error occurred"
@@ -119,7 +119,7 @@ class ProfileViewModel(
                 _uiState.value = _uiState.value.copy(isRefreshing = true)
 
                 when (val result = profileUseCases.refreshProfiles(token)) {
-                    is ApiResult.Success -> {
+                    is SafeApiResult.Success -> {
                         _uiState.value = _uiState.value.copy(
                             isRefreshing = false,
                             profiles = result.data,
@@ -127,14 +127,14 @@ class ProfileViewModel(
                         )
                     }
 
-                    is ApiResult.Error -> {
+                    is SafeApiResult.Error -> {
                         _uiState.value = _uiState.value.copy(
                             isRefreshing = false,
                             error = result.exception.message ?: "Failed to refresh profiles"
                         )
                     }
 
-                    ApiResult.Loading -> {
+                    SafeApiResult.Loading -> {
                         // Should not happen in direct API call
                         _uiState.value = _uiState.value.copy(isRefreshing = false)
                     }

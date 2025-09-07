@@ -1,6 +1,6 @@
 package com.arkhe.menu.domain.repository
 
-import com.arkhe.menu.domain.model.ApiResult
+import com.arkhe.menu.data.remote.api.SafeApiResult
 import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.domain.model.ProductGroup
 import kotlinx.coroutines.flow.Flow
@@ -10,7 +10,7 @@ interface ProductRepository {
         sessionToken: String,
         productCategoryId: String = "ALL",
         forceRefresh: Boolean = false
-    ): Flow<ApiResult<List<Product>>>
+    ): Flow<SafeApiResult<List<Product>>>
 
     suspend fun getProduct(id: String): Product?
 
@@ -23,5 +23,5 @@ interface ProductRepository {
     suspend fun refreshProducts(
         sessionToken: String,
         productCategoryId: String = "ALL"
-    ): ApiResult<List<Product>>
+    ): SafeApiResult<List<Product>>
 }

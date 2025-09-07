@@ -1,6 +1,6 @@
 package com.arkhe.menu.domain.usecase.product
 
-import com.arkhe.menu.domain.model.ApiResult
+import com.arkhe.menu.data.remote.api.SafeApiResult
 import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.domain.model.ProductGroup
 import com.arkhe.menu.domain.repository.ProductRepository
@@ -13,7 +13,7 @@ class GetProductsUseCase(
         sessionToken: String,
         productCategoryId: String = "ALL",
         forceRefresh: Boolean = false
-    ): Flow<ApiResult<List<Product>>> {
+    ): Flow<SafeApiResult<List<Product>>> {
         return repository.getProducts(sessionToken, productCategoryId, forceRefresh)
     }
 }
@@ -56,7 +56,7 @@ class RefreshProductsUseCase(
     suspend operator fun invoke(
         sessionToken: String,
         productCategoryId: String = "ALL"
-    ): ApiResult<List<Product>> {
+    ): SafeApiResult<List<Product>> {
         return repository.refreshProducts(sessionToken, productCategoryId)
     }
 }

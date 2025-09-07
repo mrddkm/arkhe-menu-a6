@@ -34,7 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.arkhe.menu.domain.model.ApiResult
+import com.arkhe.menu.data.remote.api.SafeApiResult
 import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.presentation.screen.docs.product.ext.BottomSheetProduct
 import com.arkhe.menu.presentation.screen.docs.product.ext.ProductGroupCard
@@ -100,7 +100,7 @@ fun ProductsScreen(
 
         // Action information
         when (productsState) {
-            is ApiResult.Success -> {
+            is SafeApiResult.Success -> {
                 val actionInfo = productViewModel.getActionInfo(currentLanguage)
                 if (actionInfo.isNotEmpty()) {
                     Card(
@@ -124,7 +124,7 @@ fun ProductsScreen(
         }
 
         when (productsState) {
-            is ApiResult.Loading -> {
+            is SafeApiResult.Loading -> {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -135,7 +135,7 @@ fun ProductsScreen(
                 }
             }
 
-            is ApiResult.Success -> {
+            is SafeApiResult.Success -> {
                 if (showGroupSelection) {
                     // Show product groups (categories)
                     Text(
@@ -203,7 +203,7 @@ fun ProductsScreen(
                 }
             }
 
-            is ApiResult.Error -> {
+            is SafeApiResult.Error -> {
                 Column {
                     Text(
                         text = "Error loading products",
@@ -211,7 +211,7 @@ fun ProductsScreen(
                         color = MaterialTheme.colorScheme.error
                     )
                     Text(
-                        text = (productsState as ApiResult.Error).exception.message
+                        text = (productsState as SafeApiResult.Error).exception.message
                             ?: "Unknown error",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)

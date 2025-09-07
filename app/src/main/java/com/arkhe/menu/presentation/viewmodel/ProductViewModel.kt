@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arkhe.menu.data.local.preferences.SessionManager
-import com.arkhe.menu.domain.model.ApiResult
+import com.arkhe.menu.data.remote.api.SafeApiResult
 import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.domain.model.ProductGroup
 import com.arkhe.menu.domain.usecase.product.ProductUseCases
@@ -22,8 +22,9 @@ class ProductViewModel(
         private const val TAG = "ProductViewModel"
     }
 
-    private val _productsState = MutableStateFlow<ApiResult<List<Product>>>(ApiResult.Loading)
-    val productsState: StateFlow<ApiResult<List<Product>>> = _productsState.asStateFlow()
+    private val _productsState =
+        MutableStateFlow<SafeApiResult<List<Product>>>(SafeApiResult.Loading)
+    val productsState: StateFlow<SafeApiResult<List<Product>>> = _productsState.asStateFlow()
 
     private val _selectedProduct = MutableStateFlow<Product?>(null)
     val selectedProduct: StateFlow<Product?> = _selectedProduct.asStateFlow()
@@ -68,15 +69,16 @@ class ProductViewModel(
                             _productsState.value = result
 
                             // Update product groups when products are loaded
-                            if (result is ApiResult.Success) {
+                            if (result is SafeApiResult.Success) {
                                 loadProductGroups()
                             }
                         }
                 } else {
-                    _productsState.value = ApiResult.Error(Exception("No session token available"))
+                    _productsState.value =
+                        SafeApiResult.Error(Exception("No session token available"))
                 }
             } catch (e: Exception) {
-                _productsState.value = ApiResult.Error(e)
+                _productsState.value = SafeApiResult.Error(e)
             }
         }
     }
@@ -120,7 +122,7 @@ class ProductViewModel(
                 productUseCases.getProductsByNamePrefix(prefix).collect { products ->
                     _filteredProducts.value = products
                 }
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 _filteredProducts.value = emptyList()
             }
         }
@@ -131,7 +133,7 @@ class ProductViewModel(
     }
 
     fun getActionInfo(language: String = "en"): String {
-        val products = (_productsState.value as? ApiResult.Success)?.data?.firstOrNull()
+        val products = (_productsState.value as? SafeApiResult.Success)?.data?.firstOrNull()
         return if (language == "id") {
             products?.actionInfo?.information?.indonesian ?: ""
         } else {

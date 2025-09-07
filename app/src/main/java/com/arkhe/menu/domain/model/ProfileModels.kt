@@ -69,10 +69,3 @@ data class ProfileInformation(
     val indonesian: String,
     val english: String
 )
-
-/*Result wrapper for API responses*/
-sealed class ApiResult<out T> {
-    data class Success<out T>(val data: T) : ApiResult<T>()
-    data class Error(val exception: Throwable) : ApiResult<Nothing>()
-    data object Loading : ApiResult<Nothing>()
-}

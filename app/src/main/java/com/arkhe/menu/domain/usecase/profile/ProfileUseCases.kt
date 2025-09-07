@@ -1,6 +1,6 @@
 package com.arkhe.menu.domain.usecase.profile
 
-import com.arkhe.menu.domain.model.ApiResult
+import com.arkhe.menu.data.remote.api.SafeApiResult
 import com.arkhe.menu.domain.model.Profile
 import com.arkhe.menu.domain.repository.ProfileRepository
 import kotlinx.coroutines.flow.Flow
@@ -11,7 +11,7 @@ class GetProfilesUseCase(
     suspend operator fun invoke(
         sessionToken: String,
         forceRefresh: Boolean = false
-    ): Flow<ApiResult<List<Profile>>> {
+    ): Flow<SafeApiResult<List<Profile>>> {
         return repository.getProfiles(sessionToken, forceRefresh)
     }
 }
@@ -27,7 +27,7 @@ class GetProfileUseCase(
 class RefreshProfilesUseCase(
     private val repository: ProfileRepository
 ) {
-    suspend operator fun invoke(sessionToken: String): ApiResult<List<Profile>> {
+    suspend operator fun invoke(sessionToken: String): SafeApiResult<List<Profile>> {
         return repository.refreshProfiles(sessionToken)
     }
 }

@@ -36,10 +36,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.R
+import com.arkhe.menu.data.remote.api.SafeApiResult
 import com.arkhe.menu.di.appModule
 import com.arkhe.menu.di.dataModule
 import com.arkhe.menu.di.domainModule
-import com.arkhe.menu.domain.model.ApiResult
 import com.arkhe.menu.domain.model.Category
 import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.presentation.screen.docs.categories.ext.CategoriesSectionContent
@@ -209,7 +209,7 @@ fun DocsContent(
                         }
                     )
                     when (categoriesState) {
-                        is ApiResult.Loading -> {
+                        is SafeApiResult.Loading -> {
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -220,13 +220,13 @@ fun DocsContent(
                             }
                         }
 
-                        is ApiResult.Success -> {
+                        is SafeApiResult.Success -> {
                             CategoriesSectionContent(
-                                categoriesList = (categoriesState as ApiResult.Success<List<Category>>).data
+                                categoriesList = (categoriesState as SafeApiResult.Success<List<Category>>).data
                             )
                         }
 
-                        is ApiResult.Error -> {
+                        is SafeApiResult.Error -> {
                             Text(
                                 text = "Failed to load categories",
                                 style = MaterialTheme.typography.bodyMedium,
@@ -257,7 +257,7 @@ fun DocsContent(
                         }
                     )
                     when (productsState) {
-                        is ApiResult.Loading -> {
+                        is SafeApiResult.Loading -> {
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -268,13 +268,13 @@ fun DocsContent(
                             }
                         }
 
-                        is ApiResult.Success -> {
+                        is SafeApiResult.Success -> {
                             ProductSectionContent(
-                                productList = (productsState as ApiResult.Success<List<Product>>).data
+                                productList = (productsState as SafeApiResult.Success<List<Product>>).data
                             )
                         }
 
-                        is ApiResult.Error -> {
+                        is SafeApiResult.Error -> {
                             Text(
                                 text = "Failed to load products",
                                 style = MaterialTheme.typography.bodyMedium,

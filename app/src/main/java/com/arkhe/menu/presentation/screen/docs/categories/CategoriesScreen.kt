@@ -34,7 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.arkhe.menu.domain.model.ApiResult
+import com.arkhe.menu.data.remote.api.SafeApiResult
 import com.arkhe.menu.domain.model.Category
 import com.arkhe.menu.presentation.screen.docs.categories.ext.CategoryItem
 import com.arkhe.menu.presentation.viewmodel.CategoryViewModel
@@ -60,7 +60,7 @@ fun CategoriesScreen(
     }
 
     LaunchedEffect(categoriesState) {
-        if (categoriesState !is ApiResult.Loading) {
+        if (categoriesState !is SafeApiResult.Loading) {
             isRefreshing = false
         }
     }
@@ -75,7 +75,7 @@ fun CategoriesScreen(
                 shape = CircleShape,
                 containerColor = MaterialTheme.colorScheme.primary
             ) {
-                if (isRefreshing && categoriesState is ApiResult.Loading) {
+                if (isRefreshing && categoriesState is SafeApiResult.Loading) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(24.dp),
                         color = MaterialTheme.colorScheme.onPrimary,
@@ -107,7 +107,7 @@ fun CategoriesScreen(
             )
 
             when (categoriesState) {
-                is ApiResult.Loading -> {
+                is SafeApiResult.Loading -> {
                     if (!isRefreshing) {
                         Box(
                             modifier = Modifier
@@ -131,8 +131,8 @@ fun CategoriesScreen(
                     }
                 }
 
-                is ApiResult.Success -> {
-                    val categories = (categoriesState as ApiResult.Success<List<Category>>).data
+                is SafeApiResult.Success -> {
+                    val categories = (categoriesState as SafeApiResult.Success<List<Category>>).data
 
                     if (categories.isEmpty()) {
                         Box(
@@ -181,7 +181,7 @@ fun CategoriesScreen(
                     }
                 }
 
-                is ApiResult.Error -> {
+                is SafeApiResult.Error -> {
                     Column {
                         Text(
                             text = "Error loading categories",
@@ -189,7 +189,7 @@ fun CategoriesScreen(
                             color = MaterialTheme.colorScheme.error
                         )
                         Text(
-                            text = (categoriesState as ApiResult.Error).exception.message
+                            text = (categoriesState as SafeApiResult.Error).exception.message
                                 ?: "Unknown error",
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
