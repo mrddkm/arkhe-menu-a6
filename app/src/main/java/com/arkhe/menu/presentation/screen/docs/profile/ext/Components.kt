@@ -10,15 +10,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BusinessCenter
-import androidx.compose.material.icons.filled.Camera
 import androidx.compose.material.icons.filled.Error
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.VideoLibrary
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -32,113 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.arkhe.menu.domain.model.SocialMedia
-
-@Composable
-fun SocialMediaCard(
-    socialMedia: SocialMedia,
-    onSocialMediaClick: (String) -> Unit
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            Text(
-                text = "Find Us On",
-                style = MaterialTheme.typography.titleLarge.copy(
-                    fontWeight = FontWeight.Bold
-                ),
-                color = MaterialTheme.colorScheme.primary
-            )
-
-            // Google Maps - Add null safety
-            if (socialMedia.googleMaps.isNotBlank()) {
-                SocialMediaItem(
-                    icon = Icons.Default.LocationOn,
-                    label = "Google Maps",
-                    value = "View Location",
-                    onClick = { onSocialMediaClick(socialMedia.googleMaps) }
-                )
-            }
-
-            // Instagram - Add null safety
-            if (socialMedia.instagram.isNotBlank()) {
-                SocialMediaItem(
-                    icon = Icons.Default.Camera,
-                    label = "Instagram",
-                    value = "@${socialMedia.instagram}",
-                    onClick = { onSocialMediaClick("https://instagram.com/${socialMedia.instagram}") }
-                )
-            }
-
-            // TikTok - Add null safety
-            if (socialMedia.tiktok.isNotBlank()) {
-                SocialMediaItem(
-                    icon = Icons.Default.VideoLibrary,
-                    label = "TikTok",
-                    value = "@${socialMedia.tiktok}",
-                    onClick = { onSocialMediaClick("https://tiktok.com/@${socialMedia.tiktok}") }
-                )
-            }
-
-            // YouTube - Add null safety
-            if (socialMedia.youtube.isNotBlank()) {
-                SocialMediaItem(
-                    icon = Icons.Default.PlayArrow,
-                    label = "YouTube",
-                    value = "@${socialMedia.youtube}",
-                    onClick = { onSocialMediaClick("https://youtube.com/@${socialMedia.youtube}") }
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun SocialMediaItem(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    label: String,
-    value: String,
-    onClick: () -> Unit
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        onClick = onClick,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
-        ),
-        shape = RoundedCornerShape(8.dp)
-    ) {
-        Row(
-            modifier = Modifier.padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = label,
-                tint = MaterialTheme.colorScheme.primary
-            )
-            Spacer(modifier = Modifier.width(12.dp))
-            Column {
-                Text(
-                    text = label,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Text(
-                    text = value,
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        fontWeight = FontWeight.Medium
-                    )
-                )
-            }
-        }
-    }
-}
 
 @Composable
 fun EmptyProfileState(
