@@ -22,10 +22,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.domain.model.SocialMedia
 import com.arkhe.menu.presentation.theme.AppTheme
+import com.arkhe.menu.utils.PhoneNumberParser
+import com.arkhe.menu.utils.formatToInternationalWithDash
 import compose.icons.SimpleIcons
 import compose.icons.simpleicons.Googlemaps
 import compose.icons.simpleicons.Instagram
 import compose.icons.simpleicons.Tiktok
+import compose.icons.simpleicons.Whatsapp
 import compose.icons.simpleicons.Youtube
 
 @Composable
@@ -33,6 +36,7 @@ fun SocialMediaCard(
     socialMedia: SocialMedia,
     onSocialMediaClick: (String) -> Unit
 ) {
+    val phoneFormatted = formatToInternationalWithDash(socialMedia.whatsApp)
     Column(
         modifier = Modifier.padding(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -50,6 +54,14 @@ fun SocialMediaCard(
                 icon = SimpleIcons.Googlemaps,
                 value = "View Location",
                 onClick = { onSocialMediaClick(socialMedia.googleMaps) }
+            )
+        }
+
+        if (socialMedia.whatsApp.isNotBlank()) {
+            SocialMediaItem(
+                icon = SimpleIcons.Whatsapp,
+                value = phoneFormatted,
+                onClick = { onSocialMediaClick("https://wa.me/${socialMedia.whatsApp}") }
             )
         }
 
@@ -127,6 +139,7 @@ fun SocialMediaItem(
 fun SocialMediaCardPreview() {
     val socialMediaSample = SocialMedia(
         googleMaps = "https://maps.app.goo.gl/M5HfeDqxw6F8ZJRa6",
+        whatsApp = "6285659988939",
         instagram = "tripkeun",
         tiktok = "tripkeun",
         youtube = "tripkeun"

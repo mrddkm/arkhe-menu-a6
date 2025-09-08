@@ -14,11 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -115,20 +111,6 @@ fun ProfileScreen(
                 )
             }
         }
-
-        FloatingActionButton(
-            onClick = { viewModel.refreshProfiles() },
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(16.dp),
-            containerColor = MaterialTheme.colorScheme.primary
-        ) {
-            Icon(
-                imageVector = Icons.Default.Refresh,
-                contentDescription = "Refresh",
-                tint = MaterialTheme.colorScheme.onPrimary
-            )
-        }
     }
 }
 
@@ -157,8 +139,10 @@ fun ProfileScreenPreview() {
             nameShort = "tripkeun",
             nameLong = "Tripkeun Indonesia",
             birthDate = "2023-04-20T16:59:59.000Z",
+            logo = "https://drive.google.com/file/d/1p_2G8bRhX5KJjZ2N0IGRd5B2Fv3cFMoh/view?usp=sharing",
             socialMedia = SocialMedia(
                 googleMaps = "https://maps.app.goo.gl/M5HfeDqxw6F8ZJRa6",
+                whatsApp = "6285659988939",
                 instagram = "tripkeun",
                 tiktok = "tripkeun",
                 youtube = "tripkeun"
@@ -177,7 +161,6 @@ fun ProfileScreenPreview() {
                 )
             )
         )
-
         ProfileContent(
             profile = sampleProfile,
             onSocialMediaClick = {}

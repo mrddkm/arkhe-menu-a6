@@ -22,13 +22,6 @@ data class InfoDataDto(
     val actionInformationEn: String,
 ) {
     companion object {
-        @Suppress("Unused")
-        fun empty() = InfoDataDto(
-            action = "",
-            actionInformationId = "",
-            actionInformationEn = ""
-        )
-
         fun parseError() = InfoDataDto(
             action = "parse_error",
             actionInformationId = "JSON parsing failed",
@@ -48,7 +41,9 @@ data class ProfileDataDto(
     val nameShort: String,
     val nameLong: String,
     val birthDate: String,
+    val logo: String,
     val googleMaps: String,
+    val whatsApp: String,
     val instagram: String,
     val tiktok: String,
     val youtube: String,

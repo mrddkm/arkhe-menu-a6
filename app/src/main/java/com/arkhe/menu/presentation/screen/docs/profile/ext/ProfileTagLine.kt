@@ -96,8 +96,10 @@ fun ProfileTagLinePreview() {
             nameShort = "tripkeun",
             nameLong = "Tripkeun Indonesia",
             birthDate = "2023-04-20T16:59:59.000Z",
+            logo = "https://drive.google.com/file/d/1p_2G8bRhX5KJjZ2N0IGRd5B2Fv3cFMoh/view?usp=sharing",
             socialMedia = SocialMedia(
                 googleMaps = "https://maps.app.goo.gl/M5HfeDqxw6F8ZJRa6",
+                whatsApp = "6285659988939",
                 instagram = "tripkeun",
                 tiktok = "tripkeun",
                 youtube = "tripkeun"

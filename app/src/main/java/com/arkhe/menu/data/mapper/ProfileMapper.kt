@@ -18,7 +18,9 @@ fun ProfileDataDto.toEntity(infoData: InfoDataDto): ProfileEntity {
         nameShort = nameShort,
         nameLong = nameLong,
         birthDate = birthDate,
+        logo = logo,
         googleMaps = googleMaps,
+        whatsApp = whatsApp,
         instagram = instagram,
         tiktok = tiktok,
         youtube = youtube,
@@ -39,8 +41,10 @@ fun ProfileEntity.toDomain(): Profile {
         nameShort = nameShort,
         nameLong = nameLong,
         birthDate = birthDate,
+        logo = logo,
         socialMedia = SocialMedia(
             googleMaps = googleMaps,
+            whatsApp = whatsApp,
             instagram = instagram,
             tiktok = tiktok,
             youtube = youtube
@@ -67,8 +71,10 @@ fun ProfileDataDto.toDomain(infoData: InfoDataDto): Profile {
         nameShort = nameShort,
         nameLong = nameLong,
         birthDate = birthDate,
+        logo = logo,
         socialMedia = SocialMedia(
             googleMaps = googleMaps,
+            whatsApp = whatsApp,
             instagram = instagram,
             tiktok = tiktok,
             youtube = youtube

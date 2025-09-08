@@ -20,7 +20,9 @@ data class ProfileData(
     val nameShort: String,
     val nameLong: String,
     val birthDate: String,
+    val logo: String,
     val googleMaps: String,
+    val whatsApp: String,
     val instagram: String,
     val tiktok: String,
     val youtube: String,
@@ -46,6 +48,7 @@ data class Profile(
     val nameShort: String,
     val nameLong: String,
     val birthDate: String,
+    val logo: String,
     val socialMedia: SocialMedia,
     val tagline: String,
     val quotes: String,
@@ -60,6 +63,7 @@ data class ActionInfo(
 
 data class SocialMedia(
     val googleMaps: String,
+    val whatsApp: String,
     val instagram: String,
     val tiktok: String,
     val youtube: String
