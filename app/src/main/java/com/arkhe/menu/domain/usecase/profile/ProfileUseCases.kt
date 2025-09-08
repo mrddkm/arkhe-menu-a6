@@ -32,8 +32,26 @@ class RefreshProfilesUseCase(
     }
 }
 
+class DownloadProfileImagesUseCase(
+    private val repository: ProfileRepository
+) {
+    suspend operator fun invoke(): SafeApiResult<Unit> {
+        return repository.downloadProfileImages()
+    }
+}
+
+class GetProfileImagePathUseCase(
+    private val repository: ProfileRepository
+) {
+    suspend operator fun invoke(nameShort: String): String? {
+        return repository.getProfileImagePath(nameShort)
+    }
+}
+
 data class ProfileUseCases(
     val getProfiles: GetProfilesUseCase,
     val getProfile: GetProfileUseCase,
-    val refreshProfiles: RefreshProfilesUseCase
+    val refreshProfiles: RefreshProfilesUseCase,
+    val downloadProfileImages: DownloadProfileImagesUseCase,
+    val getProfileImagePath: GetProfileImagePathUseCase
 )

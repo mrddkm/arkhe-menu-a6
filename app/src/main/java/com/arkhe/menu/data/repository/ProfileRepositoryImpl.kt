@@ -2,6 +2,7 @@ package com.arkhe.menu.data.repository
 
 import android.util.Log
 import com.arkhe.menu.data.local.LocalDataSource
+import com.arkhe.menu.data.local.storage.ImageStorageManager
 import com.arkhe.menu.data.mapper.toDomain
 import com.arkhe.menu.data.mapper.toDomainList
 import com.arkhe.menu.data.mapper.toEntityList
@@ -19,7 +20,8 @@ import kotlinx.coroutines.flow.take
 
 class ProfileRepositoryImpl(
     private val remoteDataSource: RemoteDataSource,
-    private val localDataSource: LocalDataSource
+    private val localDataSource: LocalDataSource,
+    private val imageStorageManager: ImageStorageManager
 ) : ProfileRepository {
 
     companion object {
@@ -187,5 +189,33 @@ class ProfileRepositoryImpl(
                 SafeApiResult.Error(Exception("Unexpected loading state"))
             }
         }
+    }
+
+    override suspend fun downloadProfileImages(): SafeApiResult<Unit> {
+        return try {
+            Log.d(TAG, "Starting profile images download...")
+
+            // Get all profiles from local storage
+            localDataSource.getAllProfiles()
+                .take(1)
+                .collect { profiles ->
+                    profiles.forEach { profile ->
+                        if (profile.logo.isNotEmpty()) {
+                            val fileName = "profile_${profile.nameShort}_logo"
+                            imageStorageManager.downloadAndSaveImage(profile.logo, fileName)
+                        }
+                    }
+                }
+
+            SafeApiResult.Success(Unit)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error downloading profile images: ${e.message}", e)
+            SafeApiResult.Error(e)
+        }
+    }
+
+    override suspend fun getProfileImagePath(nameShort: String): String? {
+        val fileName = "profile_${nameShort}_logo"
+        return imageStorageManager.getLocalImagePath(fileName)
     }
 }

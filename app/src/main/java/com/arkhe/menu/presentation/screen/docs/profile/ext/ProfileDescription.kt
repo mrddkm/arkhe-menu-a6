@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,18 +29,29 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.arkhe.menu.R
 import com.arkhe.menu.domain.model.ActionInfo
 import com.arkhe.menu.domain.model.Profile
 import com.arkhe.menu.domain.model.ProfileInformation
 import com.arkhe.menu.domain.model.SocialMedia
 import com.arkhe.menu.presentation.theme.AppTheme
+import com.arkhe.menu.presentation.viewmodel.ProfileViewModel
+import org.koin.androidx.compose.koinViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 @Composable
 fun ProfileDescription(profile: Profile) {
     var showEnglish by remember { mutableStateOf(false) }
+
+    val viewModel: ProfileViewModel = koinViewModel()
+    var imagePath by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(profile.nameShort) {
+        imagePath = viewModel.getProfileImagePath(profile.nameShort)
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -56,11 +68,21 @@ fun ProfileDescription(profile: Profile) {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Image(
-                    painter = painterResource(R.drawable.tripkeun_official),
-                    contentDescription = null,
-                    modifier = Modifier.size(96.dp)
-                )
+                if (imagePath != null) {
+                    AsyncImage(
+                        model = imagePath,
+                        contentDescription = null,
+                        modifier = Modifier.size(96.dp),
+                        placeholder = painterResource(R.drawable.bitrise),
+                        error = painterResource(R.drawable.searxng)
+                    )
+                } else {
+                    Image(
+                        painter = painterResource(R.drawable.devbox),
+                        contentDescription = null,
+                        modifier = Modifier.size(96.dp)
+                    )
+                }
             }
             Row(
                 modifier = Modifier.fillMaxWidth(),

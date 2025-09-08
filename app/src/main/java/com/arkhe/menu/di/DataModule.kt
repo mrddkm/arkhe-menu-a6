@@ -6,6 +6,7 @@ import com.arkhe.menu.data.local.LocalDataSource
 import com.arkhe.menu.data.local.database.AppDatabase
 import com.arkhe.menu.data.local.preferences.SessionManager
 import com.arkhe.menu.data.local.preferences.dataStore
+import com.arkhe.menu.data.local.storage.ImageStorageManager
 import com.arkhe.menu.data.remote.RemoteDataSource
 import com.arkhe.menu.data.remote.api.TripkeunApiService
 import com.arkhe.menu.data.remote.api.TripkeunApiServiceImpl
@@ -119,9 +120,10 @@ val dataModule = module {
     /*Data Sources*/
     single { RemoteDataSource(get()) }
     single { LocalDataSource(get(), get(), get()) }
+    single { ImageStorageManager(get()) }
 
     /*Repositories*/
-    single<ProfileRepository> { ProfileRepositoryImpl(get(), get()) }
+    single<ProfileRepository> { ProfileRepositoryImpl(get(), get(), get()) }
     single<CategoryRepository> { CategoryRepositoryImpl(get(), get()) }
     single<ProductRepository> { ProductRepositoryImpl(get(), get()) }
 }

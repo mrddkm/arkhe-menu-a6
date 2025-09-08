@@ -11,6 +11,8 @@ import com.arkhe.menu.domain.usecase.product.GetProductsByNamePrefixUseCase
 import com.arkhe.menu.domain.usecase.product.GetProductsUseCase
 import com.arkhe.menu.domain.usecase.product.ProductUseCases
 import com.arkhe.menu.domain.usecase.product.RefreshProductsUseCase
+import com.arkhe.menu.domain.usecase.profile.DownloadProfileImagesUseCase
+import com.arkhe.menu.domain.usecase.profile.GetProfileImagePathUseCase
 import com.arkhe.menu.domain.usecase.profile.GetProfileUseCase
 import com.arkhe.menu.domain.usecase.profile.GetProfilesUseCase
 import com.arkhe.menu.domain.usecase.profile.ProfileUseCases
@@ -23,13 +25,17 @@ val domainModule = module {
     factory { GetProfilesUseCase(get()) }
     factory { GetProfileUseCase(get()) }
     factory { RefreshProfilesUseCase(get()) }
+    factory { DownloadProfileImagesUseCase(get()) }
+    factory { GetProfileImagePathUseCase(get()) }
 
     /*Profiles Use Cases Bundle*/
     factory {
         ProfileUseCases(
             getProfiles = get(),
             getProfile = get(),
-            refreshProfiles = get()
+            refreshProfiles = get(),
+            downloadProfileImages = get(),
+            getProfileImagePath = get()
         )
     }
 

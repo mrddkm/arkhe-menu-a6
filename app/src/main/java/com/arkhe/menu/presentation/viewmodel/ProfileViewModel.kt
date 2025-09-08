@@ -168,6 +168,21 @@ class ProfileViewModel(
         super.onCleared()
         loadProfilesJob?.cancel()
     }
+
+    fun downloadImages() {
+        viewModelScope.launch {
+            try {
+                profileUseCases.downloadProfileImages()
+                Log.d(TAG, "Profile images download completed")
+            } catch (e: Exception) {
+                Log.e(TAG, "Error downloading images: ${e.message}", e)
+            }
+        }
+    }
+
+    suspend fun getProfileImagePath(logo: String): String? {
+        return profileUseCases.getProfileImagePath(logo)
+    }
 }
 
 data class ProfileUiState(

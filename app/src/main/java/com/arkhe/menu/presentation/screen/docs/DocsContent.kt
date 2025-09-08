@@ -35,6 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.arkhe.menu.R
 import com.arkhe.menu.data.remote.api.SafeApiResult
 import com.arkhe.menu.di.appModule
@@ -78,10 +79,18 @@ fun DocsContent(
     val profileState by profileViewModel.uiState.collectAsState()
     val categoriesState by categoryViewModel.categoriesState.collectAsState()
     val productsState by productViewModel.productsState.collectAsState()
+    var imagePath by remember { mutableStateOf<String?>(null) }
+
+    val profile = profileViewModel.getProfile()
 
     LaunchedEffect(Unit) {
+        profileViewModel.downloadImages()
         categoryViewModel.ensureDataLoaded()
 //        productViewModel.ensureDataLoaded()
+    }
+
+    LaunchedEffect(profile?.nameShort) {
+        imagePath = profileViewModel.getProfileImagePath(profile?.nameShort ?: "")
     }
 
     Column {
@@ -125,13 +134,22 @@ fun DocsContent(
                                 CircularProgressIndicator()
                             }
                         } else {
-                            val profile = profileViewModel.getProfile()
                             if (profile != null) {
-                                Image(
-                                    painter = painterResource(R.drawable.tripkeun_official),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(48.dp)
-                                )
+                                if (imagePath != null) {
+                                    AsyncImage(
+                                        model = imagePath,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(96.dp),
+                                        placeholder = painterResource(R.drawable.bitrise),
+                                        error = painterResource(R.drawable.searxng)
+                                    )
+                                } else {
+                                    Image(
+                                        painter = painterResource(R.drawable.devbox),
+                                        contentDescription = null,
+                                        modifier = Modifier.size(96.dp)
+                                    )
+                                }
                                 Text(
                                     text = profile.nameShort,
                                     style = MaterialTheme.typography.headlineSmall,
