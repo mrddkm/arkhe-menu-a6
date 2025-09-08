@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DividerDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -100,46 +98,6 @@ fun ProfileDescription(profile: Profile) {
                 textAlign = TextAlign.Justify,
                 lineHeight = MaterialTheme.typography.bodyMedium.lineHeight.times(1.2)
             )
-            if (profile.tagline.isNotBlank() && profile.quotes.isNotBlank()) {
-                HorizontalDivider(Modifier, DividerDefaults.Thickness, DividerDefaults.color)
-            }
-            if (profile.tagline.isNotBlank()) {
-                Column {
-                    Text(
-                        text = "Our Tagline",
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.Medium
-                        ),
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    Text(
-                        text = profile.tagline,
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            fontWeight = FontWeight.Normal
-                        ),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-
-            if (profile.quotes.isNotBlank()) {
-                Column {
-                    Text(
-                        text = "Our Philosophy",
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.Medium
-                        ),
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    Text(
-                        text = "\"${profile.quotes}\"",
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            fontWeight = FontWeight.Normal
-                        ),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
         }
     }
 }

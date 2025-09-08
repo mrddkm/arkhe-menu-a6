@@ -38,6 +38,7 @@ import com.arkhe.menu.presentation.components.common.LoadingIndicator
 import com.arkhe.menu.presentation.screen.docs.profile.ext.EmptyProfileState
 import com.arkhe.menu.presentation.screen.docs.profile.ext.ErrorCard
 import com.arkhe.menu.presentation.screen.docs.profile.ext.ProfileDescription
+import com.arkhe.menu.presentation.screen.docs.profile.ext.ProfileTagLine
 import com.arkhe.menu.presentation.screen.docs.profile.ext.SocialMediaCard
 import com.arkhe.menu.presentation.theme.AppTheme
 import com.arkhe.menu.presentation.viewmodel.ProfileViewModel
@@ -140,6 +141,7 @@ private fun ProfileContent(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         ProfileDescription(profile = profile)
+        ProfileTagLine(profile = profile)
         SocialMediaCard(
             socialMedia = profile.socialMedia,
             onSocialMediaClick = onSocialMediaClick
