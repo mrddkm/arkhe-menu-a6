@@ -99,6 +99,8 @@ dependencies {
     implementation(libs.bundles.ktor)
     implementation(libs.androidx.datastore.preferences)
 
+    implementation(libs.bundles.icons)
+
     ksp(libs.androidx.room.compiler)
 
     testImplementation(libs.bundles.testing.unit)
