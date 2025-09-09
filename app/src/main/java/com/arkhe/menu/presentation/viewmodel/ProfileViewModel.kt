@@ -180,8 +180,8 @@ class ProfileViewModel(
         }
     }
 
-    suspend fun getProfileImagePath(logo: String): String? {
-        return profileUseCases.getProfileImagePath(logo)
+    suspend fun getProfileImagePath(nameShort: String): String? {
+        return profileUseCases.getProfileImagePath(nameShort)
     }
 }
 
@@ -189,6 +189,7 @@ data class ProfileUiState(
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
     val profiles: List<Profile> = emptyList(),
+    val data: Profile? = null,
     val actionInfo: List<ActionInfo> = emptyList(),
     val error: String? = null
 )

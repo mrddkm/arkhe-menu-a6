@@ -2,18 +2,14 @@
 
 package com.arkhe.menu.presentation.screen.docs
 
-import androidx.compose.foundation.Image
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -30,12 +26,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import com.arkhe.menu.R
 import com.arkhe.menu.data.remote.api.SafeApiResult
 import com.arkhe.menu.di.appModule
@@ -53,13 +47,19 @@ import com.arkhe.menu.presentation.screen.docs.organization.ext.PersonilDetailBo
 import com.arkhe.menu.presentation.screen.docs.organization.ext.PersonilListBottomSheet
 import com.arkhe.menu.presentation.screen.docs.organization.ext.sampleOrganizations
 import com.arkhe.menu.presentation.screen.docs.product.ext.ProductSectionContent
+import com.arkhe.menu.presentation.screen.docs.profile.ext.EmptyUI
+import com.arkhe.menu.presentation.screen.docs.profile.ext.ErrorUI
+import com.arkhe.menu.presentation.screen.docs.profile.ext.LoadingUI
+import com.arkhe.menu.presentation.screen.docs.profile.ext.ProfileCard
 import com.arkhe.menu.presentation.theme.AppTheme
 import com.arkhe.menu.presentation.viewmodel.CategoryViewModel
 import com.arkhe.menu.presentation.viewmodel.ProductViewModel
 import com.arkhe.menu.presentation.viewmodel.ProfileViewModel
+import kotlinx.coroutines.delay
 import org.koin.android.ext.koin.androidContext
 import org.koin.compose.KoinApplicationPreview
 import org.koin.compose.viewmodel.koinViewModel
+import java.io.File
 
 @Composable
 fun DocsContent(
@@ -79,18 +79,40 @@ fun DocsContent(
     val profileState by profileViewModel.uiState.collectAsState()
     val categoriesState by categoryViewModel.categoriesState.collectAsState()
     val productsState by productViewModel.productsState.collectAsState()
-    var imagePath by remember { mutableStateOf<String?>(null) }
 
-    val profile = profileViewModel.getProfile()
+    var imagePath by remember { mutableStateOf<String?>(null) }
+    var isInitialized by remember { mutableStateOf(false) }
+
+    Log.d("DocsContent", "isInitialized: $isInitialized")
+
+    val localProfile = profileViewModel.getProfile()
 
     LaunchedEffect(Unit) {
-        profileViewModel.downloadImages()
-        categoryViewModel.ensureDataLoaded()
-//        productViewModel.ensureDataLoaded()
+        if (!isInitialized) {
+            try {
+                profileViewModel.downloadImages()
+                categoryViewModel.ensureDataLoaded()
+                delay(500)
+                isInitialized = true
+            } catch (e: Exception) {
+                Log.e("DocsContent", "Initialization error", e)
+            }
+        }
+        Log.d("DocsContent", "isInitialized LaunchedEffect: $isInitialized")
     }
 
-    LaunchedEffect(profile?.nameShort) {
-        imagePath = profileViewModel.getProfileImagePath(profile?.nameShort ?: "")
+    LaunchedEffect(localProfile?.nameShort) {
+        localProfile.let { p ->
+            val path = profileViewModel.getProfileImagePath(p?.nameShort ?: "")
+            Log.d("DocsContent", "Profile path: $path")
+            imagePath = if (path != null && File(path).exists()) {
+                path
+            } else {
+                Log.d("DocsContent", "Profile path: null")
+                null
+            }
+        }
+        Log.d("DocsContent", "Profile imagePath: $imagePath")
     }
 
     Column {
@@ -103,7 +125,7 @@ fun DocsContent(
             modifier = Modifier.padding(vertical = 16.dp, horizontal = 4.dp)
         )
 
-        /*Main Content*/
+        /*Main Profile Content*/
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -112,75 +134,30 @@ fun DocsContent(
         ) {
             Column(
                 modifier = Modifier
-                    .clickable {
-                        onNavigateToProfile()
-                    },
+                    .clickable { onNavigateToProfile() }
+                    .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Row(
-                    modifier = Modifier
-                        .padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Column {
-                        if (profileState.isLoading) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(100.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                CircularProgressIndicator()
-                            }
-                        } else {
-                            if (profile != null) {
-                                if (imagePath != null) {
-                                    AsyncImage(
-                                        model = imagePath,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(96.dp),
-                                        placeholder = painterResource(R.drawable.bitrise),
-                                        error = painterResource(R.drawable.searxng)
-                                    )
-                                } else {
-                                    Image(
-                                        painter = painterResource(R.drawable.devbox),
-                                        contentDescription = null,
-                                        modifier = Modifier.size(96.dp)
-                                    )
-                                }
-                                Text(
-                                    text = profile.nameShort,
-                                    style = MaterialTheme.typography.headlineSmall,
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                            } else {
-                                Text(
-                                    text = "Failed to load profiles",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.error,
-                                    modifier = Modifier.padding(16.dp)
-                                )
-                            }
-                        }
-                        profileState.error?.let { error ->
-                            Text(
-                                text = error,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.error,
-                                modifier = Modifier.padding(16.dp)
-                            )
-                        }
+                val error = profileState.error
+
+                when {
+                    profileState.isLoading && localProfile == null && !isInitialized -> LoadingUI()
+
+                    localProfile != null -> {
+                        ProfileCard(localProfile, imagePath, error)
                     }
+
+                    error != null -> ErrorUI(onRetry = { profileViewModel.loadProfiles(true) })
+
+                    else -> EmptyUI(onLoad = { profileViewModel.loadProfiles() })
                 }
             }
         }
 
+        /*Organization Section*/
         Column(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            /*Organization Section*/
             Card(
                 colors = CardDefaults.cardColors(
                     containerColor = Color.Transparent
@@ -208,7 +185,7 @@ fun DocsContent(
                 }
             }
 
-            /*Customer Section (unchanged)*/
+            /*Customer Section*/
             Card(
                 colors = CardDefaults.cardColors(
                     containerColor = Color.Transparent

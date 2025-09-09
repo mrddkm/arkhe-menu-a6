@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -23,7 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -31,25 +32,34 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.arkhe.menu.R
+import com.arkhe.menu.data.local.storage.ImageStorageManager
 import com.arkhe.menu.domain.model.ActionInfo
 import com.arkhe.menu.domain.model.Profile
 import com.arkhe.menu.domain.model.ProfileInformation
 import com.arkhe.menu.domain.model.SocialMedia
 import com.arkhe.menu.presentation.theme.AppTheme
-import com.arkhe.menu.presentation.viewmodel.ProfileViewModel
-import org.koin.androidx.compose.koinViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 @Composable
 fun ProfileDescription(profile: Profile) {
     var showEnglish by remember { mutableStateOf(false) }
-
-    val viewModel: ProfileViewModel = koinViewModel()
     var imagePath by remember { mutableStateOf<String?>(null) }
+    var isLoadingImage by remember { mutableStateOf(false) }
 
+    val context = LocalContext.current
     LaunchedEffect(profile.nameShort) {
-        imagePath = viewModel.getProfileImagePath(profile.nameShort)
+        if (profile.nameShort.isNotBlank()) {
+            isLoadingImage = true
+            imagePath = try {
+                val manager = ImageStorageManager(context)
+                manager.getLocalImagePath(profile.nameShort) ?: profile.logo
+            } catch (_: Exception) {
+                null
+            } finally {
+                isLoadingImage = false
+            }
+        }
     }
 
     Card(
@@ -63,27 +73,47 @@ fun ProfileDescription(profile: Profile) {
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            // Profile Image Section
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if (imagePath != null) {
-                    AsyncImage(
-                        model = imagePath,
-                        contentDescription = null,
-                        modifier = Modifier.size(96.dp),
-                        placeholder = painterResource(R.drawable.bitrise),
-                        error = painterResource(R.drawable.searxng)
-                    )
-                } else {
-                    Image(
-                        painter = painterResource(R.drawable.devbox),
-                        contentDescription = null,
-                        modifier = Modifier.size(96.dp)
-                    )
+                when {
+                    isLoadingImage -> {
+                        Box(
+                            modifier = Modifier.size(96.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(modifier = Modifier.size(32.dp))
+                        }
+                    }
+
+                    imagePath != null -> {
+                        AsyncImage(
+                            model = imagePath,
+                            contentDescription = "Profile Logo",
+                            modifier = Modifier.size(96.dp),
+                            placeholder = painterResource(R.drawable.bitrise),
+                            error = painterResource(R.drawable.searxng),
+                            onError = {
+                                // If image fails to load, we could set imagePath to null
+                                // to show default image instead
+                            }
+                        )
+                    }
+
+                    else -> {
+                        Image(
+                            painter = painterResource(R.drawable.devbox),
+                            contentDescription = "Default Logo",
+                            modifier = Modifier.size(96.dp)
+                        )
+                    }
                 }
             }
+
+            // Profile Title and Language Toggle
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -95,8 +125,10 @@ fun ProfileDescription(profile: Profile) {
                         fontWeight = FontWeight.Bold
                     ),
                     color = MaterialTheme.colorScheme.primary,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.weight(1f)
                 )
+
                 if (profile.information.indonesian.isNotBlank() && profile.information.english.isNotBlank()) {
                     TextButton(
                         onClick = { showEnglish = !showEnglish }
@@ -106,42 +138,62 @@ fun ProfileDescription(profile: Profile) {
                 }
             }
 
-            val birthDateFormatted = try {
-                val inputFormat =
-                    SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
-                val outputFormat = SimpleDateFormat("MMMM yyyy", Locale.getDefault())
-                val date = inputFormat.parse(profile.birthDate)
-                date?.let { outputFormat.format(it) } ?: profile.birthDate
-            } catch (_: Exception) {
+            // Birth Date Formatting
+            val birthDateFormatted = remember(profile.birthDate) {
                 try {
-                    val altFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                    val outputFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
-                    val date = altFormat.parse(profile.birthDate)
+                    val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+                    val outputFormat = SimpleDateFormat("MMMM yyyy", Locale.getDefault())
+                    val date = inputFormat.parse(profile.birthDate)
                     date?.let { outputFormat.format(it) } ?: profile.birthDate
                 } catch (_: Exception) {
-                    profile.birthDate
+                    try {
+                        val altFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                        val outputFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
+                        val date = altFormat.parse(profile.birthDate)
+                        date?.let { outputFormat.format(it) } ?: profile.birthDate
+                    } catch (_: Exception) {
+                        profile.birthDate
+                    }
                 }
             }
-            val action = when {
-                showEnglish && profile.actionInfo.information.english.isNotBlank() -> profile.actionInfo.information.english
-                profile.actionInfo.information.indonesian.isNotBlank() -> profile.actionInfo.information.indonesian
-                profile.actionInfo.information.english.isNotBlank() -> profile.actionInfo.information.english
-                else -> "No information available"
+
+            // Action Information
+            val actionText = remember(showEnglish, profile.actionInfo) {
+                val action = when {
+                    showEnglish && profile.actionInfo.information.english.isNotBlank() ->
+                        profile.actionInfo.information.english
+                    profile.actionInfo.information.indonesian.isNotBlank() ->
+                        profile.actionInfo.information.indonesian
+                    profile.actionInfo.information.english.isNotBlank() ->
+                        profile.actionInfo.information.english
+                    else -> "No information available"
+                }
+
+                action.replace("{profileNameShort}", "\"${profile.nameShort}\"")
+                    .replace("{birthDate}", birthDateFormatted)
             }
+
             Text(
-                text = action.replace("{profileNameShort}", "\"${profile.nameShort}\"")
-                    .replace("{birthDate}", birthDateFormatted),
+                text = actionText,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            val information = when {
-                showEnglish && profile.information.english.isNotBlank() -> profile.information.english
-                profile.information.indonesian.isNotBlank() -> profile.information.indonesian
-                profile.information.english.isNotBlank() -> profile.information.english
-                else -> "No information available"
+
+            // Profile Information
+            val informationText = remember(showEnglish, profile.information) {
+                when {
+                    showEnglish && profile.information.english.isNotBlank() ->
+                        profile.information.english
+                    profile.information.indonesian.isNotBlank() ->
+                        profile.information.indonesian
+                    profile.information.english.isNotBlank() ->
+                        profile.information.english
+                    else -> "No information available"
+                }
             }
+
             Text(
-                text = information,
+                text = informationText,
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Justify,
                 lineHeight = MaterialTheme.typography.bodyMedium.lineHeight.times(1.2)
