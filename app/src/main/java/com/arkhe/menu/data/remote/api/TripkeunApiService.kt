@@ -10,19 +10,6 @@ import com.arkhe.menu.data.remote.dto.ProductResponseDto
 import com.arkhe.menu.data.remote.dto.ProfileRequestDto
 import com.arkhe.menu.data.remote.dto.ProfileResponseDto
 import com.arkhe.menu.utils.Constants
-import com.arkhe.menu.utils.Logger.asLogDetailsResponse
-import com.arkhe.menu.utils.Logger.asLogJsonResponseException
-import com.arkhe.menu.utils.Logger.asLogJsonResponseSuccess
-import com.arkhe.menu.utils.Logger.asLogNetworkException
-import com.arkhe.menu.utils.Logger.asLogNonJsonResponse
-import com.arkhe.menu.utils.Logger.asLogResponseFollowRedirectManually
-import com.arkhe.menu.utils.Logger.asLogResponseFollowRedirectManuallyFailed
-import com.arkhe.menu.utils.Logger.asLogResponseHttpStatusCode303
-import com.arkhe.menu.utils.Logger.asLogResponseHttpStatusCode405
-import com.arkhe.menu.utils.Logger.asLogResponseRetryWithAlternativeMethod
-import com.arkhe.menu.utils.Logger.asLogResponseRetryWithAlternativeMethodFailed
-import com.arkhe.menu.utils.Logger.asLogResponseUnexpectedHttpStatusCode
-import com.arkhe.menu.utils.Logger.asLogSendingRequest
 import io.ktor.client.HttpClient
 import io.ktor.client.request.forms.submitForm
 import io.ktor.client.request.parameter
@@ -47,10 +34,11 @@ interface TripkeunApiService {
 class TripkeunApiServiceImpl(
     private val httpClient: HttpClient
 ) : TripkeunApiService {
-
+    /*
     companion object {
         private const val TAG = "TripkeunApiService"
     }
+    */
 
     private val json = Json {
         ignoreUnknownKeys = true
@@ -68,13 +56,16 @@ class TripkeunApiServiceImpl(
                 parameter(Constants.PARAMETER_KEY, Constants.PARAMETER_VALUE_PROFILES)
                 setBody(requestJson)
             }
-            /*------LOG REQUEST DETAILS*/
+            /*------LOG REQUEST DETAILS
             asLogSendingRequest(TAG, requestJson, Constants, response)
+            * */
 
             val responseText = response.bodyAsText()
 
-            /*------LOG RESPONSE DETAILS*/
+            /*------LOG RESPONSE DETAILS
             asLogDetailsResponse(TAG, response, responseText)
+            * */
+
             /*Handle different status codes*/
             when (response.status) {
                 HttpStatusCode.OK -> {
@@ -86,13 +77,15 @@ class TripkeunApiServiceImpl(
                                 json.decodeFromString<ProfileResponseDto>(
                                     responseText
                                 )
-                            /*------LOG RESPONSE JSON Parsing SUCCESS*/
+                            /*------LOG RESPONSE JSON Parsing SUCCESS
                             asLogJsonResponseSuccess(TAG, parsedResponse)
+                            * */
 
                             parsedResponse
                         } catch (parseException: Exception) {
-                            /*------LOG RESPONSE JSON Parsing EXCEPTION*/
+                            /*------LOG RESPONSE JSON Parsing EXCEPTION
                             asLogJsonResponseException(TAG, parseException)
+                            * */
 
                             ProfileResponseDto(
                                 status = "parse_error",
@@ -102,8 +95,9 @@ class TripkeunApiServiceImpl(
                             )
                         }
                     } else {
-                        /*------LOG RESPONSE non-JSON*/
+                        /*------LOG RESPONSE non-JSON
                         asLogNonJsonResponse(TAG)
+                        * */
 
                         ProfileResponseDto(
                             status = "invalid_response",
@@ -118,8 +112,9 @@ class TripkeunApiServiceImpl(
                 HttpStatusCode.MovedPermanently, /*301*/
                 HttpStatusCode.SeeOther -> { /*303*/
                     val location = response.headers["Location"]
-                    /*------LOG RESPONSE HttpStatusCode 303*/
+                    /*------LOG RESPONSE HttpStatusCode 303
                     asLogResponseHttpStatusCode303(TAG, location, response, responseText)
+                    * */
 
                     /*Try to follow redirect manually if needed*/
                     if (location != null && location.isNotEmpty()) {
@@ -135,15 +130,17 @@ class TripkeunApiServiceImpl(
                 }
 
                 HttpStatusCode.MethodNotAllowed -> { /*405*/
-                    /*------LOG RESPONSE HttpStatusCode 405*/
+                    /*------LOG RESPONSE HttpStatusCode 405
                     asLogResponseHttpStatusCode405(TAG, response)
+                    * */
 
                     return retryWithAlternativeMethod(sessionToken)
                 }
 
                 else -> {
-                    /*------LOG RESPONSE Unexpected Status Codes*/
+                    /*------LOG RESPONSE Unexpected Status Codes
                     asLogResponseUnexpectedHttpStatusCode(TAG, response)
+                    * */
 
                     ProfileResponseDto(
                         status = "unexpected_status",
@@ -154,8 +151,9 @@ class TripkeunApiServiceImpl(
                 }
             }
         } catch (e: Exception) {
-            /*------LOG RESPONSE Network Exception*/
+            /*------LOG RESPONSE Network Exception
             asLogNetworkException(TAG, e)
+            * */
 
             ProfileResponseDto(
                 status = "network_error",
@@ -181,8 +179,9 @@ class TripkeunApiServiceImpl(
             }
 
             val responseText = response.bodyAsText()
-            /*------LOG ALTERNATIVE METHOD*/
+            /*------LOG ALTERNATIVE METHOD
             asLogResponseRetryWithAlternativeMethod(TAG, responseText)
+            * */
 
             when (response.status) {
                 HttpStatusCode.OK -> {
@@ -210,8 +209,9 @@ class TripkeunApiServiceImpl(
                 }
             }
         } catch (e: Exception) {
-            /*------LOG ALTERNATIVE METHOD EXCEPTION*/
+            /*------LOG ALTERNATIVE METHOD EXCEPTION
             asLogResponseRetryWithAlternativeMethodFailed(TAG, e)
+            * */
 
             ProfileResponseDto(
                 status = "alternative_error",
@@ -236,8 +236,9 @@ class TripkeunApiServiceImpl(
             }
 
             val responseText = response.bodyAsText()
-            /*------LOG REDIRECT METHOD*/
+            /*------LOG REDIRECT METHOD
             asLogResponseFollowRedirectManually(TAG, location, response, responseText)
+            * */
 
             when (response.status) {
                 HttpStatusCode.OK -> {
@@ -265,8 +266,10 @@ class TripkeunApiServiceImpl(
                 }
             }
         } catch (e: Exception) {
-            /*------LOG REDIRECT METHOD FAILED*/
+            /*------LOG REDIRECT METHOD FAILED
             asLogResponseFollowRedirectManuallyFailed(TAG, e)
+            * */
+
             ProfileResponseDto(
                 status = "redirect_error",
                 message = "Manual redirect error: ${e.message}",
@@ -335,7 +338,10 @@ class TripkeunApiServiceImpl(
         }
     }
 
-    override suspend fun getProducts(sessionToken: String, productCategoryId: String): ProductResponseDto {
+    override suspend fun getProducts(
+        sessionToken: String,
+        productCategoryId: String
+    ): ProductResponseDto {
         return try {
             val requestDto = ProductRequestDto(
                 sessionToken = sessionToken,
@@ -353,9 +359,12 @@ class TripkeunApiServiceImpl(
 
             when (response.status) {
                 HttpStatusCode.OK -> {
-                    if (responseText.trim().startsWith("{") || responseText.trim().startsWith("[")) {
+                    if (responseText.trim().startsWith("{") || responseText.trim()
+                            .startsWith("[")
+                    ) {
                         try {
-                            val parsedResponse = json.decodeFromString<ProductResponseDto>(responseText)
+                            val parsedResponse =
+                                json.decodeFromString<ProductResponseDto>(responseText)
                             parsedResponse
                         } catch (parseException: Exception) {
                             ProductResponseDto(
@@ -374,6 +383,7 @@ class TripkeunApiServiceImpl(
                         )
                     }
                 }
+
                 else -> {
                     ProductResponseDto(
                         status = "unexpected_status",
