@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
+import androidx.core.graphics.scale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -11,15 +12,14 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
-import androidx.core.graphics.scale
 
 class ImageStorageManager(private val context: Context) {
 
     companion object {
         private const val TAG = "ImageStorageManager"
         private const val IMAGES_FOLDER = "cached_images"
-        private const val MAX_IMAGE_SIZE = 2048 // Max width/height in pixels
-        private const val QUALITY = 85 // JPEG quality
+        private const val MAX_IMAGE_SIZE = 2048
+        private const val QUALITY = 85
     }
 
     private val imagesDirectory: File by lazy {
@@ -41,36 +41,58 @@ class ImageStorageManager(private val context: Context) {
             try {
                 Log.d(TAG, "Starting download for: $imageUrl")
 
-                // Convert Google Drive view link to direct download link
                 val directUrl = convertToDirectDownloadUrl(imageUrl)
                 Log.d(TAG, "Direct URL: $directUrl")
 
-                // Check if file already exists
-                val localFile = File(imagesDirectory, "$fileName.jpg")
+                // Deteksi format dari URL asli terlebih dahulu, bukan dari direct URL
+                val formatFromOriginalUrl = detectImageFormat(imageUrl)
+                Log.d(TAG, "Format from original URL: $formatFromOriginalUrl")
+
+                // Download bitmap untuk mendapat format sebenarnya
+                val bitmap = downloadBitmap(directUrl)
+                if (bitmap == null) {
+                    Log.e(TAG, "Failed to download bitmap from: $directUrl")
+                    return@withContext null
+                }
+
+                // Deteksi format dari bitmap yang sudah di-download
+                val actualFormat = detectFormatFromBitmap(bitmap)
+                Log.d(TAG, "Actual format from bitmap: $actualFormat")
+
+                // Prioritas format: dari bitmap actual > dari URL asli > default jpg
+                val finalFormat = actualFormat ?: formatFromOriginalUrl ?: "jpg"
+
+                val ext = when (finalFormat) {
+                    "png" -> "png"
+                    "webp" -> "webp"
+                    else -> "jpg"
+                }
+                Log.d(TAG, "Final format: $finalFormat")
+                Log.d(TAG, "Final extension: $ext")
+
+                val preserveFormat = ext == "png" || ext == "webp"
+
+                val localFile = File(imagesDirectory, "$fileName.$ext")
                 if (localFile.exists() && localFile.length() > 0) {
                     Log.d(TAG, "Image already exists: ${localFile.absolutePath}")
+                    bitmap.recycle()
                     return@withContext localFile.absolutePath
                 }
 
-                // Download image
-                val bitmap = downloadBitmap(directUrl)
-                if (bitmap != null) {
-                    // Optimize and save bitmap
-                    val optimizedBitmap = optimizeBitmap(bitmap)
-                    val saved = saveBitmapToFile(optimizedBitmap, localFile)
+                val optimizedBitmap = optimizeBitmap(bitmap)
+                val saved = saveBitmapToFile(optimizedBitmap, localFile, preserveFormat)
 
-                    bitmap.recycle()
-                    if (bitmap != optimizedBitmap) {
-                        optimizedBitmap.recycle()
-                    }
-
-                    if (saved) {
-                        Log.d(TAG, "Image saved successfully: ${localFile.absolutePath}")
-                        return@withContext localFile.absolutePath
-                    }
+                bitmap.recycle()
+                if (bitmap != optimizedBitmap) {
+                    optimizedBitmap.recycle()
                 }
 
-                Log.e(TAG, "Failed to download or save image: $imageUrl")
+                if (saved) {
+                    Log.d(TAG, "Image saved successfully: ${localFile.absolutePath}")
+                    return@withContext localFile.absolutePath
+                }
+
+                Log.e(TAG, "Failed to save image: $imageUrl")
                 null
             } catch (e: Exception) {
                 Log.e(TAG, "Error downloading image: ${e.message}", e)
@@ -83,12 +105,14 @@ class ImageStorageManager(private val context: Context) {
      * Get local image path if exists
      */
     fun getLocalImagePath(fileName: String): String? {
-        val localFile = File(imagesDirectory, "$fileName.jpg")
-        return if (localFile.exists() && localFile.length() > 0) {
-            localFile.absolutePath
-        } else {
-            null
+        val extensions = listOf("jpg", "png", "webp")
+        for (ext in extensions) {
+            val localFile = File(imagesDirectory, "$fileName.$ext")
+            if (localFile.exists() && localFile.length() > 0) {
+                return localFile.absolutePath
+            }
         }
+        return null
     }
 
     /**
@@ -97,12 +121,15 @@ class ImageStorageManager(private val context: Context) {
     suspend fun deleteImage(fileName: String): Boolean {
         return withContext(Dispatchers.IO) {
             try {
-                val localFile = File(imagesDirectory, "$fileName.jpg")
-                if (localFile.exists()) {
-                    localFile.delete()
-                } else {
-                    true
+                val extensions = listOf("jpg", "png", "webp")
+                var allDeleted = true
+                for (ext in extensions) {
+                    val localFile = File(imagesDirectory, "$fileName.$ext")
+                    if (localFile.exists()) {
+                        allDeleted = localFile.delete() && allDeleted
+                    }
                 }
+                allDeleted
             } catch (e: Exception) {
                 Log.e(TAG, "Error deleting image: ${e.message}", e)
                 false
@@ -150,16 +177,18 @@ class ImageStorageManager(private val context: Context) {
                 val fileId = url.substringAfter("file/d/").substringBefore("/")
                 "https://drive.google.com/uc?id=$fileId&export=download"
             }
+
             url.contains("drive.google.com/open?id=") -> {
                 val fileId = url.substringAfter("id=")
                 "https://drive.google.com/uc?id=$fileId&export=download"
             }
+
             else -> url // Return original URL if not Google Drive
         }
     }
 
     /**
-     * Download bitmap from URL
+     * Download bitmap from URL with Content-Type header check
      */
     private suspend fun downloadBitmap(url: String): Bitmap? {
         return withContext(Dispatchers.IO) {
@@ -170,13 +199,16 @@ class ImageStorageManager(private val context: Context) {
                     connectTimeout = 10000
                     readTimeout = 15000
                     doInput = true
-                    // Add user agent to avoid blocking
                     setRequestProperty("User-Agent", "Mozilla/5.0 (Android)")
                 }
 
                 connection.connect()
 
                 if (connection.responseCode == HttpURLConnection.HTTP_OK) {
+                    // Log Content-Type untuk debugging
+                    val contentType = connection.getHeaderField("Content-Type")
+                    Log.d(TAG, "Content-Type: $contentType")
+
                     connection.inputStream.use { inputStream ->
                         BitmapFactory.decodeStream(inputStream)
                     }
@@ -218,7 +250,7 @@ class ImageStorageManager(private val context: Context) {
     }
 
     /**
-     * Detect image format from URL
+     * Detect image format from URL (original URL before conversion)
      */
     private fun detectImageFormat(url: String): String? {
         return when {
@@ -231,24 +263,93 @@ class ImageStorageManager(private val context: Context) {
     }
 
     /**
+     * Detect format from bitmap configuration
+     * Ini metode tambahan untuk mendeteksi format dari bitmap
+     */
+    private fun detectFormatFromBitmap(bitmap: Bitmap): String? {
+        return try {
+            // PNG biasanya memiliki alpha channel
+            when {
+                bitmap.hasAlpha() -> {
+                    Log.d(TAG, "Bitmap has alpha channel, likely PNG")
+                    "png"
+                }
+                else -> {
+                    Log.d(TAG, "Bitmap has no alpha channel")
+                    null // Tidak bisa dipastikan, biarkan logika lain yang menentukan
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error detecting format from bitmap: ${e.message}")
+            null
+        }
+    }
+
+    /**
+     * Enhanced method to detect format from HTTP response headers
+     */
+    private suspend fun detectFormatFromHeaders(url: String): String? {
+        return withContext(Dispatchers.IO) {
+            var connection: HttpURLConnection? = null
+            try {
+                connection = URL(url).openConnection() as HttpURLConnection
+                connection.apply {
+                    connectTimeout = 5000
+                    readTimeout = 5000
+                    requestMethod = "HEAD" // Only get headers
+                    setRequestProperty("User-Agent", "Mozilla/5.0 (Android)")
+                }
+
+                connection.connect()
+
+                if (connection.responseCode == HttpURLConnection.HTTP_OK) {
+                    val contentType = connection.getHeaderField("Content-Type")
+                    Log.d(TAG, "Content-Type from headers: $contentType")
+
+                    when {
+                        contentType?.contains("png", ignoreCase = true) == true -> "png"
+                        contentType?.contains("jpeg", ignoreCase = true) == true -> "jpg"
+                        contentType?.contains("webp", ignoreCase = true) == true -> "webp"
+                        contentType?.contains("gif", ignoreCase = true) == true -> "gif"
+                        else -> null
+                    }
+                } else {
+                    null
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error getting headers: ${e.message}")
+                null
+            } finally {
+                connection?.disconnect()
+            }
+        }
+    }
+
+    /**
      * Save bitmap to file with format preservation option
      */
-    private fun saveBitmapToFile(bitmap: Bitmap, file: File, preserveFormat: Boolean = false): Boolean {
+    private fun saveBitmapToFile(
+        bitmap: Bitmap,
+        file: File,
+        preserveFormat: Boolean = false
+    ): Boolean {
         return try {
             FileOutputStream(file).use { out ->
                 when {
                     preserveFormat && file.extension.equals("png", true) -> {
                         bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
                     }
+
                     preserveFormat && file.extension.equals("webp", true) &&
                             android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R -> {
                         bitmap.compress(Bitmap.CompressFormat.WEBP_LOSSLESS, 100, out)
                     }
+
                     preserveFormat && file.extension.equals("webp", true) -> {
                         bitmap.compress(Bitmap.CompressFormat.WEBP, QUALITY, out)
                     }
+
                     else -> {
-                        // Default to JPEG for best compatibility and size
                         bitmap.compress(Bitmap.CompressFormat.JPEG, QUALITY, out)
                     }
                 }
