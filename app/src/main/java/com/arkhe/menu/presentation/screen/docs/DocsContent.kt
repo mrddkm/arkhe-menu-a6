@@ -3,7 +3,6 @@
 package com.arkhe.menu.presentation.screen.docs
 
 import android.util.Log
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,6 +36,7 @@ import com.arkhe.menu.di.dataModule
 import com.arkhe.menu.di.domainModule
 import com.arkhe.menu.domain.model.Category
 import com.arkhe.menu.domain.model.Product
+import com.arkhe.menu.domain.model.Profile
 import com.arkhe.menu.presentation.screen.docs.categories.ext.CategoriesSectionContent
 import com.arkhe.menu.presentation.screen.docs.components.HeaderSection
 import com.arkhe.menu.presentation.screen.docs.customer.ext.CustomerSection
@@ -47,7 +47,6 @@ import com.arkhe.menu.presentation.screen.docs.organization.ext.PersonilDetailBo
 import com.arkhe.menu.presentation.screen.docs.organization.ext.PersonilListBottomSheet
 import com.arkhe.menu.presentation.screen.docs.organization.ext.sampleOrganizations
 import com.arkhe.menu.presentation.screen.docs.product.ext.ProductSectionContent
-import com.arkhe.menu.presentation.screen.docs.profile.ext.EmptyUI
 import com.arkhe.menu.presentation.screen.docs.profile.ext.ErrorUI
 import com.arkhe.menu.presentation.screen.docs.profile.ext.LoadingUI
 import com.arkhe.menu.presentation.screen.docs.profile.ext.ProfileCard
@@ -76,7 +75,7 @@ fun DocsContent(
     var selectedOrganization by remember { mutableStateOf<Organization?>(null) }
     var showPersonilList by remember { mutableStateOf(false) }
 
-    val profileState by profileViewModel.uiState.collectAsState()
+    val profileState by profileViewModel.profilesState.collectAsState()
     val categoriesState by categoryViewModel.categoriesState.collectAsState()
     val productsState by productViewModel.productsState.collectAsState()
 
@@ -85,12 +84,10 @@ fun DocsContent(
 
     Log.d("DocsContent", "isInitialized: $isInitialized")
 
-    val localProfile = profileViewModel.getProfile()
-
     LaunchedEffect(Unit) {
         if (!isInitialized) {
             try {
-                profileViewModel.downloadImages()
+                profileViewModel.ensureDataLoaded()
                 categoryViewModel.ensureDataLoaded()
                 delay(500)
                 isInitialized = true
@@ -98,21 +95,33 @@ fun DocsContent(
                 Log.e("DocsContent", "Initialization error", e)
             }
         }
-        Log.d("DocsContent", "isInitialized LaunchedEffect: $isInitialized")
     }
 
-    LaunchedEffect(localProfile?.nameShort) {
-        localProfile.let { p ->
-            val path = profileViewModel.getProfileImagePath(p?.nameShort ?: "")
-            Log.d("DocsContent", "Profile path: $path")
+    Log.d("DocsContent", "isInitialized LaunchedEffect: $isInitialized")
+
+    val nameShort: String? = when (profileState) {
+        is SafeApiResult.Success<*> -> {
+            val profiles = (profileState as SafeApiResult.Success<List<Profile>>).data
+            profiles.firstOrNull()?.nameShort
+        }
+
+        else -> null
+    }
+
+    LaunchedEffect(nameShort) {
+        if (!nameShort.isNullOrEmpty()) {
+            val path = profileViewModel.getProfileImagePath(nameShort)
             imagePath = if (path != null && File(path).exists()) {
                 path
             } else {
                 Log.d("DocsContent", "Profile path: null")
                 null
             }
+            Log.d("DocsContent", "Profile imagePath: $imagePath")
+        } else {
+            imagePath = null
+            Log.d("DocsContent", "nameShort is null or empty")
         }
-        Log.d("DocsContent", "Profile imagePath: $imagePath")
     }
 
     Column {
@@ -125,7 +134,7 @@ fun DocsContent(
             modifier = Modifier.padding(vertical = 16.dp, horizontal = 4.dp)
         )
 
-        /*Main Profile Content*/
+        /*Profile Content*/
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -134,22 +143,18 @@ fun DocsContent(
         ) {
             Column(
                 modifier = Modifier
-                    .clickable { onNavigateToProfile() }
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                val error = profileState.error
+                when (profileState) {
+                    is SafeApiResult.Loading -> LoadingUI()
+                    is SafeApiResult.Success<*> -> ProfileCard(
+                        onNavigateToProfile,
+                        (profileState as SafeApiResult.Success<List<Profile>>).data.first(),
+                        imagePath
+                    )
 
-                when {
-                    profileState.isLoading && localProfile == null && !isInitialized -> LoadingUI()
-
-                    localProfile != null -> {
-                        ProfileCard(localProfile, imagePath, error)
-                    }
-
-                    error != null -> ErrorUI(onRetry = { profileViewModel.loadProfiles(true) })
-
-                    else -> EmptyUI(onLoad = { profileViewModel.loadProfiles() })
+                    is SafeApiResult.Error -> ErrorUI { profileViewModel.ensureDataLoaded() }
                 }
             }
         }

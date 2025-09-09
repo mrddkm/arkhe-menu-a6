@@ -5,53 +5,50 @@ package com.arkhe.menu.presentation.screen.docs.profile
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.arkhe.menu.data.remote.api.SafeApiResult
 import com.arkhe.menu.domain.model.ActionInfo
 import com.arkhe.menu.domain.model.Profile
 import com.arkhe.menu.domain.model.ProfileInformation
 import com.arkhe.menu.domain.model.SocialMedia
-import com.arkhe.menu.presentation.components.common.LoadingIndicator
-import com.arkhe.menu.presentation.screen.docs.profile.ext.EmptyProfileState
-import com.arkhe.menu.presentation.screen.docs.profile.ext.ErrorCard
 import com.arkhe.menu.presentation.screen.docs.profile.ext.ProfileDescription
 import com.arkhe.menu.presentation.screen.docs.profile.ext.ProfileTagLine
 import com.arkhe.menu.presentation.screen.docs.profile.ext.SocialMediaCard
 import com.arkhe.menu.presentation.theme.AppTheme
 import com.arkhe.menu.presentation.viewmodel.ProfileViewModel
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun ProfileScreen(
     modifier: Modifier = Modifier,
-    viewModel: ProfileViewModel = koinViewModel()
+    profileViewModel: ProfileViewModel = koinViewModel(),
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val profileState by profileViewModel.profilesState.collectAsState()
     val scrollState = rememberScrollState()
     val uriHandler = LocalUriHandler.current
+    var isRefreshing by remember { mutableStateOf(false) }
 
-    LaunchedEffect(uiState.error) {
-        uiState.error?.let {
-            // You can show snackbar or dialog here
+    LaunchedEffect(Unit) {
+        profileViewModel.ensureDataLoaded()
+    }
+
+    LaunchedEffect(profileState) {
+        if (profileState !is SafeApiResult.Loading) {
+            isRefreshing = false
         }
     }
 
@@ -63,52 +60,23 @@ fun ProfileScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            if (uiState.isRefreshing) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "Refreshing...",
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }
-            }
-
-            if (uiState.isLoading) {
-                LoadingIndicator()
-            } else {
-                val profile = viewModel.getProfile()
-
-                if (profile != null) {
+            when (profileState) {
+                is SafeApiResult.Error -> TODO()
+                is SafeApiResult.Success<*> -> {
+                    val profile =
+                        (profileState as SafeApiResult.Success<List<Profile>>).data.first()
                     ProfileContent(
                         profile = profile,
                         onSocialMediaClick = { url ->
                             try {
                                 uriHandler.openUri(url)
                             } catch (_: Exception) {
-                                // Handle URL opening error silently
                             }
                         }
                     )
-                } else {
-                    EmptyProfileState(
-                        onRetryClick = { viewModel.loadProfiles(true) }
-                    )
                 }
-            }
 
-            uiState.error?.let { error ->
-                ErrorCard(
-                    error = error,
-                    onRetryClick = { viewModel.loadProfiles(true) },
-                    onDismissClick = { viewModel.clearError() }
-                )
+                is SafeApiResult.Loading -> TODO()
             }
         }
     }

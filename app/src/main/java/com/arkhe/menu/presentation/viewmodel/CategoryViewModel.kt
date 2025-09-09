@@ -21,8 +21,7 @@ class CategoryViewModel(
         private const val TAG = "CategoryViewModel"
     }
 
-    private val _categoriesState =
-        MutableStateFlow<SafeApiResult<List<Category>>>(SafeApiResult.Loading)
+    private val _categoriesState = MutableStateFlow<SafeApiResult<List<Category>>>(SafeApiResult.Loading)
     val categoriesState: StateFlow<SafeApiResult<List<Category>>> = _categoriesState.asStateFlow()
 
     private val _selectedCategory = MutableStateFlow<Category?>(null)
@@ -49,20 +48,13 @@ class CategoryViewModel(
     }
 
     fun loadCategories(token: String? = null, forceRefresh: Boolean = false) {
-        Log.d(TAG, "loadCategories token: $token")
-
-        Log.d(TAG, "loadCategories called with forceRefresh: $forceRefresh")
         viewModelScope.launch {
             try {
-                Log.d(TAG, "Getting session token...")
-
                 if (token != null) {
-                    Log.d(TAG, "Starting categories fetch...")
                     _categoriesState.value = SafeApiResult.Loading
 
                     categoryUseCases.getCategories(token, forceRefresh)
                         .collect { result ->
-                            Log.d(TAG, "Categories result received: ${result::class.simpleName}")
                             when (result) {
                                 is SafeApiResult.Loading -> {
                                     Log.d(TAG, "Categories loading...")

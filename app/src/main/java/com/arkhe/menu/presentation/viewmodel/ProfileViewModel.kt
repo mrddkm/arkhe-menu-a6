@@ -7,15 +7,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arkhe.menu.data.local.preferences.SessionManager
 import com.arkhe.menu.data.remote.api.SafeApiResult
-import com.arkhe.menu.domain.model.ActionInfo
 import com.arkhe.menu.domain.model.Profile
 import com.arkhe.menu.domain.usecase.profile.ProfileUseCases
 import com.arkhe.menu.utils.Constants
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class ProfileViewModel(
@@ -27,153 +24,103 @@ class ProfileViewModel(
         private const val TAG = "ProfileViewModel"
     }
 
-    private val _uiState = MutableStateFlow(ProfileUiState())
-    val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
+    private val _profilesState =
+        MutableStateFlow<SafeApiResult<List<Profile>>>(SafeApiResult.Loading)
+    val profilesState: StateFlow<SafeApiResult<List<Profile>>> = _profilesState.asStateFlow()
 
-    private var loadProfilesJob: Job? = null
+    private val _getProfile = MutableStateFlow<Profile?>(null)
+    val getProfile: StateFlow<Profile?> = _getProfile.asStateFlow()
+
+    private var isInitialized = false
 
     init {
         Log.d("init", "## ProfileViewModel::initialized ##")
-        loadProfiles()
+        viewModelScope.launch {
+            sessionManager.sessionToken.collect { token ->
+                if (token != null) {
+                    Log.d(TAG, "✅ Token ${TAG}: $token")
+                    loadProfiles(token)
+                } else {
+                    Log.w(TAG, "⚠️ Token ${TAG}: null")
+                }
+            }
+        }
     }
 
-    fun loadProfiles(forceRefresh: Boolean = false) {
-        Log.d(TAG, "========== START ==========")
-        loadProfilesJob?.cancel()
+    fun loadProfiles(token: String? = null, forceRefresh: Boolean = false) {
+        Log.d(TAG, "========== loadProfiles ==========")
 
-        loadProfilesJob = viewModelScope.launch {
+        viewModelScope.launch {
             try {
-                val token = sessionManager.sessionToken.first()
-
                 if (token != null) {
-                    Log.d("ProfileViewModel", "========== USE TOKEN ==========")
-                    Log.d("ProfileViewModel", "✅ USE TOKEN: $token")
+                    _profilesState.value = SafeApiResult.Loading
+                    profileUseCases.getProfiles(token, forceRefresh)
+                        .collect { result ->
+                            when (result) {
+                                is SafeApiResult.Loading -> {
+                                    Log.d(TAG, "Categories loading...")
+                                }
 
-                    profileUseCases.getProfiles(token, forceRefresh).collect { result ->
-                        when (result) {
-                            is SafeApiResult.Loading -> {
-                                _uiState.value = _uiState.value.copy(
-                                    isLoading = true,
-                                    error = null
-                                )
-                            }
+                                is SafeApiResult.Success -> {
+                                    result.data.forEach { profile ->
+                                        Log.d(TAG, profile.nameShort)
 
-                            is SafeApiResult.Success -> {
-                                _uiState.value = _uiState.value.copy(
-                                    isLoading = false,
-                                    profiles = result.data,
-                                    error = null
-                                )
-                            }
+                                    }
+                                }
 
-                            is SafeApiResult.Error -> {
-                                _uiState.value = _uiState.value.copy(
-                                    isLoading = false,
-                                    error = result.exception.message ?: "Unknown error occurred"
-                                )
+                                is SafeApiResult.Error -> {
+                                    result.exception.message?.let { Log.e(TAG, it) }
+                                }
                             }
+                            _profilesState.value = result
                         }
-                    }
+                    downloadImages()
                 } else {
-                    Log.d("ProfileViewModel", "========== DEFAULT TOKEN ==========")
+                    Log.e(TAG, "No session token available")
+                    _profilesState.value =
+                        SafeApiResult.Error(Exception("No session token available"))
+
                     val defaultToken = Constants.Simulation.TOKEN
                     sessionManager.saveSession(defaultToken)
-                    Log.d("ProfileViewModel", "⚠️ DEFAULT TOKEN: $defaultToken")
-                    Log.d("ProfileViewModel", "===================================")
-
-                    profileUseCases.getProfiles(defaultToken, forceRefresh).collect { result ->
-                        when (result) {
-                            is SafeApiResult.Loading -> {
-                                _uiState.value = _uiState.value.copy(
-                                    isLoading = true,
-                                    error = null
-                                )
-                            }
-
-                            is SafeApiResult.Success -> {
-                                _uiState.value = _uiState.value.copy(
-                                    isLoading = false,
-                                    profiles = result.data,
-                                    error = null
-                                )
-                            }
-
-                            is SafeApiResult.Error -> {
-                                _uiState.value = _uiState.value.copy(
-                                    isLoading = false,
-                                    error = result.exception.message ?: "Unknown error occurred"
-                                )
-                            }
-                        }
-                    }
                 }
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    error = e.message ?: "Failed to load profiles"
-                )
+                _profilesState.value = SafeApiResult.Error(e)
             }
+        }
+    }
+
+    fun ensureDataLoaded() {
+        Log.d(
+            TAG,
+            "ensureDataLoaded called - isInitialized: $isInitialized, currentState: ${_profilesState.value::class.simpleName}"
+        )
+
+        if (!isInitialized) {
+            Log.d(TAG, "First time loading data...")
+            loadProfiles(forceRefresh = false)
+            isInitialized = true
+        } else if (_profilesState.value is SafeApiResult.Error) {
+            Log.d(TAG, "Retrying after error...")
+            loadProfiles(forceRefresh = false)
+        } else {
+            Log.d(TAG, "Data already loaded or loading")
         }
     }
 
     fun refreshProfiles() {
-        viewModelScope.launch {
-            try {
-                val token = sessionManager.sessionToken.first() ?: "WWUmyoU9yWjVUsn8"
-                _uiState.value = _uiState.value.copy(isRefreshing = true)
-
-                when (val result = profileUseCases.refreshProfiles(token)) {
-                    is SafeApiResult.Success -> {
-                        _uiState.value = _uiState.value.copy(
-                            isRefreshing = false,
-                            profiles = result.data,
-                            error = null
-                        )
-                    }
-
-                    is SafeApiResult.Error -> {
-                        _uiState.value = _uiState.value.copy(
-                            isRefreshing = false,
-                            error = result.exception.message ?: "Failed to refresh profiles"
-                        )
-                    }
-
-                    SafeApiResult.Loading -> {
-                        // Should not happen in direct API call
-                        _uiState.value = _uiState.value.copy(isRefreshing = false)
-                    }
-                }
-            } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(
-                    isRefreshing = false,
-                    error = e.message ?: "Failed to refresh profiles"
-                )
-            }
-        }
+        Log.d(TAG, "refreshProfiles called")
+        loadProfiles(forceRefresh = true)
     }
 
-    fun clearError() {
-        _uiState.value = _uiState.value.copy(error = null)
-    }
-
-    fun getActionInfo(): ActionInfo? {
-        return _uiState.value.actionInfo.find { it.action == "profile" }
-    }
-
-    fun getProfile(): Profile? {
-        return _uiState.value.profiles.find { it.nameShort == "tripkeun" }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        loadProfilesJob?.cancel()
+    fun getProfile(profile: Profile) {
+        Log.d(TAG, "Profile get: ${profile.nameShort}")
+        _getProfile.value = profile
     }
 
     fun downloadImages() {
         viewModelScope.launch {
             try {
                 profileUseCases.downloadProfileImages()
-                Log.d(TAG, "Profile images download completed")
             } catch (e: Exception) {
                 Log.e(TAG, "Error downloading images: ${e.message}", e)
             }
@@ -184,12 +131,3 @@ class ProfileViewModel(
         return profileUseCases.getProfileImagePath(nameShort)
     }
 }
-
-data class ProfileUiState(
-    val isLoading: Boolean = false,
-    val isRefreshing: Boolean = false,
-    val profiles: List<Profile> = emptyList(),
-    val data: Profile? = null,
-    val actionInfo: List<ActionInfo> = emptyList(),
-    val error: String? = null
-)

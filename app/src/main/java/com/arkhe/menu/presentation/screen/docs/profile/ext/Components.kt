@@ -3,6 +3,7 @@
 package com.arkhe.menu.presentation.screen.docs.profile.ext
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -131,73 +132,72 @@ fun EmptyUI(
 
 @Composable
 fun ProfileCard(
-    localProfile: Profile,
-    imagePath: String?,
-    error: String?
+    onnNavigateToProfile: () -> Unit,
+    profile: Profile,
+    imagePath: String?
 ) {
     Row(
+        modifier = Modifier.clickable { onnNavigateToProfile() },
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        if (error == null) {
-            Box(
-                modifier = Modifier.size(96.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                val localImagePath = imagePath
-                val localFileExists = remember(localImagePath) {
-                    localImagePath?.let {
-                        try {
-                            java.io.File(it).exists()
-                        } catch (_: Exception) {
-                            false
+        Box(
+            modifier = Modifier.size(96.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            val localImagePath = imagePath
+            val localFileExists = remember(localImagePath) {
+                localImagePath?.let {
+                    try {
+                        java.io.File(it).exists()
+                    } catch (_: Exception) {
+                        false
+                    }
+                } ?: false
+            }
+            when {
+                localImagePath != null && localFileExists -> {
+                    AsyncImage(
+                        model = localImagePath,
+                        contentDescription = "Profile Logo",
+                        modifier = Modifier.size(96.dp),
+                        placeholder = painterResource(R.drawable.bitrise),
+                        error = painterResource(R.drawable.searxng),
+                        onError = {
+                            android.util.Log.e(
+                                "DocsContent",
+                                "Image load failed: $localImagePath"
+                            )
+                        },
+                        onSuccess = {
+                            android.util.Log.d(
+                                "DocsContent",
+                                "Image loaded successfully: $localImagePath"
+                            )
                         }
-                    } ?: false
+                    )
                 }
-                when {
-                    localImagePath != null && localFileExists -> {
-                        AsyncImage(
-                            model = localImagePath,
-                            contentDescription = "Profile Logo",
-                            modifier = Modifier.size(96.dp),
-                            placeholder = painterResource(R.drawable.bitrise),
-                            error = painterResource(R.drawable.searxng),
-                            onError = {
-                                android.util.Log.e(
-                                    "DocsContent",
-                                    "Image load failed: $localImagePath"
-                                )
-                            },
-                            onSuccess = {
-                                android.util.Log.d(
-                                    "DocsContent",
-                                    "Image loaded successfully: $localImagePath"
-                                )
-                            }
-                        )
-                    }
 
-                    else -> {
-                        Image(
-                            painter = painterResource(R.drawable.devbox),
-                            contentDescription = "Default Logo",
-                            modifier = Modifier.size(96.dp)
-                        )
-                    }
+                else -> {
+                    Image(
+                        painter = painterResource(R.drawable.devbox),
+                        contentDescription = "Default Logo",
+                        modifier = Modifier.size(96.dp)
+                    )
                 }
             }
-            Column {
-                Text(
-                    text = localProfile.nameShort,
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                Text(
-                    text = localProfile.nameLong,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
+        }
+        Column {
+            Text(
+                text = profile.nameShort,
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Text(
+                text = profile.nameLong,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }
