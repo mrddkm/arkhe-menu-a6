@@ -53,7 +53,8 @@ data class Profile(
     val tagline: String,
     val quotes: String,
     val information: ProfileInformation,
-    val actionInfo: ActionInfo
+    val actionInfo: ActionInfo,
+    val localImagePath: String? = null
 )
 
 data class ActionInfo(

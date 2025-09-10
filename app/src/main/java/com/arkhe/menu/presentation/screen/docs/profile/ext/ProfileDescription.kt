@@ -2,10 +2,10 @@
 
 package com.arkhe.menu.presentation.screen.docs.profile.ext
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,19 +13,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -33,42 +30,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.arkhe.menu.R
-import com.arkhe.menu.data.local.storage.ImageStorageManager
 import com.arkhe.menu.domain.model.ActionInfo
 import com.arkhe.menu.domain.model.Profile
 import com.arkhe.menu.domain.model.ProfileInformation
 import com.arkhe.menu.domain.model.SocialMedia
 import com.arkhe.menu.presentation.theme.AppTheme
 import com.arkhe.menu.utils.DateUtils.formatBirthDate
+import java.io.File
 
 @Composable
 fun ProfileDescription(profile: Profile) {
     var showEnglish by remember { mutableStateOf(false) }
-    var imagePath by remember { mutableStateOf<String?>(null) }
-    var isLoadingImage by remember { mutableStateOf(false) }
+    val imagePath = profile.localImagePath ?: profile.logo
 
-    val context = LocalContext.current
-
-    LaunchedEffect(profile.nameShort) {
-        if (profile.nameShort.isNotBlank()) {
-            try {
-                isLoadingImage = true
-                Log.d("ProfileDescription", "🖼️ Loading image for: ${profile.nameShort}")
-
-                val manager = ImageStorageManager(context)
-                val localPath = manager.getLocalImagePath(profile.nameShort)
-
-                imagePath = localPath ?: profile.logo
-
-                Log.d("ProfileDescription", "✅ Image path resolved: $imagePath")
-            } catch (e: Exception) {
-                Log.e("ProfileDescription", "❌ Error loading image: ${e.message}")
-                imagePath = profile.logo
-            } finally {
-                isLoadingImage = false
-            }
-        }
-    }
+    Log.d("ProfileDescription", "imagePath: $imagePath")
 
     Card(
         modifier = Modifier
@@ -87,32 +62,31 @@ fun ProfileDescription(profile: Profile) {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                when {
-                    isLoadingImage -> {
-                        Box(
-                            modifier = Modifier.size(96.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(32.dp),
-                                strokeWidth = 3.dp
+                val imageModel = remember(imagePath) {
+                    imagePath.let {
+                        val file = File(it)
+                        if (file.exists()) {
+                            Log.d(
+                                "ProfileDescription",
+                                "📂 imagePath=$imagePath size=${file.length()} bytes"
                             )
-                        }
+                            Uri.fromFile(file)
+                        } else null
                     }
-
-                    !imagePath.isNullOrEmpty() -> {
+                }
+                when {
+                    imageModel != null -> {
                         AsyncImage(
-                            model = imagePath,
+                            model = imageModel,
                             contentDescription = "Profile Logo",
                             modifier = Modifier.size(96.dp),
-                            placeholder = painterResource(R.drawable.bitrise),
-                            error = painterResource(R.drawable.searxng),
+                            placeholder = painterResource(R.drawable.image_outline),
+                            error = painterResource(R.drawable.alert_triangle_outline),
                             onError = { error ->
                                 Log.e(
                                     "ProfileDescription",
                                     "❌ AsyncImage error: ${error.result.throwable.message}"
                                 )
-                                // Could set imagePath to null here to show default image
                             },
                             onSuccess = {
                                 Log.d("ProfileDescription", "✅ Image loaded successfully")
@@ -121,9 +95,8 @@ fun ProfileDescription(profile: Profile) {
                     }
 
                     else -> {
-                        Log.d("ProfileDescription", "📁 Using default image")
                         Image(
-                            painter = painterResource(R.drawable.devbox),
+                            painter = painterResource(R.drawable.image_outline),
                             contentDescription = "Default Logo",
                             modifier = Modifier.size(96.dp)
                         )

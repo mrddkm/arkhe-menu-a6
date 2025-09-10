@@ -47,6 +47,7 @@ fun ProfileScreen(
     val scrollState = rememberScrollState()
     val uriHandler = LocalUriHandler.current
     var isRefreshing by remember { mutableStateOf(false) }
+    val lastSuccess = remember { mutableStateOf<List<Profile>?>(null) }
 
     LaunchedEffect(Unit) {
         profileViewModel.ensureDataLoaded()
@@ -55,6 +56,12 @@ fun ProfileScreen(
     LaunchedEffect(profileState) {
         if (profileState !is SafeApiResult.Loading) {
             isRefreshing = false
+        }
+    }
+
+    LaunchedEffect(profileState) {
+        if (profileState is SafeApiResult.Success) {
+            lastSuccess.value = (profileState as SafeApiResult.Success<List<Profile>>).data
         }
     }
 
@@ -89,41 +96,59 @@ fun ProfileScreen(
                 }
 
                 is SafeApiResult.Error -> {
-                    // Error State
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center,
-                            modifier = Modifier.padding(32.dp)
-                        ) {
-                            Text(
-                                text = "Failed to load profile",
-                                style = MaterialTheme.typography.headlineSmall,
-                                color = MaterialTheme.colorScheme.error,
-                                textAlign = TextAlign.Center
-                            )
-
-                            (profileState as SafeApiResult.Error).exception.message?.let {
-                                Text(
-                                    text = it,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier.padding(vertical = 16.dp)
-                                )
+                    if (!lastSuccess.value.isNullOrEmpty()) {
+                        ProfileContent(
+                            profile = lastSuccess.value!!.first(),
+                            onSocialMediaClick = { url ->
+                                try {
+                                    uriHandler.openUri(url)
+                                } catch (_: Exception) {
+                                }
                             }
-
-                            Button(
-                                onClick = {
-                                    isRefreshing = true
-                                    profileViewModel.refreshProfiles()
-                                },
-                                enabled = !isRefreshing
+                        )
+                        Text(
+                            text = "Gagal sync, menampilkan data lama",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.padding(top = 8.dp)
+                        )
+                    } else {
+                        // Error State
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center,
+                                modifier = Modifier.padding(32.dp)
                             ) {
-                                Text(if (isRefreshing) "Retrying..." else "Try Again")
+                                Text(
+                                    text = "Failed to load profile",
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    color = MaterialTheme.colorScheme.error,
+                                    textAlign = TextAlign.Center
+                                )
+
+                                (profileState as SafeApiResult.Error).exception.message?.let {
+                                    Text(
+                                        text = it,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier.padding(vertical = 16.dp)
+                                    )
+                                }
+
+                                Button(
+                                    onClick = {
+                                        isRefreshing = true
+                                        profileViewModel.refreshProfiles()
+                                    },
+                                    enabled = !isRefreshing
+                                ) {
+                                    Text(if (isRefreshing) "Retrying..." else "Try Again")
+                                }
                             }
                         }
                     }

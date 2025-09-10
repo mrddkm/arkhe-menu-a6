@@ -27,5 +27,6 @@ data class ProfileEntity(
     val updatedAt: String = "",
     val createdByUserId: String = "",
     val updatedByUserId: String = "",
-    val lastSyncTime: Long = System.currentTimeMillis()
+    val lastSyncTime: Long = System.currentTimeMillis(),
+    val localImagePath: String? = null
 )

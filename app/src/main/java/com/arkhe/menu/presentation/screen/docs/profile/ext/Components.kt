@@ -2,6 +2,8 @@
 
 package com.arkhe.menu.presentation.screen.docs.profile.ext
 
+import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -38,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.arkhe.menu.R
 import com.arkhe.menu.domain.model.Profile
+import java.io.File
 
 @Composable
 fun LoadingUI() {
@@ -136,6 +139,8 @@ fun ProfileCard(
     profile: Profile,
     imagePath: String?
 ) {
+
+    Log.d("ProfileCard", "imagePath: $imagePath")
     Row(
         modifier = Modifier.clickable { onnNavigateToProfile() },
         verticalAlignment = Alignment.CenterVertically,
@@ -145,34 +150,36 @@ fun ProfileCard(
             modifier = Modifier.size(96.dp),
             contentAlignment = Alignment.Center
         ) {
-            val localImagePath = imagePath
-            val localFileExists = remember(localImagePath) {
-                localImagePath?.let {
-                    try {
-                        java.io.File(it).exists()
-                    } catch (_: Exception) {
-                        false
-                    }
-                } ?: false
+            val imageModel = remember(imagePath) {
+                imagePath?.let {
+                    val file = File(it)
+                    if (file.exists()) {
+                        Log.d(
+                            "ProfileDescription",
+                            "📂 imagePath=$imagePath size=${file.length()} bytes"
+                        )
+                        Uri.fromFile(file)
+                    } else null
+                }
             }
             when {
-                localImagePath != null && localFileExists -> {
+                imageModel != null -> {
                     AsyncImage(
-                        model = localImagePath,
+                        model = imageModel,
                         contentDescription = "Profile Logo",
                         modifier = Modifier.size(96.dp),
-                        placeholder = painterResource(R.drawable.bitrise),
-                        error = painterResource(R.drawable.searxng),
+                        placeholder = painterResource(R.drawable.image_outline),
+                        error = painterResource(R.drawable.alert_triangle_outline),
                         onError = {
-                            android.util.Log.e(
+                            Log.e(
                                 "DocsContent",
-                                "Image load failed: $localImagePath"
+                                "Image load failed: $imageModel"
                             )
                         },
                         onSuccess = {
-                            android.util.Log.d(
+                            Log.d(
                                 "DocsContent",
-                                "Image loaded successfully: $localImagePath"
+                                "Image loaded successfully: $imageModel"
                             )
                         }
                     )
@@ -180,7 +187,7 @@ fun ProfileCard(
 
                 else -> {
                     Image(
-                        painter = painterResource(R.drawable.devbox),
+                        painter = painterResource(R.drawable.image_outline),
                         contentDescription = "Default Logo",
                         modifier = Modifier.size(96.dp)
                     )

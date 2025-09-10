@@ -32,19 +32,11 @@ class RefreshProfilesUseCase(
     }
 }
 
-class DownloadProfileImagesUseCase(
+class SyncProfilesUseCase(
     private val repository: ProfileRepository
 ) {
-    suspend operator fun invoke(): SafeApiResult<Unit> {
-        return repository.downloadProfileImages()
-    }
-}
-
-class GetProfileImagePathUseCase(
-    private val repository: ProfileRepository
-) {
-    suspend operator fun invoke(nameShort: String): String? {
-        return repository.getProfileImagePath(nameShort)
+    suspend operator fun invoke(sessionToken: String): SafeApiResult<List<Profile>> {
+        return repository.syncProfiles(sessionToken)
     }
 }
 
@@ -52,6 +44,5 @@ data class ProfileUseCases(
     val getProfiles: GetProfilesUseCase,
     val getProfile: GetProfileUseCase,
     val refreshProfiles: RefreshProfilesUseCase,
-    val downloadProfileImages: DownloadProfileImagesUseCase,
-    val getProfileImagePath: GetProfileImagePathUseCase
+    val syncProfiles: SyncProfilesUseCase
 )

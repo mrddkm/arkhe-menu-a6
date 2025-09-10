@@ -21,6 +21,9 @@ interface ProfileDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertProfiles(profiles: List<ProfileEntity>)
 
+    @Query("UPDATE profiles SET localImagePath = :path WHERE nameShort = :nameShort")
+    suspend fun updateImagePath(nameShort: String, path: String?)
+
     @Query("DELETE FROM profiles WHERE nameShort = :nameShort")
     suspend fun deleteProfile(nameShort: String)
 

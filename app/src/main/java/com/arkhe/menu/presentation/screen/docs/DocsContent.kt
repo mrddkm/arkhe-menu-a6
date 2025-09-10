@@ -58,7 +58,6 @@ import kotlinx.coroutines.delay
 import org.koin.android.ext.koin.androidContext
 import org.koin.compose.KoinApplicationPreview
 import org.koin.compose.viewmodel.koinViewModel
-import java.io.File
 
 @Composable
 fun DocsContent(
@@ -79,7 +78,6 @@ fun DocsContent(
     val categoriesState by categoryViewModel.categoriesState.collectAsState()
     val productsState by productViewModel.productsState.collectAsState()
 
-    var imagePath by remember { mutableStateOf<String?>(null) }
     var isInitialized by remember { mutableStateOf(false) }
 
     Log.d("DocsContent", "🔄 Component recomposed - isInitialized: $isInitialized")
@@ -89,61 +87,14 @@ fun DocsContent(
             try {
                 Log.d("DocsContent", "🚀 Starting initialization...")
 
-                // Start all data loading in parallel
                 profileViewModel.ensureDataLoaded()
                 categoryViewModel.ensureDataLoaded()
-
-                // Small delay to ensure token is properly set
                 delay(500)
-
-                // Load products after categories (if dependent)
-                // productViewModel.ensureDataLoaded() // Uncomment if you have ProductViewModel with ensureDataLoaded
-
                 isInitialized = true
                 Log.d("DocsContent", "✅ Initialization completed")
             } catch (e: Exception) {
                 Log.e("DocsContent", "❌ Initialization error: ${e.message}", e)
             }
-        }
-    }
-
-    // Handle profile image loading
-    val nameShort: String? = when (profileState) {
-        is SafeApiResult.Success<*> -> {
-            val profiles = (profileState as SafeApiResult.Success<List<Profile>>).data
-            val firstProfile = profiles.firstOrNull()
-            Log.d("DocsContent", "📋 Profile loaded: ${firstProfile?.nameShort}")
-            firstProfile?.nameShort
-        }
-        is SafeApiResult.Loading -> {
-            Log.d("DocsContent", "⏳ Profile still loading...")
-            null
-        }
-        is SafeApiResult.Error -> {
-            Log.e("DocsContent", "❌ Profile error: ${(profileState as SafeApiResult.Error).exception.message}")
-            null
-        }
-    }
-
-    LaunchedEffect(nameShort) {
-        if (!nameShort.isNullOrEmpty()) {
-            try {
-                Log.d("DocsContent", "🖼️ Getting image path for: $nameShort")
-                val path = profileViewModel.getProfileImagePath(nameShort)
-                imagePath = if (path != null && File(path).exists()) {
-                    Log.d("DocsContent", "✅ Image path found: $path")
-                    path
-                } else {
-                    Log.d("DocsContent", "⚠️ Image path not found or doesn't exist")
-                    null
-                }
-            } catch (e: Exception) {
-                Log.e("DocsContent", "❌ Error getting image path: ${e.message}")
-                imagePath = null
-            }
-        } else {
-            imagePath = null
-            Log.d("DocsContent", "⚠️ nameShort is null or empty")
         }
     }
 
@@ -182,7 +133,7 @@ fun DocsContent(
                             ProfileCard(
                                 onNavigateToProfile,
                                 profiles.first(),
-                                imagePath
+                                profiles.first().localImagePath
                             )
                         } else {
                             Log.w("DocsContent", "⚠️ Profile list is empty")

@@ -61,7 +61,8 @@ fun ProfileEntity.toDomain(): Profile {
                 indonesian = actionInformationId,
                 english = actionInformationEn
             )
-        )
+        ),
+        localImagePath = localImagePath
     )
 }
 

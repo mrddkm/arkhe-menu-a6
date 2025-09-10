@@ -12,6 +12,5 @@ interface ProfileRepository {
 
     suspend fun getProfile(nameShort: String): Profile?
     suspend fun refreshProfiles(sessionToken: String): SafeApiResult<List<Profile>>
-    suspend fun downloadProfileImages(): SafeApiResult<Unit>
-    suspend fun getProfileImagePath(nameShort: String): String?
+    suspend fun syncProfiles(sessionToken: String): SafeApiResult<List<Profile>>
 }
