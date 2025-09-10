@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 abstract class BaseViewModel<Domain>(
-    private val repository: BaseRepository<*, *, Domain>
+    private val repository: BaseRepository<*, Domain>
 ) : ViewModel() {
 
     private val _state =
