@@ -2,6 +2,7 @@
 
 package com.arkhe.menu.presentation.screen.docs.profile.ext
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -38,8 +39,7 @@ import com.arkhe.menu.domain.model.Profile
 import com.arkhe.menu.domain.model.ProfileInformation
 import com.arkhe.menu.domain.model.SocialMedia
 import com.arkhe.menu.presentation.theme.AppTheme
-import java.text.SimpleDateFormat
-import java.util.Locale
+import com.arkhe.menu.utils.DateUtils.formatBirthDate
 
 @Composable
 fun ProfileDescription(profile: Profile) {
@@ -48,14 +48,22 @@ fun ProfileDescription(profile: Profile) {
     var isLoadingImage by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
+
     LaunchedEffect(profile.nameShort) {
         if (profile.nameShort.isNotBlank()) {
-            isLoadingImage = true
-            imagePath = try {
+            try {
+                isLoadingImage = true
+                Log.d("ProfileDescription", "🖼️ Loading image for: ${profile.nameShort}")
+
                 val manager = ImageStorageManager(context)
-                manager.getLocalImagePath(profile.nameShort) ?: profile.logo
-            } catch (_: Exception) {
-                null
+                val localPath = manager.getLocalImagePath(profile.nameShort)
+
+                imagePath = localPath ?: profile.logo
+
+                Log.d("ProfileDescription", "✅ Image path resolved: $imagePath")
+            } catch (e: Exception) {
+                Log.e("ProfileDescription", "❌ Error loading image: ${e.message}")
+                imagePath = profile.logo
             } finally {
                 isLoadingImage = false
             }
@@ -85,25 +93,35 @@ fun ProfileDescription(profile: Profile) {
                             modifier = Modifier.size(96.dp),
                             contentAlignment = Alignment.Center
                         ) {
-                            CircularProgressIndicator(modifier = Modifier.size(32.dp))
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(32.dp),
+                                strokeWidth = 3.dp
+                            )
                         }
                     }
 
-                    imagePath != null -> {
+                    !imagePath.isNullOrEmpty() -> {
                         AsyncImage(
                             model = imagePath,
                             contentDescription = "Profile Logo",
                             modifier = Modifier.size(96.dp),
                             placeholder = painterResource(R.drawable.bitrise),
                             error = painterResource(R.drawable.searxng),
-                            onError = {
-                                // If image fails to load, we could set imagePath to null
-                                // to show default image instead
+                            onError = { error ->
+                                Log.e(
+                                    "ProfileDescription",
+                                    "❌ AsyncImage error: ${error.result.throwable.message}"
+                                )
+                                // Could set imagePath to null here to show default image
+                            },
+                            onSuccess = {
+                                Log.d("ProfileDescription", "✅ Image loaded successfully")
                             }
                         )
                     }
 
                     else -> {
+                        Log.d("ProfileDescription", "📁 Using default image")
                         Image(
                             painter = painterResource(R.drawable.devbox),
                             contentDescription = "Default Logo",
@@ -129,65 +147,62 @@ fun ProfileDescription(profile: Profile) {
                     modifier = Modifier.weight(1f)
                 )
 
+                // Show language toggle only if both languages have content
                 if (profile.information.indonesian.isNotBlank() && profile.information.english.isNotBlank()) {
                     TextButton(
                         onClick = { showEnglish = !showEnglish }
                     ) {
-                        Text(if (showEnglish) "ID" else "EN")
+                        Text(
+                            text = if (showEnglish) "ID" else "EN",
+                            style = MaterialTheme.typography.labelLarge
+                        )
                     }
                 }
             }
 
-            // Birth Date Formatting
             val birthDateFormatted = remember(profile.birthDate) {
-                try {
-                    val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
-                    val outputFormat = SimpleDateFormat("MMMM yyyy", Locale.getDefault())
-                    val date = inputFormat.parse(profile.birthDate)
-                    date?.let { outputFormat.format(it) } ?: profile.birthDate
-                } catch (_: Exception) {
-                    try {
-                        val altFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                        val outputFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
-                        val date = altFormat.parse(profile.birthDate)
-                        date?.let { outputFormat.format(it) } ?: profile.birthDate
-                    } catch (_: Exception) {
-                        profile.birthDate
-                    }
-                }
+                formatBirthDate(profile.birthDate)
             }
 
-            // Action Information
-            val actionText = remember(showEnglish, profile.actionInfo) {
-                val action = when {
+            // Action Information with smart text replacement
+            val actionText = remember(showEnglish, profile.actionInfo, birthDateFormatted) {
+                val information = when {
                     showEnglish && profile.actionInfo.information.english.isNotBlank() ->
                         profile.actionInfo.information.english
+
                     profile.actionInfo.information.indonesian.isNotBlank() ->
                         profile.actionInfo.information.indonesian
+
                     profile.actionInfo.information.english.isNotBlank() ->
                         profile.actionInfo.information.english
+
                     else -> "No information available"
                 }
 
-                action.replace("{profileNameShort}", "\"${profile.nameShort}\"")
+                information
+                    .replace("{profileNameShort}", "\"${profile.nameShort}\"")
                     .replace("{birthDate}", birthDateFormatted)
             }
 
             Text(
                 text = actionText,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                lineHeight = MaterialTheme.typography.bodyMedium.lineHeight.times(1.2)
             )
 
-            // Profile Information
+            // Profile Information with language preference
             val informationText = remember(showEnglish, profile.information) {
                 when {
                     showEnglish && profile.information.english.isNotBlank() ->
                         profile.information.english
+
                     profile.information.indonesian.isNotBlank() ->
                         profile.information.indonesian
+
                     profile.information.english.isNotBlank() ->
                         profile.information.english
+
                     else -> "No information available"
                 }
             }
@@ -196,7 +211,8 @@ fun ProfileDescription(profile: Profile) {
                 text = informationText,
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Justify,
-                lineHeight = MaterialTheme.typography.bodyMedium.lineHeight.times(1.2)
+                lineHeight = MaterialTheme.typography.bodyMedium.lineHeight.times(1.2),
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
     }

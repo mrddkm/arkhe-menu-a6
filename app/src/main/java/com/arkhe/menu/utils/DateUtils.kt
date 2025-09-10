@@ -1,6 +1,7 @@
 package com.arkhe.menu.utils
 
 import android.annotation.SuppressLint
+import android.util.Log
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -11,8 +12,10 @@ object DateUtils {
 
     @SuppressLint("ConstantLocale")
     private val dateFormat = SimpleDateFormat(Constants.DATE_FORMAT, Locale.getDefault())
+
     @SuppressLint("ConstantLocale")
     private val dateTimeFormat = SimpleDateFormat(Constants.DATETIME_FORMAT, Locale.getDefault())
+
     @SuppressLint("ConstantLocale")
     private val isoDateFormat = SimpleDateFormat(Constants.ISO_DATE_FORMAT, Locale.getDefault())
 
@@ -77,5 +80,34 @@ object DateUtils {
             diff < 7 * 24 * 60 * 60 * 1000 -> "${diff / (24 * 60 * 60 * 1000)} days ago"
             else -> formatDate(date)
         }
+    }
+
+    /**
+     * Format birth date with multiple fallback formats
+     */
+    fun formatBirthDate(birthDate: String): String {
+        if (birthDate.isBlank()) return "Unknown"
+
+        val formats = listOf(
+            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'" to "MMMM yyyy",
+            "yyyy-MM-dd'T'HH:mm:ss'Z'" to "MMMM yyyy",
+            "yyyy-MM-dd" to "dd MMMM yyyy",
+            "dd-MM-yyyy" to "dd MMMM yyyy"
+        )
+
+        for ((inputFormat, outputFormat) in formats) {
+            try {
+                val inputFormatter = SimpleDateFormat(inputFormat, Locale.getDefault())
+                val outputFormatter = SimpleDateFormat(outputFormat, Locale.getDefault())
+                val date = inputFormatter.parse(birthDate)
+                if (date != null) {
+                    return outputFormatter.format(date)
+                }
+            } catch (e: Exception) {
+                continue
+            }
+        }
+
+        return birthDate
     }
 }

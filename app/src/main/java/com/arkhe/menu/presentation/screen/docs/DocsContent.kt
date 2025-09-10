@@ -82,45 +82,68 @@ fun DocsContent(
     var imagePath by remember { mutableStateOf<String?>(null) }
     var isInitialized by remember { mutableStateOf(false) }
 
-    Log.d("DocsContent", "isInitialized: $isInitialized")
+    Log.d("DocsContent", "🔄 Component recomposed - isInitialized: $isInitialized")
 
     LaunchedEffect(Unit) {
         if (!isInitialized) {
             try {
+                Log.d("DocsContent", "🚀 Starting initialization...")
+
+                // Start all data loading in parallel
                 profileViewModel.ensureDataLoaded()
                 categoryViewModel.ensureDataLoaded()
+
+                // Small delay to ensure token is properly set
                 delay(500)
+
+                // Load products after categories (if dependent)
+                // productViewModel.ensureDataLoaded() // Uncomment if you have ProductViewModel with ensureDataLoaded
+
                 isInitialized = true
+                Log.d("DocsContent", "✅ Initialization completed")
             } catch (e: Exception) {
-                Log.e("DocsContent", "Initialization error", e)
+                Log.e("DocsContent", "❌ Initialization error: ${e.message}", e)
             }
         }
     }
 
-    Log.d("DocsContent", "isInitialized LaunchedEffect: $isInitialized")
-
+    // Handle profile image loading
     val nameShort: String? = when (profileState) {
         is SafeApiResult.Success<*> -> {
             val profiles = (profileState as SafeApiResult.Success<List<Profile>>).data
-            profiles.firstOrNull()?.nameShort
+            val firstProfile = profiles.firstOrNull()
+            Log.d("DocsContent", "📋 Profile loaded: ${firstProfile?.nameShort}")
+            firstProfile?.nameShort
         }
-
-        else -> null
+        is SafeApiResult.Loading -> {
+            Log.d("DocsContent", "⏳ Profile still loading...")
+            null
+        }
+        is SafeApiResult.Error -> {
+            Log.e("DocsContent", "❌ Profile error: ${(profileState as SafeApiResult.Error).exception.message}")
+            null
+        }
     }
 
     LaunchedEffect(nameShort) {
         if (!nameShort.isNullOrEmpty()) {
-            val path = profileViewModel.getProfileImagePath(nameShort)
-            imagePath = if (path != null && File(path).exists()) {
-                path
-            } else {
-                Log.d("DocsContent", "Profile path: null")
-                null
+            try {
+                Log.d("DocsContent", "🖼️ Getting image path for: $nameShort")
+                val path = profileViewModel.getProfileImagePath(nameShort)
+                imagePath = if (path != null && File(path).exists()) {
+                    Log.d("DocsContent", "✅ Image path found: $path")
+                    path
+                } else {
+                    Log.d("DocsContent", "⚠️ Image path not found or doesn't exist")
+                    null
+                }
+            } catch (e: Exception) {
+                Log.e("DocsContent", "❌ Error getting image path: ${e.message}")
+                imagePath = null
             }
-            Log.d("DocsContent", "Profile imagePath: $imagePath")
         } else {
             imagePath = null
-            Log.d("DocsContent", "nameShort is null or empty")
+            Log.d("DocsContent", "⚠️ nameShort is null or empty")
         }
     }
 
@@ -147,14 +170,37 @@ fun DocsContent(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 when (profileState) {
-                    is SafeApiResult.Loading -> LoadingUI()
-                    is SafeApiResult.Success<*> -> ProfileCard(
-                        onNavigateToProfile,
-                        (profileState as SafeApiResult.Success<List<Profile>>).data.first(),
-                        imagePath
-                    )
+                    is SafeApiResult.Loading -> {
+                        Log.d("DocsContent", "🔄 Showing loading UI for profile")
+                        LoadingUI()
+                    }
 
-                    is SafeApiResult.Error -> ErrorUI { profileViewModel.ensureDataLoaded() }
+                    is SafeApiResult.Success<*> -> {
+                        val profiles = (profileState as SafeApiResult.Success<List<Profile>>).data
+                        if (profiles.isNotEmpty()) {
+                            Log.d("DocsContent", "✅ Showing profile card")
+                            ProfileCard(
+                                onNavigateToProfile,
+                                profiles.first(),
+                                imagePath
+                            )
+                        } else {
+                            Log.w("DocsContent", "⚠️ Profile list is empty")
+                            Text(
+                                text = "No profile data available",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        }
+                    }
+
+                    is SafeApiResult.Error -> {
+                        Log.e("DocsContent", "❌ Showing error UI for profile")
+                        ErrorUI {
+                            Log.d("DocsContent", "🔄 Retry button clicked")
+                            profileViewModel.refreshProfiles()
+                        }
+                    }
                 }
             }
         }
