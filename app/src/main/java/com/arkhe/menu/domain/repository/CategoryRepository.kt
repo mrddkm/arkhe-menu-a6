@@ -5,7 +5,7 @@ import com.arkhe.menu.domain.model.Category
 import kotlinx.coroutines.flow.Flow
 
 interface CategoryRepository {
-    suspend fun getCategories(
+    fun getCategories(
         sessionToken: String,
         forceRefresh: Boolean = false
     ): Flow<SafeApiResult<List<Category>>>

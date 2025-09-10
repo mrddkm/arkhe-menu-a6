@@ -116,19 +116,5 @@ class CategoryViewModel(
         _selectedCategory.value = category
     }
 
-    fun clearSelectedCategory() {
-        Log.d(TAG, "Selected category cleared")
-        _selectedCategory.value = null
-    }
-
-    fun updateScrollPosition(position: Int) {
-        _lastScrollPosition.value = position
-    }
-
     fun getScrollPosition(): Int = _lastScrollPosition.value
-
-    suspend fun getCategoryById(id: String): Category? {
-        Log.d(TAG, "Getting category by ID: $id")
-        return categoryUseCases.getCategory(id)
-    }
 }
