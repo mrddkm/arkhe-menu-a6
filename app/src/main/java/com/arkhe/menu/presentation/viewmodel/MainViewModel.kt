@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class MainViewModel(
     private val sessionManager: SessionManager
@@ -21,19 +22,81 @@ class MainViewModel(
     private val _uiState = MutableStateFlow(MainUiState())
     val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
 
-    init {
-        Log.d("init", "## MainViewModel::initialized First Timw ##")
-        viewModelScope.launch {
-            val token = sessionManager.sessionToken.first()
-            if (token == null) {
-                val defaultToken = Constants.Simulation.TOKEN
-                sessionManager.saveSession(defaultToken)
-                Log.d("MainViewModel", "⚠️ Using sessionToken from Constant: $defaultToken")
+    /*
+        init {
+            Log.d("init", "## MainViewModel::initialized First Timw ##")
+            viewModelScope.launch {
+                val token = sessionManager.sessionToken.first()
+                if (token == null) {
+                    val defaultToken = Constants.Simulation.TOKEN
+                    sessionManager.saveSession(defaultToken)
+                    Log.d("MainViewModel", "⚠️ Using sessionToken from Constant: $defaultToken")
 
-                val saved = sessionManager.sessionToken.first()
-                Log.d("MainViewModel", "✅ Token tersimpan di DataStore: $saved")
-            } else {
-                Log.d("MainViewModel", "✅ Using sessionToken from SessionManager: $token")
+                    val saved = sessionManager.sessionToken.first()
+                    Log.d("MainViewModel", "✅ Token tersimpan di DataStore: $saved")
+                } else {
+                    Log.d("MainViewModel", "✅ Using sessionToken from SessionManager: $token")
+                }
+            }
+        }
+    */
+
+    init {
+        Log.d("init", "## MainViewModel::initialized First Time ##")
+
+        // Initialize token synchronously to ensure it's available for other ViewModels
+        initializeToken()
+
+        // Then handle any additional async initialization
+        viewModelScope.launch {
+            // Additional async initialization can go here if needed
+        }
+    }
+
+    /**
+     * Initialize token synchronously to ensure it's available immediately
+     * for other ViewModels that depend on it
+     */
+    private fun initializeToken() {
+        try {
+            runBlocking {
+                val existingToken = sessionManager.sessionToken.first()
+
+                if (existingToken.isNullOrEmpty()) {
+                    val defaultToken = Constants.Simulation.TOKEN
+
+                    // Save the token
+                    sessionManager.saveSession(defaultToken)
+
+                    // Verify it was saved correctly
+                    val savedToken = sessionManager.sessionToken.first()
+
+                    if (savedToken == defaultToken) {
+                        Log.d("MainViewModel", "✅ Default token saved successfully: $defaultToken")
+                    } else {
+                        Log.e(
+                            "MainViewModel",
+                            "❌ Token save failed. Expected: $defaultToken, Got: $savedToken"
+                        )
+                    }
+                } else {
+                    Log.d("MainViewModel", "✅ Using existing sessionToken: $existingToken")
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("MainViewModel", "❌ Error initializing token: ${e.message}", e)
+            // Fallback: try to save token again
+            viewModelScope.launch {
+                try {
+                    sessionManager.saveSession(Constants.Simulation.TOKEN)
+                    Log.d("MainViewModel", "✅ Fallback token save completed")
+                } catch (fallbackException: Exception) {
+                    Log.e(
+                        "MainViewModel",
+                        "❌ Fallback token save failed: ${fallbackException.message}"
+                    )
+                    setError("Failed to initialize session token")
+                }
             }
         }
     }
