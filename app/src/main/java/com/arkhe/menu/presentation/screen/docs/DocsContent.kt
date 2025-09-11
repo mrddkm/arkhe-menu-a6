@@ -272,35 +272,6 @@ fun DocsContent(
                             )
                         }
                     }
-
-                    when (categoriesState) {
-                        is SafeApiResult.Loading -> {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(100.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                CircularProgressIndicator()
-                            }
-                        }
-
-                        is SafeApiResult.Success -> {
-                            CategoriesSectionContent(
-                                categoriesList = (categoriesState as SafeApiResult.Success<List<Category>>).data
-                            )
-                        }
-
-                        is SafeApiResult.Error -> {
-                            Text(
-                                text = "Failed to load categories",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.error,
-                                modifier = Modifier.padding(16.dp)
-                            )
-                        }
-                    }
-
                 }
             }
 
