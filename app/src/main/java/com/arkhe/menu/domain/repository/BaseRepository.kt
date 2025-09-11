@@ -23,27 +23,32 @@ abstract class BaseRepository<Entity, Domain>(
 
     fun getAll(): Flow<List<Domain>> =
         daoFlow.map { entities ->
-            Log.d(TAG, "Local data count: ${entities.size}")
-            entities.map(mapperToDomain)
+            Log.d(TAG, "💾 BaseRepository.getAll() - Local entities count: ${entities.size}")
+            val domains = entities.map(mapperToDomain)
+            Log.d(TAG, "💾 BaseRepository.getAll() - Mapped to ${domains.size} domain objects")
+            domains
         }
 
     suspend fun sync(token: String): SafeApiResult<List<Domain>> {
         return withContext(Dispatchers.IO) {
             try {
-                Log.d(TAG, "Starting sync with token: $token")
+                Log.d(TAG, "🔄 BaseRepository.sync() - Starting with token: $token")
 
                 val remoteEntities = fetchRemoteEntities(token)
-                Log.d(TAG, "Fetched ${remoteEntities.size} items from remote")
+                Log.d(TAG, "🌐 BaseRepository.sync() - Fetched ${remoteEntities.size} entities from remote")
 
+                Log.d(TAG, "🗑️ BaseRepository.sync() - Clearing local data...")
                 clearEntities()
+
+                Log.d(TAG, "💾 BaseRepository.sync() - Inserting ${remoteEntities.size} entities...")
                 insertEntities(remoteEntities)
 
                 val domainObjects = remoteEntities.map(mapperToDomain)
-                Log.d(TAG, "Sync completed successfully")
+                Log.d(TAG, "✅ BaseRepository.sync() - Successfully synced ${domainObjects.size} items")
 
                 SafeApiResult.Success(domainObjects)
             } catch (e: Exception) {
-                Log.e(TAG, "Sync failed: ${e.message}", e)
+                Log.e(TAG, "❌ BaseRepository.sync() - Failed: ${e.message}", e)
                 SafeApiResult.Error(e)
             }
         }

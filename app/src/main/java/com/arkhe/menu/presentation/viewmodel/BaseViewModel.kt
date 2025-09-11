@@ -34,12 +34,17 @@ abstract class BaseViewModel<Domain>(
 
     private fun initializeData() {
         viewModelScope.launch {
-            sessionManager.sessionToken.collect { token ->
-                if (token != null && !isInitialized) {
-                    Log.d(TAG, "Token available, initializing data")
-                    loadData(token, forceRefresh = false)
-                    isInitialized = true
+            try {
+                sessionManager.sessionToken.collect { token ->
+                    if (token != null && !isInitialized) {
+                        Log.d(TAG, "Token available, initializing data")
+                        loadData(token, forceRefresh = false)
+                        isInitialized = true
+                    }
                 }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error in initializeData: ${e.message}", e)
+                _state.value = SafeApiResult.Error(e)
             }
         }
     }
@@ -47,18 +52,42 @@ abstract class BaseViewModel<Domain>(
     protected fun loadData(token: String? = null, forceRefresh: Boolean = false) {
         viewModelScope.launch {
             try {
-                val sessionToken = token ?: sessionManager.getTokenForApiCall()
+                // ✅ Better token handling
+                val sessionToken = token ?: run {
+                    val retrievedToken = sessionManager.getTokenForApiCall()
+                    if (retrievedToken.isEmpty()) {
+                        Log.e(TAG, "❌ No valid token available")
+                        _state.value = SafeApiResult.Error(
+                            IllegalStateException("Authentication token not available")
+                        )
+                        return@launch
+                    }
+                    retrievedToken
+                }
+
                 Log.d(TAG, "Loading data - forceRefresh: $forceRefresh")
 
                 if (!forceRefresh) {
-                    fetchData(sessionToken, false).collect { result ->
-                        Log.d(TAG, "Data received: ${result::class.simpleName}")
-                        _state.value = result
+                    // ✅ Better error handling for fetchData
+                    try {
+                        fetchData(sessionToken, false).collect { result ->
+                            Log.d(TAG, "Data received: ${result::class.simpleName}")
+                            _state.value = result
+                        }
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Error in fetchData flow: ${e.message}", e)
+                        _state.value = SafeApiResult.Error(e)
                     }
                 } else {
                     _state.value = SafeApiResult.Loading
-                    val syncResult = syncData(sessionToken)
-                    _state.value = syncResult
+                    // ✅ Better error handling for syncData
+                    try {
+                        val syncResult = syncData(sessionToken)
+                        _state.value = syncResult
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Error in syncData: ${e.message}", e)
+                        _state.value = SafeApiResult.Error(e)
+                    }
                 }
 
             } catch (e: Exception) {
@@ -70,18 +99,57 @@ abstract class BaseViewModel<Domain>(
 
     fun refresh() {
         viewModelScope.launch {
-            val token = sessionManager.getTokenForApiCall()
-            loadData(token, forceRefresh = true)
+            try {
+                val token = sessionManager.getTokenForApiCall()
+                if (token.isEmpty()) {
+                    Log.e(TAG, "❌ Cannot refresh: No valid token")
+                    _state.value = SafeApiResult.Error(
+                        IllegalStateException("Authentication token not available for refresh")
+                    )
+                    return@launch
+                }
+                loadData(token, forceRefresh = true)
+            } catch (e: Exception) {
+                Log.e(TAG, "Error in refresh: ${e.message}", e)
+                _state.value = SafeApiResult.Error(e)
+            }
         }
     }
 
     fun ensureDataLoaded() {
         if (!isInitialized) {
             viewModelScope.launch {
-                val token = sessionManager.getTokenForApiCall()
-                loadData(token, forceRefresh = false)
-                isInitialized = true
+                try {
+                    val token = sessionManager.getTokenForApiCall()
+                    if (token.isEmpty()) {
+                        Log.e(TAG, "❌ Cannot ensure data loaded: No valid token")
+                        _state.value = SafeApiResult.Error(
+                            IllegalStateException("Authentication token not available")
+                        )
+                        return@launch
+                    }
+                    loadData(token, forceRefresh = false)
+                    isInitialized = true
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error in ensureDataLoaded: ${e.message}", e)
+                    _state.value = SafeApiResult.Error(e)
+                }
             }
+        }
+    }
+
+    // ✅ Add method to check if dependencies are properly initialized
+    protected open fun validateDependencies(): Boolean {
+        return true // Override in child classes
+    }
+
+    // ✅ Add method to handle dependency validation
+    protected fun checkAndHandleDependencies() {
+        if (!validateDependencies()) {
+            Log.e(TAG, "❌ Dependencies validation failed")
+            _state.value = SafeApiResult.Error(
+                IllegalStateException("Required dependencies are not properly initialized")
+            )
         }
     }
 }

@@ -87,7 +87,7 @@ fun CategoriesScreen(
             FloatingActionButton(
                 onClick = {
                     isUserRefreshing = true
-                    categoryViewModel.refreshCategories()
+                    categoryViewModel.refresh()
                 },
                 shape = CircleShape,
                 containerColor = MaterialTheme.colorScheme.primary

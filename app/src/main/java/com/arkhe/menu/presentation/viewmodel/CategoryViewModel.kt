@@ -19,6 +19,14 @@ class CategoryViewModel(
         private const val TAG = "CategoryViewModel"
     }
 
+    init {
+        @Suppress("SENSELESS_COMPARISON")
+        if (categoryUseCases == null) {
+            Log.e(TAG, "❌ categoryUseCases is NULL! Check DI setup.")
+            throw IllegalStateException("CategoryUseCases is not injected!")
+        }
+    }
+
     private val _selectedCategory = MutableStateFlow<Category?>(null)
     val selectedCategory: StateFlow<Category?> = _selectedCategory.asStateFlow()
 
@@ -29,18 +37,21 @@ class CategoryViewModel(
         token: String,
         forceRefresh: Boolean
     ): Flow<SafeApiResult<List<Category>>> {
-        Log.d(TAG, "Fetching categories data - forceRefresh: $forceRefresh")
-        return categoryUseCases.getCategories(token, forceRefresh)
+        Log.d(TAG, "🔍 fetchData called - token: $token, forceRefresh: $forceRefresh")
+        val result = categoryUseCases.getCategories(token, forceRefresh)
+        Log.d(TAG, "📊 fetchData result flow created")
+        return result
     }
 
     override suspend fun syncData(token: String): SafeApiResult<List<Category>> {
-        Log.d(TAG, "Syncing categories data")
-        return categoryUseCases.refreshCategories(token)
+        Log.d(TAG, "🔄 syncData called with token: $token")
+        val result = categoryUseCases.refreshCategories(token)
+        Log.d(TAG, "📊 syncData result: ${result::class.simpleName}")
+        return result
     }
 
-    // ✅ Category-specific methods
     fun selectCategory(category: Category) {
-        Log.d(TAG, "Category selected: ${category.name}")
+        Log.d(TAG, "📌 Category selected: ${category.name}")
         _selectedCategory.value = category
     }
 
@@ -50,14 +61,21 @@ class CategoryViewModel(
 
     fun getScrollPosition(): Int = _lastScrollPosition.value
 
-    // ✅ Convenience Methods for UI
-    fun loadCategories(forceRefresh: Boolean = false) {
-        Log.d(TAG, "loadCategories called - forceRefresh: $forceRefresh")
-        loadData(forceRefresh = forceRefresh)
-    }
+    // 🔧 DEBUGGING METHODS
+    fun debugCurrentState() {
+        Log.d(TAG, "🐛 Current state: ${state.value::class.simpleName}")
+        when (val currentState = state.value) {
+            is SafeApiResult.Success -> {
+                Log.d(TAG, "🐛 Success data count: ${currentState.data.size}")
+            }
 
-    fun refreshCategories() {
-        Log.d(TAG, "refreshCategories called")
-        refresh()
+            is SafeApiResult.Error -> {
+                Log.d(TAG, "🐛 Error message: ${currentState.exception.message}")
+            }
+
+            is SafeApiResult.Loading -> {
+                Log.d(TAG, "🐛 Currently loading...")
+            }
+        }
     }
 }

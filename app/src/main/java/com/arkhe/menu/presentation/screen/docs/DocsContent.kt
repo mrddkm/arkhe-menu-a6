@@ -80,6 +80,33 @@ fun DocsContent(
     /*✅ Using the state from the BaseViewmodel Pattern*/
     val categoriesState by categoryViewModel.state.collectAsState()
 
+    // 🐛 DEBUGGING - tambahkan ini sementara
+    LaunchedEffect(categoriesState) {
+        Log.d("DocsContent", "🐛 Categories state changed: ${categoriesState::class.simpleName}")
+        when (categoriesState) {
+            is SafeApiResult.Success -> {
+                Log.d("DocsContent", "🐛 Success with ${(categoriesState as SafeApiResult.Success<List<Category>>).data.size} items")
+            }
+            is SafeApiResult.Error -> {
+                Log.d("DocsContent", "🐛 Error: ${(categoriesState as SafeApiResult.Error).exception}")
+            }
+            is SafeApiResult.Loading -> {
+                Log.d("DocsContent", "🐛 Loading state detected")
+            }
+        }
+    }
+
+    // Coba panggil debug method
+    LaunchedEffect(Unit) {
+        kotlinx.coroutines.delay(2000) // Wait 2 seconds
+        if (categoriesState is SafeApiResult.Loading) {
+            Log.d("DocsContent", "🚨 Still loading after 2 seconds - debugging...")
+            categoryViewModel.debugCurrentState()
+        }
+    }
+
+
+
     val profileState by profileViewModel.profilesState.collectAsState()
     val productsState by productViewModel.productsState.collectAsState()
 
