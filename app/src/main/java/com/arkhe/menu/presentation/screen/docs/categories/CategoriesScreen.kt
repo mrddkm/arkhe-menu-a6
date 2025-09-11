@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,35 +48,51 @@ fun CategoriesScreen(
     categoryViewModel: CategoryViewModel = koinViewModel(),
     onNavigateToDetail: () -> Unit = {}
 ) {
-    val categoriesState by categoryViewModel.categoriesState.collectAsState()
+    /*✅ Using the State from BaseViewModel*/
+    val categoriesState by categoryViewModel.state.collectAsState()
 
     val listState = rememberLazyListState(
         initialFirstVisibleItemIndex = categoryViewModel.getScrollPosition()
     )
 
-    var isRefreshing by remember { mutableStateOf(false) }
+    /*✅ Improved refresh state management*/
+    var isUserRefreshing by remember { mutableStateOf(false) }
 
+    /*✅ Smart refresh indicator - show loading only user trigger refresh*/
+    val showRefreshLoading by remember {
+        derivedStateOf {
+            isUserRefreshing && categoriesState is SafeApiResult.Loading
+        }
+    }
+
+    /*✅ Auto-initialization with offline-first approach*/
     LaunchedEffect(Unit) {
         categoryViewModel.ensureDataLoaded()
     }
 
+    /*✅ Reset refresh flag when not loading*/
     LaunchedEffect(categoriesState) {
         if (categoriesState !is SafeApiResult.Loading) {
-            isRefreshing = false
+            isUserRefreshing = false
         }
+    }
+
+    /*✅ Save scroll position when dispose*/
+    LaunchedEffect(listState.firstVisibleItemIndex) {
+        categoryViewModel.updateScrollPosition(listState.firstVisibleItemIndex)
     }
 
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    isRefreshing = true
+                    isUserRefreshing = true
                     categoryViewModel.refreshCategories()
                 },
                 shape = CircleShape,
                 containerColor = MaterialTheme.colorScheme.primary
             ) {
-                if (isRefreshing && categoriesState is SafeApiResult.Loading) {
+                if (showRefreshLoading) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(24.dp),
                         color = MaterialTheme.colorScheme.onPrimary,
@@ -108,21 +125,21 @@ fun CategoriesScreen(
 
             when (categoriesState) {
                 is SafeApiResult.Loading -> {
-                    if (!isRefreshing) {
+                    /*✅ Only show initial loading, not refresh loading*/
+                    if (!isUserRefreshing) {
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(200.dp),
                             contentAlignment = Alignment.Center
                         ) {
-                            CircularProgressIndicator()
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 CircularProgressIndicator()
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text(
-                                    text = if (isRefreshing) "Refreshing..." else "Loading categories...",
+                                    text = "Loading categories...",
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                                 )
@@ -135,10 +152,9 @@ fun CategoriesScreen(
                     val categories = (categoriesState as SafeApiResult.Success<List<Category>>).data
 
                     if (categories.isEmpty()) {
+                        /*✅ Empty state with better UX*/
                         Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(200.dp),
+                            modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
                         ) {
                             Column(
@@ -149,18 +165,25 @@ fun CategoriesScreen(
                                     style = MaterialTheme.typography.bodyLarge,
                                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                                 )
-                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = "Pull to refresh or tap the refresh button",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                                    modifier = Modifier.padding(top = 4.dp)
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
                                 Button(
                                     onClick = {
-                                        isRefreshing = true
-                                        categoryViewModel.refreshCategories()
+                                        isUserRefreshing = true
+                                        categoryViewModel.refresh()
                                     }
                                 ) {
-                                    Text("Retry")
+                                    Text("Refresh")
                                 }
                             }
                         }
                     } else {
+                        /*✅ Success state with data*/
                         LazyColumn(
                             state = listState,
                             verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -182,26 +205,47 @@ fun CategoriesScreen(
                 }
 
                 is SafeApiResult.Error -> {
-                    Column {
-                        Text(
-                            text = "Error loading categories",
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.error
-                        )
-                        Text(
-                            text = (categoriesState as SafeApiResult.Error).exception.message
-                                ?: "Unknown error",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Button(
-                            onClick = {
-                                isRefreshing = true
-                                categoryViewModel.refreshCategories()
-                            }
+                    /*✅ Error state with better error handling*/
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text("Retry")
+                            Text(
+                                text = "Unable to load categories",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = MaterialTheme.colorScheme.error
+                            )
+
+                            val errorMessage = (categoriesState as SafeApiResult.Error).exception.message
+                            if (!errorMessage.isNullOrBlank()) {
+                                Text(
+                                    text = errorMessage,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                                    modifier = Modifier.padding(top = 4.dp, start = 16.dp, end = 16.dp)
+                                )
+                            }
+
+                            Text(
+                                text = "Check your internet connection and try again",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                                modifier = Modifier.padding(top = 8.dp)
+                            )
+
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            Button(
+                                onClick = {
+                                    isUserRefreshing = true
+                                    categoryViewModel.refresh()
+                                }
+                            ) {
+                                Text("Try Again")
+                            }
                         }
                     }
                 }

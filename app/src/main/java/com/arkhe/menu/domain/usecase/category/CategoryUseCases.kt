@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 class GetCategoriesUseCase(
     private val repository: CategoryRepository
 ) {
-    suspend operator fun invoke(
+    operator fun invoke(
         sessionToken: String,
         forceRefresh: Boolean = false
     ): Flow<SafeApiResult<List<Category>>> {

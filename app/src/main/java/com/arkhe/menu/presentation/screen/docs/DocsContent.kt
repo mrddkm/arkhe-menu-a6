@@ -38,6 +38,9 @@ import com.arkhe.menu.domain.model.Category
 import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.domain.model.Profile
 import com.arkhe.menu.presentation.screen.docs.categories.ext.CategoriesSectionContent
+import com.arkhe.menu.presentation.screen.docs.categories.ext.EmptyDataSection
+import com.arkhe.menu.presentation.screen.docs.categories.ext.ErrorSection
+import com.arkhe.menu.presentation.screen.docs.categories.ext.LoadingSection
 import com.arkhe.menu.presentation.screen.docs.components.HeaderSection
 import com.arkhe.menu.presentation.screen.docs.customer.ext.CustomerSection
 import com.arkhe.menu.presentation.screen.docs.customer.ext.sampleCustomers
@@ -74,24 +77,28 @@ fun DocsContent(
     var selectedOrganization by remember { mutableStateOf<Organization?>(null) }
     var showPersonilList by remember { mutableStateOf(false) }
 
+    /*✅ Using the state from the BaseViewmodel Pattern*/
+    val categoriesState by categoryViewModel.state.collectAsState()
+
     val profileState by profileViewModel.profilesState.collectAsState()
-    val categoriesState by categoryViewModel.categoriesState.collectAsState()
     val productsState by productViewModel.productsState.collectAsState()
 
     var isInitialized by remember { mutableStateOf(false) }
 
-    Log.d("DocsContent", "🔄 Component recomposed - isInitialized: $isInitialized")
+    Log.d("DocsContent", "📄 Component recomposed - isInitialized: $isInitialized")
 
+    /*✅ Improved initialization - offline-first approach*/
     LaunchedEffect(Unit) {
         if (!isInitialized) {
             try {
-                Log.d("DocsContent", "🚀 Starting initialization...")
+                Log.d("DocsContent", "🚀 Starting offline-first initialization...")
 
                 profileViewModel.ensureDataLoaded()
                 categoryViewModel.ensureDataLoaded()
-                delay(500)
+
+                delay(300)
                 isInitialized = true
-                Log.d("DocsContent", "✅ Initialization completed")
+                Log.d("DocsContent", "✅ Offline-first initialization completed")
             } catch (e: Exception) {
                 Log.e("DocsContent", "❌ Initialization error: ${e.message}", e)
             }
@@ -212,7 +219,7 @@ fun DocsContent(
                 }
             }
 
-            /*Categories Section (with API)*/
+            /*Categories Section - dengan offline-first handling*/
             Card(
                 colors = CardDefaults.cardColors(
                     containerColor = Color.Transparent
@@ -230,6 +237,42 @@ fun DocsContent(
                             onNavigateToCategories()
                         }
                     )
+
+                    when (categoriesState) {
+                        is SafeApiResult.Loading -> {
+                            Log.d("DocsContent", "📄 Categories: Loading state")
+                            LoadingSection(message = "Loading categories...")
+                        }
+
+                        is SafeApiResult.Success -> {
+                            val categories =
+                                (categoriesState as SafeApiResult.Success<List<Category>>).data
+                            Log.d(
+                                "DocsContent",
+                                "✅ Categories: Showing ${categories.size} categories"
+                            )
+                            if (categories.isNotEmpty()) {
+                                CategoriesSectionContent(categoriesList = categories)
+                            } else {
+                                EmptyDataSection(
+                                    message = "No categories available",
+                                    onRetry = { categoryViewModel.refresh() }
+                                )
+                            }
+                        }
+
+                        is SafeApiResult.Error -> {
+                            Log.e(
+                                "DocsContent",
+                                "❌ Categories: Error - ${(categoriesState as SafeApiResult.Error).exception}"
+                            )
+                            ErrorSection(
+                                message = "Failed to load categories",
+                                onRetry = { categoryViewModel.refresh() }
+                            )
+                        }
+                    }
+
                     when (categoriesState) {
                         is SafeApiResult.Loading -> {
                             Box(
@@ -257,6 +300,7 @@ fun DocsContent(
                             )
                         }
                     }
+
                 }
             }
 

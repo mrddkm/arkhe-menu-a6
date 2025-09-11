@@ -1,27 +1,63 @@
+@file:Suppress("SpellCheckingInspection")
+
 package com.arkhe.menu.domain.repository
 
+import android.util.Log
 import com.arkhe.menu.data.remote.api.SafeApiResult
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 abstract class BaseRepository<Entity, Domain>(
     private val daoFlow: Flow<List<Entity>>,
     private val insertEntities: suspend (List<Entity>) -> Unit,
     private val clearEntities: suspend () -> Unit,
-    private val mapperToDomain: (Entity) -> Domain,
-    private val fetchRemote: suspend (String) -> List<Entity>
+    private val mapperToDomain: (Entity) -> Domain
 ) {
+    companion object {
+        private const val TAG = "BaseRepository"
+    }
+
+    protected abstract suspend fun fetchRemoteEntities(token: String): List<Entity>
+
     fun getAll(): Flow<List<Domain>> =
-        daoFlow.map { entities -> entities.map(mapperToDomain) }
+        daoFlow.map { entities ->
+            Log.d(TAG, "Local data count: ${entities.size}")
+            entities.map(mapperToDomain)
+        }
 
     suspend fun sync(token: String): SafeApiResult<List<Domain>> {
-        return try {
-            val remoteEntities = fetchRemote(token)
-            clearEntities()
-            insertEntities(remoteEntities)
-            SafeApiResult.Success(remoteEntities.map(mapperToDomain))
-        } catch (e: Exception) {
-            SafeApiResult.Error(e)
+        return withContext(Dispatchers.IO) {
+            try {
+                Log.d(TAG, "Starting sync with token: $token")
+
+                val remoteEntities = fetchRemoteEntities(token)
+                Log.d(TAG, "Fetched ${remoteEntities.size} items from remote")
+
+                clearEntities()
+                insertEntities(remoteEntities)
+
+                val domainObjects = remoteEntities.map(mapperToDomain)
+                Log.d(TAG, "Sync completed successfully")
+
+                SafeApiResult.Success(domainObjects)
+            } catch (e: Exception) {
+                Log.e(TAG, "Sync failed: ${e.message}", e)
+                SafeApiResult.Error(e)
+            }
+        }
+    }
+
+    @Suppress("UNUSED")
+    open suspend fun isEmpty(): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                false
+            } catch (e: Exception) {
+                Log.e(TAG, "Error checking if empty: ${e.message}")
+                true
+            }
         }
     }
 }
