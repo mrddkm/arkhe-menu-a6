@@ -1,4 +1,4 @@
-package com.arkhe.menu.presentation.screen.docs.profile.ext
+package com.arkhe.menu.presentation.screen.docs.profile.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,12 +17,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.domain.model.SocialMedia
 import com.arkhe.menu.presentation.theme.AppTheme
-import com.arkhe.menu.utils.PhoneNumberParser
 import com.arkhe.menu.utils.formatToInternationalWithDash
 import compose.icons.SimpleIcons
 import compose.icons.simpleicons.Googlemaps
@@ -93,7 +93,7 @@ fun SocialMediaCard(
 
 @Composable
 fun SocialMediaItem(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    icon: ImageVector,
     value: String,
     onClick: () -> Unit
 ) {

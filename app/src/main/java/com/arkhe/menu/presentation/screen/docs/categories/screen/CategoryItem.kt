@@ -1,6 +1,6 @@
 @file:Suppress("SpellCheckingInspection")
 
-package com.arkhe.menu.presentation.screen.docs.categories.ext
+package com.arkhe.menu.presentation.screen.docs.categories.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -49,7 +49,6 @@ fun CategoryItem(
     val iconColor = parseColorFromHex(category.colors.iconColor)
 
     if (isDetailView) {
-        // Detail view layout - expanded information
         Card(
             modifier = modifier
                 .fillMaxWidth(),

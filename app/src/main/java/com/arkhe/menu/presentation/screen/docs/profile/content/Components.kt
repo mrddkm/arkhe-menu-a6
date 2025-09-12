@@ -1,6 +1,6 @@
 @file:Suppress("SpellCheckingInspection")
 
-package com.arkhe.menu.presentation.screen.docs.profile.ext
+package com.arkhe.menu.presentation.screen.docs.profile.content
 
 import android.net.Uri
 import android.util.Log
@@ -12,19 +12,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BusinessCenter
 import androidx.compose.material.icons.filled.Error
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -43,98 +40,7 @@ import com.arkhe.menu.domain.model.Profile
 import java.io.File
 
 @Composable
-fun LoadingUI() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(100.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        CircularProgressIndicator()
-        Text(
-            text = "Loading profile...",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-    }
-}
-
-@Composable
-fun ErrorUI(
-    onRetry: () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        Icon(
-            imageVector = Icons.Default.Error,
-            contentDescription = "Error",
-            tint = MaterialTheme.colorScheme.error,
-            modifier = Modifier.size(48.dp)
-        )
-
-        Text(
-            text = "Failed to load profile",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.error,
-            textAlign = TextAlign.Center
-        )
-
-        Button(onClick = onRetry) {
-            Icon(
-                imageVector = Icons.Default.Refresh,
-                contentDescription = "Retry",
-                modifier = Modifier.size(18.dp)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text("Retry")
-        }
-    }
-}
-
-@Composable
-fun EmptyUI(
-    onLoad: () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        Icon(
-            imageVector = Icons.Default.Info,
-            contentDescription = "No Data",
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.size(48.dp)
-        )
-
-        Text(
-            text = "No profile data available",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center
-        )
-
-        Button(onClick = onLoad) {
-            Icon(
-                imageVector = Icons.Default.Refresh,
-                contentDescription = "Load",
-                modifier = Modifier.size(18.dp)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text("Load Profile")
-        }
-    }
-}
-
-@Composable
-fun ProfileCard(
+fun ProfileUI(
     onnNavigateToProfile: () -> Unit,
     profile: Profile,
     imagePath: String?

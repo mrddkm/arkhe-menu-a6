@@ -1,4 +1,4 @@
-package com.arkhe.menu.presentation.screen.docs.profile.ext
+package com.arkhe.menu.presentation.screen.docs.profile.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

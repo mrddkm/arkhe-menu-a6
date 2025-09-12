@@ -1,7 +1,4 @@
-@file:Suppress("SpellCheckingInspection")
-@file:OptIn(ExperimentalMaterial3Api::class)
-
-package com.arkhe.menu.presentation.screen.docs.categories.ext
+package com.arkhe.menu.presentation.screen.docs.categories.content
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -42,10 +39,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.domain.model.Category
+import com.arkhe.menu.domain.model.CategoryActionInfo
+import com.arkhe.menu.domain.model.CategoryColors
+import com.arkhe.menu.domain.model.CategoryInformation
+import com.arkhe.menu.presentation.screen.docs.categories.screen.parseColorFromHex
 import com.arkhe.menu.presentation.theme.AppTheme
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CategoriesSectionContent(
+fun CategoriesUI(
     categoriesList: List<Category>
 ) {
     /*Category*/
@@ -153,7 +155,7 @@ fun CategoryCardContent(
 @Composable
 fun CategoryCardPreview() {
     AppTheme {
-        CategoriesSectionContent(
+        CategoriesUI(
             categoriesList = listOf(
                 Category(
                     id = "1",
@@ -163,17 +165,17 @@ fun CategoryCardPreview() {
                     initiation = 0,
                     research = 0,
                     ready = 0,
-                    information = com.arkhe.menu.domain.model.CategoryInformation(
+                    information = CategoryInformation(
                         indonesian = "Kategori Buah",
                         english = "Fruit Category"
                     ),
-                    colors = com.arkhe.menu.domain.model.CategoryColors(
+                    colors = CategoryColors(
                         backgroundColor = "#FFEB3B",
                         iconColor = "#F57C00"
                     ),
-                    actionInfo = com.arkhe.menu.domain.model.CategoryActionInfo(
+                    actionInfo = CategoryActionInfo(
                         action = "view",
-                        information = com.arkhe.menu.domain.model.CategoryInformation(
+                        information = CategoryInformation(
                             indonesian = "Lihat Kategori Buah",
                             english = "View Fruit Category"
                         )
@@ -187,17 +189,17 @@ fun CategoryCardPreview() {
                     initiation = 0,
                     research = 0,
                     ready = 0,
-                    information = com.arkhe.menu.domain.model.CategoryInformation(
+                    information = CategoryInformation(
                         indonesian = "Kategori Sayur",
                         english = "Vegetable Category"
                     ),
-                    colors = com.arkhe.menu.domain.model.CategoryColors(
+                    colors = CategoryColors(
                         backgroundColor = "#4CAF50",
                         iconColor = "#1B5E20"
                     ),
-                    actionInfo = com.arkhe.menu.domain.model.CategoryActionInfo(
+                    actionInfo = CategoryActionInfo(
                         action = "view",
-                        information = com.arkhe.menu.domain.model.CategoryInformation(
+                        information = CategoryInformation(
                             indonesian = "Lihat Kategori Sayur",
                             english = "View Vegetable Category"
                         )

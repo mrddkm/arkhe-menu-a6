@@ -1,6 +1,5 @@
 package com.arkhe.menu.di
 
-import android.util.Log
 import com.arkhe.menu.domain.usecase.category.CategoryUseCases
 import com.arkhe.menu.domain.usecase.category.GetCategoriesUseCase
 import com.arkhe.menu.domain.usecase.category.GetCategoryUseCase
@@ -21,29 +20,12 @@ import org.koin.dsl.module
 
 val domainModule = module {
 
-    Log.d("DomainModule", "🏗️ Initializing Domain Module...")
+    single { GetProfilesUseCase(get()) }
+    single { GetProfileUseCase(get()) }
+    single { RefreshProfilesUseCase(get()) }
+    single { SyncProfilesUseCase(get()) }
 
-    /*✅ Profiles Use Cases - Changed to single for consistency*/
     single {
-        Log.d("DI", "Creating GetProfilesUseCase")
-        GetProfilesUseCase(get())
-    }
-    single {
-        Log.d("DI", "Creating GetProfileUseCase")
-        GetProfileUseCase(get())
-    }
-    single {
-        Log.d("DI", "Creating RefreshProfilesUseCase")
-        RefreshProfilesUseCase(get())
-    }
-    single {
-        Log.d("DI", "Creating SyncProfilesUseCase")
-        SyncProfilesUseCase(get())
-    }
-
-    /*✅ Profiles Use Cases Bundle*/
-    single {
-        Log.d("DI", "Creating ProfileUseCases bundle")
         ProfileUseCases(
             getProfiles = get(),
             getProfile = get(),
@@ -52,73 +34,26 @@ val domainModule = module {
         )
     }
 
-    /*✅ Category Use Cases - Changed to single for consistency*/
-    single {
-        Log.d(
-            "DI",
-            "Creating GetCategoriesUseCase with repository: ${get<com.arkhe.menu.domain.repository.CategoryRepository>()}"
-        )
-        GetCategoriesUseCase(get())
-    }
-    single {
-        Log.d("DI", "Creating GetCategoryUseCase")
-        GetCategoryUseCase(get())
-    }
-    single {
-        Log.d("DI", "Creating RefreshCategoriesUseCase")
-        RefreshCategoriesUseCase(get())
-    }
+    single { GetCategoriesUseCase(get()) }
+    single { GetCategoryUseCase(get()) }
+    single { RefreshCategoriesUseCase(get()) }
 
-    /*✅ Category Use Cases Bundle with explicit validation*/
     single {
-        Log.d("DI", "Creating CategoryUseCases bundle")
-        val getCategories = get<GetCategoriesUseCase>()
-        val getCategory = get<GetCategoryUseCase>()
-        val refreshCategories = get<RefreshCategoriesUseCase>()
-
-        Log.d(
-            "DI",
-            "CategoryUseCases dependencies - getCategories: $getCategories, getCategory: $getCategory, refreshCategories: $refreshCategories"
-        )
-
         CategoryUseCases(
-            getCategories = getCategories,
-            getCategory = getCategory,
-            refreshCategories = refreshCategories
-        ).also {
-            Log.d("DI", "✅ CategoryUseCases created successfully: $it")
-        }
+            getCategories = get(),
+            getCategory = get(),
+            refreshCategories = get()
+        )
     }
 
-    /*✅ Product Use Cases - Changed to single for consistency*/
-    single {
-        Log.d("DI", "Creating GetProductsUseCase")
-        GetProductsUseCase(get())
-    }
-    single {
-        Log.d("DI", "Creating GetProductUseCase")
-        GetProductUseCase(get())
-    }
-    single {
-        Log.d("DI", "Creating GetProductsByCategoryUseCase")
-        GetProductsByCategoryUseCase(get())
-    }
-    single {
-        Log.d("DI", "Creating GetProductsByNamePrefixUseCase")
-        GetProductsByNamePrefixUseCase(get())
-    }
-    single {
-        Log.d("DI", "Creating GetProductGroupsUseCase")
-        GetProductGroupsUseCase(get())
-    }
-    single {
-        Log.d("DI", "Creating RefreshProductsUseCase")
-        RefreshProductsUseCase(get())
-    }
+    single { GetProductsUseCase(get()) }
+    single { GetProductUseCase(get()) }
+    single { GetProductsByCategoryUseCase(get()) }
+    single { GetProductsByNamePrefixUseCase(get()) }
+    single { GetProductGroupsUseCase(get()) }
+    single { RefreshProductsUseCase(get()) }
 
-    /*✅ Product Use Cases Bundle*/
     single {
-        Log.d("DI", "Creating ProductUseCases bundle")
         ProductUseCases(
             getProducts = get(),
             getProduct = get(),

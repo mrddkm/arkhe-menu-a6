@@ -1,6 +1,6 @@
 @file:Suppress("SpellCheckingInspection")
 
-package com.arkhe.menu.presentation.screen.docs.categories.ext
+package com.arkhe.menu.presentation.screen.docs.categories.content
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -37,6 +37,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.domain.model.Category
+import com.arkhe.menu.domain.model.CategoryActionInfo
+import com.arkhe.menu.domain.model.CategoryColors
+import com.arkhe.menu.domain.model.CategoryInformation
+import com.arkhe.menu.presentation.screen.docs.categories.screen.parseColorFromHex
 import com.arkhe.menu.presentation.theme.AppTheme
 import com.arkhe.menu.utils.Constants
 
@@ -234,17 +238,17 @@ fun BottomSheetCategoryPreview() {
         initiation = 0,
         research = 0,
         ready = 26,
-        information = com.arkhe.menu.domain.model.CategoryInformation(
+        information = CategoryInformation(
             indonesian = "Lorem Ipsum adalah contoh teks atau dummy dalam industri percetakan dan penataan huruf atau typesetting. Lorem Ipsum telah menjadi standar contoh teks sejak tahun 1500an",
             english = "Lorem ipsum dolor sit amet consectetur adipiscing elit. Sit amet consectetur adipiscing elit quisque faucibus ex. Adipiscing elit quisque faucibus ex sapien vitae pellentesque."
         ),
-        colors = com.arkhe.menu.domain.model.CategoryColors(
+        colors = CategoryColors(
             backgroundColor = "#FFEB3B",
             iconColor = "#F57C00"
         ),
-        actionInfo = com.arkhe.menu.domain.model.CategoryActionInfo(
+        actionInfo = CategoryActionInfo(
             action = "View More",
-            information = com.arkhe.menu.domain.model.CategoryInformation(
+            information = CategoryInformation(
                 indonesian = "Lorem Ipsum hanyalah contoh teks dalam industri percetakan dan penataan huruf. Lorem Ipsum telah menjadi contoh teks standar industri sejak tahun 1500-an.",
                 english = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s."
             )

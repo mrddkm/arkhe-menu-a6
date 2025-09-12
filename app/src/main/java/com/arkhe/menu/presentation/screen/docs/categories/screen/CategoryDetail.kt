@@ -1,4 +1,4 @@
-package com.arkhe.menu.presentation.screen.docs.categories
+package com.arkhe.menu.presentation.screen.docs.categories.screen
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,13 +23,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.arkhe.menu.presentation.screen.docs.categories.ext.CategoryItem
 import com.arkhe.menu.presentation.viewmodel.CategoryViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CategoryDetailScreen(
+fun CategoryDetail(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
     categoryViewModel: CategoryViewModel = koinViewModel()

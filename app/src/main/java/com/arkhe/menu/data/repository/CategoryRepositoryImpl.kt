@@ -2,65 +2,27 @@ package com.arkhe.menu.data.repository
 
 import android.util.Log
 import com.arkhe.menu.data.local.dao.CategoryDao
-import com.arkhe.menu.data.local.entity.CategoryEntity
 import com.arkhe.menu.data.mapper.toDomain
 import com.arkhe.menu.data.mapper.toEntityList
 import com.arkhe.menu.data.remote.api.SafeApiResult
 import com.arkhe.menu.data.remote.api.TripkeunApiService
 import com.arkhe.menu.domain.model.Category
-import com.arkhe.menu.domain.repository.BaseRepository
 import com.arkhe.menu.domain.repository.CategoryRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 class CategoryRepositoryImpl(
     private val api: TripkeunApiService,
     private val dao: CategoryDao
-) : BaseRepository<CategoryEntity, Category>(
-    daoFlow = dao.getAllCategories(),
-    insertEntities = { dao.insertCategories(it) },
-    clearEntities = { dao.deleteAllCategories() },
-    mapperToDomain = { entity -> entity.toDomain() }
-), CategoryRepository {
+) : CategoryRepository {
 
     companion object {
         private const val TAG = "CategoryRepositoryImpl"
     }
 
-    override suspend fun fetchRemoteEntities(token: String): List<CategoryEntity> {
-        return try {
-            Log.d(TAG, "🌐 Starting fetchRemoteEntities with token: $token")
-            val response = api.getCategories(token)
-
-            Log.d(TAG, "📡 API Response received:")
-            Log.d(TAG, "  Status: ${response.status}")
-            Log.d(TAG, "  Message: ${response.message}")
-            Log.d(TAG, "  Data count: ${response.data.size}")
-
-            val entities = response.toEntityList()
-            Log.d(TAG, "🔄 Mapped to ${entities.size} entities")
-
-            // Log sample entity untuk debug
-            if (entities.isNotEmpty()) {
-                val sample = entities.first()
-                Log.d(TAG, "📝 Sample entity: id=${sample.id}, name=${sample.name}")
-            }
-
-            entities
-        } catch (e: Exception) {
-            Log.e(TAG, "❌ Error in fetchRemoteEntities: ${e.message}", e)
-            throw e
-        }
-    }
-
-
-    override suspend fun isEmpty(): Boolean {
-        val count = dao.getCategoryCount()
-        Log.d(TAG, "📊 isEmpty check: count = $count")
-        return count == 0
-    }
-
-    // 🔧 SIMPLIFIED getCategories - lebih straightforward
     override fun getCategories(
         sessionToken: String,
         forceRefresh: Boolean
@@ -73,25 +35,26 @@ class CategoryRepositoryImpl(
                 Log.d(TAG, "🔄 Starting force refresh...")
                 emit(SafeApiResult.Loading)
 
-                val syncResult = sync(sessionToken)
+                val syncResult = refreshCategories(sessionToken)
                 emit(syncResult)
             } else {
                 // Offline-first flow
                 Log.d(TAG, "💾 Starting offline-first flow...")
 
                 // First, emit local data
-                super.getAll().collect { localCategories ->
-                    Log.d(TAG, "💾 Local categories: ${localCategories.size}")
+                dao.getAllCategories().collect { entities ->
+                    val categories = entities.map { it.toDomain() }
+                    Log.d(TAG, "💾 Local categories: ${categories.size}")
 
-                    if (localCategories.isNotEmpty()) {
+                    if (categories.isNotEmpty()) {
                         Log.d(TAG, "✅ Emitting local data")
-                        emit(SafeApiResult.Success(localCategories))
+                        emit(SafeApiResult.Success(categories))
                     } else {
                         Log.d(TAG, "📭 No local data, starting auto-sync...")
                         emit(SafeApiResult.Loading)
 
                         // Auto-sync if no local data
-                        val syncResult = sync(sessionToken)
+                        val syncResult = refreshCategories(sessionToken)
                         emit(syncResult)
                     }
                 }
@@ -101,28 +64,71 @@ class CategoryRepositoryImpl(
 
     override suspend fun getCategory(id: String): Category? {
         Log.d(TAG, "🔍 Getting category by id: $id")
-        return dao.getCategory(id)?.toDomain()
+        return withContext(Dispatchers.IO) {
+            dao.getCategory(id)?.toDomain()
+        }
     }
 
     override suspend fun refreshCategories(sessionToken: String): SafeApiResult<List<Category>> {
-        Log.d(TAG, "🔄 refreshCategories called")
-        return super.sync(sessionToken)
+        Log.d(TAG, "🔄 refreshCategories called with token: ${sessionToken.take(8)}...")
+
+        return withContext(Dispatchers.IO) {
+            try {
+                Log.d(TAG, "🌐 Fetching categories from API...")
+                val response = api.getCategories(sessionToken)
+
+                Log.d(TAG, "📡 API Response received:")
+                Log.d(TAG, "  Status: ${response.status}")
+                Log.d(TAG, "  Message: ${response.message}")
+                Log.d(TAG, "  Data count: ${response.data.size}")
+
+                val entities = response.toEntityList()
+                Log.d(TAG, "🔄 Mapped to ${entities.size} entities")
+
+                // Clear and insert new data
+                Log.d(TAG, "🗑️ Clearing local data...")
+                dao.deleteAllCategories()
+
+                Log.d(TAG, "💾 Inserting ${entities.size} entities...")
+                dao.insertCategories(entities)
+
+                val categories = entities.map { it.toDomain() }
+                Log.d(TAG, "✅ Successfully synced ${categories.size} categories")
+
+                SafeApiResult.Success(categories)
+
+            } catch (e: Exception) {
+                Log.e(TAG, "❌ Error refreshing categories: ${e.message}", e)
+                SafeApiResult.Error(e)
+            }
+        }
     }
 
-    private suspend fun debugLocalData() {
-        try {
-            val count = dao.getCategoryCount()
-            val categories = dao.getAllCategories()
-            Log.d(TAG, "🐛 Direct DB check - Count: $count")
-
-            categories.collect { entities ->
-                Log.d(TAG, "🐛 Direct DB flow - Entities: ${entities.size}")
-                entities.take(3).forEach { entity ->
-                    Log.d(TAG, "🐛 Sample entity: ${entity.id} - ${entity.name}")
-                }
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "🐛 Error checking DB: ${e.message}", e)
+    /**
+     * Get categories as flow for observing changes - for ViewModel init
+     */
+    fun getCategoriesFlow(): Flow<List<Category>> {
+        return dao.getAllCategories().map { entities ->
+            val categories = entities.map { it.toDomain() }
+            Log.d(TAG, "💾 Flow emission: ${categories.size} categories")
+            categories
         }
+    }
+
+    /**
+     * Check if local database is empty
+     */
+    private suspend fun isEmpty(): Boolean {
+        val count = dao.getCategoryCount()
+        Log.d(TAG, "📊 isEmpty check: count = $count")
+        return count == 0
+    }
+
+    /**
+     * Sync categories (used for manual refresh)
+     */
+    suspend fun syncCategories(sessionToken: String): SafeApiResult<List<Category>> {
+        Log.d(TAG, "🔄 syncCategories called")
+        return refreshCategories(sessionToken)
     }
 }

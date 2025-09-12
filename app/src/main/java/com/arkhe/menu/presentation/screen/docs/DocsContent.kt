@@ -37,10 +37,10 @@ import com.arkhe.menu.di.domainModule
 import com.arkhe.menu.domain.model.Category
 import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.domain.model.Profile
-import com.arkhe.menu.presentation.screen.docs.categories.ext.CategoriesSectionContent
-import com.arkhe.menu.presentation.screen.docs.categories.ext.EmptyDataSection
-import com.arkhe.menu.presentation.screen.docs.categories.ext.ErrorSection
-import com.arkhe.menu.presentation.screen.docs.categories.ext.LoadingSection
+import com.arkhe.menu.presentation.components.common.EmptyUI
+import com.arkhe.menu.presentation.components.common.ErrorUI
+import com.arkhe.menu.presentation.components.common.LoadingUI
+import com.arkhe.menu.presentation.screen.docs.categories.content.CategoriesUI
 import com.arkhe.menu.presentation.screen.docs.components.HeaderSection
 import com.arkhe.menu.presentation.screen.docs.customer.ext.CustomerSection
 import com.arkhe.menu.presentation.screen.docs.customer.ext.sampleCustomers
@@ -50,9 +50,7 @@ import com.arkhe.menu.presentation.screen.docs.organization.ext.PersonilDetailBo
 import com.arkhe.menu.presentation.screen.docs.organization.ext.PersonilListBottomSheet
 import com.arkhe.menu.presentation.screen.docs.organization.ext.sampleOrganizations
 import com.arkhe.menu.presentation.screen.docs.product.ext.ProductSectionContent
-import com.arkhe.menu.presentation.screen.docs.profile.ext.ErrorUI
-import com.arkhe.menu.presentation.screen.docs.profile.ext.LoadingUI
-import com.arkhe.menu.presentation.screen.docs.profile.ext.ProfileCard
+import com.arkhe.menu.presentation.screen.docs.profile.content.ProfileUI
 import com.arkhe.menu.presentation.theme.AppTheme
 import com.arkhe.menu.presentation.viewmodel.CategoryViewModel
 import com.arkhe.menu.presentation.viewmodel.ProductViewModel
@@ -77,49 +75,15 @@ fun DocsContent(
     var selectedOrganization by remember { mutableStateOf<Organization?>(null) }
     var showPersonilList by remember { mutableStateOf(false) }
 
-    /*✅ Using the state from the BaseViewmodel Pattern*/
-    val categoriesState by categoryViewModel.state.collectAsState()
-
-    // 🐛 DEBUGGING - tambahkan ini sementara
-    LaunchedEffect(categoriesState) {
-        Log.d("DocsContent", "🐛 Categories state changed: ${categoriesState::class.simpleName}")
-        when (categoriesState) {
-            is SafeApiResult.Success -> {
-                Log.d("DocsContent", "🐛 Success with ${(categoriesState as SafeApiResult.Success<List<Category>>).data.size} items")
-            }
-            is SafeApiResult.Error -> {
-                Log.d("DocsContent", "🐛 Error: ${(categoriesState as SafeApiResult.Error).exception}")
-            }
-            is SafeApiResult.Loading -> {
-                Log.d("DocsContent", "🐛 Loading state detected")
-            }
-        }
-    }
-
-    // Coba panggil debug method
-    LaunchedEffect(Unit) {
-        kotlinx.coroutines.delay(2000) // Wait 2 seconds
-        if (categoriesState is SafeApiResult.Loading) {
-            Log.d("DocsContent", "🚨 Still loading after 2 seconds - debugging...")
-            categoryViewModel.debugCurrentState()
-        }
-    }
-
-
-
     val profileState by profileViewModel.profilesState.collectAsState()
+    val categoriesState by categoryViewModel.categoriesState.collectAsState()
     val productsState by productViewModel.productsState.collectAsState()
 
     var isInitialized by remember { mutableStateOf(false) }
 
-    Log.d("DocsContent", "📄 Component recomposed - isInitialized: $isInitialized")
-
-    /*✅ Improved initialization - offline-first approach*/
     LaunchedEffect(Unit) {
         if (!isInitialized) {
             try {
-                Log.d("DocsContent", "🚀 Starting offline-first initialization...")
-
                 profileViewModel.ensureDataLoaded()
                 categoryViewModel.ensureDataLoaded()
 
@@ -156,35 +120,31 @@ fun DocsContent(
             ) {
                 when (profileState) {
                     is SafeApiResult.Loading -> {
-                        Log.d("DocsContent", "🔄 Showing loading UI for profile")
                         LoadingUI()
                     }
 
                     is SafeApiResult.Success<*> -> {
                         val profiles = (profileState as SafeApiResult.Success<List<Profile>>).data
                         if (profiles.isNotEmpty()) {
-                            Log.d("DocsContent", "✅ Showing profile card")
-                            ProfileCard(
+                            ProfileUI(
                                 onNavigateToProfile,
                                 profiles.first(),
                                 profiles.first().localImagePath
                             )
                         } else {
-                            Log.w("DocsContent", "⚠️ Profile list is empty")
-                            Text(
-                                text = "No profile data available",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.error
+                            EmptyUI(
+                                message = "Profile",
+                                onLoad = { profileViewModel.refreshProfiles() }
                             )
                         }
                     }
 
                     is SafeApiResult.Error -> {
-                        Log.e("DocsContent", "❌ Showing error UI for profile")
-                        ErrorUI {
-                            Log.d("DocsContent", "🔄 Retry button clicked")
-                            profileViewModel.refreshProfiles()
-                        }
+                        ErrorUI(
+                            message = "Profile",
+                            exception = (profileState as SafeApiResult.Error).exception as Exception,
+                            onRetry = { profileViewModel.refreshProfiles() }
+                        )
                     }
                 }
             }
@@ -267,35 +227,27 @@ fun DocsContent(
 
                     when (categoriesState) {
                         is SafeApiResult.Loading -> {
-                            Log.d("DocsContent", "📄 Categories: Loading state")
-                            LoadingSection(message = "Loading categories...")
+                            LoadingUI()
                         }
 
                         is SafeApiResult.Success -> {
                             val categories =
                                 (categoriesState as SafeApiResult.Success<List<Category>>).data
-                            Log.d(
-                                "DocsContent",
-                                "✅ Categories: Showing ${categories.size} categories"
-                            )
                             if (categories.isNotEmpty()) {
-                                CategoriesSectionContent(categoriesList = categories)
+                                CategoriesUI(categoriesList = categories)
                             } else {
-                                EmptyDataSection(
-                                    message = "No categories available",
-                                    onRetry = { categoryViewModel.refresh() }
+                                EmptyUI(
+                                    message = "Categories",
+                                    onLoad = { categoryViewModel.refreshCategories() }
                                 )
                             }
                         }
 
                         is SafeApiResult.Error -> {
-                            Log.e(
-                                "DocsContent",
-                                "❌ Categories: Error - ${(categoriesState as SafeApiResult.Error).exception}"
-                            )
-                            ErrorSection(
-                                message = "Failed to load categories",
-                                onRetry = { categoryViewModel.refresh() }
+                            ErrorUI(
+                                message = "Categories",
+                                exception = (categoriesState as SafeApiResult.Error).exception as Exception,
+                                onRetry = { categoryViewModel.refreshCategories() }
                             )
                         }
                     }

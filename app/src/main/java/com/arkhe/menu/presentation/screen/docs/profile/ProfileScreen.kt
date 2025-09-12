@@ -31,9 +31,9 @@ import com.arkhe.menu.domain.model.ActionInfo
 import com.arkhe.menu.domain.model.Profile
 import com.arkhe.menu.domain.model.ProfileInformation
 import com.arkhe.menu.domain.model.SocialMedia
-import com.arkhe.menu.presentation.screen.docs.profile.ext.ProfileDescription
-import com.arkhe.menu.presentation.screen.docs.profile.ext.ProfileTagLine
-import com.arkhe.menu.presentation.screen.docs.profile.ext.SocialMediaCard
+import com.arkhe.menu.presentation.screen.docs.profile.screen.ProfileDescription
+import com.arkhe.menu.presentation.screen.docs.profile.screen.ProfileTagLine
+import com.arkhe.menu.presentation.screen.docs.profile.screen.SocialMediaCard
 import com.arkhe.menu.presentation.theme.AppTheme
 import com.arkhe.menu.presentation.viewmodel.ProfileViewModel
 import org.koin.compose.viewmodel.koinViewModel
@@ -75,7 +75,6 @@ fun ProfileScreen(
         ) {
             when (profileState) {
                 is SafeApiResult.Loading -> {
-                    // Loading State
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
@@ -113,7 +112,6 @@ fun ProfileScreen(
                             modifier = Modifier.padding(top = 8.dp)
                         )
                     } else {
-                        // Error State
                         Box(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
@@ -156,9 +154,7 @@ fun ProfileScreen(
 
                 is SafeApiResult.Success<*> -> {
                     val profiles = (profileState as SafeApiResult.Success<List<Profile>>).data
-
                     if (profiles.isEmpty()) {
-                        // Empty State
                         Box(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
