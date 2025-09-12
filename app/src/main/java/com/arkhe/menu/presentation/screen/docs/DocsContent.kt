@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -206,7 +207,7 @@ fun DocsContent(
                 }
             }
 
-            /*Categories Section - dengan offline-first handling*/
+            /*Categories Section*/
             Card(
                 colors = CardDefaults.cardColors(
                     containerColor = Color.Transparent
@@ -216,13 +217,12 @@ fun DocsContent(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .height(500.dp)
                         .padding(top = 8.dp, bottom = 8.dp)
                 ) {
                     HeaderSection(
                         title = stringResource(R.string.categories),
-                        onHeaderClick = {
-                            onNavigateToCategories()
-                        }
+                        onHeaderClick = { onNavigateToCategories() }
                     )
 
                     when (categoriesState) {

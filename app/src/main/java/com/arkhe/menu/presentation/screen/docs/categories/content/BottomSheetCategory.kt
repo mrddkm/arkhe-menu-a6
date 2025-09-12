@@ -243,14 +243,14 @@ fun BottomSheetCategoryPreview() {
             english = "Lorem ipsum dolor sit amet consectetur adipiscing elit. Sit amet consectetur adipiscing elit quisque faucibus ex. Adipiscing elit quisque faucibus ex sapien vitae pellentesque."
         ),
         colors = CategoryColors(
-            backgroundColor = "#FFEB3B",
-            iconColor = "#F57C00"
+            backgroundColor = "0xFFE0F2F1",
+            iconColor = "0xFF00695C"
         ),
         actionInfo = CategoryActionInfo(
-            action = "View More",
+            action = "productcategory",
             information = CategoryInformation(
                 indonesian = "Lorem Ipsum hanyalah contoh teks dalam industri percetakan dan penataan huruf. Lorem Ipsum telah menjadi contoh teks standar industri sejak tahun 1500-an.",
-                english = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s."
+                english = "Lorem ipsum dolor sit amet consectetur adipiscing elit. Sit amet consectetur adipiscing elit quisque faucibus ex. Adipiscing elit quisque faucibus ex sapien vitae pellentesque."
             )
         )
     )

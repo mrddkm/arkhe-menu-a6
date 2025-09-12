@@ -1,29 +1,27 @@
 package com.arkhe.menu.presentation.screen.docs.categories.content
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Egg
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,8 +31,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -50,29 +46,25 @@ import com.arkhe.menu.presentation.theme.AppTheme
 fun CategoriesUI(
     categoriesList: List<Category>
 ) {
-    /*Category*/
     var showCategoryBottomSheet by remember { mutableStateOf(false) }
     var selectedCategory by remember { mutableStateOf<Category?>(null) }
 
-    Column(
-        modifier = Modifier.fillMaxWidth()
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxWidth(),
+        contentPadding = PaddingValues(vertical = 20.dp)
     ) {
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            items(categoriesList) { category ->
-                CategoryCardContent(
-                    category = category,
-                    onClick = {
-                        selectedCategory = category
-                        showCategoryBottomSheet = true
-                    }
-                )
-            }
+        items(categoriesList) { category ->
+            CategoryItem(
+                category = category,
+                onClick = {
+                    selectedCategory = category
+                    showCategoryBottomSheet = true
+                }
+            )
         }
     }
 
-    /*Category Detail BottomSheet*/
     if (showCategoryBottomSheet && selectedCategory != null) {
         ModalBottomSheet(
             onDismissRequest = {
@@ -88,24 +80,20 @@ fun CategoriesUI(
 }
 
 @Composable
-fun CategoryCardContent(
+fun CategoryItem(
     category: Category,
     onClick: () -> Unit
 ) {
     val backgroundColor = parseColorFromHex(category.colors.backgroundColor)
     val iconColor = parseColorFromHex(category.colors.iconColor)
 
-    Spacer(modifier = Modifier.width(8.dp))
-    Card(
-        modifier = Modifier
-            .width(170.dp)
-            .clickable { onClick() },
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        shape = RoundedCornerShape(8.dp),
-    ) {
+    Surface(onClick = { onClick }, shape = MaterialTheme.shapes.large) {
         Row(
-            modifier = Modifier.padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
         ) {
             Box(
                 modifier = Modifier
@@ -121,30 +109,14 @@ fun CategoryCardContent(
                     tint = iconColor
                 )
             }
-            Spacer(modifier = Modifier.width(4.dp))
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                horizontalAlignment = Alignment.Start
-            ) {
-                Text(
-                    text = category.name,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Medium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    textAlign = TextAlign.Left,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                Spacer(modifier = Modifier.height(4.dp))
+            Column {
+                Text(text = category.name, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Spacer(Modifier.height(4.dp))
                 Text(
                     text = "${category.productCount} Products",
-                    style = MaterialTheme.typography.bodySmall,
-                    textAlign = TextAlign.Left,
+                    style = MaterialTheme.typography.bodyMedium,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }
@@ -158,50 +130,50 @@ fun CategoryCardPreview() {
         CategoriesUI(
             categoriesList = listOf(
                 Category(
-                    id = "1",
-                    name = "Fruits",
-                    type = "food",
-                    productCount = 120,
+                    id = "SRS",
+                    name = "Series",
+                    type = "Regular",
+                    productCount = 26,
                     initiation = 0,
                     research = 0,
                     ready = 0,
                     information = CategoryInformation(
-                        indonesian = "Kategori Buah",
-                        english = "Fruit Category"
+                        indonesian = "Lorem Ipsum adalah contoh teks atau dummy dalam industri percetakan dan penataan huruf atau typesetting. Lorem Ipsum telah menjadi standar contoh teks sejak tahun 1500an",
+                        english = "Lorem ipsum dolor sit amet consectetur adipiscing elit. Sit amet consectetur adipiscing elit quisque faucibus ex. Adipiscing elit quisque faucibus ex sapien vitae pellentesque."
                     ),
                     colors = CategoryColors(
-                        backgroundColor = "#FFEB3B",
-                        iconColor = "#F57C00"
+                        backgroundColor = "0xFFE0F2F1",
+                        iconColor = "0xFF00695C"
                     ),
                     actionInfo = CategoryActionInfo(
-                        action = "view",
+                        action = "productcategory",
                         information = CategoryInformation(
-                            indonesian = "Lihat Kategori Buah",
-                            english = "View Fruit Category"
+                            indonesian = "Lorem Ipsum hanyalah contoh teks dalam industri percetakan dan penataan huruf. Lorem Ipsum telah menjadi contoh teks standar industri sejak tahun 1500-an.",
+                            english = "Lorem ipsum dolor sit amet consectetur adipiscing elit. Sit amet consectetur adipiscing elit quisque faucibus ex. Adipiscing elit quisque faucibus ex sapien vitae pellentesque."
                         )
                     )
                 ),
                 Category(
-                    id = "2",
-                    name = "Vegetables",
-                    type = "food",
-                    productCount = 80,
+                    id = "CIP",
+                    name = "Chipkeun",
+                    type = "Udunan",
+                    productCount = 11,
                     initiation = 0,
                     research = 0,
                     ready = 0,
                     information = CategoryInformation(
-                        indonesian = "Kategori Sayur",
-                        english = "Vegetable Category"
+                        indonesian = "Lorem Ipsum adalah contoh teks atau dummy dalam industri percetakan dan penataan huruf atau typesetting. Lorem Ipsum telah menjadi standar contoh teks sejak tahun 1500an",
+                        english = "Lorem ipsum dolor sit amet consectetur adipiscing elit. Sit amet consectetur adipiscing elit quisque faucibus ex. Adipiscing elit quisque faucibus ex sapien vitae pellentesque."
                     ),
                     colors = CategoryColors(
-                        backgroundColor = "#4CAF50",
-                        iconColor = "#1B5E20"
+                        backgroundColor = "0xFFE0F2F1",
+                        iconColor = "0xFF00695C"
                     ),
                     actionInfo = CategoryActionInfo(
-                        action = "view",
+                        action = "productcategory",
                         information = CategoryInformation(
-                            indonesian = "Lihat Kategori Sayur",
-                            english = "View Vegetable Category"
+                            indonesian = "Lorem Ipsum hanyalah contoh teks dalam industri percetakan dan penataan huruf. Lorem Ipsum telah menjadi contoh teks standar industri sejak tahun 1500-an.",
+                            english = "Lorem ipsum dolor sit amet consectetur adipiscing elit. Sit amet consectetur adipiscing elit quisque faucibus ex. Adipiscing elit quisque faucibus ex sapien vitae pellentesque."
                         )
                     )
                 )
