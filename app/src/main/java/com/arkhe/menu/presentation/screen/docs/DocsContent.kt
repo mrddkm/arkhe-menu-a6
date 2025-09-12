@@ -4,16 +4,12 @@ package com.arkhe.menu.presentation.screen.docs
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,7 +19,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -40,8 +35,8 @@ import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.domain.model.Profile
 import com.arkhe.menu.presentation.components.common.EmptyUI
 import com.arkhe.menu.presentation.components.common.ErrorUI
-import com.arkhe.menu.presentation.components.common.LoadingUI
-import com.arkhe.menu.presentation.screen.docs.categories.content.CategoriesUI
+import com.arkhe.menu.presentation.components.common.LoadingIndicator
+import com.arkhe.menu.presentation.screen.docs.categories.content.CategoriesNonScrollableUI
 import com.arkhe.menu.presentation.screen.docs.components.HeaderSection
 import com.arkhe.menu.presentation.screen.docs.customer.ext.CustomerSection
 import com.arkhe.menu.presentation.screen.docs.customer.ext.sampleCustomers
@@ -121,7 +116,9 @@ fun DocsContent(
             ) {
                 when (profileState) {
                     is SafeApiResult.Loading -> {
-                        LoadingUI()
+                        LoadingIndicator(
+                            message = "Loading profile..."
+                        )
                     }
 
                     is SafeApiResult.Success<*> -> {
@@ -217,7 +214,6 @@ fun DocsContent(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(500.dp)
                         .padding(top = 8.dp, bottom = 8.dp)
                 ) {
                     HeaderSection(
@@ -227,14 +223,16 @@ fun DocsContent(
 
                     when (categoriesState) {
                         is SafeApiResult.Loading -> {
-                            LoadingUI()
+                            LoadingIndicator(
+                                message = "Loading categories..."
+                            )
                         }
 
                         is SafeApiResult.Success -> {
                             val categories =
                                 (categoriesState as SafeApiResult.Success<List<Category>>).data
                             if (categories.isNotEmpty()) {
-                                CategoriesUI(categoriesList = categories)
+                                CategoriesNonScrollableUI(categoriesList = categories)
                             } else {
                                 EmptyUI(
                                     message = "Categories",
@@ -274,14 +272,9 @@ fun DocsContent(
                     )
                     when (productsState) {
                         is SafeApiResult.Loading -> {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(100.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                CircularProgressIndicator()
-                            }
+                            LoadingIndicator(
+                                message = "Loading products..."
+                            )
                         }
 
                         is SafeApiResult.Success -> {
@@ -327,7 +320,7 @@ fun DocsContent(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, heightDp = 1000)
 @Composable
 fun DocsContentPreview() {
     val previewContext = androidx.compose.ui.platform.LocalContext.current

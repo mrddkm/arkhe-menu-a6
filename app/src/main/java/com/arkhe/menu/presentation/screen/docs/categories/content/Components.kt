@@ -4,16 +4,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Egg
@@ -43,19 +39,20 @@ import com.arkhe.menu.presentation.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CategoriesUI(
+fun CategoriesNonScrollableUI(
     categoriesList: List<Category>
 ) {
     var showCategoryBottomSheet by remember { mutableStateOf(false) }
     var selectedCategory by remember { mutableStateOf<Category?>(null) }
 
-    LazyColumn(
+    Column(
         modifier = Modifier
-            .fillMaxWidth(),
-        contentPadding = PaddingValues(vertical = 20.dp)
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items(categoriesList) { category ->
-            CategoryItem(
+        categoriesList.forEach { category ->
+            CategoryItemNonScrollable(
                 category = category,
                 onClick = {
                     selectedCategory = category
@@ -80,20 +77,20 @@ fun CategoriesUI(
 }
 
 @Composable
-fun CategoryItem(
+fun CategoryItemNonScrollable(
     category: Category,
     onClick: () -> Unit
 ) {
     val backgroundColor = parseColorFromHex(category.colors.backgroundColor)
     val iconColor = parseColorFromHex(category.colors.iconColor)
 
-    Surface(onClick = { onClick }, shape = MaterialTheme.shapes.large) {
+    Surface(onClick = { onClick() }, shape = MaterialTheme.shapes.small) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(8.dp)
         ) {
             Box(
                 modifier = Modifier
@@ -127,7 +124,8 @@ fun CategoryItem(
 @Composable
 fun CategoryCardPreview() {
     AppTheme {
-        CategoriesUI(
+        @Suppress("SpellCheckingInspection")
+        CategoriesNonScrollableUI(
             categoriesList = listOf(
                 Category(
                     id = "SRS",

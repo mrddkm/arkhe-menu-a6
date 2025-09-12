@@ -108,7 +108,7 @@ fun CategoriesScreen(
                             }
                         }
                         Text(
-                            text = "Gagal sync, menampilkan data lama",
+                            text = "Failed sync, displaying old data",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.error,
                             modifier = Modifier.padding(top = 8.dp)
@@ -124,7 +124,7 @@ fun CategoriesScreen(
                                 modifier = Modifier.padding(32.dp)
                             ) {
                                 Text(
-                                    text = "Failed to load profile",
+                                    text = "Failed to load categories",
                                     style = MaterialTheme.typography.headlineSmall,
                                     color = MaterialTheme.colorScheme.error,
                                     textAlign = TextAlign.Center
