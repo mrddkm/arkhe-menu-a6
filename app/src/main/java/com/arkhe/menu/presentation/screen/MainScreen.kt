@@ -233,7 +233,9 @@ fun MainScreenPreview() {
         application = {
             androidContext(previewContext)
             modules(
-                appModule, dataModule, domainModule
+                dataModule,
+                domainModule,
+                appModule
             )
         }
     ) {

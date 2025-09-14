@@ -328,7 +328,9 @@ fun DocsContentPreview() {
         application = {
             androidContext(previewContext)
             modules(
-                appModule, dataModule, domainModule
+                dataModule,
+                domainModule,
+                appModule
             )
         }
     ) {
