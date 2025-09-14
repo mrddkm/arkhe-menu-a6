@@ -17,9 +17,9 @@ class TripkeunApplication : Application() {
             androidLogger(Level.DEBUG)
             androidContext(this@TripkeunApplication)
             modules(
-                appModule,
                 dataModule,
-                domainModule
+                domainModule,
+                appModule
             )
         }
     }
