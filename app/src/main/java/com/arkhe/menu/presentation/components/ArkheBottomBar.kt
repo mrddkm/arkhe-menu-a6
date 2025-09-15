@@ -17,6 +17,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import com.arkhe.menu.presentation.theme.AppTheme
 import com.arkhe.menu.presentation.viewmodel.BottomNavItem
+import compose.icons.EvaIcons
+import compose.icons.evaicons.Outline
+import compose.icons.evaicons.outline.Activity
+import compose.icons.evaicons.outline.Grid
 
 @Composable
 fun ArkheBottomBar(
@@ -49,9 +53,9 @@ fun ArkheBottomBar(
 
 private fun getIconForItem(item: BottomNavItem): ImageVector {
     return when (item) {
-        BottomNavItem.DOCS -> Icons.Rounded.Dashboard
+        BottomNavItem.DOCS -> EvaIcons.Outline.Grid
         BottomNavItem.TRIPKEUN -> Icons.Rounded.GroupWork
-        BottomNavItem.ACTIVITY -> Icons.Rounded.WorkHistory
+        BottomNavItem.ACTIVITY -> EvaIcons.Outline.Activity
     }
 }
 

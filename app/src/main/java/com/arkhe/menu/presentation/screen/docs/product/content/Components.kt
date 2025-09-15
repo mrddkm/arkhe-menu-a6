@@ -1,7 +1,7 @@
 @file:Suppress("SpellCheckingInspection")
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.arkhe.menu.presentation.screen.docs.product.ext
+package com.arkhe.menu.presentation.screen.docs.product.content
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -27,7 +27,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,7 +49,10 @@ fun ProductSectionContent(
 ) {
     var selectedProduct by remember { mutableStateOf<Product?>(null) }
     var showDetailBottomSheet by remember { mutableStateOf(false) }
-
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true,
+        confirmValueChange = { true }
+    )
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -74,13 +79,16 @@ fun ProductSectionContent(
             }
         }
     }
-
     if (showDetailBottomSheet && selectedProduct != null) {
+        LaunchedEffect(Unit) {
+            sheetState.show()
+        }
         ModalBottomSheet(
             onDismissRequest = {
                 showDetailBottomSheet = false
                 selectedProduct = null
-            }
+            },
+            sheetState = sheetState
         ) {
             BottomSheetProduct(
                 product = selectedProduct!!

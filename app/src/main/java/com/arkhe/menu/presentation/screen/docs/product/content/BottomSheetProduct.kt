@@ -1,6 +1,9 @@
-package com.arkhe.menu.presentation.screen.docs.product.ext
+package com.arkhe.menu.presentation.screen.docs.product.content
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,10 +14,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Language
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -38,16 +41,27 @@ import com.arkhe.menu.R
 import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.presentation.theme.AppTheme
 import com.arkhe.menu.utils.Constants
+import com.arkhe.menu.utils.Constants.Category.STATISTICS_INITIATION
+import com.arkhe.menu.utils.Constants.Category.STATISTICS_READY
+import com.arkhe.menu.utils.Constants.Category.STATISTICS_RESEARCH
+import com.arkhe.menu.utils.getDevelopmentColor
+import compose.icons.EvaIcons
+import compose.icons.evaicons.Fill
+import compose.icons.evaicons.Outline
+import compose.icons.evaicons.fill.MoreHorizontal
+import compose.icons.evaicons.outline.ChevronRight
+import compose.icons.evaicons.outline.Globe
 
 @Composable
 fun BottomSheetProduct(
     product: Product
 ) {
-    var currentLanguage by remember { mutableStateOf(Constants.CurrentLanguage.ENGLISH) }
+    var showEnglish by remember { mutableStateOf(false) }
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 0.dp, start = 16.dp, end = 16.dp, bottom = 48.dp)
+            .verticalScroll(rememberScrollState())
+            .padding(top = 0.dp, start = 16.dp, end = 16.dp, bottom = 32.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -65,22 +79,26 @@ fun BottomSheetProduct(
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.primary,
             )
-            if (product.information.indonesian.isNotEmpty() &&
-                product.information.english.isNotEmpty()
+            if (product.information.indonesian.isNotEmpty() && product.information.english.isNotEmpty()
             ) {
                 IconButton(
-                    onClick = {
-                        currentLanguage =
-                            if (currentLanguage == Constants.CurrentLanguage.ENGLISH)
-                                Constants.CurrentLanguage.INDONESIAN
-                            else Constants.CurrentLanguage.ENGLISH
-                    }
+                    onClick = { showEnglish = !showEnglish }
                 ) {
-                    Icon(
-                        imageVector = Icons.Rounded.Language,
-                        contentDescription = "Toggle Language",
-                        modifier = Modifier.size(17.dp),
-                    )
+                    if (showEnglish) {
+                        Icon(
+                            imageVector = EvaIcons.Outline.Globe,
+                            contentDescription = "Toggle Language English",
+                            modifier = Modifier.size(24.dp),
+                        )
+                    } else {
+                        Image(
+                            painter = painterResource(R.drawable.ic_id_indonesia),
+                            contentDescription = "Toggle Language Indonesia",
+                            modifier = Modifier
+                                .size(24.dp)
+                                .border(0.5.dp, Color.LightGray, shape = CircleShape),
+                        )
+                    }
                 }
             } else {
                 Spacer(Modifier.width(48.dp))
@@ -144,22 +162,22 @@ fun BottomSheetProduct(
                     Card(
                         colors = CardDefaults.cardColors(
                             containerColor = when (product.status) {
-                                "Ready" -> Color(0xFF4CAF50).copy(alpha = 0.1f)
-                                "Research" -> Color(0xFFFF9800).copy(alpha = 0.1f)
-                                "Product" -> Color(0xFF2196F3).copy(alpha = 0.1f)
-                                else -> Color(0xFF757575).copy(alpha = 0.1f)
+                                STATISTICS_READY -> getDevelopmentColor(STATISTICS_READY).copy(alpha = 0.1f)
+                                STATISTICS_RESEARCH -> getDevelopmentColor(STATISTICS_RESEARCH).copy(alpha = 0.1f)
+                                STATISTICS_INITIATION -> getDevelopmentColor(STATISTICS_INITIATION).copy(alpha = 0.1f)
+                                else -> Color.LightGray
                             }
                         ),
-                        shape = RoundedCornerShape(8.dp)
+                        shape = RoundedCornerShape(6.dp)
                     ) {
                         Text(
                             text = product.status,
                             style = MaterialTheme.typography.bodySmall,
                             color = when (product.status) {
-                                "Ready" -> Color(0xFF4CAF50)
-                                "Research" -> Color(0xFFFF9800)
-                                "Product" -> Color(0xFF2196F3)
-                                else -> Color(0xFF757575)
+                                STATISTICS_READY -> getDevelopmentColor(STATISTICS_READY)
+                                STATISTICS_RESEARCH -> getDevelopmentColor(STATISTICS_RESEARCH)
+                                STATISTICS_INITIATION -> getDevelopmentColor(STATISTICS_INITIATION)
+                                else -> Color.DarkGray
                             },
                             modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp)
                         )
@@ -168,30 +186,78 @@ fun BottomSheetProduct(
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
-        val information = if (currentLanguage == Constants.CurrentLanguage.INDONESIAN) {
-            product.information.indonesian
-        } else {
-            product.information.english
+        val informationText = remember(showEnglish, product.information) {
+            when {
+                showEnglish && product.information.english.isNotBlank() ->
+                    product.information.english
+
+                product.information.indonesian.isNotBlank() ->
+                    product.information.indonesian
+
+                product.information.english.isNotBlank() ->
+                    product.information.english
+
+                else -> "No information available"
+            }
         }
-        if (information.isNotEmpty()) {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                ),
-                shape = RoundedCornerShape(8.dp)
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant
+            ),
+            shape = RoundedCornerShape(8.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
-                    Text(
-                        text = information,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
+                Text(
+                    text = informationText,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(24.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {}
+                .padding(start = 4.dp, top = 12.dp, end = 0.dp, bottom = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(24.dp)
+                    .clip(CircleShape)
+                    .background(Color.LightGray),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = EvaIcons.Fill.MoreHorizontal,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                    tint = Color.DarkGray
+                )
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "More",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                )
+                Icon(
+                    imageVector = EvaIcons.Outline.ChevronRight,
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp),
+                    tint = Color.LightGray
+                )
             }
         }
     }
@@ -208,7 +274,7 @@ fun BottomSheetProductPreview() {
         productCode = "MN04",
         productFullName = "Mountain Series #04",
         productDestination = "Gn. Papandayan",
-        status = "Ready",
+        status = STATISTICS_RESEARCH,
         information = com.arkhe.menu.domain.model.ProductInformation(
             indonesian = "Lorem Ipsum adalah contoh teks atau dummy dalam industri percetakan dan penataan huruf atau typesetting. Lorem Ipsum telah menjadi standar contoh teks sejak tahun 1500an",
             english = "Lorem ipsum dolor sit amet consectetur adipiscing elit. Sit amet consectetur adipiscing elit quisque faucibus ex. Adipiscing elit quisque faucibus ex sapien vitae pellentesque."

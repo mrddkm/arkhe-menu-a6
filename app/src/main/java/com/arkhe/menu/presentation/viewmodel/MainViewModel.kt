@@ -28,7 +28,7 @@ class MainViewModel(
         viewModelScope.launch {
             try {
                 sessionManager.ensureTokenAvailable()
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 setError("Failed to initialize app")
             }
         }

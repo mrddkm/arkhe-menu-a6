@@ -37,6 +37,13 @@ import com.arkhe.menu.domain.model.CategoryActionInfo
 import com.arkhe.menu.domain.model.CategoryColors
 import com.arkhe.menu.domain.model.CategoryInformation
 import com.arkhe.menu.presentation.theme.AppTheme
+import com.arkhe.menu.utils.Constants.Category.STATISTICS_INITIATION
+import com.arkhe.menu.utils.Constants.Category.STATISTICS_READY
+import com.arkhe.menu.utils.Constants.Category.STATISTICS_RESEARCH
+import com.arkhe.menu.utils.getDevelopmentColor
+import compose.icons.EvaIcons
+import compose.icons.evaicons.Fill
+import compose.icons.evaicons.fill.Droplet
 
 @Composable
 fun CategoryItem(
@@ -60,7 +67,6 @@ fun CategoryItem(
                     .fillMaxWidth()
                     .padding(24.dp)
             ) {
-                // Header with icon and basic info
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
@@ -73,7 +79,7 @@ fun CategoryItem(
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
-                            imageVector = Icons.Rounded.Egg,
+                            imageVector = EvaIcons.Fill.Droplet,
                             contentDescription = category.name,
                             modifier = Modifier.size(40.dp),
                             tint = iconColor
@@ -97,7 +103,6 @@ fun CategoryItem(
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                // Product Statistics
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     colors = CardDefaults.cardColors(
@@ -144,7 +149,6 @@ fun CategoryItem(
                     }
                 }
 
-                // Information Section
                 if (category.information.indonesian.isNotBlank() || category.information.english.isNotBlank()) {
                     Spacer(modifier = Modifier.height(20.dp))
                     Card(
@@ -187,7 +191,6 @@ fun CategoryItem(
                     }
                 }
 
-                // Action Information Section
                 if (category.actionInfo.action.isNotBlank()) {
                     Spacer(modifier = Modifier.height(20.dp))
                     Card(
@@ -232,7 +235,6 @@ fun CategoryItem(
             }
         }
     } else {
-        // List view layout - compact information
         Card(
             modifier = modifier
                 .fillMaxWidth()
@@ -254,7 +256,7 @@ fun CategoryItem(
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = Icons.Rounded.Egg,
+                        imageVector = EvaIcons.Fill.Droplet,
                         contentDescription = category.name,
                         modifier = Modifier.size(28.dp),
                         tint = iconColor
@@ -283,22 +285,22 @@ fun CategoryItem(
                         Row {
                             if (category.ready > 0) {
                                 StatusChip(
-                                    text = "${category.ready} Ready",
-                                    color = Color(0xFF4CAF50)
+                                    text = "${category.ready} $STATISTICS_READY",
+                                    color = getDevelopmentColor(STATISTICS_READY)
                                 )
                             }
                             if (category.research > 0) {
                                 Spacer(modifier = Modifier.width(8.dp))
                                 StatusChip(
-                                    text = "${category.research} Research",
-                                    color = Color(0xFFFF9800)
+                                    text = "${category.research} $STATISTICS_RESEARCH",
+                                    color = getDevelopmentColor(STATISTICS_RESEARCH)
                                 )
                             }
                             if (category.initiation > 0) {
                                 Spacer(modifier = Modifier.width(8.dp))
                                 StatusChip(
-                                    text = "${category.initiation} Initiation",
-                                    color = Color(0xFF2196F3)
+                                    text = "${category.initiation} $STATISTICS_INITIATION",
+                                    color = getDevelopmentColor(STATISTICS_INITIATION)
                                 )
                             }
                         }

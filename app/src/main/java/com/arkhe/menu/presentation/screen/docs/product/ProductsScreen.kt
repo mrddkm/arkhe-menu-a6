@@ -36,9 +36,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.data.remote.api.SafeApiResult
 import com.arkhe.menu.domain.model.Product
-import com.arkhe.menu.presentation.screen.docs.product.ext.BottomSheetProduct
-import com.arkhe.menu.presentation.screen.docs.product.ext.ProductGroupCard
-import com.arkhe.menu.presentation.screen.docs.product.ext.ProductListItem
+import com.arkhe.menu.presentation.screen.docs.product.content.BottomSheetProduct
+import com.arkhe.menu.presentation.screen.docs.product.screen.ProductGroupCard
+import com.arkhe.menu.presentation.screen.docs.product.screen.ProductListItem
 import com.arkhe.menu.presentation.viewmodel.ProductViewModel
 import org.koin.compose.viewmodel.koinViewModel
 

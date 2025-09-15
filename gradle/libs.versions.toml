@@ -7,13 +7,13 @@ googleKsp = "2.2.0-2.0.2"
 coreKtx = "1.17.0"
 #noinspection GradleDependency
 lifecycleRuntimeKtx = "2.9.2"
-activityCompose = "1.10.1"
+activityCompose = "1.11.0"
 #noinspection GradleDependency
 composeBom = "2025.08.00"
-composeNavigation = "2.9.3"
+composeNavigation = "2.9.4"
 #noinspection NewerVersionAvailable
 koin = "4.1.0"
-room = "2.7.2"
+room = "2.8.0"
 ktor = "3.2.3"
 datastore = "1.1.7"
 materialIcons = "1.7.8"
@@ -57,7 +57,8 @@ androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "j
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 
 androidx-material-icons = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "materialIcons" }
-compose-icons-simple = { group = "br.com.devsrsouza.compose.icons", name = "simple-icons", version.ref = "composeIcons" }
+compose-simple-icons = { group = "br.com.devsrsouza.compose.icons", name = "simple-icons", version.ref = "composeIcons" }
+compose-eva-icons = { group = "br.com.devsrsouza.compose.icons", name = "eva-icons", version.ref = "composeIcons" }
 compose-coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 
 [plugins]
@@ -97,7 +98,8 @@ ktor = [
 
 icons = [
     "androidx-material-icons",
-    "compose-icons-simple"
+    "compose-simple-icons",
+    "compose-eva-icons"
 ]
 
 testing-unit = [

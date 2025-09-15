@@ -3,14 +3,13 @@
 
 package com.arkhe.menu.presentation.screen.docs.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,6 +25,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.presentation.theme.AppTheme
+import compose.icons.EvaIcons
+import compose.icons.evaicons.Outline
+import compose.icons.evaicons.outline.ChevronRight
 
 @Composable
 fun HeaderSection(
@@ -43,9 +45,10 @@ fun HeaderSection(
     ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .clickable { onHeaderClick() },
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.spacedBy(0.dp)
         ) {
             Text(
                 text = title,
@@ -54,17 +57,13 @@ fun HeaderSection(
                 ),
                 color = MaterialTheme.colorScheme.primary
             )
-            IconButton(onClick = onHeaderClick) {
-                Icon(
-                    imageVector = Icons.Rounded.ChevronRight,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(end = 2.dp)
-                        .align(Alignment.CenterVertically)
-                )
-            }
+            Icon(
+                imageVector = EvaIcons.Outline.ChevronRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+            )
         }
     }
 }

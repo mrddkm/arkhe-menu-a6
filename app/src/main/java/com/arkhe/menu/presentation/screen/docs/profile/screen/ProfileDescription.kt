@@ -5,17 +5,20 @@ package com.arkhe.menu.presentation.screen.docs.profile.screen
 import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -36,6 +40,9 @@ import com.arkhe.menu.domain.model.ProfileInformation
 import com.arkhe.menu.domain.model.SocialMedia
 import com.arkhe.menu.presentation.theme.AppTheme
 import com.arkhe.menu.utils.DateUtils.formatBirthDate
+import compose.icons.EvaIcons
+import compose.icons.evaicons.Outline
+import compose.icons.evaicons.outline.Globe
 import java.io.File
 
 @Composable
@@ -104,7 +111,6 @@ fun ProfileDescription(profile: Profile) {
                 }
             }
 
-            // Profile Title and Language Toggle
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -120,15 +126,25 @@ fun ProfileDescription(profile: Profile) {
                     modifier = Modifier.weight(1f)
                 )
 
-                // Show language toggle only if both languages have content
                 if (profile.information.indonesian.isNotBlank() && profile.information.english.isNotBlank()) {
-                    TextButton(
+                    IconButton(
                         onClick = { showEnglish = !showEnglish }
                     ) {
-                        Text(
-                            text = if (showEnglish) "ID" else "EN",
-                            style = MaterialTheme.typography.labelLarge
-                        )
+                        if (showEnglish) {
+                            Icon(
+                                imageVector = EvaIcons.Outline.Globe,
+                                contentDescription = "Toggle Language English",
+                                modifier = Modifier.size(24.dp),
+                            )
+                        } else {
+                            Image(
+                                painter = painterResource(R.drawable.ic_id_indonesia),
+                                contentDescription = "Toggle Language Indonesia",
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .border(0.5.dp, Color.LightGray, shape = CircleShape),
+                            )
+                        }
                     }
                 }
             }
@@ -137,7 +153,6 @@ fun ProfileDescription(profile: Profile) {
                 formatBirthDate(profile.birthDate)
             }
 
-            // Action Information with smart text replacement
             val actionText = remember(showEnglish, profile.actionInfo, birthDateFormatted) {
                 val information = when {
                     showEnglish && profile.actionInfo.information.english.isNotBlank() ->
@@ -164,7 +179,6 @@ fun ProfileDescription(profile: Profile) {
                 lineHeight = MaterialTheme.typography.bodyMedium.lineHeight.times(1.2)
             )
 
-            // Profile Information with language preference
             val informationText = remember(showEnglish, profile.information) {
                 when {
                     showEnglish && profile.information.english.isNotBlank() ->

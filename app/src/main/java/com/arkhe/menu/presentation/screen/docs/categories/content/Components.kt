@@ -11,15 +11,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Egg
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,6 +36,9 @@ import com.arkhe.menu.domain.model.CategoryColors
 import com.arkhe.menu.domain.model.CategoryInformation
 import com.arkhe.menu.presentation.screen.docs.categories.screen.parseColorFromHex
 import com.arkhe.menu.presentation.theme.AppTheme
+import compose.icons.EvaIcons
+import compose.icons.evaicons.Fill
+import compose.icons.evaicons.fill.Droplet
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,7 +47,10 @@ fun CategoriesNonScrollableUI(
 ) {
     var showCategoryBottomSheet by remember { mutableStateOf(false) }
     var selectedCategory by remember { mutableStateOf<Category?>(null) }
-
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true,
+        confirmValueChange = { true }
+    )
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -63,11 +69,15 @@ fun CategoriesNonScrollableUI(
     }
 
     if (showCategoryBottomSheet && selectedCategory != null) {
+        LaunchedEffect(Unit) {
+            sheetState.show()
+        }
         ModalBottomSheet(
             onDismissRequest = {
                 showCategoryBottomSheet = false
                 selectedCategory = null
-            }
+            },
+            sheetState = sheetState
         ) {
             BottomSheetCategory(
                 category = selectedCategory!!
@@ -100,7 +110,7 @@ fun CategoryItemNonScrollable(
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = Icons.Rounded.Egg,
+                    imageVector = EvaIcons.Fill.Droplet,
                     contentDescription = category.name,
                     modifier = Modifier.size(24.dp),
                     tint = iconColor

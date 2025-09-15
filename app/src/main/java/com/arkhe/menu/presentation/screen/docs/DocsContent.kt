@@ -45,7 +45,7 @@ import com.arkhe.menu.presentation.screen.docs.organization.ext.OrganizationSect
 import com.arkhe.menu.presentation.screen.docs.organization.ext.PersonilDetailBottomSheet
 import com.arkhe.menu.presentation.screen.docs.organization.ext.PersonilListBottomSheet
 import com.arkhe.menu.presentation.screen.docs.organization.ext.sampleOrganizations
-import com.arkhe.menu.presentation.screen.docs.product.ext.ProductSectionContent
+import com.arkhe.menu.presentation.screen.docs.product.content.ProductSectionContent
 import com.arkhe.menu.presentation.screen.docs.profile.content.ProfileUI
 import com.arkhe.menu.presentation.theme.AppTheme
 import com.arkhe.menu.presentation.viewmodel.CategoryViewModel

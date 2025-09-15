@@ -1,4 +1,4 @@
-package com.arkhe.menu.presentation.screen.docs.product.ext
+package com.arkhe.menu.presentation.screen.docs.product.screen
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
