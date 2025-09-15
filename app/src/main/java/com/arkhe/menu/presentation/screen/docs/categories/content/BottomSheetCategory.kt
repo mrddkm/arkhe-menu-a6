@@ -43,7 +43,7 @@ import com.arkhe.menu.R
 import com.arkhe.menu.domain.model.Category
 import com.arkhe.menu.domain.model.CategoryActionInfo
 import com.arkhe.menu.domain.model.CategoryColors
-import com.arkhe.menu.domain.model.CategoryInformation
+import com.arkhe.menu.domain.model.CategoryInformationLanguage
 import com.arkhe.menu.presentation.screen.docs.categories.screen.parseColorFromHex
 import com.arkhe.menu.presentation.theme.AppTheme
 import com.arkhe.menu.utils.Constants
@@ -307,7 +307,7 @@ fun BottomSheetCategoryPreview() {
         initiation = 0,
         research = 0,
         ready = 26,
-        information = CategoryInformation(
+        information = CategoryInformationLanguage(
             indonesian = "Lorem Ipsum adalah contoh teks atau dummy dalam industri percetakan dan penataan huruf atau typesetting. Lorem Ipsum telah menjadi standar contoh teks sejak tahun 1500an",
             english = "Lorem ipsum dolor sit amet consectetur adipiscing elit. Sit amet consectetur adipiscing elit quisque faucibus ex. Adipiscing elit quisque faucibus ex sapien vitae pellentesque."
         ),
@@ -317,7 +317,7 @@ fun BottomSheetCategoryPreview() {
         ),
         actionInfo = CategoryActionInfo(
             action = "productcategory",
-            information = CategoryInformation(
+            information = CategoryInformationLanguage(
                 indonesian = "Lorem Ipsum hanyalah contoh teks dalam industri percetakan dan penataan huruf. Lorem Ipsum telah menjadi contoh teks standar industri sejak tahun 1500-an.",
                 english = "Lorem ipsum dolor sit amet consectetur adipiscing elit. Sit amet consectetur adipiscing elit quisque faucibus ex. Adipiscing elit quisque faucibus ex sapien vitae pellentesque."
             )

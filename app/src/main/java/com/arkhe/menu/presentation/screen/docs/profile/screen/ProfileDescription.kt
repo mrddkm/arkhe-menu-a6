@@ -34,9 +34,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.arkhe.menu.R
-import com.arkhe.menu.domain.model.ActionInfo
+import com.arkhe.menu.domain.model.ProfileActionInfo
 import com.arkhe.menu.domain.model.Profile
-import com.arkhe.menu.domain.model.ProfileInformation
+import com.arkhe.menu.domain.model.ProfileInformationLanguage
 import com.arkhe.menu.domain.model.SocialMedia
 import com.arkhe.menu.presentation.theme.AppTheme
 import com.arkhe.menu.utils.DateUtils.formatBirthDate
@@ -153,16 +153,16 @@ fun ProfileDescription(profile: Profile) {
                 formatBirthDate(profile.birthDate)
             }
 
-            val actionText = remember(showEnglish, profile.actionInfo, birthDateFormatted) {
+            val actionText = remember(showEnglish, profile.profileActionInfo, birthDateFormatted) {
                 val information = when {
-                    showEnglish && profile.actionInfo.information.english.isNotBlank() ->
-                        profile.actionInfo.information.english
+                    showEnglish && profile.profileActionInfo.information.english.isNotBlank() ->
+                        profile.profileActionInfo.information.english
 
-                    profile.actionInfo.information.indonesian.isNotBlank() ->
-                        profile.actionInfo.information.indonesian
+                    profile.profileActionInfo.information.indonesian.isNotBlank() ->
+                        profile.profileActionInfo.information.indonesian
 
-                    profile.actionInfo.information.english.isNotBlank() ->
-                        profile.actionInfo.information.english
+                    profile.profileActionInfo.information.english.isNotBlank() ->
+                        profile.profileActionInfo.information.english
 
                     else -> "No information available"
                 }
@@ -223,13 +223,13 @@ fun ProfileHeaderPreview() {
             ),
             tagline = "More Than a Journey, It's a Connection",
             quotes = "The best journey isn't about distance, but about who walks with you.",
-            information = ProfileInformation(
+            information = ProfileInformationLanguage(
                 indonesian = "Tripkeun Indonesia adalah gerbang menuju petualangan tanpa batas.",
                 english = "Tripkeun Indonesia is your gateway to limitless adventures."
             ),
-            actionInfo = ActionInfo(
+            profileActionInfo = ProfileActionInfo(
                 action = "profile",
-                information = ProfileInformation(
+                information = ProfileInformationLanguage(
                     indonesian = "Panggil Kami {profileNameShort} lahir di Bandung pada {birthDate}.",
                     english = "Call us {profileNameShort} born in Bandung on {birthDate}."
                 )

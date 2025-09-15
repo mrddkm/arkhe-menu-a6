@@ -6,7 +6,7 @@ import com.arkhe.menu.data.remote.dto.ProductInfoDto
 import com.arkhe.menu.data.remote.dto.ProductResponseDto
 import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.domain.model.ProductActionInfo
-import com.arkhe.menu.domain.model.ProductInformation
+import com.arkhe.menu.domain.model.ProductInformationLanguage
 
 /*DTO to Entity*/
 fun ProductDataDto.toEntity(infoData: ProductInfoDto): ProductEntity {
@@ -38,13 +38,13 @@ fun ProductEntity.toDomain(): Product {
         productFullName = productFullName,
         productDestination = productDestination,
         status = status,
-        information = ProductInformation(
+        information = ProductInformationLanguage(
             indonesian = informationId,
             english = informationEn
         ),
         actionInfo = ProductActionInfo(
             action = action,
-            information = ProductInformation(
+            information = ProductInformationLanguage(
                 indonesian = actionInformationId,
                 english = actionInformationEn
             )
@@ -63,13 +63,13 @@ fun ProductDataDto.toDomain(infoData: ProductInfoDto): Product {
         productFullName = productFullName,
         productDestination = productDestination,
         status = status,
-        information = ProductInformation(
+        information = ProductInformationLanguage(
             indonesian = informationId,
             english = informationEn
         ),
         actionInfo = ProductActionInfo(
             action = infoData.action,
-            information = ProductInformation(
+            information = ProductInformationLanguage(
                 indonesian = infoData.actionInformationId,
                 english = infoData.actionInformationEn
             )

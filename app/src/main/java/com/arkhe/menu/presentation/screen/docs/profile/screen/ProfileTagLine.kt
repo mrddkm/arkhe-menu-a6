@@ -14,9 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.arkhe.menu.domain.model.ActionInfo
+import com.arkhe.menu.domain.model.ProfileActionInfo
 import com.arkhe.menu.domain.model.Profile
-import com.arkhe.menu.domain.model.ProfileInformation
+import com.arkhe.menu.domain.model.ProfileInformationLanguage
 import com.arkhe.menu.domain.model.SocialMedia
 import com.arkhe.menu.presentation.theme.AppTheme
 
@@ -106,13 +106,13 @@ fun ProfileTagLinePreview() {
             ),
             tagline = "More Than a Journey, It's a Connection",
             quotes = "The best journey isn't about distance, but about who walks with you.",
-            information = ProfileInformation(
+            information = ProfileInformationLanguage(
                 indonesian = "Tripkeun Indonesia adalah gerbang menuju petualangan tanpa batas.",
                 english = "Tripkeun Indonesia is your gateway to limitless adventures."
             ),
-            actionInfo = ActionInfo(
+            profileActionInfo = ProfileActionInfo(
                 action = "profile",
-                information = ProfileInformation(
+                information = ProfileInformationLanguage(
                     indonesian = "Perbarui informasi perusahaan Anda untuk tetap terhubung dengan pelanggan.",
                     english = "Update your company information to stay connected with customers."
                 )

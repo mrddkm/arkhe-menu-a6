@@ -27,6 +27,7 @@ data class ProductData(
     val productCode: String,
     val productFullName: String,
     val productDestination: String,
+    val logo: String,
     val status: String,
     val informationId: String,
     val informationEn: String
@@ -49,10 +50,10 @@ data class Product(
     val productFullName: String,
     val productDestination: String,
     val status: String,
-    val information: ProductInformation,
-    val actionInfo: ProductActionInfo
+    val information: ProductInformationLanguage,
+    val actionInfo: ProductActionInfo,
+    val localImagePath: String? = null
 ) {
-    /*Extract series prefix from productFullName (e.g., "Chipkeun" from "Chipkeun #01")*/
     val seriesPrefix: String
         get() {
             val fullName = productFullName
@@ -60,7 +61,6 @@ data class Product(
             return if (hashIndex > 0) {
                 fullName.substring(0, hashIndex).trim()
             } else {
-                // Fallback to productCategoryId or first word
                 productCategoryId.ifEmpty {
                     fullName.split(" ").firstOrNull() ?: fullName
                 }
@@ -68,18 +68,18 @@ data class Product(
         }
 }
 
-data class ProductInformation(
-    val indonesian: String,
-    val english: String
-)
-
-data class ProductActionInfo(
-    val action: String,
-    val information: ProductInformation
-)
-
 /*UI grouping model*/
 data class ProductGroup(
     val seriesName: String,
     val products: List<Product>
+)
+
+data class ProductActionInfo(
+    val action: String,
+    val information: ProductInformationLanguage
+)
+
+data class ProductInformationLanguage(
+    val indonesian: String,
+    val english: String
 )

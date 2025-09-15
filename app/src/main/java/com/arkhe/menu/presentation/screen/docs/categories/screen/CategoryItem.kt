@@ -16,8 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Egg
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -35,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.arkhe.menu.domain.model.Category
 import com.arkhe.menu.domain.model.CategoryActionInfo
 import com.arkhe.menu.domain.model.CategoryColors
-import com.arkhe.menu.domain.model.CategoryInformation
+import com.arkhe.menu.domain.model.CategoryInformationLanguage
 import com.arkhe.menu.presentation.theme.AppTheme
 import com.arkhe.menu.utils.Constants.Category.STATISTICS_INITIATION
 import com.arkhe.menu.utils.Constants.Category.STATISTICS_READY
@@ -375,7 +373,7 @@ fun CategoryItemPreview() {
         initiation = 10,
         research = 20,
         ready = 90,
-        information = CategoryInformation(
+        information = CategoryInformationLanguage(
             indonesian = "Kategori buah-buahan dan sayuran segar untuk kebutuhan sehari-hari",
             english = "Fresh fruits and vegetables category for daily needs"
         ),
@@ -385,7 +383,7 @@ fun CategoryItemPreview() {
         ),
         actionInfo = CategoryActionInfo(
             action = "View Products",
-            information = CategoryInformation(
+            information = CategoryInformationLanguage(
                 indonesian = "Lihat produk dalam kategori ini",
                 english = "View products in this category"
             )

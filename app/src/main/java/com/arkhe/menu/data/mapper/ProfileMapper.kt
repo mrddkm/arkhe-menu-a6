@@ -4,9 +4,9 @@ import com.arkhe.menu.data.local.entity.ProfileEntity
 import com.arkhe.menu.data.remote.dto.InfoDataDto
 import com.arkhe.menu.data.remote.dto.ProfileDataDto
 import com.arkhe.menu.data.remote.dto.ProfileResponseDto
-import com.arkhe.menu.domain.model.ActionInfo
+import com.arkhe.menu.domain.model.ProfileActionInfo
 import com.arkhe.menu.domain.model.Profile
-import com.arkhe.menu.domain.model.ProfileInformation
+import com.arkhe.menu.domain.model.ProfileInformationLanguage
 import com.arkhe.menu.domain.model.SocialMedia
 
 /*DTO to Entity*/
@@ -51,13 +51,13 @@ fun ProfileEntity.toDomain(): Profile {
         ),
         tagline = tagline,
         quotes = quotes,
-        information = ProfileInformation(
+        information = ProfileInformationLanguage(
             indonesian = informationId,
             english = informationEn
         ),
-        actionInfo = ActionInfo(
+        profileActionInfo = ProfileActionInfo(
             action = action,
-            information = ProfileInformation(
+            information = ProfileInformationLanguage(
                 indonesian = actionInformationId,
                 english = actionInformationEn
             )
@@ -82,13 +82,13 @@ fun ProfileDataDto.toDomain(infoData: InfoDataDto): Profile {
         ),
         tagline = tagline,
         quotes = quotes,
-        information = ProfileInformation(
+        information = ProfileInformationLanguage(
             indonesian = informationId,
             english = informationEn
         ),
-        actionInfo = ActionInfo(
+        profileActionInfo = ProfileActionInfo(
             action = infoData.action,
-            information = ProfileInformation(
+            information = ProfileInformationLanguage(
                 indonesian = infoData.actionInformationId,
                 english = infoData.actionInformationEn
             )

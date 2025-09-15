@@ -37,7 +37,6 @@ import com.arkhe.menu.presentation.components.common.EmptyUI
 import com.arkhe.menu.presentation.components.common.ErrorUI
 import com.arkhe.menu.presentation.components.common.LoadingIndicator
 import com.arkhe.menu.presentation.screen.docs.categories.content.CategoriesNonScrollableUI
-import com.arkhe.menu.presentation.screen.docs.components.HeaderSection
 import com.arkhe.menu.presentation.screen.docs.customer.ext.CustomerSection
 import com.arkhe.menu.presentation.screen.docs.customer.ext.sampleCustomers
 import com.arkhe.menu.presentation.screen.docs.organization.ext.Organization

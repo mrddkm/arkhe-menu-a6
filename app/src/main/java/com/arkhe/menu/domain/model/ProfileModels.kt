@@ -12,7 +12,7 @@ data class ProfileResponse(
     val status: String,
     val message: String,
     val data: List<ProfileData>,
-    val info: InfoData
+    val info: ProfileInfoData
 )
 
 @Serializable
@@ -37,7 +37,7 @@ data class ProfileData(
 )
 
 @Serializable
-data class InfoData(
+data class ProfileInfoData(
     val action: String,
     val actionInformationId: String,
     val actionInformationEn: String
@@ -52,14 +52,14 @@ data class Profile(
     val socialMedia: SocialMedia,
     val tagline: String,
     val quotes: String,
-    val information: ProfileInformation,
-    val actionInfo: ActionInfo,
+    val information: ProfileInformationLanguage,
+    val profileActionInfo: ProfileActionInfo,
     val localImagePath: String? = null
 )
 
-data class ActionInfo(
+data class ProfileActionInfo(
     val action: String,
-    val information: ProfileInformation
+    val information: ProfileInformationLanguage
 )
 
 data class SocialMedia(
@@ -70,7 +70,7 @@ data class SocialMedia(
     val youtube: String
 )
 
-data class ProfileInformation(
+data class ProfileInformationLanguage(
     val indonesian: String,
     val english: String
 )

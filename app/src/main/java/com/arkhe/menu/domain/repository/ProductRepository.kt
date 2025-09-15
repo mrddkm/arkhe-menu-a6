@@ -13,13 +13,9 @@ interface ProductRepository {
     ): Flow<SafeApiResult<List<Product>>>
 
     suspend fun getProduct(id: String): Product?
-
     suspend fun getProductsByCategory(categoryId: String): Flow<List<Product>>
-
     suspend fun getProductsByNamePrefix(namePrefix: String): Flow<List<Product>>
-
     suspend fun getProductGroups(): List<ProductGroup>
-
     suspend fun refreshProducts(
         sessionToken: String,
         productCategoryId: String = "ALL"

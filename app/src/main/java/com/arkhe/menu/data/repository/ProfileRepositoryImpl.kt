@@ -7,9 +7,7 @@ import com.arkhe.menu.data.mapper.toDomain
 import com.arkhe.menu.data.mapper.toDomainList
 import com.arkhe.menu.data.mapper.toEntityList
 import com.arkhe.menu.data.remote.RemoteDataSource
-import com.arkhe.menu.data.remote.api.NetworkErrorHandler
 import com.arkhe.menu.data.remote.api.SafeApiResult
-import com.arkhe.menu.domain.model.NetworkException
 import com.arkhe.menu.domain.model.Profile
 import com.arkhe.menu.domain.repository.ProfileRepository
 import kotlinx.coroutines.Dispatchers
@@ -35,7 +33,6 @@ class ProfileRepositoryImpl(
         Log.d(TAG, "getProfiles called - forceRefresh: $forceRefresh, token: $sessionToken")
         emit(SafeApiResult.Loading)
 
-        // Emit cached data first if available and not forcing refresh
         var cachedEmitted = false
         if (!forceRefresh) {
             try {
@@ -54,7 +51,6 @@ class ProfileRepositoryImpl(
             }
         }
 
-        // If forceRefresh or no cached data, syncProfiles
         if (forceRefresh || !cachedEmitted) {
             Log.d(TAG, "Calling syncProfiles for remote data...")
             val result = syncProfiles(sessionToken)
@@ -101,10 +97,9 @@ class ProfileRepositoryImpl(
                     SafeApiResult.Error(Exception("No data returned from API"))
                 }
             }
+
             is SafeApiResult.Error -> SafeApiResult.Error(remoteResult.exception)
             SafeApiResult.Loading -> SafeApiResult.Error(Exception("Unexpected loading state"))
         }
     }
-
-    // downloadProfileImages() and getProfileImagePath() removed as per instructions
 }

@@ -12,7 +12,7 @@ data class CategoryResponse(
     val status: String,
     val message: String,
     val data: List<CategoryData>,
-    val info: CategoryInfo
+    val info: CategoryInfoData
 )
 
 @Serializable
@@ -31,13 +31,13 @@ data class CategoryData(
 )
 
 @Serializable
-data class CategoryInfo(
+data class CategoryInfoData(
     val action: String,
     val actionInformationId: String,
     val actionInformationEn: String
 )
 
-// Domain model for UI
+/*Domain model for UI*/
 data class Category(
     val id: String,
     val name: String,
@@ -46,14 +46,9 @@ data class Category(
     val initiation: Int,
     val research: Int,
     val ready: Int,
-    val information: CategoryInformation,
+    val information: CategoryInformationLanguage,
     val colors: CategoryColors,
     val actionInfo: CategoryActionInfo
-)
-
-data class CategoryInformation(
-    val indonesian: String,
-    val english: String
 )
 
 data class CategoryColors(
@@ -63,5 +58,10 @@ data class CategoryColors(
 
 data class CategoryActionInfo(
     val action: String,
-    val information: CategoryInformation
+    val information: CategoryInformationLanguage
+)
+
+data class CategoryInformationLanguage(
+    val indonesian: String,
+    val english: String
 )

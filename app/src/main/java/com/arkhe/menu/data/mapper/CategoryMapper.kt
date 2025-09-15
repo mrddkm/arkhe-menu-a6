@@ -7,7 +7,7 @@ import com.arkhe.menu.data.remote.dto.CategoryResponseDto
 import com.arkhe.menu.domain.model.Category
 import com.arkhe.menu.domain.model.CategoryActionInfo
 import com.arkhe.menu.domain.model.CategoryColors
-import com.arkhe.menu.domain.model.CategoryInformation
+import com.arkhe.menu.domain.model.CategoryInformationLanguage
 
 // DTO to Entity
 fun CategoryDataDto.toEntity(infoData: CategoryInfoDto): CategoryEntity {
@@ -39,7 +39,7 @@ fun CategoryEntity.toDomain(): Category {
         initiation = initiation.toIntOrNull() ?: 0,
         research = research.toIntOrNull() ?: 0,
         ready = ready.toIntOrNull() ?: 0,
-        information = CategoryInformation(
+        information = CategoryInformationLanguage(
             indonesian = informationId,
             english = informationEn
         ),
@@ -49,7 +49,7 @@ fun CategoryEntity.toDomain(): Category {
         ),
         actionInfo = CategoryActionInfo(
             action = action,
-            information = CategoryInformation(
+            information = CategoryInformationLanguage(
                 indonesian = actionInformationId,
                 english = actionInformationEn
             )
@@ -67,7 +67,7 @@ fun CategoryDataDto.toDomain(infoData: CategoryInfoDto): Category {
         initiation = initiation.toIntOrNull() ?: 0,
         research = research.toIntOrNull() ?: 0,
         ready = ready.toIntOrNull() ?: 0,
-        information = CategoryInformation(
+        information = CategoryInformationLanguage(
             indonesian = informationId,
             english = informationEn
         ),
@@ -77,7 +77,7 @@ fun CategoryDataDto.toDomain(infoData: CategoryInfoDto): Category {
         ),
         actionInfo = CategoryActionInfo(
             action = infoData.action,
-            information = CategoryInformation(
+            information = CategoryInformationLanguage(
                 indonesian = infoData.actionInformationId,
                 english = infoData.actionInformationEn
             )
