@@ -11,6 +11,8 @@ import com.arkhe.menu.domain.usecase.product.ProductUseCases
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
 class ProductViewModel(
@@ -41,44 +43,172 @@ class ProductViewModel(
     private val _currentProductCategoryId = MutableStateFlow("ALL")
     val currentProductCategoryId: StateFlow<String> = _currentProductCategoryId.asStateFlow()
 
+    private var isInitialized = false
+
     init {
         Log.d("init", "## ProductViewModel::initialized ##")
+        Log.d(TAG, "  - categoryUseCases: $productUseCases")
+        Log.d(TAG, "  - sessionManager: $sessionManager")
+
         viewModelScope.launch {
-            sessionManager.sessionToken.collect { token ->
-                if (token != null) {
-                    Log.d(TAG, "✅ Token $TAG: $token")
-                    loadProducts(token)
-                } else {
-                    Log.w(TAG, "⚠️ Token $TAG: null")
-                }
+            try {
+                productUseCases.getProducts(sessionManager.getTokenForApiCall())
+                    .collectLatest { productsResult ->
+                        Log.d(TAG, "📊 Products result: ${productsResult::class.simpleName}")
+                        _productsState.value = productsResult
+                    }
+            } catch (e: Exception) {
+                Log.e(TAG, "❌ Error in init: ${e.message}", e)
+                _productsState.value = SafeApiResult.Error(e)
             }
         }
     }
 
     fun loadProducts(
-        token: String? = null,
         productCategoryId: String = "ALL",
         forceRefresh: Boolean = false
     ) {
+        Log.d(TAG, "========== loadProducts ==========")
+        Log.d(TAG, "forceRefresh: $forceRefresh")
+
+        if (!forceRefresh) {
+            Log.d(TAG, "Using local DB data flow, no API call.")
+            return
+        }
+
         viewModelScope.launch {
             try {
                 _currentProductCategoryId.value = productCategoryId
-                if (token != null) {
-                    productUseCases.getProducts(token, productCategoryId, forceRefresh)
-                        .collect { result ->
-                            _productsState.value = result
+                _productsState.value = SafeApiResult.Loading
 
-                            // Update product groups when products are loaded
-                            if (result is SafeApiResult.Success) {
-                                loadProductGroups()
-                            }
+                val sessionToken = sessionManager.getTokenForApiCall()
+                Log.d(TAG, "🔑 Token from SessionManager: ${sessionToken.take(8)}...")
+
+                val result = productUseCases.refreshProducts(sessionToken, productCategoryId)
+                when (result) {
+                    is SafeApiResult.Loading -> {
+                        Log.d(TAG, "⏳ Products loading...")
+                        _productsState.value = result
+                    }
+
+                    is SafeApiResult.Success -> {
+                        Log.d(TAG, "✅ Products loaded successfully: ${result.data.size} items")
+                        result.data.forEach { product ->
+                            Log.d(TAG, "📋 Category: ${product.productDestination}")
                         }
-                } else {
-                    _productsState.value =
-                        SafeApiResult.Error(Exception("No session token available"))
+                        _productsState.value = result
+                        loadProductGroups()
+                    }
+
+                    is SafeApiResult.Error -> {
+                        Log.e(TAG, "❌ Error loading categories: ${result.exception.message}")
+                        _productsState.value = result
+                        handleTokenError(result.exception, forceRefresh)
+                    }
                 }
             } catch (e: Exception) {
+                Log.e(TAG, "❌ Exception in loadCategories: ${e.message}", e)
                 _productsState.value = SafeApiResult.Error(e)
+            }
+        }
+    }
+
+    private fun handleTokenError(exception: Throwable, alreadyRetried: Boolean) {
+        val errorMessage = exception.message?.lowercase() ?: ""
+        val isTokenError = errorMessage.contains("token") ||
+                errorMessage.contains("unauthorized") ||
+                errorMessage.contains("authentication")
+
+        if (isTokenError && !alreadyRetried) {
+            Log.d(
+                TAG,
+                "🔄 Token error detected, refreshing and retrying..."
+            )
+            viewModelScope.launch {
+                try {
+                    val newToken = sessionManager.ensureTokenAvailable()
+                    Log.d(
+                        TAG,
+                        "🔑 Retrying with refreshed token: ${newToken.take(8)}..."
+                    )
+                    loadProducts(_currentProductCategoryId.value, forceRefresh = true)
+                } catch (e: Exception) {
+                    Log.e(
+                        TAG,
+                        "❌ Error in token refresh retry: ${e.message}"
+                    )
+                }
+            }
+        }
+    }
+
+    fun ensureDataLoaded() {
+        Log.d(
+            TAG,
+            "ensureDataLoaded called - isInitialized: $isInitialized, currentState: ${_productsState.value::class.simpleName}"
+        )
+
+        if (!isInitialized) {
+            viewModelScope.launch {
+                try {
+                    val token = sessionManager.getTokenForApiCall()
+                    val productsResult = productUseCases.getProducts(token).firstOrNull()
+
+                    when (productsResult) {
+                        is SafeApiResult.Success -> {
+                            if (productsResult.data.isEmpty()) {
+                                Log.d(TAG, "🆕 No local data found, syncing categories from API...")
+                                loadProducts(_currentProductCategoryId.value, forceRefresh = true)
+                            } else {
+                                Log.d(TAG, "🆗 Local data found, no need to sync.")
+                                _productsState.value = productsResult
+                            }
+                        }
+
+                        is SafeApiResult.Error -> {
+                            Log.e(
+                                TAG,
+                                "❌ Error getting categories: ${productsResult.exception.message}"
+                            )
+                            _productsState.value = productsResult
+                        }
+
+                        SafeApiResult.Loading -> {
+                            Log.d(TAG, "🆗 Loading...")
+                        }
+
+                        null -> {
+                            Log.d(
+                                TAG,
+                                "🆗 null result, loading fresh data..."
+                            )
+                            loadProducts(_currentProductCategoryId.value, forceRefresh = true)
+                        }
+                    }
+                    isInitialized = true
+                } catch (e: Exception) {
+                    Log.e(
+                        TAG,
+                        "❌ Exception in ensureDataLoaded: ${e.message}",
+                        e
+                    )
+                    _productsState.value = SafeApiResult.Error(e)
+                }
+            }
+        } else {
+            when (_productsState.value) {
+                is SafeApiResult.Error -> {
+                    Log.d(TAG, "🔄 Retrying after error...")
+                    loadProducts(_currentProductCategoryId.value, forceRefresh = false)
+                }
+
+                is SafeApiResult.Loading -> {
+                    Log.d(TAG, "⏳ Already loading, waiting...")
+                }
+
+                else -> {
+                    Log.d(TAG, "✅ Data already loaded")
+                }
             }
         }
     }
@@ -89,7 +219,6 @@ class ProductViewModel(
                 val groups = productUseCases.getProductGroups()
                 _productGroups.value = groups
             } catch (_: Exception) {
-                // Handle error if needed
             }
         }
     }

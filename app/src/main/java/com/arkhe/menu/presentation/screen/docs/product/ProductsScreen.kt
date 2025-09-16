@@ -25,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,6 +41,7 @@ import com.arkhe.menu.presentation.screen.docs.product.content.BottomSheetProduc
 import com.arkhe.menu.presentation.screen.docs.product.screen.ProductGroupCard
 import com.arkhe.menu.presentation.screen.docs.product.screen.ProductListItem
 import com.arkhe.menu.presentation.viewmodel.ProductViewModel
+import com.arkhe.menu.utils.Constants.CurrentLanguage.ENGLISH
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,22 +57,40 @@ fun ProductsScreen(
 
     var selectedProduct by remember { mutableStateOf<Product?>(null) }
     var showDetailBottomSheet by remember { mutableStateOf(false) }
-    var currentLanguage by remember { mutableStateOf("en") }
+    var currentLanguage by remember { mutableStateOf(ENGLISH) }
     var showGroupSelection by remember { mutableStateOf(true) }
+
+    var isRefreshing by remember { mutableStateOf(false) }
+    val lastSuccess = remember { mutableStateOf<List<Product>?>(null) }
+
+    LaunchedEffect(Unit) {
+        productViewModel.ensureDataLoaded()
+    }
+
+    LaunchedEffect(productsState) {
+        if (productsState !is SafeApiResult.Loading) {
+            isRefreshing = false
+        }
+    }
+
+    LaunchedEffect(productsState) {
+        if (productsState is SafeApiResult.Success) {
+            lastSuccess.value = (productsState as SafeApiResult.Success<List<Product>>).data
+        }
+    }
 
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // Header with language toggle
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Products Tripkeun",
+                text = "Products",
                 style = MaterialTheme.typography.headlineLarge.copy(
                     fontWeight = FontWeight.Bold
                 ),

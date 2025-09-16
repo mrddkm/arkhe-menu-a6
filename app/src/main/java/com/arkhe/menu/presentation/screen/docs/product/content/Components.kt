@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.dp
 import com.arkhe.menu.domain.model.Product
 
 @Composable
-fun ProductSectionContent(
+fun ProductUI(
     productList: List<Product>
 ) {
     var selectedProduct by remember { mutableStateOf<Product?>(null) }

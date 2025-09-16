@@ -87,7 +87,6 @@ class SessionManager(
             }
         } catch (e: Exception) {
             Log.e(TAG, "❌ Error ensuring token: ${e.message}")
-            // Return default token as fallback
             Constants.Simulation.TOKEN
         }
     }
@@ -109,6 +108,7 @@ class SessionManager(
      * Get current token synchronously with fallback to default
      * Always returns a valid token
      */
+    @Suppress("Unused")
     fun getCurrentTokenSyncOrDefault(): String {
         return getCurrentTokenSync() ?: Constants.Simulation.TOKEN
     }
@@ -116,6 +116,7 @@ class SessionManager(
     /**
      * Initialize token synchronously (for app startup)
      */
+    @Suppress("Unused")
     fun initializeTokenSync() {
         try {
             runBlocking {
@@ -130,6 +131,7 @@ class SessionManager(
     /**
      * Refresh token (save new token)
      */
+    @Suppress("Unused")
     suspend fun refreshToken(newToken: String) {
         try {
             saveSession(newToken)
@@ -142,6 +144,7 @@ class SessionManager(
     /**
      * Check if token is available and valid
      */
+    @Suppress("Unused")
     fun hasValidToken(): Boolean {
         val token = getCurrentTokenSync()
         val isValid = !token.isNullOrEmpty()

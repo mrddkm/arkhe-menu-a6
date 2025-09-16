@@ -44,7 +44,7 @@ import com.arkhe.menu.presentation.screen.docs.organization.ext.OrganizationSect
 import com.arkhe.menu.presentation.screen.docs.organization.ext.PersonilDetailBottomSheet
 import com.arkhe.menu.presentation.screen.docs.organization.ext.PersonilListBottomSheet
 import com.arkhe.menu.presentation.screen.docs.organization.ext.sampleOrganizations
-import com.arkhe.menu.presentation.screen.docs.product.content.ProductSectionContent
+import com.arkhe.menu.presentation.screen.docs.product.content.ProductUI
 import com.arkhe.menu.presentation.screen.docs.profile.content.ProfileUI
 import com.arkhe.menu.presentation.theme.AppTheme
 import com.arkhe.menu.presentation.viewmodel.CategoryViewModel
@@ -81,6 +81,7 @@ fun DocsContent(
             try {
                 profileViewModel.ensureDataLoaded()
                 categoryViewModel.ensureDataLoaded()
+                productViewModel.ensureDataLoaded()
 
                 delay(300)
                 isInitialized = true
@@ -277,17 +278,26 @@ fun DocsContent(
                         }
 
                         is SafeApiResult.Success -> {
-                            ProductSectionContent(
-                                productList = (productsState as SafeApiResult.Success<List<Product>>).data
-                            )
+                            val products =
+                                (productsState as SafeApiResult.Success<List<Product>>).data
+
+                            if (products.isNotEmpty()) {
+                                ProductUI(
+                                    productList = products
+                                )
+                            } else {
+                                EmptyUI(
+                                    message = "Products",
+                                    onLoad = { productViewModel.refreshProducts() }
+                                )
+                            }
                         }
 
                         is SafeApiResult.Error -> {
-                            Text(
-                                text = "Failed to load products",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.error,
-                                modifier = Modifier.padding(16.dp)
+                            ErrorUI(
+                                message = "Products",
+                                exception = (productsState as SafeApiResult.Error).exception as Exception,
+                                onRetry = { productViewModel.refreshProducts() }
                             )
                         }
                     }
