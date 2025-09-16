@@ -24,7 +24,7 @@ import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.domain.model.ProductGroup
 
 @Composable
-fun ProductGroupCard(
+fun ProductGroup(
     group: ProductGroup,
     onClick: () -> Unit
 ) {

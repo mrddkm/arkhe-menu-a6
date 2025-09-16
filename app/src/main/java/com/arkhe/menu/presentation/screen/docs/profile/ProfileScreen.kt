@@ -106,7 +106,7 @@ fun ProfileScreen(
                             }
                         )
                         Text(
-                            text = "Gagal sync, menampilkan data lama",
+                            text = "Failed sync, displaying old data",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.error,
                             modifier = Modifier.padding(top = 8.dp)
