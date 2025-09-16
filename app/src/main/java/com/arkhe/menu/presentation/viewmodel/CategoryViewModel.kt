@@ -44,10 +44,7 @@ class CategoryViewModel(
 
         viewModelScope.launch {
             try {
-                val token = sessionManager.getTokenForApiCall()
-                Log.d(TAG, "🔑 Initial token: ${token.take(8)}...")
-
-                categoryUseCases.getCategories(token)
+                categoryUseCases.getCategories(sessionManager.getTokenForApiCall())
                     .collectLatest { categoriesResult ->
                         Log.d(TAG, "📊 Categories result: ${categoriesResult::class.simpleName}")
                         _categoriesState.value = categoriesResult
