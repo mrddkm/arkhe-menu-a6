@@ -56,6 +56,10 @@ class ProductViewModel(
                     .collectLatest { productsResult ->
                         Log.d(TAG, "📊 Products result: ${productsResult::class.simpleName}")
                         _productsState.value = productsResult
+
+                        if (productsResult is SafeApiResult.Success && productsResult.data.isNotEmpty()) {
+                            loadProductGroups()
+                        }
                     }
             } catch (e: Exception) {
                 Log.e(TAG, "❌ Error in init: ${e.message}", e)
@@ -162,6 +166,7 @@ class ProductViewModel(
                             } else {
                                 Log.d(TAG, "🆗 Local data found, no need to sync.")
                                 _productsState.value = productsResult
+                                loadProductGroups()
                             }
                         }
 
@@ -208,6 +213,10 @@ class ProductViewModel(
 
                 else -> {
                     Log.d(TAG, "✅ Data already loaded")
+                    if (_productGroups.value.isEmpty()) {
+                        Log.d(TAG, "🔄 Product groups not loaded, loading now...")
+                        loadProductGroups()
+                    }
                 }
             }
         }
@@ -219,6 +228,7 @@ class ProductViewModel(
                 val groups = productUseCases.getProductGroups()
                 _productGroups.value = groups
             } catch (_: Exception) {
+                _productGroups.value = emptyList()
             }
         }
     }

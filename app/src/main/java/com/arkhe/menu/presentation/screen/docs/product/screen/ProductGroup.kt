@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -30,14 +29,14 @@ fun ProductGroup(
 ) {
     Card(
         modifier = Modifier
-            .width(200.dp)
+            .fillMaxWidth()
             .clickable { onClick() },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(8.dp)
         ) {
             Text(
                 text = group.seriesName,
@@ -45,34 +44,6 @@ fun ProductGroup(
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.primary
             )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = "${group.products.size} Products",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-            )
-
-            val statusCounts = group.products.groupingBy { it.status }.eachCount()
-            if (statusCounts.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    statusCounts.forEach { (status, count) ->
-                        StatusChip(
-                            text = "$count $status",
-                            color = when (status) {
-                                "Ready" -> Color(0xFF4CAF50)
-                                "Research" -> Color(0xFFFF9800)
-                                "Product" -> Color(0xFF2196F3)
-                                else -> Color(0xFF757575)
-                            }
-                        )
-                    }
-                }
-            }
         }
     }
 }

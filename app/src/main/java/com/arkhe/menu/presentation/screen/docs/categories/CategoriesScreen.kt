@@ -70,7 +70,7 @@ fun CategoriesScreen(
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(8.dp)
         ) {
             Text(
                 text = "Category",
