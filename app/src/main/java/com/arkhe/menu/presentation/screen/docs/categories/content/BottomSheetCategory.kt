@@ -5,7 +5,6 @@ package com.arkhe.menu.presentation.screen.docs.categories.content
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,6 +43,7 @@ import com.arkhe.menu.domain.model.Category
 import com.arkhe.menu.domain.model.CategoryActionInfo
 import com.arkhe.menu.domain.model.CategoryColors
 import com.arkhe.menu.domain.model.CategoryInformationLanguage
+import com.arkhe.menu.presentation.components.common.MoreSection
 import com.arkhe.menu.presentation.screen.docs.categories.screen.parseColorFromHex
 import com.arkhe.menu.presentation.theme.AppTheme
 import com.arkhe.menu.utils.Constants
@@ -56,8 +56,6 @@ import compose.icons.EvaIcons
 import compose.icons.evaicons.Fill
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.fill.Droplet
-import compose.icons.evaicons.fill.MoreHorizontal
-import compose.icons.evaicons.outline.ChevronRight
 import compose.icons.evaicons.outline.Globe
 
 @Composable
@@ -230,46 +228,7 @@ fun BottomSheetCategory(
             }
         }
         Spacer(modifier = Modifier.height(24.dp))
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable {}
-                .padding(start = 4.dp, top = 12.dp, end = 0.dp, bottom = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(24.dp)
-                    .clip(CircleShape)
-                    .background(backgroundColor),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = EvaIcons.Fill.MoreHorizontal,
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp),
-                    tint = iconColor
-                )
-            }
-            Spacer(modifier = Modifier.width(8.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "More",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                )
-                Icon(
-                    imageVector = EvaIcons.Outline.ChevronRight,
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp),
-                    tint = Color.LightGray
-                )
-            }
-        }
+        MoreSection(onMoreClick = {})
     }
 }
 

@@ -35,6 +35,7 @@ import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.domain.model.Profile
 import com.arkhe.menu.presentation.components.common.EmptyUI
 import com.arkhe.menu.presentation.components.common.ErrorUI
+import com.arkhe.menu.presentation.components.common.HeaderSection
 import com.arkhe.menu.presentation.components.common.LoadingIndicator
 import com.arkhe.menu.presentation.screen.docs.categories.content.CategoriesNonScrollableUI
 import com.arkhe.menu.presentation.screen.docs.customer.ext.CustomerSection

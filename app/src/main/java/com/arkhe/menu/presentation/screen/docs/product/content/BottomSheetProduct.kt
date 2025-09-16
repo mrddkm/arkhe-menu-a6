@@ -1,9 +1,7 @@
 package com.arkhe.menu.presentation.screen.docs.product.content
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.R
 import com.arkhe.menu.domain.model.Product
+import com.arkhe.menu.presentation.components.common.MoreSection
 import com.arkhe.menu.presentation.theme.AppTheme
 import com.arkhe.menu.utils.Constants
 import com.arkhe.menu.utils.Constants.Category.STATISTICS_INITIATION
@@ -46,10 +45,7 @@ import com.arkhe.menu.utils.Constants.Category.STATISTICS_READY
 import com.arkhe.menu.utils.Constants.Category.STATISTICS_RESEARCH
 import com.arkhe.menu.utils.getDevelopmentColor
 import compose.icons.EvaIcons
-import compose.icons.evaicons.Fill
 import compose.icons.evaicons.Outline
-import compose.icons.evaicons.fill.MoreHorizontal
-import compose.icons.evaicons.outline.ChevronRight
 import compose.icons.evaicons.outline.Globe
 
 @Composable
@@ -163,8 +159,14 @@ fun BottomSheetProduct(
                         colors = CardDefaults.cardColors(
                             containerColor = when (product.status) {
                                 STATISTICS_READY -> getDevelopmentColor(STATISTICS_READY).copy(alpha = 0.1f)
-                                STATISTICS_RESEARCH -> getDevelopmentColor(STATISTICS_RESEARCH).copy(alpha = 0.1f)
-                                STATISTICS_INITIATION -> getDevelopmentColor(STATISTICS_INITIATION).copy(alpha = 0.1f)
+                                STATISTICS_RESEARCH -> getDevelopmentColor(STATISTICS_RESEARCH).copy(
+                                    alpha = 0.1f
+                                )
+
+                                STATISTICS_INITIATION -> getDevelopmentColor(STATISTICS_INITIATION).copy(
+                                    alpha = 0.1f
+                                )
+
                                 else -> Color.LightGray
                             }
                         ),
@@ -220,46 +222,7 @@ fun BottomSheetProduct(
             }
         }
         Spacer(modifier = Modifier.height(24.dp))
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable {}
-                .padding(start = 4.dp, top = 12.dp, end = 0.dp, bottom = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(24.dp)
-                    .clip(CircleShape)
-                    .background(Color.LightGray),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = EvaIcons.Fill.MoreHorizontal,
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp),
-                    tint = Color.DarkGray
-                )
-            }
-            Spacer(modifier = Modifier.width(8.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "More",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                )
-                Icon(
-                    imageVector = EvaIcons.Outline.ChevronRight,
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp),
-                    tint = Color.LightGray
-                )
-            }
-        }
+        MoreSection(onMoreClick = {})
     }
 }
 
