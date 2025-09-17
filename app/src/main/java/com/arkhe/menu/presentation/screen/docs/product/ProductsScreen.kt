@@ -9,11 +9,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Language
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -45,6 +43,12 @@ import com.arkhe.menu.presentation.screen.docs.product.screen.ProductListItem
 import com.arkhe.menu.presentation.theme.AppTheme
 import com.arkhe.menu.presentation.viewmodel.ProductViewModel
 import com.arkhe.menu.utils.Constants.CurrentLanguage.ENGLISH
+import compose.icons.EvaIcons
+import compose.icons.evaicons.Outline
+import compose.icons.evaicons.outline.Globe
+import compose.icons.evaicons.outline.Info
+import compose.icons.evaicons.outline.MessageSquare
+import compose.icons.evaicons.outline.Refresh
 import org.koin.android.ext.koin.androidContext
 import org.koin.compose.KoinApplicationPreview
 import org.koin.compose.viewmodel.koinViewModel
@@ -179,7 +183,7 @@ fun ProductsScreen(
                                     }
                                 ) {
                                     Icon(
-                                        imageVector = Icons.Default.Language,
+                                        imageVector = EvaIcons.Outline.Globe,
                                         contentDescription = "Toggle Language"
                                     )
                                 }
@@ -211,7 +215,7 @@ fun ProductsScreen(
                                     onClick = { showGroupBottomSheet = true }
                                 ) {
                                     Icon(
-                                        imageVector = Icons.Default.Info,
+                                        imageVector = EvaIcons.Outline.Info,
                                         contentDescription = null
                                     )
                                 }
@@ -226,7 +230,7 @@ fun ProductsScreen(
                                     }
                                 ) {
                                     Icon(
-                                        imageVector = Icons.Default.Refresh,
+                                        imageVector = EvaIcons.Outline.Refresh,
                                         contentDescription = null
                                     )
                                 }
@@ -241,17 +245,23 @@ fun ProductsScreen(
                     }
 
                     selectedGroup?.let { group ->
-                        LazyColumn(
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                         ) {
-                            items(filteredProducts) { product ->
-                                ProductListItem(
-                                    product = product,
-                                    onClick = {
-                                        selectedProduct = product
-                                        showDetailBottomSheet = true
-                                    }
-                                )
+                            LazyColumn(
+                                verticalArrangement = Arrangement.spacedBy(0.dp)
+                            ) {
+                                items(filteredProducts) { product ->
+                                    ProductListItem(
+                                        product = product,
+                                        onClick = {
+                                            selectedProduct = product
+                                            showDetailBottomSheet = true
+                                        }
+                                    )
+                                }
                             }
                         }
                     } ?: run {
@@ -260,11 +270,16 @@ fun ProductsScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             Column(
-                                horizontalAlignment = Alignment.CenterHorizontally
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
+                                Icon(
+                                    imageVector = EvaIcons.Outline.MessageSquare,
+                                    contentDescription = null
+                                )
                                 Text(
-                                    text = "Select products from Browse Product",
-                                    style = MaterialTheme.typography.bodyLarge,
+                                    text = "Select Products Group",
+                                    style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     textAlign = TextAlign.Center
                                 )
@@ -306,11 +321,6 @@ fun ProductsScreen(
             )
         }
     }
-}
-
-@Composable
-fun ProductContent() {
-
 }
 
 @Preview(showBackground = true)
