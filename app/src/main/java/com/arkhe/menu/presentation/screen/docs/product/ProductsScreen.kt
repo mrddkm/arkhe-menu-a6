@@ -4,16 +4,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Language
-import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -148,46 +147,19 @@ fun ProductsScreen(
                 }
 
                 is SafeApiResult.Success -> {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Products",
-                            style = MaterialTheme.typography.headlineLarge.copy(
-                                fontWeight = FontWeight.Bold
-                            ),
-                            color = MaterialTheme.colorScheme.primary
-                        )
-
-                        val actionInfo = productViewModel.getActionInfo(currentLanguage)
-                        if (actionInfo.isNotEmpty() &&
-                            productViewModel.getActionInfo("id").isNotEmpty() &&
-                            productViewModel.getActionInfo("en").isNotEmpty()
-                        ) {
-                            IconButton(
-                                onClick = {
-                                    currentLanguage = if (currentLanguage == "en") "id" else "en"
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Language,
-                                    contentDescription = "Toggle Language"
-                                )
-                            }
-                        }
-                    }
-
-                    // Bagian 1: Action Info Header dengan Language Toggle
-                    Row(
+                    /*TODO:: Separated (reusable compose) for actionInfo header*/
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                            .padding(top = 0.dp, start = 8.dp, end = 8.dp, bottom = 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Column {
+                        val actionInfo = productViewModel.getActionInfo(currentLanguage)
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             Text(
                                 text = "Products",
                                 style = MaterialTheme.typography.headlineLarge.copy(
@@ -196,25 +168,10 @@ fun ProductsScreen(
                                 color = MaterialTheme.colorScheme.primary
                             )
 
-                            // Tampilkan Action Info
-                            val actionInfo = productViewModel.getActionInfo(currentLanguage)
-                            if (actionInfo.isNotEmpty()) {
-                                Text(
-                                    text = actionInfo,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.padding(top = 4.dp)
-                                )
-                            }
-                        }
-
-                        Row {
-                            // Language Toggle Button
-                            val hasMultiLanguage =
+                            if (actionInfo.isNotEmpty() &&
                                 productViewModel.getActionInfo("id").isNotEmpty() &&
-                                        productViewModel.getActionInfo("en").isNotEmpty()
-
-                            if (hasMultiLanguage) {
+                                productViewModel.getActionInfo("en").isNotEmpty()
+                            ) {
                                 IconButton(
                                     onClick = {
                                         currentLanguage =
@@ -227,62 +184,77 @@ fun ProductsScreen(
                                     )
                                 }
                             }
-
-                            // Menu Button
-                            IconButton(
-                                onClick = { showGroupBottomSheet = true }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Menu,
-                                    contentDescription = "Select Category"
-                                )
-                            }
+                        }
+                        if (actionInfo.isNotEmpty()) {
+                            Text(
+                                text = actionInfo,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.padding(top = 4.dp)
+                            )
                         }
                     }
 
-                    // Bagian 3: Tampilkan Products dari Selected Group (jika ada)
-                    selectedGroup?.let { group ->
-                        Column {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        selectedGroup?.let { group ->
                             Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(bottom = 16.dp),
+                                modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text(
-                                    text = "Category: ${group.seriesName}",
-                                    style = MaterialTheme.typography.titleLarge.copy(
-                                        fontWeight = FontWeight.SemiBold
-                                    ),
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-
+                                IconButton(
+                                    onClick = { showGroupBottomSheet = true }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Info,
+                                        contentDescription = null
+                                    )
+                                }
                                 Button(
+                                    onClick = { showGroupBottomSheet = true }
+                                ) {
+                                    Text(group.seriesName)
+                                }
+                                IconButton(
                                     onClick = {
                                         productViewModel.clearSelectedGroup()
                                     }
                                 ) {
-                                    Text("Clear Selection")
-                                }
-                            }
-
-                            LazyColumn(
-                                verticalArrangement = Arrangement.spacedBy(12.dp)
-                            ) {
-                                items(filteredProducts) { product ->
-                                    ProductListItem(
-                                        product = product,
-                                        onClick = {
-                                            selectedProduct = product
-                                            showDetailBottomSheet = true
-                                        }
+                                    Icon(
+                                        imageVector = Icons.Default.Refresh,
+                                        contentDescription = null
                                     )
                                 }
                             }
+                        } ?: run {
+                            Button(
+                                onClick = { showGroupBottomSheet = true }
+                            ) {
+                                Text("Browse Products")
+                            }
+                        }
+                    }
+
+                    selectedGroup?.let { group ->
+                        LazyColumn(
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            items(filteredProducts) { product ->
+                                ProductListItem(
+                                    product = product,
+                                    onClick = {
+                                        selectedProduct = product
+                                        showDetailBottomSheet = true
+                                    }
+                                )
+                            }
                         }
                     } ?: run {
-                        // Jika belum ada group yang dipilih, tampilkan pesan
                         Box(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
@@ -291,19 +263,11 @@ fun ProductsScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Text(
-                                    text = "Select a category from menu",
+                                    text = "Select products from Browse Product",
                                     style = MaterialTheme.typography.bodyLarge,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     textAlign = TextAlign.Center
                                 )
-
-                                Spacer(modifier = Modifier.height(8.dp))
-
-                                Button(
-                                    onClick = { showGroupBottomSheet = true }
-                                ) {
-                                    Text("Browse Categories")
-                                }
                             }
                         }
                     }
@@ -312,7 +276,7 @@ fun ProductsScreen(
         }
     }
 
-    // Bagian 2: Bottom Sheet untuk Product Groups
+    /*Section 2: Bottom sheet for Product Groups*/
     if (showGroupBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = {
@@ -329,7 +293,7 @@ fun ProductsScreen(
         }
     }
 
-    // Product detail bottom sheet
+    /*Product detail bottom sheet; TODO::Change to new screen*/
     if (showDetailBottomSheet && selectedProduct != null) {
         ModalBottomSheet(
             onDismissRequest = {
@@ -342,6 +306,11 @@ fun ProductsScreen(
             )
         }
     }
+}
+
+@Composable
+fun ProductContent() {
+
 }
 
 @Preview(showBackground = true)

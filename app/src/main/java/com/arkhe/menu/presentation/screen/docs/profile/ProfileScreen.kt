@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,10 +26,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.data.remote.api.SafeApiResult
-import com.arkhe.menu.domain.model.ProfileActionInfo
 import com.arkhe.menu.domain.model.Profile
+import com.arkhe.menu.domain.model.ProfileActionInfo
 import com.arkhe.menu.domain.model.ProfileInformationLanguage
 import com.arkhe.menu.domain.model.SocialMedia
+import com.arkhe.menu.presentation.components.common.LoadingIndicator
 import com.arkhe.menu.presentation.screen.docs.profile.screen.ProfileDescription
 import com.arkhe.menu.presentation.screen.docs.profile.screen.ProfileTagLine
 import com.arkhe.menu.presentation.screen.docs.profile.screen.SocialMediaCard
@@ -70,28 +70,13 @@ fun ProfileScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(scrollState)
-                .padding(8.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .padding(8.dp)
         ) {
             when (profileState) {
                 is SafeApiResult.Loading -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            CircularProgressIndicator()
-                            Text(
-                                text = "Loading profile...",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.padding(top = 16.dp)
-                            )
-                        }
-                    }
+                    LoadingIndicator(
+                        message = "Loading profile...",
+                    )
                 }
 
                 is SafeApiResult.Error -> {

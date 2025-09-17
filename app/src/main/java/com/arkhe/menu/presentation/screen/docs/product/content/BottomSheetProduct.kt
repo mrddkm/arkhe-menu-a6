@@ -1,3 +1,5 @@
+@file:Suppress("SpellCheckingInspection")
+
 package com.arkhe.menu.presentation.screen.docs.product.content
 
 import androidx.compose.foundation.Image
@@ -38,12 +40,10 @@ import androidx.compose.ui.unit.dp
 import com.arkhe.menu.R
 import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.presentation.components.common.MoreSection
+import com.arkhe.menu.presentation.components.common.StatusDevelopmentChip
 import com.arkhe.menu.presentation.theme.AppTheme
 import com.arkhe.menu.utils.Constants
-import com.arkhe.menu.utils.Constants.Category.STATISTICS_INITIATION
-import com.arkhe.menu.utils.Constants.Category.STATISTICS_READY
 import com.arkhe.menu.utils.Constants.Category.STATISTICS_RESEARCH
-import com.arkhe.menu.utils.getDevelopmentColor
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.Globe
@@ -155,35 +155,7 @@ fun BottomSheetProduct(
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
-                    Card(
-                        colors = CardDefaults.cardColors(
-                            containerColor = when (product.status) {
-                                STATISTICS_READY -> getDevelopmentColor(STATISTICS_READY).copy(alpha = 0.1f)
-                                STATISTICS_RESEARCH -> getDevelopmentColor(STATISTICS_RESEARCH).copy(
-                                    alpha = 0.1f
-                                )
-
-                                STATISTICS_INITIATION -> getDevelopmentColor(STATISTICS_INITIATION).copy(
-                                    alpha = 0.1f
-                                )
-
-                                else -> Color.LightGray
-                            }
-                        ),
-                        shape = RoundedCornerShape(6.dp)
-                    ) {
-                        Text(
-                            text = product.status,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = when (product.status) {
-                                STATISTICS_READY -> getDevelopmentColor(STATISTICS_READY)
-                                STATISTICS_RESEARCH -> getDevelopmentColor(STATISTICS_RESEARCH)
-                                STATISTICS_INITIATION -> getDevelopmentColor(STATISTICS_INITIATION)
-                                else -> Color.DarkGray
-                            },
-                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp)
-                        )
-                    }
+                    StatusDevelopmentChip(product.status)
                 }
             }
         }
@@ -233,7 +205,7 @@ fun BottomSheetProductPreview() {
         id = "rtg6wm5iijqC5WIl",
         productCategoryId = "SRS",
         categoryName = "Series",
-        categoryType = "Reguler",
+        categoryType = "Regular",
         productCode = "MN04",
         productFullName = "Mountain Series #04",
         productDestination = "Gn. Papandayan",

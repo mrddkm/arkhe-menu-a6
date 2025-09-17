@@ -30,6 +30,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.presentation.theme.AppTheme
+import com.arkhe.menu.utils.Constants.Category.STATISTICS_INITIATION
+import com.arkhe.menu.utils.Constants.Category.STATISTICS_READY
+import com.arkhe.menu.utils.Constants.Category.STATISTICS_RESEARCH
+import com.arkhe.menu.utils.getDevelopmentColor
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Fill
 import compose.icons.evaicons.Outline
@@ -127,6 +131,41 @@ fun MoreSection(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun StatusDevelopmentChip(
+    status: String
+) {
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = when (status) {
+                STATISTICS_READY -> getDevelopmentColor(STATISTICS_READY).copy(alpha = 0.1f)
+                STATISTICS_RESEARCH -> getDevelopmentColor(STATISTICS_RESEARCH).copy(
+                    alpha = 0.1f
+                )
+
+                STATISTICS_INITIATION -> getDevelopmentColor(STATISTICS_INITIATION).copy(
+                    alpha = 0.1f
+                )
+
+                else -> Color.LightGray
+            }
+        ),
+        shape = RoundedCornerShape(6.dp)
+    ) {
+        Text(
+            text = status,
+            style = MaterialTheme.typography.labelSmall,
+            color = when (status) {
+                STATISTICS_READY -> getDevelopmentColor(STATISTICS_READY)
+                STATISTICS_RESEARCH -> getDevelopmentColor(STATISTICS_RESEARCH)
+                STATISTICS_INITIATION -> getDevelopmentColor(STATISTICS_INITIATION)
+                else -> Color.DarkGray
+            },
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+        )
     }
 }
 

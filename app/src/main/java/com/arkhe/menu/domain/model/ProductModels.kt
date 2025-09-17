@@ -61,9 +61,7 @@ data class Product(
             return if (hashIndex > 0) {
                 fullName.substring(0, hashIndex).trim()
             } else {
-                productCategoryId.ifEmpty {
-                    fullName.split(" ").firstOrNull() ?: fullName
-                }
+                productFullName
             }
         }
 }

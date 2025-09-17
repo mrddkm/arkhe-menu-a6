@@ -159,7 +159,7 @@ fun CategoriesScreen(
                     if (categories.isEmpty()) {
                         Box(
                             modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
+                            contentAlignment = Alignment.TopCenter
                         ) {
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
