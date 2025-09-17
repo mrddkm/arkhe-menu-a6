@@ -37,6 +37,7 @@ object Constants {
 
     object Product {
         const val PRODUCT_LABEL = "Product"
+        const val PRODUCT_GROUP_LABEL = "Product Group"
     }
 
     object Category {

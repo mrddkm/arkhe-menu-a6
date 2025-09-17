@@ -18,6 +18,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -71,6 +72,10 @@ fun ProductsScreen(
     var showDetailBottomSheet by remember { mutableStateOf(false) }
     var showGroupBottomSheet by remember { mutableStateOf(false) }
     var currentLanguage by remember { mutableStateOf(ENGLISH) }
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true,
+        confirmValueChange = { true }
+    )
 
     LaunchedEffect(Unit) {
         productViewModel.ensureDataLoaded()
@@ -206,34 +211,45 @@ fun ProductsScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         selectedGroup?.let { group ->
-                            Row(
+                            Column(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                IconButton(
-                                    onClick = { showGroupBottomSheet = true }
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Icon(
-                                        imageVector = EvaIcons.Outline.Info,
-                                        contentDescription = null
-                                    )
-                                }
-                                Button(
-                                    onClick = { showGroupBottomSheet = true }
-                                ) {
-                                    Text(group.seriesName)
-                                }
-                                IconButton(
-                                    onClick = {
-                                        productViewModel.clearSelectedGroup()
+                                    IconButton(
+                                        onClick = { showGroupBottomSheet = true }
+                                    ) {
+                                        Icon(
+                                            imageVector = EvaIcons.Outline.Info,
+                                            contentDescription = null
+                                        )
                                     }
-                                ) {
-                                    Icon(
-                                        imageVector = EvaIcons.Outline.Refresh,
-                                        contentDescription = null
-                                    )
+                                    Button(
+                                        onClick = { showGroupBottomSheet = true }
+                                    ) {
+                                        Text(group.seriesName)
+                                    }
+                                    IconButton(
+                                        onClick = {
+                                            productViewModel.clearSelectedGroup()
+                                        }
+                                    ) {
+                                        Icon(
+                                            imageVector = EvaIcons.Outline.Refresh,
+                                            contentDescription = null
+                                        )
+                                    }
                                 }
+                                Text(
+                                    text = group.products.size.toString() + " products",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
                             }
                         } ?: run {
                             Button(
@@ -293,10 +309,14 @@ fun ProductsScreen(
 
     /*Section 2: Bottom sheet for Product Groups*/
     if (showGroupBottomSheet) {
+        LaunchedEffect(Unit) {
+            sheetState.show()
+        }
         ModalBottomSheet(
             onDismissRequest = {
                 showGroupBottomSheet = false
-            }
+            },
+            sheetState = sheetState
         ) {
             BottomSheetProductGroup(
                 productGroups = productGroups,

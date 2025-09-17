@@ -135,6 +135,24 @@ fun MoreSection(
 }
 
 @Composable
+fun HeaderBottomSheet(
+    title: String
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.primary,
+        )
+    }
+}
+
+@Composable
 fun StatusDevelopmentChip(
     status: String
 ) {
