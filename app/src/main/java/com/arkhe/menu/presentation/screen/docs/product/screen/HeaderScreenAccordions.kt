@@ -9,13 +9,10 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -63,8 +60,12 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun HeaderScreenAccordions(
-    title: String
+    title: String,
+    productViewModel: ProductViewModel = koinViewModel()
 ) {
+    val actionInfoEnText = productViewModel.getActionInfo(ENGLISH)
+    val actionInfoIdText = productViewModel.getActionInfo(INDONESIAN)
+    var showEnglish by remember { mutableStateOf(false) }
     LazyColumn {
         item {
             var expanded by remember { mutableStateOf(false) }
@@ -73,9 +74,8 @@ fun HeaderScreenAccordions(
                 Row(
                     modifier = Modifier
                         .clip(RoundedCornerShape(8.dp))
-                        .clickable { expanded = expanded.not() }
                         .fillMaxWidth()
-                        .padding(end = 8.dp, bottom = 8.dp),
+                        .padding(bottom = 4.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -86,12 +86,50 @@ fun HeaderScreenAccordions(
                         ),
                         color = MaterialTheme.colorScheme.primary
                     )
-                    Icon(
-                        imageVector = EvaIcons.Outline.ArrowIosForward,
-                        contentDescription = null,
-                        modifier = Modifier.rotate(degrees),
-                        tint = Color.Gray
-                    )
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        if (expanded) {
+                            if (actionInfoEnText.isNotEmpty() && actionInfoIdText.isNotEmpty()
+                            ) {
+                                IconButton(
+                                    onClick = { showEnglish = !showEnglish }
+                                ) {
+                                    if (showEnglish) {
+                                        Icon(
+                                            imageVector = EvaIcons.Outline.Globe,
+                                            contentDescription = "Toggle Language English",
+                                            modifier = Modifier.size(24.dp),
+                                        )
+                                    } else {
+                                        Image(
+                                            painter = painterResource(R.drawable.ic_id_indonesia),
+                                            contentDescription = "Toggle Language Indonesia",
+                                            modifier = Modifier
+                                                .size(24.dp)
+                                                .border(
+                                                    0.5.dp,
+                                                    Color.LightGray,
+                                                    shape = CircleShape
+                                                ),
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                        IconButton(
+                            onClick = { expanded = expanded.not() }
+                        ) {
+                            Icon(
+                                imageVector = EvaIcons.Outline.ArrowIosForward,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .rotate(degrees),
+                                tint = Color.Gray
+                            )
+                        }
+                    }
                 }
                 AnimatedVisibility(
                     visible = expanded,
@@ -103,7 +141,11 @@ fun HeaderScreenAccordions(
                     ),
                     exit = shrinkVertically()
                 ) {
-                    AnimatedVisibilityContent()
+                    AnimatedVisibilityContent(
+                        actionInfoEnText = actionInfoEnText,
+                        actionInfoIdText = actionInfoIdText,
+                        showEnglish = showEnglish
+                    )
                 }
             }
         }
@@ -112,12 +154,10 @@ fun HeaderScreenAccordions(
 
 @Composable
 fun AnimatedVisibilityContent(
-    productViewModel: ProductViewModel = koinViewModel()
+    actionInfoEnText: String = "",
+    actionInfoIdText: String = "",
+    showEnglish: Boolean = false
 ) {
-    val actionInfoEnText = productViewModel.getActionInfo(ENGLISH)
-    val actionInfoIdText = productViewModel.getActionInfo(INDONESIAN)
-    var showEnglish by remember { mutableStateOf(false) }
-
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -127,31 +167,9 @@ fun AnimatedVisibilityContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(4.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (actionInfoEnText.isNotEmpty() && actionInfoIdText.isNotEmpty()
-            ) {
-                IconButton(
-                    onClick = { showEnglish = !showEnglish }
-                ) {
-                    if (showEnglish) {
-                        Icon(
-                            imageVector = EvaIcons.Outline.Globe,
-                            contentDescription = "Toggle Language English",
-                            modifier = Modifier.size(24.dp),
-                        )
-                    } else {
-                        Image(
-                            painter = painterResource(R.drawable.ic_id_indonesia),
-                            contentDescription = "Toggle Language Indonesia",
-                            modifier = Modifier
-                                .size(24.dp)
-                                .border(0.5.dp, Color.LightGray, shape = CircleShape),
-                        )
-                    }
-                }
-            }
             val informationText = remember(showEnglish, actionInfoEnText, actionInfoIdText) {
                 when {
                     showEnglish && actionInfoEnText.isNotBlank() ->
@@ -187,7 +205,8 @@ fun AnimatedVisibilityContent(
             }
         }
         Column(
-            modifier = Modifier.padding(4.dp)
+            modifier = Modifier.padding(start = 32.dp, end = 32.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
                 text = Constants.Category.STATISTICS_LABEL,
@@ -195,7 +214,6 @@ fun AnimatedVisibilityContent(
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.primary
             )
-            Spacer(modifier = Modifier.height(8.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -224,7 +242,7 @@ fun AnimatedVisibilityContent(
         }
         HorizontalDivider(
             modifier = Modifier.padding(horizontal = 50.dp),
-            thickness = 1.dp,
+            thickness = 2.dp,
             color = Color.Gray.copy(alpha = 0.2f)
         )
     }
