@@ -38,7 +38,28 @@ import compose.icons.EvaIcons
 import compose.icons.evaicons.Fill
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.fill.MoreHorizontal
-import compose.icons.evaicons.outline.ChevronRight
+import compose.icons.evaicons.outline.ArrowIosForward
+
+@Composable
+fun HeaderContent(
+    title: String
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(0.dp)
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.headlineLarge.copy(
+                fontWeight = FontWeight.Bold
+            ),
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.padding(vertical = 16.dp, horizontal = 4.dp)
+        )
+    }
+}
 
 @Composable
 fun HeaderSection(
@@ -69,7 +90,7 @@ fun HeaderSection(
                 color = MaterialTheme.colorScheme.primary
             )
             Icon(
-                imageVector = EvaIcons.Outline.ChevronRight,
+                imageVector = EvaIcons.Outline.ArrowIosForward,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
@@ -124,7 +145,7 @@ fun MoreSection(
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                 )
                 Icon(
-                    imageVector = EvaIcons.Outline.ChevronRight,
+                    imageVector = EvaIcons.Outline.ArrowIosForward,
                     contentDescription = null,
                     modifier = Modifier.size(24.dp),
                     tint = Color.LightGray
@@ -183,6 +204,16 @@ fun StatusDevelopmentChip(
                 else -> Color.DarkGray
             },
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HeaderScreenPreview() {
+    AppTheme {
+        HeaderContent(
+            title = "Docs"
         )
     }
 }

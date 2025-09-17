@@ -28,10 +28,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.arkhe.menu.R
 import com.arkhe.menu.data.remote.api.SafeApiResult
 import com.arkhe.menu.di.appModule
 import com.arkhe.menu.di.dataModule
@@ -40,13 +41,12 @@ import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.presentation.components.common.LoadingIndicator
 import com.arkhe.menu.presentation.screen.docs.product.content.BottomSheetProduct
 import com.arkhe.menu.presentation.screen.docs.product.screen.BottomSheetProductGroup
+import com.arkhe.menu.presentation.screen.docs.product.screen.HeaderScreenAccordions
 import com.arkhe.menu.presentation.screen.docs.product.screen.ProductListItem
 import com.arkhe.menu.presentation.theme.AppTheme
 import com.arkhe.menu.presentation.viewmodel.ProductViewModel
-import com.arkhe.menu.utils.Constants.CurrentLanguage.ENGLISH
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
-import compose.icons.evaicons.outline.Globe
 import compose.icons.evaicons.outline.Info
 import compose.icons.evaicons.outline.MessageSquare
 import compose.icons.evaicons.outline.Refresh
@@ -71,7 +71,6 @@ fun ProductsScreen(
     var selectedProduct by remember { mutableStateOf<Product?>(null) }
     var showDetailBottomSheet by remember { mutableStateOf(false) }
     var showGroupBottomSheet by remember { mutableStateOf(false) }
-    var currentLanguage by remember { mutableStateOf(ENGLISH) }
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
         confirmValueChange = { true }
@@ -93,213 +92,174 @@ fun ProductsScreen(
         }
     }
 
-    Box(modifier = modifier.fillMaxSize()) {
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(8.dp)
-        ) {
-            when (productsState) {
-                is SafeApiResult.Loading -> {
-                    LoadingIndicator(
-                        message = "Loading products...",
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(8.dp)
+    ) {
+        when (productsState) {
+            is SafeApiResult.Loading -> {
+                LoadingIndicator(
+                    message = "Loading products...",
+                )
+            }
+
+            is SafeApiResult.Error -> {
+                if (!lastSuccess.value.isNullOrEmpty()) {
+                    Text(
+                        text = "Failed sync, displaying old data",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+                } else {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center,
+                            modifier = Modifier.padding(32.dp)
+                        ) {
+                            Text(
+                                text = "Error loading products",
+                                style = MaterialTheme.typography.headlineSmall,
+                                color = MaterialTheme.colorScheme.error,
+                                textAlign = TextAlign.Center
+                            )
+
+                            (productsState as SafeApiResult.Error).exception.message?.let {
+                                Text(
+                                    text = it,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.padding(vertical = 16.dp)
+                                )
+                            }
+
+                            Button(
+                                onClick = {
+                                    isRefreshing = true
+                                    productViewModel.refreshProducts()
+                                },
+                                enabled = !isRefreshing
+                            ) {
+                                Text(if (isRefreshing) "Retrying..." else "Try Again")
+                            }
+                        }
+                    }
+                }
+            }
+
+            is SafeApiResult.Success -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 0.dp, start = 8.dp, end = 8.dp, bottom = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    HeaderScreenAccordions(
+                        title = stringResource(R.string.products)
                     )
                 }
 
-                is SafeApiResult.Error -> {
-                    if (!lastSuccess.value.isNullOrEmpty()) {
-                        Text(
-                            text = "Failed sync, displaying old data",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.padding(top = 8.dp)
-                        )
-                    } else {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    selectedGroup?.let { group ->
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center,
-                                modifier = Modifier.padding(32.dp)
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text(
-                                    text = "Error loading products",
-                                    style = MaterialTheme.typography.headlineSmall,
-                                    color = MaterialTheme.colorScheme.error,
-                                    textAlign = TextAlign.Center
-                                )
-
-                                (productsState as SafeApiResult.Error).exception.message?.let {
-                                    Text(
-                                        text = it,
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        textAlign = TextAlign.Center,
-                                        modifier = Modifier.padding(vertical = 16.dp)
+                                IconButton(
+                                    onClick = { showGroupBottomSheet = true }
+                                ) {
+                                    Icon(
+                                        imageVector = EvaIcons.Outline.Info,
+                                        contentDescription = null
                                     )
                                 }
-
                                 Button(
-                                    onClick = {
-                                        isRefreshing = true
-                                        productViewModel.refreshProducts()
-                                    },
-                                    enabled = !isRefreshing
+                                    onClick = { showGroupBottomSheet = true }
                                 ) {
-                                    Text(if (isRefreshing) "Retrying..." else "Try Again")
+                                    Text(group.seriesName)
+                                }
+                                IconButton(
+                                    onClick = {
+                                        productViewModel.clearSelectedGroup()
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = EvaIcons.Outline.Refresh,
+                                        contentDescription = null
+                                    )
                                 }
                             }
+                            Text(
+                                text = group.products.size.toString() + " products",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    } ?: run {
+                        Button(
+                            onClick = { showGroupBottomSheet = true }
+                        ) {
+                            Text("Browse Products")
                         }
                     }
                 }
 
-                is SafeApiResult.Success -> {
-                    /*TODO:: Separated (reusable compose) for actionInfo header*/
-                    Column(
+                selectedGroup?.let { group ->
+                    Card(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 0.dp, start = 8.dp, end = 8.dp, bottom = 16.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                            .fillMaxWidth(),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                     ) {
-                        val actionInfo = productViewModel.getActionInfo(currentLanguage)
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
+                        LazyColumn(
+                            verticalArrangement = Arrangement.spacedBy(0.dp)
                         ) {
-                            Text(
-                                text = "Products",
-                                style = MaterialTheme.typography.headlineLarge.copy(
-                                    fontWeight = FontWeight.Bold
-                                ),
-                                color = MaterialTheme.colorScheme.primary
-                            )
-
-                            if (actionInfo.isNotEmpty() &&
-                                productViewModel.getActionInfo("id").isNotEmpty() &&
-                                productViewModel.getActionInfo("en").isNotEmpty()
-                            ) {
-                                IconButton(
+                            items(filteredProducts) { product ->
+                                ProductListItem(
+                                    product = product,
                                     onClick = {
-                                        currentLanguage =
-                                            if (currentLanguage == "en") "id" else "en"
+                                        selectedProduct = product
+                                        showDetailBottomSheet = true
                                     }
-                                ) {
-                                    Icon(
-                                        imageVector = EvaIcons.Outline.Globe,
-                                        contentDescription = "Toggle Language"
-                                    )
-                                }
+                                )
                             }
                         }
-                        if (actionInfo.isNotEmpty()) {
-                            Text(
-                                text = actionInfo,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.padding(top = 4.dp)
-                            )
-                        }
                     }
-
+                } ?: run {
                     Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
+                        modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        selectedGroup?.let { group ->
-                            Column(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    IconButton(
-                                        onClick = { showGroupBottomSheet = true }
-                                    ) {
-                                        Icon(
-                                            imageVector = EvaIcons.Outline.Info,
-                                            contentDescription = null
-                                        )
-                                    }
-                                    Button(
-                                        onClick = { showGroupBottomSheet = true }
-                                    ) {
-                                        Text(group.seriesName)
-                                    }
-                                    IconButton(
-                                        onClick = {
-                                            productViewModel.clearSelectedGroup()
-                                        }
-                                    ) {
-                                        Icon(
-                                            imageVector = EvaIcons.Outline.Refresh,
-                                            contentDescription = null
-                                        )
-                                    }
-                                }
-                                Text(
-                                    text = group.products.size.toString() + " products",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                        } ?: run {
-                            Button(
-                                onClick = { showGroupBottomSheet = true }
-                            ) {
-                                Text("Browse Products")
-                            }
-                        }
-                    }
-
-                    selectedGroup?.let { group ->
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            LazyColumn(
-                                verticalArrangement = Arrangement.spacedBy(0.dp)
-                            ) {
-                                items(filteredProducts) { product ->
-                                    ProductListItem(
-                                        product = product,
-                                        onClick = {
-                                            selectedProduct = product
-                                            showDetailBottomSheet = true
-                                        }
-                                    )
-                                }
-                            }
-                        }
-                    } ?: run {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                Icon(
-                                    imageVector = EvaIcons.Outline.MessageSquare,
-                                    contentDescription = null
-                                )
-                                Text(
-                                    text = "Select Products Group",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    textAlign = TextAlign.Center
-                                )
-                            }
+                            Icon(
+                                imageVector = EvaIcons.Outline.MessageSquare,
+                                contentDescription = null
+                            )
+                            Text(
+                                text = "Select Products Group",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                textAlign = TextAlign.Center
+                            )
                         }
                     }
                 }
@@ -307,7 +267,6 @@ fun ProductsScreen(
         }
     }
 
-    /*Section 2: Bottom sheet for Product Groups*/
     if (showGroupBottomSheet) {
         LaunchedEffect(Unit) {
             sheetState.show()

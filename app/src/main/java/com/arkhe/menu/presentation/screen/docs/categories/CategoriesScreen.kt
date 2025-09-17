@@ -66,141 +66,139 @@ fun CategoriesScreen(
         categoryViewModel.updateScrollPosition(listState.firstVisibleItemIndex)
     }
 
-    Box(modifier = modifier.fillMaxSize()) {
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(8.dp)
-        ) {
-            Text(
-                text = "Category",
-                style = MaterialTheme.typography.headlineMedium.copy(
-                    fontWeight = FontWeight.Medium
-                ),
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(8.dp)
+    ) {
+        Text(
+            text = "Category",
+            style = MaterialTheme.typography.headlineMedium.copy(
+                fontWeight = FontWeight.Medium
+            ),
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
 
-            when (categoriesState) {
-                is SafeApiResult.Loading -> {
-                    LoadingIndicator(
-                        message = "Loading categories..."
+        when (categoriesState) {
+            is SafeApiResult.Loading -> {
+                LoadingIndicator(
+                    message = "Loading categories..."
+                )
+            }
+
+            is SafeApiResult.Error -> {
+                if (!lastSuccess.value.isNullOrEmpty()) {
+                    LazyColumn(
+                        state = listState,
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(
+                            items = lastSuccess.value as List<Any?>,
+                            key = { it.hashCode() }
+                        ) { category ->
+                            CategoryItem(
+                                category = lastSuccess.value!!.first(),
+                                onClick = {
+                                    categoryViewModel.selectCategory(lastSuccess.value!!.first())
+                                    onNavigateToDetail()
+                                }
+                            )
+                        }
+                    }
+                    Text(
+                        text = "Failed sync, displaying old data",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(top = 8.dp)
                     )
-                }
-
-                is SafeApiResult.Error -> {
-                    if (!lastSuccess.value.isNullOrEmpty()) {
-                        LazyColumn(
-                            state = listState,
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                } else {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center,
+                            modifier = Modifier.padding(32.dp)
                         ) {
-                            items(
-                                items = lastSuccess.value as List<Any?>,
-                                key = { it.hashCode() }
-                            ) { category ->
-                                CategoryItem(
-                                    category = lastSuccess.value!!.first(),
-                                    onClick = {
-                                        categoryViewModel.selectCategory(lastSuccess.value!!.first())
-                                        onNavigateToDetail()
-                                    }
+                            Text(
+                                text = "Failed to load categories",
+                                style = MaterialTheme.typography.headlineSmall,
+                                color = MaterialTheme.colorScheme.error,
+                                textAlign = TextAlign.Center
+                            )
+
+                            (categoriesState as SafeApiResult.Error).exception.message?.let {
+                                Text(
+                                    text = it,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.padding(vertical = 16.dp)
                                 )
                             }
-                        }
-                        Text(
-                            text = "Failed sync, displaying old data",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.padding(top = 8.dp)
-                        )
-                    } else {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center,
-                                modifier = Modifier.padding(32.dp)
+
+                            Button(
+                                onClick = {
+                                    isRefreshing = true
+                                    categoryViewModel.refreshCategories()
+                                },
+                                enabled = !isRefreshing
                             ) {
-                                Text(
-                                    text = "Failed to load categories",
-                                    style = MaterialTheme.typography.headlineSmall,
-                                    color = MaterialTheme.colorScheme.error,
-                                    textAlign = TextAlign.Center
-                                )
-
-                                (categoriesState as SafeApiResult.Error).exception.message?.let {
-                                    Text(
-                                        text = it,
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        textAlign = TextAlign.Center,
-                                        modifier = Modifier.padding(vertical = 16.dp)
-                                    )
-                                }
-
-                                Button(
-                                    onClick = {
-                                        isRefreshing = true
-                                        categoryViewModel.refreshCategories()
-                                    },
-                                    enabled = !isRefreshing
-                                ) {
-                                    Text(if (isRefreshing) "Retrying..." else "Try Again")
-                                }
+                                Text(if (isRefreshing) "Retrying..." else "Try Again")
                             }
                         }
                     }
                 }
+            }
 
-                is SafeApiResult.Success -> {
-                    val categories = (categoriesState as SafeApiResult.Success<List<Category>>).data
-                    if (categories.isEmpty()) {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.TopCenter
+            is SafeApiResult.Success -> {
+                val categories = (categoriesState as SafeApiResult.Success<List<Category>>).data
+                if (categories.isEmpty()) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.TopCenter
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
                         ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                Text(
-                                    text = "No categories data available",
-                                    style = MaterialTheme.typography.headlineSmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    textAlign = TextAlign.Center
-                                )
+                            Text(
+                                text = "No categories data available",
+                                style = MaterialTheme.typography.headlineSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                textAlign = TextAlign.Center
+                            )
 
-                                Button(
-                                    onClick = {
-                                        isRefreshing = true
-                                        categoryViewModel.refreshCategories()
-                                    },
-                                    enabled = !isRefreshing,
-                                    modifier = Modifier.padding(top = 16.dp)
-                                ) {
-                                    Text(if (isRefreshing) "Refreshing..." else "Refresh")
-                                }
+                            Button(
+                                onClick = {
+                                    isRefreshing = true
+                                    categoryViewModel.refreshCategories()
+                                },
+                                enabled = !isRefreshing,
+                                modifier = Modifier.padding(top = 16.dp)
+                            ) {
+                                Text(if (isRefreshing) "Refreshing..." else "Refresh")
                             }
                         }
-                    } else {
-                        LazyColumn(
-                            state = listState,
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            items(
-                                items = categories,
-                                key = { it.id }
-                            ) { category ->
-                                CategoryItem(
-                                    category = category,
-                                    onClick = {
-                                        categoryViewModel.selectCategory(category)
-                                        onNavigateToDetail()
-                                    }
-                                )
-                            }
+                    }
+                } else {
+                    LazyColumn(
+                        state = listState,
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(
+                            items = categories,
+                            key = { it.id }
+                        ) { category ->
+                            CategoryItem(
+                                category = category,
+                                onClick = {
+                                    categoryViewModel.selectCategory(category)
+                                    onNavigateToDetail()
+                                }
+                            )
                         }
                     }
                 }

@@ -43,7 +43,7 @@ object Constants {
     object Category {
         const val CATEGORY_LABEL = "Category"
         const val STATISTICS_LABEL = "Statistics"
-        const val STATISTICS_TOTAL = "Total Products"
+        const val STATISTICS_TOTAL = "Total"
         const val STATISTICS_READY = "Ready"
         const val STATISTICS_RESEARCH = "Research"
         const val STATISTICS_INITIATION = "Initiation"

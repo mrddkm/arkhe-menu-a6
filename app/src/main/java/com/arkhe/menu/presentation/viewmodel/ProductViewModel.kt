@@ -8,6 +8,8 @@ import com.arkhe.menu.data.remote.api.SafeApiResult
 import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.domain.model.ProductGroup
 import com.arkhe.menu.domain.usecase.product.ProductUseCases
+import com.arkhe.menu.utils.Constants.CurrentLanguage.ENGLISH
+import com.arkhe.menu.utils.Constants.CurrentLanguage.INDONESIAN
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -271,9 +273,9 @@ class ProductViewModel(
         return productUseCases.getProduct(id)
     }
 
-    fun getActionInfo(language: String = "en"): String {
+    fun getActionInfo(language: String = ENGLISH): String {
         val products = (_productsState.value as? SafeApiResult.Success)?.data?.firstOrNull()
-        return if (language == "id") {
+        return if (language == INDONESIAN) {
             products?.actionInfo?.information?.indonesian ?: ""
         } else {
             products?.actionInfo?.information?.english ?: ""

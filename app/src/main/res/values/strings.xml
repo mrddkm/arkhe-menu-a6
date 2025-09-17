@@ -8,7 +8,7 @@
     <string name="profile">Profile</string>
     <string name="settings">Settings</string>
 
-    <!--BottomBar-->
+    <!--BottomBar and HeaderContent-->
     <string name="docs">Docs</string>
     <string name="tripkeun">tripkeun</string>
     <string name="activity">Activity</string>

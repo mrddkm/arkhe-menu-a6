@@ -65,119 +65,117 @@ fun ProfileScreen(
         }
     }
 
-    Box(modifier = modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(scrollState)
-                .padding(8.dp)
-        ) {
-            when (profileState) {
-                is SafeApiResult.Loading -> {
-                    LoadingIndicator(
-                        message = "Loading profile...",
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(scrollState)
+            .padding(8.dp)
+    ) {
+        when (profileState) {
+            is SafeApiResult.Loading -> {
+                LoadingIndicator(
+                    message = "Loading profile...",
+                )
+            }
+
+            is SafeApiResult.Error -> {
+                if (!lastSuccess.value.isNullOrEmpty()) {
+                    ProfileContent(
+                        profile = lastSuccess.value!!.first(),
+                        onSocialMediaClick = { url ->
+                            try {
+                                uriHandler.openUri(url)
+                            } catch (_: Exception) {
+                            }
+                        }
                     )
-                }
-
-                is SafeApiResult.Error -> {
-                    if (!lastSuccess.value.isNullOrEmpty()) {
-                        ProfileContent(
-                            profile = lastSuccess.value!!.first(),
-                            onSocialMediaClick = { url ->
-                                try {
-                                    uriHandler.openUri(url)
-                                } catch (_: Exception) {
-                                }
-                            }
-                        )
-                        Text(
-                            text = "Failed sync, displaying old data",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.padding(top = 8.dp)
-                        )
-                    } else {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
+                    Text(
+                        text = "Failed sync, displaying old data",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+                } else {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center,
+                            modifier = Modifier.padding(32.dp)
                         ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center,
-                                modifier = Modifier.padding(32.dp)
-                            ) {
+                            Text(
+                                text = "Failed to load profile",
+                                style = MaterialTheme.typography.headlineSmall,
+                                color = MaterialTheme.colorScheme.error,
+                                textAlign = TextAlign.Center
+                            )
+
+                            (profileState as SafeApiResult.Error).exception.message?.let {
                                 Text(
-                                    text = "Failed to load profile",
-                                    style = MaterialTheme.typography.headlineSmall,
-                                    color = MaterialTheme.colorScheme.error,
-                                    textAlign = TextAlign.Center
-                                )
-
-                                (profileState as SafeApiResult.Error).exception.message?.let {
-                                    Text(
-                                        text = it,
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        textAlign = TextAlign.Center,
-                                        modifier = Modifier.padding(vertical = 16.dp)
-                                    )
-                                }
-
-                                Button(
-                                    onClick = {
-                                        isRefreshing = true
-                                        profileViewModel.refreshProfiles()
-                                    },
-                                    enabled = !isRefreshing
-                                ) {
-                                    Text(if (isRefreshing) "Retrying..." else "Try Again")
-                                }
-                            }
-                        }
-                    }
-                }
-
-                is SafeApiResult.Success<*> -> {
-                    val profiles = (profileState as SafeApiResult.Success<List<Profile>>).data
-                    if (profiles.isEmpty()) {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                Text(
-                                    text = "No profile data available",
-                                    style = MaterialTheme.typography.headlineSmall,
+                                    text = it,
+                                    style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    textAlign = TextAlign.Center
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.padding(vertical = 16.dp)
                                 )
+                            }
 
-                                Button(
-                                    onClick = {
-                                        isRefreshing = true
-                                        profileViewModel.refreshProfiles()
-                                    },
-                                    enabled = !isRefreshing,
-                                    modifier = Modifier.padding(top = 16.dp)
-                                ) {
-                                    Text(if (isRefreshing) "Refreshing..." else "Refresh")
-                                }
+                            Button(
+                                onClick = {
+                                    isRefreshing = true
+                                    profileViewModel.refreshProfiles()
+                                },
+                                enabled = !isRefreshing
+                            ) {
+                                Text(if (isRefreshing) "Retrying..." else "Try Again")
                             }
                         }
-                    } else {
-                        ProfileContent(
-                            profile = profiles.first(),
-                            onSocialMediaClick = { url ->
-                                try {
-                                    uriHandler.openUri(url)
-                                } catch (_: Exception) {
-                                }
-                            }
-                        )
                     }
+                }
+            }
+
+            is SafeApiResult.Success<*> -> {
+                val profiles = (profileState as SafeApiResult.Success<List<Profile>>).data
+                if (profiles.isEmpty()) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = "No profile data available",
+                                style = MaterialTheme.typography.headlineSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                textAlign = TextAlign.Center
+                            )
+
+                            Button(
+                                onClick = {
+                                    isRefreshing = true
+                                    profileViewModel.refreshProfiles()
+                                },
+                                enabled = !isRefreshing,
+                                modifier = Modifier.padding(top = 16.dp)
+                            ) {
+                                Text(if (isRefreshing) "Refreshing..." else "Refresh")
+                            }
+                        }
+                    }
+                } else {
+                    ProfileContent(
+                        profile = profiles.first(),
+                        onSocialMediaClick = { url ->
+                            try {
+                                uriHandler.openUri(url)
+                            } catch (_: Exception) {
+                            }
+                        }
+                    )
                 }
             }
         }
