@@ -1,3 +1,5 @@
+@file:Suppress("SpellCheckingInspection")
+
 package com.arkhe.menu.data.local.storage
 
 import android.content.Context

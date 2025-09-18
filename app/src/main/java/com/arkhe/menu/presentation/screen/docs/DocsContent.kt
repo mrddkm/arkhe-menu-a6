@@ -110,7 +110,7 @@ fun DocsContent(
                 when (profileState) {
                     is SafeApiResult.Loading -> {
                         LoadingIndicator(
-                            message = "Loading profile..."
+                            message = "${stringResource(R.string.loading)} ${stringResource(R.string.profile)}..."
                         )
                     }
 
@@ -123,7 +123,7 @@ fun DocsContent(
                             )
                         } else {
                             EmptyUI(
-                                message = "Profile",
+                                message = stringResource(R.string.profile),
                                 onLoad = { profileViewModel.refreshProfiles() }
                             )
                         }
@@ -131,7 +131,7 @@ fun DocsContent(
 
                     is SafeApiResult.Error -> {
                         ErrorUI(
-                            message = "Profile",
+                            message = stringResource(R.string.profile),
                             exception = (profileState as SafeApiResult.Error).exception as Exception,
                             onRetry = { profileViewModel.refreshProfiles() }
                         )
@@ -218,7 +218,7 @@ fun DocsContent(
                     when (categoriesState) {
                         is SafeApiResult.Loading -> {
                             LoadingIndicator(
-                                message = "Loading categories..."
+                                message = "${stringResource(R.string.loading)} ${stringResource(R.string.categories)}..."
                             )
                         }
 
@@ -229,7 +229,7 @@ fun DocsContent(
                                 CategoriesNonScrollableUI(categoriesList = categories)
                             } else {
                                 EmptyUI(
-                                    message = "Categories",
+                                    message = stringResource(R.string.categories),
                                     onLoad = { categoryViewModel.refreshCategories() }
                                 )
                             }
@@ -237,7 +237,7 @@ fun DocsContent(
 
                         is SafeApiResult.Error -> {
                             ErrorUI(
-                                message = "Categories",
+                                message = stringResource(R.string.categories),
                                 exception = (categoriesState as SafeApiResult.Error).exception as Exception,
                                 onRetry = { categoryViewModel.refreshCategories() }
                             )
@@ -269,7 +269,7 @@ fun DocsContent(
                     when (productsState) {
                         is SafeApiResult.Loading -> {
                             LoadingIndicator(
-                                message = "Loading products..."
+                                message = "${stringResource(R.string.loading)} ${stringResource(R.string.products)}..."
                             )
                         }
 

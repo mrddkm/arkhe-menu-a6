@@ -94,7 +94,7 @@ class ProductViewModel(
                 val sessionToken = sessionManager.getTokenForApiCall()
                 Log.d(TAG, "🔑 Token from SessionManager: ${sessionToken.take(8)}...")
 
-                val result = productUseCases.refreshProducts(sessionToken, productCategoryId)
+                val result = productUseCases.syncProducts(sessionToken, productCategoryId)
                 when (result) {
                     is SafeApiResult.Loading -> {
                         Log.d(TAG, "⏳ Products loading...")
@@ -161,9 +161,9 @@ class ProductViewModel(
         if (!isInitialized) {
             viewModelScope.launch {
                 try {
-                    val token = sessionManager.getTokenForApiCall()
-                    val productsResult = productUseCases.getProducts(token).firstOrNull()
-
+                    val productsResult = productUseCases.getProducts(
+                        sessionManager.getTokenForApiCall()
+                    ).firstOrNull()
                     when (productsResult) {
                         is SafeApiResult.Success -> {
                             if (productsResult.data.isEmpty()) {

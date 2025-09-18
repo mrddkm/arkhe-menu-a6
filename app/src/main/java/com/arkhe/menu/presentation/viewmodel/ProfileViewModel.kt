@@ -86,8 +86,9 @@ class ProfileViewModel(
     fun ensureDataLoaded() {
         if (!isInitialized) {
             viewModelScope.launch {
-                val profilesResult =
-                    profileUseCases.getProfiles(sessionManager.getTokenForApiCall()).firstOrNull()
+                val profilesResult = profileUseCases.getProfiles(
+                    sessionManager.getTokenForApiCall()
+                ).firstOrNull()
                 when (profilesResult) {
                     is SafeApiResult.Success -> {
                         if (profilesResult.data.isEmpty()) {

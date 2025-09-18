@@ -14,7 +14,7 @@
     <string name="activity">Activity</string>
 
     <!--Common-->
-    <string name="loading">Loading…</string>
+    <string name="loading">Loading</string>
     <string name="error_occurred">An error occurred</string>
     <string name="retry">Retry</string>
     <string name="save">Save</string>
