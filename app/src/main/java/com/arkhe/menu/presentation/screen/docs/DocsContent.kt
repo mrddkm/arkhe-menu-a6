@@ -118,8 +118,8 @@ fun DocsContent(
                         val profiles = (profileState as SafeApiResult.Success<List<Profile>>).data
                         if (profiles.isNotEmpty()) {
                             ProfileUI(
-                                profiles.first(),
-                                profiles.first().localImagePath
+                                profile = profiles.first(),
+                                imagePath = profiles.first().localImagePath
                             )
                         } else {
                             EmptyUI(

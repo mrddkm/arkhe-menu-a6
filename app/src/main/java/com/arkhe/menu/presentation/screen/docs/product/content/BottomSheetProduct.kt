@@ -2,6 +2,8 @@
 
 package com.arkhe.menu.presentation.screen.docs.product.content
 
+import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -37,6 +39,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.arkhe.menu.R
 import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.presentation.components.common.MoreSection
@@ -47,10 +50,12 @@ import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_RESEARCH
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.Globe
+import java.io.File
 
 @Composable
 fun BottomSheetProduct(
-    product: Product
+    product: Product,
+    imagePath: String?
 ) {
     var showEnglish by remember { mutableStateOf(false) }
     Column(
@@ -111,11 +116,49 @@ fun BottomSheetProduct(
                     .clip(CircleShape),
                 contentAlignment = Alignment.Center
             ) {
-                Image(
-                    painter = painterResource(R.drawable.mn),
-                    contentDescription = null,
-                    modifier = Modifier.size(64.dp)
-                )
+                val imageModel = remember(imagePath) {
+                    imagePath?.let {
+                        val file = File(it)
+                        if (file.exists()) {
+                            Log.d(
+                                "BottomSheetProduct",
+                                "📂 imagePath=$imagePath size=${file.length()} bytes"
+                            )
+                            Uri.fromFile(file)
+                        } else null
+                    }
+                }
+                when {
+                    imageModel != null -> {
+                        AsyncImage(
+                            model = imageModel,
+                            contentDescription = null,
+                            modifier = Modifier.size(64.dp),
+                            placeholder = painterResource(R.drawable.image_outline),
+                            error = painterResource(R.drawable.alert_triangle_outline),
+                            onError = {
+                                Log.e(
+                                    "BottomSheetProduct",
+                                    "Image load failed: $imageModel"
+                                )
+                            },
+                            onSuccess = {
+                                Log.d(
+                                    "BottomSheetProduct",
+                                    "Image loaded successfully: $imageModel"
+                                )
+                            }
+                        )
+                    }
+
+                    else -> {
+                        Image(
+                            painter = painterResource(R.drawable.image_outline),
+                            contentDescription = "Default Logo",
+                            modifier = Modifier.size(64.dp)
+                        )
+                    }
+                }
             }
             Spacer(modifier = Modifier.width(8.dp))
             Column {
@@ -224,6 +267,9 @@ fun BottomSheetProductPreview() {
         )
     )
     AppTheme {
-        BottomSheetProduct(product = sampleProduct)
+        BottomSheetProduct(
+            product = sampleProduct,
+            imagePath = null
+        )
     }
 }
