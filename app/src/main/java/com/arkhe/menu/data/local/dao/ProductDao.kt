@@ -30,6 +30,9 @@ interface ProductDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertProducts(products: List<ProductEntity>)
 
+    @Query("UPDATE products SET localImagePath = :path WHERE productCode = :productCode")
+    suspend fun updateImagePath(productCode: String, path: String?)
+
     @Query("DELETE FROM products WHERE id = :id")
     suspend fun deleteProduct(id: String)
 

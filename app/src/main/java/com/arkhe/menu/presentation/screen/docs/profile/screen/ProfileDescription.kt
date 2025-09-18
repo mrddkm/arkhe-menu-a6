@@ -63,7 +63,6 @@ fun ProfileDescription(profile: Profile) {
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Profile Image Section
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.Center,

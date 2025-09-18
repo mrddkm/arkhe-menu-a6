@@ -15,7 +15,7 @@ data class ProductResponse(
     val status: String,
     val message: String,
     val data: List<ProductData>,
-    val info: ProductInfo
+    val info: ProductInfoData
 )
 
 @Serializable
@@ -34,7 +34,7 @@ data class ProductData(
 )
 
 @Serializable
-data class ProductInfo(
+data class ProductInfoData(
     val action: String,
     val actionInformationId: String,
     val actionInformationEn: String
@@ -49,6 +49,7 @@ data class Product(
     val productCode: String,
     val productFullName: String,
     val productDestination: String,
+    val logo: String,
     val status: String,
     val information: ProductInformationLanguage,
     val actionInfo: ProductActionInfo,

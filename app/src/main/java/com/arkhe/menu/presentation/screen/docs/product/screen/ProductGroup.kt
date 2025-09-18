@@ -60,7 +60,6 @@ fun ProductGroup(
                 modifier = Modifier.size(42.dp)
             )
         }
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -165,6 +164,7 @@ fun ProductListItemPreview() {
             productCode = "Sample Code",
             productFullName = "Chipkeun #01",
             productDestination = "Gn. Pangradinan",
+            logo = "",
             status = "Ready",
             information = ProductInformationLanguage(
                 indonesian = "Sample Indonesian Information",
@@ -193,6 +193,7 @@ val sampleProduct = Product(
     productCode = "Sample Code",
     productFullName = "Chipkeun #01",
     productDestination = "Gn. Pangradinan",
+    logo = "",
     status = "Ready",
     information = ProductInformationLanguage(
         indonesian = "Sample Indonesian Information",

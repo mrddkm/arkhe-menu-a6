@@ -61,11 +61,23 @@ class RefreshProductsUseCase(
     }
 }
 
+class SyncProductsUseCase(
+    private val repository: ProductRepository
+) {
+    suspend operator fun invoke(
+        sessionToken: String,
+        productCategoryId: String = "ALL"
+    ): SafeApiResult<List<Product>> {
+        return repository.syncProducts(sessionToken, productCategoryId)
+    }
+}
+
 data class ProductUseCases(
     val getProducts: GetProductsUseCase,
     val getProduct: GetProductUseCase,
     val getProductsByCategory: GetProductsByCategoryUseCase,
     val getProductsByNamePrefix: GetProductsByNamePrefixUseCase,
     val getProductGroups: GetProductGroupsUseCase,
-    val refreshProducts: RefreshProductsUseCase
+    val refreshProducts: RefreshProductsUseCase,
+    val syncProducts: SyncProductsUseCase
 )

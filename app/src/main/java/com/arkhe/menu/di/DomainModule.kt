@@ -11,6 +11,7 @@ import com.arkhe.menu.domain.usecase.product.GetProductsByNamePrefixUseCase
 import com.arkhe.menu.domain.usecase.product.GetProductsUseCase
 import com.arkhe.menu.domain.usecase.product.ProductUseCases
 import com.arkhe.menu.domain.usecase.product.RefreshProductsUseCase
+import com.arkhe.menu.domain.usecase.product.SyncProductsUseCase
 import com.arkhe.menu.domain.usecase.profile.GetProfileUseCase
 import com.arkhe.menu.domain.usecase.profile.GetProfilesUseCase
 import com.arkhe.menu.domain.usecase.profile.ProfileUseCases
@@ -52,6 +53,7 @@ val domainModule = module {
     single { GetProductsByNamePrefixUseCase(get()) }
     single { GetProductGroupsUseCase(get()) }
     single { RefreshProductsUseCase(get()) }
+    single { SyncProductsUseCase(get()) }
 
     single {
         ProductUseCases(
@@ -60,7 +62,8 @@ val domainModule = module {
             getProductsByCategory = get(),
             getProductsByNamePrefix = get(),
             getProductGroups = get(),
-            refreshProducts = get()
+            refreshProducts = get(),
+            syncProducts = get()
         )
     }
 }

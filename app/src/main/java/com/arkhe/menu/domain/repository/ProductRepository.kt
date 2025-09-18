@@ -20,4 +20,8 @@ interface ProductRepository {
         sessionToken: String,
         productCategoryId: String = "ALL"
     ): SafeApiResult<List<Product>>
+    suspend fun syncProducts(
+        sessionToken: String,
+        productCategoryId: String = "ALL"
+    ): SafeApiResult<List<Product>>
 }

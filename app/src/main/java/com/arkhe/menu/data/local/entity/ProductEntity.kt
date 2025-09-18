@@ -14,11 +14,13 @@ data class ProductEntity(
     val productCode: String,
     val productFullName: String,
     val productDestination: String,
+    val logo: String,
     val status: String,
     val informationId: String,
     val informationEn: String,
     val action: String,
     val actionInformationId: String,
     val actionInformationEn: String,
-    val lastSyncTime: Long = System.currentTimeMillis()
+    val lastSyncTime: Long = System.currentTimeMillis(),
+    val localImagePath: String? = null
 )

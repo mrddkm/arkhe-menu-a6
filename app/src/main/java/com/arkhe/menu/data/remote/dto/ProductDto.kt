@@ -25,6 +25,7 @@ data class ProductDataDto(
     val productCode: String,
     val productFullName: String,
     val productDestination: String,
+    val logo: String,
     val status: String,
     val informationId: String,
     val informationEn: String

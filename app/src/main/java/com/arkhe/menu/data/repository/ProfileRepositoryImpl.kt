@@ -76,7 +76,9 @@ class ProfileRepositoryImpl(
     }
 
     override suspend fun syncProfiles(sessionToken: String): SafeApiResult<List<Profile>> {
-        return when (val remoteResult = remoteDataSource.getProfiles(sessionToken)) {
+        return when (
+            val remoteResult = remoteDataSource.getProfiles(sessionToken)
+        ) {
             is SafeApiResult.Success -> {
                 if (remoteResult.data.status == "success" && remoteResult.data.data.isNotEmpty()) {
                     try {

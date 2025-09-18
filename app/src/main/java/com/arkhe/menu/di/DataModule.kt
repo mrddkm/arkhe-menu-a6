@@ -125,5 +125,5 @@ val dataModule = module {
     /*Repositories*/
     single<ProfileRepository> { ProfileRepositoryImpl(get(), get(), get()) }
     single<CategoryRepository> { CategoryRepositoryImpl(get(), get()) }
-    single<ProductRepository> { ProductRepositoryImpl(get(), get()) }
+    single<ProductRepository> { ProductRepositoryImpl(get(), get(), get()) }
 }

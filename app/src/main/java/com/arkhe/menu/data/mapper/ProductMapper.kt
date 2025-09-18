@@ -18,6 +18,7 @@ fun ProductDataDto.toEntity(infoData: ProductInfoDto): ProductEntity {
         productCode = productCode,
         productFullName = productFullName,
         productDestination = productDestination,
+        logo = logo,
         status = status,
         informationId = informationId,
         informationEn = informationEn,
@@ -37,6 +38,7 @@ fun ProductEntity.toDomain(): Product {
         productCode = productCode,
         productFullName = productFullName,
         productDestination = productDestination,
+        logo = logo,
         status = status,
         information = ProductInformationLanguage(
             indonesian = informationId,
@@ -62,6 +64,7 @@ fun ProductDataDto.toDomain(infoData: ProductInfoDto): Product {
         productCode = productCode,
         productFullName = productFullName,
         productDestination = productDestination,
+        logo = logo,
         status = status,
         information = ProductInformationLanguage(
             indonesian = informationId,
