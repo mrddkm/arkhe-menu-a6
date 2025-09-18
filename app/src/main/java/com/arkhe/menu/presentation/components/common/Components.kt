@@ -144,13 +144,13 @@ fun MoreSection(
                 Text(
                     text = "More",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                    color = Color.DarkGray.copy(alpha = 1.5f)
                 )
                 Icon(
                     imageVector = EvaIcons.Outline.ArrowIosForward,
                     contentDescription = null,
                     modifier = Modifier.size(24.dp),
-                    tint = Color.LightGray
+                    tint = Color.Gray
                 )
             }
         }
