@@ -77,6 +77,13 @@ data class ProductActionInfo(
     val information: ProductInformationLanguage
 )
 
+data class ProductStatistics(
+    val total: Int,
+    val ready: Int,
+    val research: Int,
+    val initiation: Int
+)
+
 data class ProductInformationLanguage(
     val indonesian: String,
     val english: String

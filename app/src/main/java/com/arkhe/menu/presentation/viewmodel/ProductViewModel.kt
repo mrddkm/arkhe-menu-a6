@@ -7,9 +7,13 @@ import com.arkhe.menu.data.local.preferences.SessionManager
 import com.arkhe.menu.data.remote.api.SafeApiResult
 import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.domain.model.ProductGroup
+import com.arkhe.menu.domain.model.ProductStatistics
 import com.arkhe.menu.domain.usecase.product.ProductUseCases
 import com.arkhe.menu.utils.Constants.CurrentLanguage.ENGLISH
 import com.arkhe.menu.utils.Constants.CurrentLanguage.INDONESIAN
+import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_INITIATION
+import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_READY
+import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_RESEARCH
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -271,6 +275,19 @@ class ProductViewModel(
 
     suspend fun getProductById(id: String): Product? {
         return productUseCases.getProduct(id)
+    }
+
+    fun getProductStatistics(): ProductStatistics {
+        val products = (productsState.value as? SafeApiResult.Success)?.data ?: emptyList()
+        val ready = products.count { it.status == STATISTICS_READY }
+        val research = products.count { it.status == STATISTICS_RESEARCH }
+        val initiation = products.count { it.status == STATISTICS_INITIATION }
+        return ProductStatistics(
+            total = products.size,
+            ready = ready,
+            research = research,
+            initiation = initiation
+        )
     }
 
     fun getActionInfo(language: String = ENGLISH): String {

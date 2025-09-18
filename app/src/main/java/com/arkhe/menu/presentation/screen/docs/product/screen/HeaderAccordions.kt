@@ -41,16 +41,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.R
+import com.arkhe.menu.domain.model.ProductStatistics
 import com.arkhe.menu.presentation.screen.docs.categories.content.StatisticItem
 import com.arkhe.menu.presentation.theme.AppTheme
 import com.arkhe.menu.presentation.viewmodel.ProductViewModel
-import com.arkhe.menu.utils.Constants
-import com.arkhe.menu.utils.Constants.Category.STATISTICS_INITIATION
-import com.arkhe.menu.utils.Constants.Category.STATISTICS_READY
-import com.arkhe.menu.utils.Constants.Category.STATISTICS_RESEARCH
-import com.arkhe.menu.utils.Constants.Category.STATISTICS_TOTAL
 import com.arkhe.menu.utils.Constants.CurrentLanguage.ENGLISH
 import com.arkhe.menu.utils.Constants.CurrentLanguage.INDONESIAN
+import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_INITIATION
+import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_LABEL
+import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_READY
+import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_RESEARCH
+import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_TOTAL
 import com.arkhe.menu.utils.getDevelopmentColor
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
@@ -59,7 +60,7 @@ import compose.icons.evaicons.outline.Globe
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun HeaderScreenAccordions(
+fun HeaderAccordions(
     title: String,
     productViewModel: ProductViewModel = koinViewModel()
 ) {
@@ -144,6 +145,7 @@ fun HeaderScreenAccordions(
                     AnimatedVisibilityContent(
                         actionInfoEnText = actionInfoEnText,
                         actionInfoIdText = actionInfoIdText,
+                        stats = productViewModel.getProductStatistics(),
                         showEnglish = showEnglish
                     )
                 }
@@ -156,6 +158,7 @@ fun HeaderScreenAccordions(
 fun AnimatedVisibilityContent(
     actionInfoEnText: String = "",
     actionInfoIdText: String = "",
+    stats: ProductStatistics? = null,
     showEnglish: Boolean = false
 ) {
     Column(
@@ -209,7 +212,7 @@ fun AnimatedVisibilityContent(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
-                text = Constants.Category.STATISTICS_LABEL,
+                text = STATISTICS_LABEL,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.primary
@@ -220,22 +223,22 @@ fun AnimatedVisibilityContent(
             ) {
                 StatisticItem(
                     label = STATISTICS_TOTAL,
-                    value = "10",
+                    value = stats?.total.toString(),
                     color = getDevelopmentColor(STATISTICS_TOTAL)
                 )
                 StatisticItem(
                     label = STATISTICS_READY,
-                    value = "10",
+                    value = stats?.ready.toString(),
                     color = getDevelopmentColor(STATISTICS_READY)
                 )
                 StatisticItem(
                     label = STATISTICS_RESEARCH,
-                    value = "10",
+                    value = stats?.research.toString(),
                     color = getDevelopmentColor(STATISTICS_RESEARCH)
                 )
                 StatisticItem(
                     label = STATISTICS_INITIATION,
-                    value = "10",
+                    value = stats?.initiation.toString(),
                     color = getDevelopmentColor(STATISTICS_INITIATION)
                 )
             }

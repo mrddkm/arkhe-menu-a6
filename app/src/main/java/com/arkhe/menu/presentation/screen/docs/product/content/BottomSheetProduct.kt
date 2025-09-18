@@ -43,7 +43,7 @@ import com.arkhe.menu.presentation.components.common.MoreSection
 import com.arkhe.menu.presentation.components.common.StatusDevelopmentChip
 import com.arkhe.menu.presentation.theme.AppTheme
 import com.arkhe.menu.utils.Constants
-import com.arkhe.menu.utils.Constants.Category.STATISTICS_RESEARCH
+import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_RESEARCH
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.Globe

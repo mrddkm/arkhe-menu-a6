@@ -47,10 +47,11 @@ import com.arkhe.menu.presentation.components.common.MoreSection
 import com.arkhe.menu.presentation.screen.docs.categories.screen.parseColorFromHex
 import com.arkhe.menu.presentation.theme.AppTheme
 import com.arkhe.menu.utils.Constants
-import com.arkhe.menu.utils.Constants.Category.STATISTICS_INITIATION
-import com.arkhe.menu.utils.Constants.Category.STATISTICS_READY
-import com.arkhe.menu.utils.Constants.Category.STATISTICS_RESEARCH
-import com.arkhe.menu.utils.Constants.Category.STATISTICS_TOTAL
+import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_INITIATION
+import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_LABEL
+import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_READY
+import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_RESEARCH
+import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_TOTAL
 import com.arkhe.menu.utils.getDevelopmentColor
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Fill
@@ -161,7 +162,7 @@ fun BottomSheetCategory(
             modifier = Modifier.padding(8.dp)
         ) {
             Text(
-                text = Constants.Category.STATISTICS_LABEL,
+                text = STATISTICS_LABEL,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.primary

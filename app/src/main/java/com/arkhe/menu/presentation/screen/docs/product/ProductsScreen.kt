@@ -41,7 +41,7 @@ import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.presentation.components.common.LoadingIndicator
 import com.arkhe.menu.presentation.screen.docs.product.content.BottomSheetProduct
 import com.arkhe.menu.presentation.screen.docs.product.screen.BottomSheetProductGroup
-import com.arkhe.menu.presentation.screen.docs.product.screen.HeaderScreenAccordions
+import com.arkhe.menu.presentation.screen.docs.product.screen.HeaderAccordions
 import com.arkhe.menu.presentation.screen.docs.product.screen.ProductListItem
 import com.arkhe.menu.presentation.theme.AppTheme
 import com.arkhe.menu.presentation.viewmodel.ProductViewModel
@@ -160,7 +160,7 @@ fun ProductsScreen(
                         .padding(top = 0.dp, start = 8.dp, end = 8.dp, bottom = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    HeaderScreenAccordions(
+                    HeaderAccordions(
                         title = stringResource(R.string.products)
                     )
                 }
