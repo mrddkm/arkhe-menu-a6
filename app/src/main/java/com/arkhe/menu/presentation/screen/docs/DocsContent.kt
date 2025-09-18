@@ -3,6 +3,7 @@
 package com.arkhe.menu.presentation.screen.docs
 
 import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -36,10 +37,7 @@ import com.arkhe.menu.presentation.components.common.HeaderContent
 import com.arkhe.menu.presentation.components.common.HeaderSection
 import com.arkhe.menu.presentation.components.common.LoadingIndicator
 import com.arkhe.menu.presentation.screen.docs.categories.content.CategoriesNonScrollableUI
-import com.arkhe.menu.presentation.screen.docs.customer.ext.CustomerSection
-import com.arkhe.menu.presentation.screen.docs.customer.ext.sampleCustomers
 import com.arkhe.menu.presentation.screen.docs.organization.ext.Organization
-import com.arkhe.menu.presentation.screen.docs.organization.ext.OrganizationSection
 import com.arkhe.menu.presentation.screen.docs.organization.ext.PersonilDetailBottomSheet
 import com.arkhe.menu.presentation.screen.docs.organization.ext.PersonilListBottomSheet
 import com.arkhe.menu.presentation.screen.docs.organization.ext.sampleOrganizations
@@ -99,13 +97,14 @@ fun DocsContent(
         /*Profile Content*/
         Card(
             modifier = Modifier
+                .clickable { onNavigateToProfile() }
                 .fillMaxWidth()
-                .padding(start = 4.dp, end = 8.dp, bottom = 16.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+                .padding(8.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
             Column(
                 modifier = Modifier
-                    .padding(16.dp),
+                    .padding(start = 8.dp, top = 16.dp, bottom = 16.dp, end = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 when (profileState) {
@@ -119,7 +118,6 @@ fun DocsContent(
                         val profiles = (profileState as SafeApiResult.Success<List<Profile>>).data
                         if (profiles.isNotEmpty()) {
                             ProfileUI(
-                                onNavigateToProfile,
                                 profiles.first(),
                                 profiles.first().localImagePath
                             )
@@ -142,10 +140,10 @@ fun DocsContent(
             }
         }
 
-        /*Organization Section*/
         Column(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            /*Organization Section
             Card(
                 colors = CardDefaults.cardColors(
                     containerColor = Color.Transparent
@@ -172,8 +170,9 @@ fun DocsContent(
                     )
                 }
             }
+            */
 
-            /*Customer Section*/
+            /*Customer Section
             Card(
                 colors = CardDefaults.cardColors(
                     containerColor = Color.Transparent
@@ -197,6 +196,7 @@ fun DocsContent(
                     )
                 }
             }
+             */
 
             /*Categories Section*/
             Card(
@@ -208,7 +208,7 @@ fun DocsContent(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 8.dp, bottom = 8.dp)
+                        .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 16.dp)
                 ) {
                     HeaderSection(
                         title = stringResource(R.string.categories),
@@ -246,20 +246,22 @@ fun DocsContent(
                 }
             }
 
-            /*Products Section (with API - productCategoryId = "ALL")*/
+            /*Products Section*/
             Card(
+                modifier = Modifier
+                    .fillMaxWidth(),
                 colors = CardDefaults.cardColors(
                     containerColor = Color.Transparent
-                ),
-                shape = RoundedCornerShape(4.dp),
+                )
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 8.dp, bottom = 8.dp)
+                        .padding(start = 0.dp, top = 8.dp, bottom = 8.dp, end = 0.dp)
                 ) {
                     HeaderSection(
                         title = stringResource(R.string.products),
+                        paddingStart = 16.dp,
                         onHeaderClick = {
                             onNavigateToProducts()
                         }
@@ -281,7 +283,7 @@ fun DocsContent(
                                 )
                             } else {
                                 EmptyUI(
-                                    message = "Products",
+                                    message = stringResource(R.string.products),
                                     onLoad = { productViewModel.refreshProducts() }
                                 )
                             }
@@ -289,7 +291,7 @@ fun DocsContent(
 
                         is SafeApiResult.Error -> {
                             ErrorUI(
-                                message = "Products",
+                                message = stringResource(R.string.products),
                                 exception = (productsState as SafeApiResult.Error).exception as Exception,
                                 onRetry = { productViewModel.refreshProducts() }
                             )

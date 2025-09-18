@@ -5,7 +5,6 @@ package com.arkhe.menu.presentation.screen.docs.profile.content
 import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,12 +25,10 @@ import java.io.File
 
 @Composable
 fun ProfileUI(
-    onnNavigateToProfile: () -> Unit,
     profile: Profile,
     imagePath: String?
 ) {
     Row(
-        modifier = Modifier.clickable { onnNavigateToProfile() },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {

@@ -28,6 +28,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.presentation.theme.AppTheme
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_INITIATION
@@ -64,12 +65,13 @@ fun HeaderContent(
 @Composable
 fun HeaderSection(
     title: String,
+    paddingStart: Dp = 0.dp,
     onHeaderClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 12.dp),
+            .padding(start = paddingStart, top = 4.dp, end = 8.dp, bottom = 12.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color.Transparent
         ),

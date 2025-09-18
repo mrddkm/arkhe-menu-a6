@@ -209,6 +209,7 @@ fun BottomSheetProductPreview() {
         productCode = "MN04",
         productFullName = "Mountain Series #04",
         productDestination = "Gn. Papandayan",
+        logo = "",
         status = STATISTICS_RESEARCH,
         information = com.arkhe.menu.domain.model.ProductInformationLanguage(
             indonesian = "Lorem Ipsum adalah contoh teks atau dummy dalam industri percetakan dan penataan huruf atau typesetting. Lorem Ipsum telah menjadi standar contoh teks sejak tahun 1500an",

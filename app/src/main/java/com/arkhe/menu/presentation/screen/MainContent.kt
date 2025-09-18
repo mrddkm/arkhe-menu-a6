@@ -35,7 +35,7 @@ fun MainContent(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 0.dp)
     ) {
         when (selectedBottomNavItem) {
             BottomNavItem.DOCS -> {
