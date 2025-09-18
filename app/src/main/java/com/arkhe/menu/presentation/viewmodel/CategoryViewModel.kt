@@ -9,6 +9,8 @@ import com.arkhe.menu.data.local.preferences.SessionManager
 import com.arkhe.menu.data.remote.api.SafeApiResult
 import com.arkhe.menu.domain.model.Category
 import com.arkhe.menu.domain.usecase.category.CategoryUseCases
+import com.arkhe.menu.utils.Constants.CurrentLanguage.ENGLISH
+import com.arkhe.menu.utils.Constants.CurrentLanguage.INDONESIAN
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -195,6 +197,15 @@ class CategoryViewModel(
             _selectedCategory.value = category
         } catch (e: Exception) {
             Log.e(TAG, "❌ Error selecting category: ${e.message}", e)
+        }
+    }
+
+    fun getActionInfo(language: String = ENGLISH): String {
+        val products = (_categoriesState.value as? SafeApiResult.Success)?.data?.firstOrNull()
+        return if (language == INDONESIAN) {
+            products?.actionInfo?.information?.indonesian ?: ""
+        } else {
+            products?.actionInfo?.information?.english ?: ""
         }
     }
 

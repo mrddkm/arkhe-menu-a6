@@ -21,13 +21,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.arkhe.menu.R
 import com.arkhe.menu.data.remote.api.SafeApiResult
 import com.arkhe.menu.domain.model.Category
 import com.arkhe.menu.presentation.components.common.LoadingIndicator
 import com.arkhe.menu.presentation.screen.docs.categories.screen.CategoryItem
+import com.arkhe.menu.presentation.screen.docs.categories.screen.HeaderAccordions
 import com.arkhe.menu.presentation.viewmodel.CategoryViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -71,13 +73,8 @@ fun CategoriesScreen(
             .fillMaxSize()
             .padding(8.dp)
     ) {
-        Text(
-            text = "Category",
-            style = MaterialTheme.typography.headlineMedium.copy(
-                fontWeight = FontWeight.Medium
-            ),
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(bottom = 16.dp)
+        HeaderAccordions(
+            title = stringResource(R.string.categories)
         )
 
         when (categoriesState) {
