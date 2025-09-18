@@ -296,8 +296,7 @@ fun ProductsScreen(
             }
         ) {
             BottomSheetProduct(
-                product = selectedProduct!!,
-                imagePath = selectedProduct?.localImagePath
+                product = selectedProduct!!
             )
         }
     }

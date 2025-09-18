@@ -81,8 +81,7 @@ fun ProductUI(
             sheetState = sheetState
         ) {
             BottomSheetProduct(
-                product = selectedProduct!!,
-                imagePath = selectedProduct?.localImagePath
+                product = selectedProduct!!
             )
         }
     }

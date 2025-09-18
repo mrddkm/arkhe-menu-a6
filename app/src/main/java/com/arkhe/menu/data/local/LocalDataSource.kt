@@ -15,6 +15,7 @@ class LocalDataSource(
     private val categoryDao: CategoryDao,
     private val productDao: ProductDao
 ) {
+    /*Profiles Operations*/
     fun getAllProfiles(): Flow<List<ProfileEntity>> {
         return profileDao.getAllProfiles()
     }
@@ -59,7 +60,7 @@ class LocalDataSource(
         return getProfileCount() > 0
     }
 
-    /*Categories*/
+    /*Categories Operations*/
     fun getAllCategories(): Flow<List<CategoryEntity>> {
         return categoryDao.getAllCategories()
     }
@@ -104,7 +105,7 @@ class LocalDataSource(
         return getCategoryCount() > 0
     }
 
-    /*Products*/
+    /*Products Operations*/
     fun getAllProducts(): Flow<List<ProductEntity>> {
         return productDao.getAllProducts()
     }
@@ -155,5 +156,35 @@ class LocalDataSource(
 
     suspend fun hasProducts(): Boolean {
         return getProductCount() > 0
+    }
+
+    suspend fun updateImagePath(productCode: String, path: String?) {
+        withContext(Dispatchers.IO) {
+            productDao.updateImagePath(productCode, path)
+        }
+    }
+
+    suspend fun updateImagePathById(id: String, path: String?) {
+        withContext(Dispatchers.IO) {
+            productDao.updateImagePathById(id, path)
+        }
+    }
+
+    suspend fun getProductsWithoutLocalImages(): List<ProductEntity> {
+        return withContext(Dispatchers.IO) {
+            productDao.getProductsWithoutLocalImages()
+        }
+    }
+
+    suspend fun getProductsWithLocalImages(): List<ProductEntity> {
+        return withContext(Dispatchers.IO) {
+            productDao.getProductsWithLocalImages()
+        }
+    }
+
+    suspend fun updateImagePaths(productCodes: List<String>, path: String?) {
+        withContext(Dispatchers.IO) {
+            productDao.updateImagePaths(productCodes, path)
+        }
     }
 }

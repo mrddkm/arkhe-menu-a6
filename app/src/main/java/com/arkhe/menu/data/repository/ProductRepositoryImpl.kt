@@ -19,6 +19,8 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.supervisorScope
 
 class ProductRepositoryImpl(
     private val remoteDataSource: RemoteDataSource,
@@ -59,6 +61,12 @@ class ProductRepositoryImpl(
                         Log.d(TAG, "Found ${entities.size} cached products")
                         if (entities.isNotEmpty()) {
                             emit(SafeApiResult.Success(entities.toDomainList()))
+                            // Download images in background for products that don't have local images
+                            supervisorScope {
+                                launch {
+                                    downloadMissingImages(entities)
+                                }
+                            }
                         }
                     }
             } catch (e: Exception) {
@@ -92,6 +100,13 @@ class ProductRepositoryImpl(
                                 localDataSource.insertProducts(entities)
 
                                 emit(SafeApiResult.Success(remoteResult.data.toDomainList()))
+
+                                // Download images in background
+                                supervisorScope {
+                                    launch {
+                                        downloadAndUpdateImages(entities)
+                                    }
+                                }
                             } catch (e: Exception) {
                                 Log.e(
                                     TAG,
@@ -139,6 +154,64 @@ class ProductRepositoryImpl(
             }
         }
     }.flowOn(Dispatchers.IO)
+
+    /**
+     * Download images for products that don't have local images yet
+     */
+    private suspend fun downloadMissingImages(entities: List<com.arkhe.menu.data.local.entity.ProductEntity>) {
+        try {
+            Log.d(TAG, "Checking for missing images...")
+            entities.forEach { entity ->
+                if (entity.localImagePath.isNullOrEmpty() && entity.logo.isNotEmpty()) {
+                    val fileName = "product_${entity.productCode}_logo"
+                    val existingPath = imageStorageManager.getLocalImagePath(fileName)
+
+                    if (existingPath == null) {
+                        Log.d(TAG, "Downloading missing image for product: ${entity.productCode}")
+                        val localPath =
+                            imageStorageManager.downloadAndSaveImage(entity.logo, fileName)
+                        if (localPath != null) {
+                            localDataSource.updateImagePath(entity.productCode, localPath)
+                            Log.d(TAG, "Updated image path for ${entity.productCode}: $localPath")
+                        }
+                    } else {
+                        // Update database with existing path
+                        localDataSource.updateImagePath(entity.productCode, existingPath)
+                        Log.d(
+                            TAG,
+                            "Updated database with existing image path for ${entity.productCode}: $existingPath"
+                        )
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error downloading missing images: ${e.message}", e)
+        }
+    }
+
+    /**
+     * Download and update images for new products
+     */
+    private suspend fun downloadAndUpdateImages(entities: List<com.arkhe.menu.data.local.entity.ProductEntity>) {
+        try {
+            Log.d(TAG, "Downloading images for new products...")
+            entities.forEach { entity ->
+                if (entity.logo.isNotEmpty()) {
+                    val fileName = "product_${entity.productCode}_logo"
+                    val localPath = imageStorageManager.downloadAndSaveImage(entity.logo, fileName)
+                    if (localPath != null) {
+                        localDataSource.updateImagePath(entity.productCode, localPath)
+                        Log.d(
+                            TAG,
+                            "Downloaded and saved image for ${entity.productCode}: $localPath"
+                        )
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error downloading and updating images: ${e.message}", e)
+        }
+    }
 
     override suspend fun getProduct(id: String): Product? {
         return try {
@@ -215,6 +288,13 @@ class ProductRepositoryImpl(
                             localDataSource.deleteAllProducts()
                         }
                         localDataSource.insertProducts(entities)
+
+                        supervisorScope {
+                            launch {
+                                downloadAndUpdateImages(entities)
+                            }
+                        }
+
                         SafeApiResult.Success(entities.toDomainList())
                     } catch (e: Exception) {
                         Log.e(TAG, "Failed to save refreshed products data: ${e.message}", e)

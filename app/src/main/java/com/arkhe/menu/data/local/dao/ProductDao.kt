@@ -33,6 +33,18 @@ interface ProductDao {
     @Query("UPDATE products SET localImagePath = :path WHERE productCode = :productCode")
     suspend fun updateImagePath(productCode: String, path: String?)
 
+    @Query("UPDATE products SET localImagePath = :path WHERE id = :id")
+    suspend fun updateImagePathById(id: String, path: String?)
+
+    @Query("UPDATE products SET localImagePath = :path WHERE productCode IN (:productCodes)")
+    suspend fun updateImagePaths(productCodes: List<String>, path: String?)
+
+    @Query("SELECT * FROM products WHERE localImagePath IS NULL OR localImagePath = '' AND logo IS NOT NULL AND logo != ''")
+    suspend fun getProductsWithoutLocalImages(): List<ProductEntity>
+
+    @Query("SELECT * FROM products WHERE localImagePath IS NOT NULL AND localImagePath != ''")
+    suspend fun getProductsWithLocalImages(): List<ProductEntity>
+
     @Query("DELETE FROM products WHERE id = :id")
     suspend fun deleteProduct(id: String)
 

@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -55,9 +56,11 @@ import java.io.File
 @Composable
 fun BottomSheetProduct(
     product: Product,
-    imagePath: String?
+    imagePath: String? = null
 ) {
     var showEnglish by remember { mutableStateOf(false) }
+    val finalImagePath = product.localImagePath ?: imagePath
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -116,42 +119,96 @@ fun BottomSheetProduct(
                     .clip(CircleShape),
                 contentAlignment = Alignment.Center
             ) {
-                val imageModel = remember(imagePath) {
-                    imagePath?.let {
-                        val file = File(it)
-                        if (file.exists()) {
-                            Log.d(
-                                "BottomSheetProduct",
-                                "📂 imagePath=$imagePath size=${file.length()} bytes"
-                            )
-                            Uri.fromFile(file)
-                        } else null
-                    }
-                }
                 when {
-                    imageModel != null -> {
+                    !finalImagePath.isNullOrEmpty() -> {
+                        val imageFile = File(finalImagePath)
+                        Log.d("BottomSheetProduct", "🖼️ Checking image: $finalImagePath")
+                        Log.d("BottomSheetProduct", "📁 File exists: ${imageFile.exists()}")
+                        Log.d(
+                            "BottomSheetProduct",
+                            "📊 File size: ${if (imageFile.exists()) imageFile.length() else 0} bytes"
+                        )
+                        Log.d("BottomSheetProduct", "🔗 Product code: ${product.productCode}")
+                        Log.d("BottomSheetProduct", "🌐 Logo URL: ${product.logo}")
+
+                        if (imageFile.exists() && imageFile.length() > 0) {
+                            AsyncImage(
+                                model = Uri.fromFile(imageFile),
+                                contentDescription = "Product Image",
+                                modifier = Modifier
+                                    .size(64.dp)
+                                    .clip(CircleShape),
+                                contentScale = ContentScale.Crop,
+                                placeholder = painterResource(R.drawable.image_outline),
+                                error = painterResource(R.drawable.alert_triangle_outline),
+                                onLoading = {
+                                    Log.d("BottomSheetProduct", "🔄 Image loading: $finalImagePath")
+                                },
+                                onSuccess = {
+                                    Log.d(
+                                        "BottomSheetProduct",
+                                        "✅ Image loaded successfully: $finalImagePath"
+                                    )
+                                },
+                                onError = { error ->
+                                    Log.e(
+                                        "BottomSheetProduct",
+                                        "❌ Image load failed: $finalImagePath"
+                                    )
+                                    Log.e(
+                                        "BottomSheetProduct",
+                                        "❌ Error: ${error.result.throwable.message}"
+                                    )
+                                }
+                            )
+                        } else {
+                            Log.w(
+                                "BottomSheetProduct",
+                                "⚠️ File doesn't exist or is empty: $finalImagePath"
+                            )
+                            Image(
+                                painter = painterResource(R.drawable.image_outline),
+                                contentDescription = "Default Logo",
+                                modifier = Modifier.size(64.dp)
+                            )
+                        }
+                    }
+
+                    product.logo.isNotEmpty() -> {
+                        Log.d(
+                            "BottomSheetProduct",
+                            "🌐 Loading from URL (no local path): ${product.logo}"
+                        )
                         AsyncImage(
-                            model = imageModel,
-                            contentDescription = null,
-                            modifier = Modifier.size(64.dp),
+                            model = product.logo,
+                            contentDescription = "Product Image from URL",
+                            modifier = Modifier
+                                .size(64.dp)
+                                .clip(CircleShape),
+                            contentScale = ContentScale.Crop,
                             placeholder = painterResource(R.drawable.image_outline),
                             error = painterResource(R.drawable.alert_triangle_outline),
-                            onError = {
+                            onError = { error ->
                                 Log.e(
                                     "BottomSheetProduct",
-                                    "Image load failed: $imageModel"
+                                    "❌ URL Image load failed: ${product.logo}"
+                                )
+                                Log.e(
+                                    "BottomSheetProduct",
+                                    "❌ Error: ${error.result.throwable.message}"
                                 )
                             },
                             onSuccess = {
                                 Log.d(
                                     "BottomSheetProduct",
-                                    "Image loaded successfully: $imageModel"
+                                    "✅ URL Image loaded successfully: ${product.logo}"
                                 )
                             }
                         )
                     }
 
                     else -> {
+                        Log.d("BottomSheetProduct", "📋 No image available, showing default")
                         Image(
                             painter = painterResource(R.drawable.image_outline),
                             contentDescription = "Default Logo",
@@ -160,86 +217,88 @@ fun BottomSheetProduct(
                     }
                 }
             }
-            Spacer(modifier = Modifier.width(8.dp))
-            Column {
+        }
+
+        Spacer(modifier = Modifier.width(8.dp))
+        Column {
+            Text(
+                text = "“${product.productDestination}”",
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Text(
+                text = product.productFullName,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+            )
+            Row(
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text(
-                    text = "“${product.productDestination}”",
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                Text(
-                    text = product.productFullName,
+                    text = product.productCode,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                 )
-                Row(
-                    horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = product.productCode,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = product.categoryName,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                    )
-                    Text(
-                        text = "/",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                    )
-                    Text(
-                        text = product.categoryType,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    StatusDevelopmentChip(product.status)
-                }
-            }
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        val informationText = remember(showEnglish, product.information) {
-            when {
-                showEnglish && product.information.english.isNotBlank() ->
-                    product.information.english
-
-                product.information.indonesian.isNotBlank() ->
-                    product.information.indonesian
-
-                product.information.english.isNotBlank() ->
-                    product.information.english
-
-                else -> "No information available"
-            }
-        }
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant
-            ),
-            shape = RoundedCornerShape(8.dp)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
+                Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = informationText,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface
+                    text = product.categoryName,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                 )
+                Text(
+                    text = "/",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                )
+                Text(
+                    text = product.categoryType,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                StatusDevelopmentChip(product.status)
             }
         }
-        Spacer(modifier = Modifier.height(24.dp))
-        MoreSection(onMoreClick = {})
     }
+    Spacer(modifier = Modifier.height(16.dp))
+    val informationText = remember(showEnglish, product.information) {
+        when {
+            showEnglish && product.information.english.isNotBlank() ->
+                product.information.english
+
+            product.information.indonesian.isNotBlank() ->
+                product.information.indonesian
+
+            product.information.english.isNotBlank() ->
+                product.information.english
+
+            else -> "No information available"
+        }
+    }
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        ),
+        shape = RoundedCornerShape(8.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Text(
+                text = informationText,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+    }
+    Spacer(modifier = Modifier.height(24.dp))
+    MoreSection(onMoreClick = {})
 }
+
 
 @Preview(showBackground = true)
 @Composable
@@ -264,7 +323,8 @@ fun BottomSheetProductPreview() {
                 indonesian = "Lorem Ipsum hanyalah contoh teks dalam industri percetakan dan penataan huruf. Lorem Ipsum telah menjadi contoh teks standar industri sejak tahun 1500-an.",
                 english = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s."
             )
-        )
+        ),
+        localImagePath = null
     )
     AppTheme {
         BottomSheetProduct(

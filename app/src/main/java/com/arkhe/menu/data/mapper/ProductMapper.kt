@@ -50,7 +50,8 @@ fun ProductEntity.toDomain(): Product {
                 indonesian = actionInformationId,
                 english = actionInformationEn
             )
-        )
+        ),
+        localImagePath = localImagePath
     )
 }
 
