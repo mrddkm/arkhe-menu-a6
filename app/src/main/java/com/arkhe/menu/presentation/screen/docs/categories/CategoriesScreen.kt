@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.arkhe.menu.R
 import com.arkhe.menu.data.remote.api.SafeApiResult
 import com.arkhe.menu.domain.model.Category
-import com.arkhe.menu.presentation.components.common.LoadingIndicator
+import com.arkhe.menu.presentation.components.common.LoadingIndicatorSpinner
 import com.arkhe.menu.presentation.screen.docs.categories.screen.CategoryItem
 import com.arkhe.menu.presentation.screen.docs.categories.screen.HeaderAccordions
 import com.arkhe.menu.presentation.viewmodel.CategoryViewModel
@@ -79,8 +79,8 @@ fun CategoriesScreen(
 
         when (categoriesState) {
             is SafeApiResult.Loading -> {
-                LoadingIndicator(
-                    message = "Loading categories..."
+                LoadingIndicatorSpinner(
+                    message = stringResource(R.string.categories)
                 )
             }
 

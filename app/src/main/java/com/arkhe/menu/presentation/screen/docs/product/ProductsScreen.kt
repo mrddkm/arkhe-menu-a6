@@ -38,7 +38,8 @@ import com.arkhe.menu.di.appModule
 import com.arkhe.menu.di.dataModule
 import com.arkhe.menu.di.domainModule
 import com.arkhe.menu.domain.model.Product
-import com.arkhe.menu.presentation.components.common.LoadingIndicator
+import com.arkhe.menu.presentation.components.common.EmptyUI
+import com.arkhe.menu.presentation.components.common.LoadingIndicatorSpinner
 import com.arkhe.menu.presentation.screen.docs.product.content.BottomSheetProduct
 import com.arkhe.menu.presentation.screen.docs.product.screen.BottomSheetProductGroup
 import com.arkhe.menu.presentation.screen.docs.product.screen.HeaderAccordions
@@ -48,7 +49,6 @@ import com.arkhe.menu.presentation.viewmodel.ProductViewModel
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.Info
-import compose.icons.evaicons.outline.MessageSquare
 import compose.icons.evaicons.outline.Refresh
 import org.koin.android.ext.koin.androidContext
 import org.koin.compose.KoinApplicationPreview
@@ -99,8 +99,8 @@ fun ProductsScreen(
     ) {
         when (productsState) {
             is SafeApiResult.Loading -> {
-                LoadingIndicator(
-                    message = "Loading products...",
+                LoadingIndicatorSpinner(
+                    message = stringResource(R.string.products)
                 )
             }
 
@@ -216,7 +216,7 @@ fun ProductsScreen(
                         Button(
                             onClick = { showGroupBottomSheet = true }
                         ) {
-                            Text("Browse Products")
+                            Text("Browse Groups")
                         }
                     }
                 }
@@ -246,21 +246,10 @@ fun ProductsScreen(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Icon(
-                                imageVector = EvaIcons.Outline.MessageSquare,
-                                contentDescription = null
-                            )
-                            Text(
-                                text = "Select Products Group",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                textAlign = TextAlign.Center
-                            )
-                        }
+                        EmptyUI(
+                            message = "Select Product Groups",
+                            isButtonLoad = false
+                        )
                     }
                 }
             }

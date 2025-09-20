@@ -35,7 +35,7 @@ import com.arkhe.menu.presentation.components.common.EmptyUI
 import com.arkhe.menu.presentation.components.common.ErrorUI
 import com.arkhe.menu.presentation.components.common.HeaderContent
 import com.arkhe.menu.presentation.components.common.HeaderSection
-import com.arkhe.menu.presentation.components.common.LoadingIndicator
+import com.arkhe.menu.presentation.components.common.LoadingIndicatorSpinner
 import com.arkhe.menu.presentation.screen.docs.categories.content.CategoriesNonScrollableUI
 import com.arkhe.menu.presentation.screen.docs.organization.ext.Organization
 import com.arkhe.menu.presentation.screen.docs.organization.ext.PersonilDetailBottomSheet
@@ -109,8 +109,8 @@ fun DocsContent(
             ) {
                 when (profileState) {
                     is SafeApiResult.Loading -> {
-                        LoadingIndicator(
-                            message = "${stringResource(R.string.loading)} ${stringResource(R.string.profile)}..."
+                        LoadingIndicatorSpinner(
+                            message = stringResource(R.string.profile)
                         )
                     }
 
@@ -217,8 +217,8 @@ fun DocsContent(
 
                     when (categoriesState) {
                         is SafeApiResult.Loading -> {
-                            LoadingIndicator(
-                                message = "${stringResource(R.string.loading)} ${stringResource(R.string.categories)}..."
+                            LoadingIndicatorSpinner(
+                                message = stringResource(R.string.profile)
                             )
                         }
 
@@ -268,8 +268,8 @@ fun DocsContent(
                     )
                     when (productsState) {
                         is SafeApiResult.Loading -> {
-                            LoadingIndicator(
-                                message = "${stringResource(R.string.loading)} ${stringResource(R.string.products)}..."
+                            LoadingIndicatorSpinner(
+                                message = stringResource(R.string.profile)
                             )
                         }
 

@@ -25,7 +25,7 @@ import com.arkhe.menu.presentation.animation.ScreenTransitions
 import com.arkhe.menu.presentation.components.ArkheBottomBar
 import com.arkhe.menu.presentation.components.ArkheTopBar
 import com.arkhe.menu.presentation.components.UserBottomSheet
-import com.arkhe.menu.presentation.components.common.LoadingIndicator
+import com.arkhe.menu.presentation.components.common.LoadingIndicatorSpinner
 import com.arkhe.menu.presentation.navigation.NavigationRoute
 import com.arkhe.menu.presentation.screen.docs.categories.CategoriesScreen
 import com.arkhe.menu.presentation.screen.docs.customer.CustomerScreen
@@ -213,7 +213,7 @@ fun MainScreen(
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
-                LoadingIndicator()
+                LoadingIndicatorSpinner()
             }
         }
 

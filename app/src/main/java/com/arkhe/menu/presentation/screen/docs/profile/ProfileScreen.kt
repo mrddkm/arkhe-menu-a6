@@ -22,15 +22,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.arkhe.menu.R
 import com.arkhe.menu.data.remote.api.SafeApiResult
 import com.arkhe.menu.domain.model.Profile
 import com.arkhe.menu.domain.model.ProfileActionInfo
 import com.arkhe.menu.domain.model.ProfileInformationLanguage
 import com.arkhe.menu.domain.model.SocialMedia
-import com.arkhe.menu.presentation.components.common.LoadingIndicator
+import com.arkhe.menu.presentation.components.common.LoadingIndicatorSpinner
 import com.arkhe.menu.presentation.screen.docs.profile.screen.ProfileDescription
 import com.arkhe.menu.presentation.screen.docs.profile.screen.ProfileTagLine
 import com.arkhe.menu.presentation.screen.docs.profile.screen.SocialMediaCard
@@ -73,8 +75,8 @@ fun ProfileScreen(
     ) {
         when (profileState) {
             is SafeApiResult.Loading -> {
-                LoadingIndicator(
-                    message = "Loading profile...",
+                LoadingIndicatorSpinner(
+                    message = stringResource(R.string.profile),
                 )
             }
 
