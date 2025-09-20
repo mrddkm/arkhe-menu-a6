@@ -100,6 +100,7 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
 
     implementation(libs.bundles.icons)
+    implementation(libs.bundles.animation)
 
     ksp(libs.androidx.room.compiler)
 
