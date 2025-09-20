@@ -30,7 +30,7 @@ import com.arkhe.menu.domain.model.ProductActionInfo
 import com.arkhe.menu.domain.model.ProductGroup
 import com.arkhe.menu.domain.model.ProductInformationLanguage
 import com.arkhe.menu.presentation.components.common.StatusDevelopmentChip
-import com.arkhe.menu.presentation.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.AppTheme
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.ChevronRight

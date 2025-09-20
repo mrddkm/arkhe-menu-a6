@@ -44,7 +44,7 @@ import com.arkhe.menu.presentation.screen.docs.product.content.BottomSheetProduc
 import com.arkhe.menu.presentation.screen.docs.product.screen.BottomSheetProductGroup
 import com.arkhe.menu.presentation.screen.docs.product.screen.HeaderAccordions
 import com.arkhe.menu.presentation.screen.docs.product.screen.ProductListItem
-import com.arkhe.menu.presentation.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.AppTheme
 import com.arkhe.menu.presentation.viewmodel.ProductViewModel
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline

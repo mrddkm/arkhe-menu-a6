@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.arkhe.menu.di.appModule
 import com.arkhe.menu.di.dataModule
 import com.arkhe.menu.di.domainModule
@@ -32,7 +33,7 @@ import com.arkhe.menu.presentation.screen.docs.customer.CustomerScreen
 import com.arkhe.menu.presentation.screen.docs.organization.OrganizationScreen
 import com.arkhe.menu.presentation.screen.docs.product.ProductsScreen
 import com.arkhe.menu.presentation.screen.docs.profile.ProfileScreen
-import com.arkhe.menu.presentation.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.AppTheme
 import com.arkhe.menu.presentation.viewmodel.MainViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.compose.koinViewModel
@@ -240,7 +241,7 @@ fun MainScreenPreview() {
         }
     ) {
         AppTheme {
-            MainScreen(navController = androidx.navigation.compose.rememberNavController())
+            MainScreen(navController = rememberNavController())
         }
     }
 }

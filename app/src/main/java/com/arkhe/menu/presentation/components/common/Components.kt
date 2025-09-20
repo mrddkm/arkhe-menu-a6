@@ -30,7 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.arkhe.menu.presentation.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.AppTheme
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_INITIATION
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_READY
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_RESEARCH

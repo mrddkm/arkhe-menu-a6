@@ -43,7 +43,7 @@ import androidx.compose.ui.unit.dp
 import com.arkhe.menu.R
 import com.arkhe.menu.domain.model.ProductStatistics
 import com.arkhe.menu.presentation.screen.docs.categories.content.StatisticItem
-import com.arkhe.menu.presentation.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.AppTheme
 import com.arkhe.menu.presentation.viewmodel.ProductViewModel
 import com.arkhe.menu.utils.Constants.CurrentLanguage.ENGLISH
 import com.arkhe.menu.utils.Constants.CurrentLanguage.INDONESIAN

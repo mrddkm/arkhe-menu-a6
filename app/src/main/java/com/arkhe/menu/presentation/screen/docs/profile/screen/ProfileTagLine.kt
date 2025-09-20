@@ -18,7 +18,7 @@ import com.arkhe.menu.domain.model.ProfileActionInfo
 import com.arkhe.menu.domain.model.Profile
 import com.arkhe.menu.domain.model.ProfileInformationLanguage
 import com.arkhe.menu.domain.model.SocialMedia
-import com.arkhe.menu.presentation.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.AppTheme
 
 @Composable
 fun ProfileTagLine(profile: Profile) {

@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.domain.model.ProductActionInfo
 import com.arkhe.menu.domain.model.ProductInformationLanguage
-import com.arkhe.menu.presentation.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

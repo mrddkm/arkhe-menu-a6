@@ -34,7 +34,7 @@ import com.arkhe.menu.domain.model.Category
 import com.arkhe.menu.domain.model.CategoryActionInfo
 import com.arkhe.menu.domain.model.CategoryColors
 import com.arkhe.menu.domain.model.CategoryInformationLanguage
-import com.arkhe.menu.presentation.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.AppTheme
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_INITIATION
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_READY
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_RESEARCH

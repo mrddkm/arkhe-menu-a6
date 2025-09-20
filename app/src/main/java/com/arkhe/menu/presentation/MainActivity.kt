@@ -8,7 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.arkhe.menu.presentation.navigation.ArkheNavigation
-import com.arkhe.menu.presentation.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.AppTheme
 import org.koin.androidx.compose.KoinAndroidContext
 
 @Suppress("DEPRECATION")

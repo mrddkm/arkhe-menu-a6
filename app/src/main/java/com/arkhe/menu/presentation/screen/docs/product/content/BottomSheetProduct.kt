@@ -45,7 +45,7 @@ import com.arkhe.menu.R
 import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.presentation.components.common.MoreSection
 import com.arkhe.menu.presentation.components.common.StatusDevelopmentChip
-import com.arkhe.menu.presentation.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.AppTheme
 import com.arkhe.menu.utils.Constants
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_RESEARCH
 import compose.icons.EvaIcons

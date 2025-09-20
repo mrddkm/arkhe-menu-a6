@@ -3,9 +3,7 @@
 package com.arkhe.menu.presentation.components
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Dashboard
 import androidx.compose.material.icons.rounded.GroupWork
-import androidx.compose.material.icons.rounded.WorkHistory
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -15,7 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
-import com.arkhe.menu.presentation.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.AppTheme
 import com.arkhe.menu.presentation.viewmodel.BottomNavItem
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline

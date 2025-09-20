@@ -43,7 +43,7 @@ import com.arkhe.menu.presentation.screen.docs.organization.ext.PersonilListBott
 import com.arkhe.menu.presentation.screen.docs.organization.ext.sampleOrganizations
 import com.arkhe.menu.presentation.screen.docs.product.content.ProductUI
 import com.arkhe.menu.presentation.screen.docs.profile.content.ProfileUI
-import com.arkhe.menu.presentation.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.AppTheme
 import com.arkhe.menu.presentation.viewmodel.CategoryViewModel
 import com.arkhe.menu.presentation.viewmodel.ProductViewModel
 import com.arkhe.menu.presentation.viewmodel.ProfileViewModel

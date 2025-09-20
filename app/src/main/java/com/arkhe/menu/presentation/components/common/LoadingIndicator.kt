@@ -3,9 +3,7 @@ package com.arkhe.menu.presentation.components.common
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -21,7 +19,7 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.arkhe.menu.R
-import com.arkhe.menu.presentation.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.AppTheme
 
 @Composable
 fun LoadingIndicatorSpinner(
@@ -47,7 +45,7 @@ fun LoadingIndicatorSpinner(
             LottieAnimation(
                 composition = composition,
                 progress = { progress },
-                modifier = Modifier.size(100.dp)
+                modifier = Modifier.size(60.dp)
             )
             Text(
                 text = "Loading $message ...",

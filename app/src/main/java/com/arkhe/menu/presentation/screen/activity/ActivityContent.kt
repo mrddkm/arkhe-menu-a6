@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.dp
 import com.arkhe.menu.R
 import com.arkhe.menu.domain.model.UserRole
 import com.arkhe.menu.presentation.components.common.HeaderContent
-import com.arkhe.menu.presentation.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.AppTheme
 
 @Composable
 fun ActivityContent(
