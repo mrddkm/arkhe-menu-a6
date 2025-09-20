@@ -14,6 +14,7 @@ composeNavigation = "2.9.4"
 #noinspection NewerVersionAvailable
 koin = "4.1.0"
 room = "2.8.0"
+#noinspection NewerVersionAvailable
 ktor = "3.2.3"
 datastore = "1.1.7"
 materialIcons = "1.7.8"
@@ -63,9 +64,9 @@ compose-coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coi
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+org-jetbrains-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 google-ksp = { id = "com.google.devtools.ksp", version.ref = "googleKsp" }
+org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 org-jetbrains-kotlin-plugin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 
 [bundles]

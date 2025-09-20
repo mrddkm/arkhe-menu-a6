@@ -9,10 +9,10 @@ import java.util.TimeZone
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.jetbrains.kotlin.android)
-    alias(libs.plugins.google.ksp)
-    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.org.jetbrains.kotlin.android)
     alias(libs.plugins.org.jetbrains.kotlin.plugin.compose)
+    alias(libs.plugins.org.jetbrains.kotlin.serialization)
+    alias(libs.plugins.google.ksp)
 }
 
 val buildProperties = Properties()
