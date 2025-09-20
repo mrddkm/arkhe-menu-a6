@@ -111,7 +111,8 @@ fun BottomSheetProduct(
         Spacer(modifier = Modifier.height(16.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Box(
                 modifier = Modifier
@@ -122,19 +123,10 @@ fun BottomSheetProduct(
                 when {
                     !finalImagePath.isNullOrEmpty() -> {
                         val imageFile = File(finalImagePath)
-                        Log.d("BottomSheetProduct", "🖼️ Checking image: $finalImagePath")
-                        Log.d("BottomSheetProduct", "📁 File exists: ${imageFile.exists()}")
-                        Log.d(
-                            "BottomSheetProduct",
-                            "📊 File size: ${if (imageFile.exists()) imageFile.length() else 0} bytes"
-                        )
-                        Log.d("BottomSheetProduct", "🔗 Product code: ${product.productCode}")
-                        Log.d("BottomSheetProduct", "🌐 Logo URL: ${product.logo}")
-
                         if (imageFile.exists() && imageFile.length() > 0) {
                             AsyncImage(
                                 model = Uri.fromFile(imageFile),
-                                contentDescription = "Product Image",
+                                contentDescription = null,
                                 modifier = Modifier
                                     .size(64.dp)
                                     .clip(CircleShape),
@@ -153,35 +145,22 @@ fun BottomSheetProduct(
                                 onError = { error ->
                                     Log.e(
                                         "BottomSheetProduct",
-                                        "❌ Image load failed: $finalImagePath"
-                                    )
-                                    Log.e(
-                                        "BottomSheetProduct",
                                         "❌ Error: ${error.result.throwable.message}"
                                     )
                                 }
                             )
                         } else {
-                            Log.w(
-                                "BottomSheetProduct",
-                                "⚠️ File doesn't exist or is empty: $finalImagePath"
-                            )
                             Image(
                                 painter = painterResource(R.drawable.image_outline),
-                                contentDescription = "Default Logo",
+                                contentDescription = null,
                                 modifier = Modifier.size(64.dp)
                             )
                         }
                     }
-
                     product.logo.isNotEmpty() -> {
-                        Log.d(
-                            "BottomSheetProduct",
-                            "🌐 Loading from URL (no local path): ${product.logo}"
-                        )
                         AsyncImage(
                             model = product.logo,
-                            contentDescription = "Product Image from URL",
+                            contentDescription = null,
                             modifier = Modifier
                                 .size(64.dp)
                                 .clip(CircleShape),
@@ -189,10 +168,6 @@ fun BottomSheetProduct(
                             placeholder = painterResource(R.drawable.image_outline),
                             error = painterResource(R.drawable.alert_triangle_outline),
                             onError = { error ->
-                                Log.e(
-                                    "BottomSheetProduct",
-                                    "❌ URL Image load failed: ${product.logo}"
-                                )
                                 Log.e(
                                     "BottomSheetProduct",
                                     "❌ Error: ${error.result.throwable.message}"
@@ -208,97 +183,95 @@ fun BottomSheetProduct(
                     }
 
                     else -> {
-                        Log.d("BottomSheetProduct", "📋 No image available, showing default")
                         Image(
                             painter = painterResource(R.drawable.image_outline),
-                            contentDescription = "Default Logo",
+                            contentDescription = null,
                             modifier = Modifier.size(64.dp)
                         )
                     }
                 }
             }
-        }
-
-        Spacer(modifier = Modifier.width(8.dp))
-        Column {
-            Text(
-                text = "“${product.productDestination}”",
-                style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Text(
-                text = product.productFullName,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-            )
-            Row(
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically
+            Column(
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = product.productCode,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(
-                    text = product.categoryName,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                    text = "“${product.productDestination}”",
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.primary
                 )
                 Text(
-                    text = "/",
+                    text = product.productFullName,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                 )
-                Text(
-                    text = product.categoryType,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                StatusDevelopmentChip(product.status)
+                Row(
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = product.productCode,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = product.categoryName,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                    )
+                    Text(
+                        text = "/",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                    )
+                    Text(
+                        text = product.categoryType,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    StatusDevelopmentChip(product.status)
+                }
             }
         }
-    }
-    Spacer(modifier = Modifier.height(16.dp))
-    val informationText = remember(showEnglish, product.information) {
-        when {
-            showEnglish && product.information.english.isNotBlank() ->
-                product.information.english
+        Spacer(modifier = Modifier.height(24.dp))
+        val informationText = remember(showEnglish, product.information) {
+            when {
+                showEnglish && product.information.english.isNotBlank() ->
+                    product.information.english
 
-            product.information.indonesian.isNotBlank() ->
-                product.information.indonesian
+                product.information.indonesian.isNotBlank() ->
+                    product.information.indonesian
 
-            product.information.english.isNotBlank() ->
-                product.information.english
+                product.information.english.isNotBlank() ->
+                    product.information.english
 
-            else -> "No information available"
+                else -> "No information available"
+            }
         }
-    }
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
-        ),
-        shape = RoundedCornerShape(8.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant
+            ),
+            shape = RoundedCornerShape(8.dp)
         ) {
-            Text(
-                text = informationText,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = informationText,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
         }
+        Spacer(modifier = Modifier.height(16.dp))
+        MoreSection(onMoreClick = {})
     }
-    Spacer(modifier = Modifier.height(24.dp))
-    MoreSection(onMoreClick = {})
 }
-
 
 @Preview(showBackground = true)
 @Composable
