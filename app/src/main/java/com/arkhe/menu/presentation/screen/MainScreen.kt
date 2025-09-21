@@ -9,12 +9,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -41,7 +43,7 @@ import org.koin.compose.KoinApplicationPreview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreenDraft(
+fun MainScreen(
     navController: NavHostController,
     viewModel: MainViewModel = koinViewModel()
 ) {
@@ -65,9 +67,13 @@ fun MainScreenDraft(
         }
     }
 
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             ArkheTopBar(
+                scrollBehavior = scrollBehavior,
                 isInMainContent = uiState.isInMainContent,
                 currentContentType = uiState.currentContentType,
                 onBackClick = {
@@ -241,7 +247,7 @@ fun MainScreenPreview() {
         }
     ) {
         AppTheme {
-            MainScreenDraft(navController = rememberNavController())
+            MainScreen(navController = rememberNavController())
         }
     }
 }
