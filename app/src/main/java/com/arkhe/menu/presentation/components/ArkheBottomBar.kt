@@ -11,6 +11,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import com.arkhe.menu.presentation.ui.theme.AppTheme
@@ -43,6 +44,44 @@ fun ArkheBottomBar(
                     selectedIconColor = MaterialTheme.colorScheme.primary,
                     selectedTextColor = MaterialTheme.colorScheme.primary,
                     indicatorColor = MaterialTheme.colorScheme.primaryContainer
+                )
+            )
+        }
+    }
+}
+
+@Composable
+fun ArkheGlassBottomBar(
+    selectedItem: BottomNavItem,
+    onItemSelected: (BottomNavItem) -> Unit
+) {
+    NavigationBar(
+        containerColor = MaterialTheme.colorScheme.surfaceContainer
+    ) {
+        BottomNavItem.entries.forEach { item ->
+            NavigationBarItem(
+                selected = selectedItem == item,
+                onClick = { onItemSelected(item) },
+                icon = {
+                    Icon(
+                        imageVector = getIconForItem(item),
+                        contentDescription = item.title,
+                        tint = if (selectedItem == item) MaterialTheme.colorScheme.primary
+                        else MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                },
+                label = {
+                    Text(
+                        text = item.title,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = if (selectedItem == item) MaterialTheme.colorScheme.primary
+                        else MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                },
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                    selectedTextColor = MaterialTheme.colorScheme.primary,
+                    indicatorColor = Color.Transparent
                 )
             )
         }

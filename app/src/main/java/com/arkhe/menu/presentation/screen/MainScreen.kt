@@ -25,7 +25,7 @@ import com.arkhe.menu.di.appModule
 import com.arkhe.menu.di.dataModule
 import com.arkhe.menu.di.domainModule
 import com.arkhe.menu.presentation.animation.ScreenTransitions
-import com.arkhe.menu.presentation.components.ArkheBottomBar
+import com.arkhe.menu.presentation.components.ArkheGlassBottomBar
 import com.arkhe.menu.presentation.components.ArkheTopBar
 import com.arkhe.menu.presentation.components.UserBottomSheet
 import com.arkhe.menu.presentation.components.common.LoadingIndicatorSpinner
@@ -84,7 +84,7 @@ fun MainScreen(
         },
         bottomBar = {
             if (uiState.showBottomBar) {
-                ArkheBottomBar(
+                ArkheGlassBottomBar(
                     selectedItem = uiState.selectedBottomNavItem,
                     onItemSelected = { viewModel.selectBottomNavItem(it) }
                 )
