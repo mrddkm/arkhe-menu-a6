@@ -5,7 +5,6 @@ package com.arkhe.menu.presentation.components
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
-import androidx.compose.material.icons.rounded.ChevronLeft
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -17,6 +16,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.arkhe.menu.presentation.ui.theme.AppTheme
+import compose.icons.EvaIcons
+import compose.icons.evaicons.Outline
+import compose.icons.evaicons.outline.ArrowIosBack
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,7 +38,7 @@ fun ArkheTopBar(
             if (isInMainContent) {
                 IconButton(onClick = onBackClick) {
                     Icon(
-                        imageVector = Icons.Rounded.ChevronLeft,
+                        imageVector = EvaIcons.Outline.ArrowIosBack,
                         contentDescription = null,
                         modifier = Modifier.fillMaxSize()
                     )

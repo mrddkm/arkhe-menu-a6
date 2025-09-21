@@ -9,9 +9,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -28,16 +25,24 @@ fun GlassScaffold(
     title: String,
     items: List<BottomNavItem>,
     selectedIndex: Int,
-    onItemSelected: (Int) -> Unit
+    onItemSelected: (Int) -> Unit,
+    isInMainContent: Boolean,
+    previousLabel: String? = null,
+    onBackClick: (() -> Unit)? = null,
+    onProfileClick: (() -> Unit)? = null
 ) {
     val listState = rememberLazyListState()
-    val scrollOffset by remember {
-        derivedStateOf { min(1f, listState.firstVisibleItemScrollOffset / 200f) }
-    }
 
     Scaffold(
         topBar = {
-            GlassTopBar(title = title, listState = listState)
+            GlassTopBar(
+                title = title,
+                listState = listState,
+                isInMainContent = isInMainContent,
+                previousLabel = previousLabel,
+                onBackClick = onBackClick,
+                onProfileClick = onProfileClick
+            )
         },
         bottomBar = {
             GlassBottomBar(
@@ -61,11 +66,12 @@ fun GlassScaffold(
                     modifier = Modifier
                         .padding(start = 16.dp, top = 24.dp, bottom = 8.dp)
                         .graphicsLayer {
-                            val scale = lerp(1f, 0.7f, scrollOffset)
+                            val offset = min(1f, listState.firstVisibleItemScrollOffset / 200f)
+                            val scale = lerp(1f, 0.7f, offset)
                             scaleX = scale
                             scaleY = scale
-                            translationY = -40 * scrollOffset
-                            alpha = 1f - scrollOffset
+                            translationY = -40 * offset
+                            alpha = 1f - offset
                         }
                 )
             }
@@ -79,3 +85,4 @@ fun GlassScaffold(
         }
     }
 }
+

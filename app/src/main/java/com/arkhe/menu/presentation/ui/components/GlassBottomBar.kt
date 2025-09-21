@@ -56,13 +56,13 @@ fun GlassBottomBar(
                             imageVector = item.icon,
                             contentDescription = item.label,
                             tint = if (isSelected) MaterialTheme.colorScheme.primary
-                            else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                            else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Text(
                             text = item.label,
                             style = MaterialTheme.typography.labelSmall,
                             color = if (isSelected) MaterialTheme.colorScheme.primary
-                            else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                            else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }

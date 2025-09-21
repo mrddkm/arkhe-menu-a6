@@ -7,7 +7,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.arkhe.menu.presentation.screen.MainScreen
+import com.arkhe.menu.presentation.screen.GlassMainScreen
 import com.arkhe.menu.presentation.screen.docs.categories.screen.CategoryDetail
 
 @Composable
@@ -20,24 +20,24 @@ fun ArkheNavigation(
     ) {
         /*Main*/
         composable(NavigationRoute.MAIN) {
-            MainScreen(navController = navController)
+            GlassMainScreen(navController = navController)
         }
 
         /*Docs*/
         composable(NavigationRoute.PROFILE) {
-            MainScreen(navController = navController)
+            GlassMainScreen(navController = navController)
         }
 
         composable(NavigationRoute.ORGANIZATION) {
-            MainScreen(navController = navController)
+            GlassMainScreen(navController = navController)
         }
 
         composable(NavigationRoute.CUSTOMER) {
-            MainScreen(navController = navController)
+            GlassMainScreen(navController = navController)
         }
 
         composable(NavigationRoute.CATEGORIES) {
-            MainScreen(navController = navController)
+            GlassMainScreen(navController = navController)
         }
 
         composable(NavigationRoute.CATEGORY_DETAIL) {
@@ -49,7 +49,7 @@ fun ArkheNavigation(
         }
 
         composable(NavigationRoute.PRODUCTS) {
-            MainScreen(navController = navController)
+            GlassMainScreen(navController = navController)
         }
 
         /*tripkeun*/

@@ -41,7 +41,7 @@ import org.koin.compose.KoinApplicationPreview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(
+fun MainScreenDraft(
     navController: NavHostController,
     viewModel: MainViewModel = koinViewModel()
 ) {
@@ -241,7 +241,7 @@ fun MainScreenPreview() {
         }
     ) {
         AppTheme {
-            MainScreen(navController = rememberNavController())
+            MainScreenDraft(navController = rememberNavController())
         }
     }
 }

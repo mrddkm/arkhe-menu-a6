@@ -29,7 +29,11 @@ fun GlassScaffoldPreviewLight() {
             title = "Docs",
             items = items,
             selectedIndex = selectedIndex,
-            onItemSelected = { selectedIndex = it }
+            onItemSelected = { selectedIndex = it },
+            isInMainContent = true,
+            previousLabel = "Back",
+            onBackClick = { },
+            onProfileClick = { }
         )
     }
 }
@@ -49,7 +53,11 @@ fun GlassScaffoldPreviewDark() {
             title = "Docs",
             items = items,
             selectedIndex = selectedIndex,
-            onItemSelected = { selectedIndex = it }
+            onItemSelected = { selectedIndex = it },
+            isInMainContent = false,
+            previousLabel = "Back",
+            onBackClick = { },
+            onProfileClick = { }
         )
     }
 }
