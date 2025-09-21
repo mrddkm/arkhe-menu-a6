@@ -31,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.presentation.ui.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_INITIATION
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_READY
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_RESEARCH
@@ -198,7 +199,10 @@ fun StatusDevelopmentChip(
     ) {
         Text(
             text = status,
-            style = MaterialTheme.typography.labelSmall,
+            style = MaterialTheme.typography.labelSmall.copy(
+                fontFamily = sourceCodeProFontFamily,
+                fontWeight = FontWeight.Normal
+            ),
             color = when (status) {
                 STATISTICS_READY -> getDevelopmentColor(STATISTICS_READY)
                 STATISTICS_RESEARCH -> getDevelopmentColor(STATISTICS_RESEARCH)

@@ -46,6 +46,7 @@ import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.presentation.components.common.MoreSection
 import com.arkhe.menu.presentation.components.common.StatusDevelopmentChip
 import com.arkhe.menu.presentation.ui.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
 import com.arkhe.menu.utils.Constants
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_RESEARCH
 import compose.icons.EvaIcons
@@ -157,6 +158,7 @@ fun BottomSheetProduct(
                             )
                         }
                     }
+
                     product.logo.isNotEmpty() -> {
                         AsyncImage(
                             model = product.logo,
@@ -210,23 +212,19 @@ fun BottomSheetProduct(
                 ) {
                     Text(
                         text = product.productCode,
-                        style = MaterialTheme.typography.bodySmall,
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            fontFamily = sourceCodeProFontFamily,
+                            fontWeight = FontWeight.Normal
+                        ),
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = product.categoryName,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                    )
-                    Text(
-                        text = "/",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                    )
-                    Text(
-                        text = product.categoryType,
-                        style = MaterialTheme.typography.bodySmall,
+                        text = "${product.categoryName}/${product.categoryType}",
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            fontFamily = sourceCodeProFontFamily,
+                            fontWeight = FontWeight.Normal
+                        ),
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                     )
                     Spacer(modifier = Modifier.width(4.dp))

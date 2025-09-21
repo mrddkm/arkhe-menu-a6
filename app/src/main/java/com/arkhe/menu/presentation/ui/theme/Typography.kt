@@ -8,10 +8,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.arkhe.menu.R
 
+val sourceCodeProFontFamily = FontFamily(
+    Font(R.font.source_code_pro_regular, FontWeight.Normal),
+    Font(R.font.source_code_pro_bold, FontWeight.Bold)
+)
+
+val montserratAlternatesFontFamily = FontFamily(
+    Font(R.font.montserrat_alternates_medium, FontWeight.Medium),
+    Font(R.font.montserrat_alternates_bold, FontWeight.Bold)
+)
 
 val poppinsFontFamily = FontFamily(
-    Font(R.font.poppins_regular),
-    Font(R.font.poppins_bold)
+    Font(R.font.poppins_regular, FontWeight.Normal),
+    Font(R.font.poppins_bold, FontWeight.Bold)
 )
 
 val Typography = Typography(

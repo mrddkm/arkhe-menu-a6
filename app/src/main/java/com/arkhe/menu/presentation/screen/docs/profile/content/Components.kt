@@ -17,10 +17,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.arkhe.menu.R
 import com.arkhe.menu.domain.model.Profile
+import com.arkhe.menu.presentation.ui.theme.montserratAlternatesFontFamily
 import java.io.File
 
 @Composable
@@ -40,10 +42,6 @@ fun ProfileUI(
                 imagePath?.let {
                     val file = File(it)
                     if (file.exists()) {
-                        Log.d(
-                            "ProfileDescription",
-                            "📂 imagePath=$imagePath size=${file.length()} bytes"
-                        )
                         Uri.fromFile(file)
                     } else null
                 }
@@ -83,11 +81,14 @@ fun ProfileUI(
         Column {
             Text(
                 text = profile.nameShort,
-                style = MaterialTheme.typography.headlineSmall,
+                style = MaterialTheme.typography.headlineSmall.copy(
+                    fontFamily = montserratAlternatesFontFamily,
+                    fontWeight = FontWeight.Medium
+                ),
                 color = MaterialTheme.colorScheme.primary
             )
             Text(
-                text = profile.nameLong,
+                text = profile.tagline,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

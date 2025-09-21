@@ -46,6 +46,7 @@ import com.arkhe.menu.domain.model.CategoryInformationLanguage
 import com.arkhe.menu.presentation.components.common.MoreSection
 import com.arkhe.menu.presentation.screen.docs.categories.screen.parseColorFromHex
 import com.arkhe.menu.presentation.ui.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
 import com.arkhe.menu.utils.Constants
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_INITIATION
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_LABEL
@@ -134,7 +135,7 @@ fun BottomSheetCategory(
                     tint = iconColor
                 )
             }
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(12.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -145,7 +146,7 @@ fun BottomSheetCategory(
                     Text(
                         text = category.name,
                         style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.primary
                     )
                     Text(
@@ -244,8 +245,10 @@ fun StatisticItem(
     ) {
         Text(
             text = value,
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.headlineSmall.copy(
+                fontFamily = sourceCodeProFontFamily,
+                fontWeight = FontWeight.Normal
+            ),
             color = color
         )
         Text(
