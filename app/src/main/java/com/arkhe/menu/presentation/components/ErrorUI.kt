@@ -1,4 +1,4 @@
-package com.arkhe.menu.presentation.components.common
+package com.arkhe.menu.presentation.components
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement

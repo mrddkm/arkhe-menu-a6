@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.domain.model.ProductGroup
-import com.arkhe.menu.presentation.components.common.HeaderBottomSheet
+import com.arkhe.menu.presentation.components.HeaderBottomSheet
 import com.arkhe.menu.utils.Constants.Product.PRODUCT_GROUP_LABEL
 
 @Composable

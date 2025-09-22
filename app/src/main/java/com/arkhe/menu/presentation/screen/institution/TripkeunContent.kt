@@ -19,7 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.R
-import com.arkhe.menu.presentation.components.common.HeaderContent
+import com.arkhe.menu.presentation.components.HeaderContent
 import com.arkhe.menu.presentation.ui.theme.AppTheme
 
 @Composable

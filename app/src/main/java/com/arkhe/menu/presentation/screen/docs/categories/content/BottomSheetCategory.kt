@@ -43,7 +43,7 @@ import com.arkhe.menu.domain.model.Category
 import com.arkhe.menu.domain.model.CategoryActionInfo
 import com.arkhe.menu.domain.model.CategoryColors
 import com.arkhe.menu.domain.model.CategoryInformationLanguage
-import com.arkhe.menu.presentation.components.common.MoreSection
+import com.arkhe.menu.presentation.components.MoreSection
 import com.arkhe.menu.presentation.screen.docs.categories.screen.parseColorFromHex
 import com.arkhe.menu.presentation.ui.theme.AppTheme
 import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily

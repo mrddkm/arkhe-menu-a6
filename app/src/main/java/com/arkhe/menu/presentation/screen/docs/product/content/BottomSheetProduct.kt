@@ -43,8 +43,8 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.arkhe.menu.R
 import com.arkhe.menu.domain.model.Product
-import com.arkhe.menu.presentation.components.common.MoreSection
-import com.arkhe.menu.presentation.components.common.StatusDevelopmentChip
+import com.arkhe.menu.presentation.components.MoreSection
+import com.arkhe.menu.presentation.components.StatusDevelopmentChip
 import com.arkhe.menu.presentation.ui.theme.AppTheme
 import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
 import com.arkhe.menu.utils.Constants

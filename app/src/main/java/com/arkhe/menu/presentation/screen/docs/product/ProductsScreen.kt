@@ -38,8 +38,8 @@ import com.arkhe.menu.di.appModule
 import com.arkhe.menu.di.dataModule
 import com.arkhe.menu.di.domainModule
 import com.arkhe.menu.domain.model.Product
-import com.arkhe.menu.presentation.components.common.EmptyUI
-import com.arkhe.menu.presentation.components.common.LoadingIndicatorSpinner
+import com.arkhe.menu.presentation.components.EmptyUI
+import com.arkhe.menu.presentation.components.LoadingIndicatorSpinner
 import com.arkhe.menu.presentation.screen.docs.product.content.BottomSheetProduct
 import com.arkhe.menu.presentation.screen.docs.product.screen.BottomSheetProductGroup
 import com.arkhe.menu.presentation.screen.docs.product.screen.HeaderAccordions

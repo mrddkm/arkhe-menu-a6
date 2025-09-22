@@ -30,10 +30,10 @@ import com.arkhe.menu.di.appModule
 import com.arkhe.menu.di.dataModule
 import com.arkhe.menu.di.domainModule
 import com.arkhe.menu.presentation.animation.ScreenTransitions
-import com.arkhe.menu.presentation.components.ArkheGlassBottomBar
-import com.arkhe.menu.presentation.components.ArkheTopBar
-import com.arkhe.menu.presentation.components.UserBottomSheet
-import com.arkhe.menu.presentation.components.common.LoadingIndicatorSpinner
+import com.arkhe.menu.presentation.ui.components.ArkheGlassBottomBar
+import com.arkhe.menu.presentation.ui.components.ArkheTopBar
+import com.arkhe.menu.presentation.screen.user.UserBottomSheet
+import com.arkhe.menu.presentation.components.LoadingIndicatorSpinner
 import com.arkhe.menu.presentation.navigation.NavigationRoute
 import com.arkhe.menu.presentation.screen.docs.categories.CategoriesScreen
 import com.arkhe.menu.presentation.screen.docs.customer.CustomerScreen
