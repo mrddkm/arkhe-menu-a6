@@ -4,20 +4,23 @@ package com.arkhe.menu.presentation.screen
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -70,21 +73,149 @@ fun MainScreen(
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-    Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .nestedScroll(scrollBehavior.nestedScrollConnection)
+        ) {
             ArkheTopBar(
                 scrollBehavior = scrollBehavior,
                 isInMainContent = uiState.isInMainContent,
                 currentContentType = uiState.currentContentType,
-                onBackClick = {
-                    viewModel.navigateBackToMain()
-                },
+                onBackClick = { viewModel.navigateBackToMain() },
                 onUserIconClick = { viewModel.toggleProfileBottomSheet() }
             )
-        },
-        bottomBar = {
-            if (uiState.showBottomBar) {
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = if (uiState.showBottomBar) 92.dp else 0.dp) // Space untuk bottom bar
+            ) {
+                AnimatedContent(
+                    targetState = uiState.currentScreen,
+                    transitionSpec = {
+                        when {
+                            initialState == NavigationRoute.MAIN && targetState == NavigationRoute.PROFILE -> {
+                                ScreenTransitions.slideFromLeft()
+                            }
+
+                            initialState == NavigationRoute.PROFILE && targetState == NavigationRoute.MAIN -> {
+                                ScreenTransitions.slideFromRight()
+                            }
+
+                            initialState == NavigationRoute.MAIN && targetState == NavigationRoute.ORGANIZATION -> {
+                                ScreenTransitions.slideFromLeft()
+                            }
+
+                            initialState == NavigationRoute.ORGANIZATION && targetState == NavigationRoute.MAIN -> {
+                                ScreenTransitions.slideFromRight()
+                            }
+
+                            initialState == NavigationRoute.MAIN && targetState == NavigationRoute.CUSTOMER -> {
+                                ScreenTransitions.slideFromLeft()
+                            }
+
+                            initialState == NavigationRoute.CUSTOMER && targetState == NavigationRoute.MAIN -> {
+                                ScreenTransitions.slideFromRight()
+                            }
+
+                            initialState == NavigationRoute.MAIN && targetState == NavigationRoute.CATEGORIES -> {
+                                ScreenTransitions.slideFromLeft()
+                            }
+
+                            initialState == NavigationRoute.CATEGORIES && targetState == NavigationRoute.MAIN -> {
+                                ScreenTransitions.slideFromRight()
+                            }
+
+                            initialState == NavigationRoute.CATEGORIES && targetState.startsWith("category_detail") -> {
+                                ScreenTransitions.slideFromLeft()
+                            }
+
+                            initialState.startsWith("category_detail") && targetState == NavigationRoute.CATEGORIES -> {
+                                ScreenTransitions.slideFromRight()
+                            }
+
+                            initialState == NavigationRoute.MAIN && targetState == NavigationRoute.PRODUCTS -> {
+                                ScreenTransitions.slideFromLeft()
+                            }
+
+                            initialState == NavigationRoute.PRODUCTS && targetState == NavigationRoute.MAIN -> {
+                                ScreenTransitions.slideFromRight()
+                            }
+
+                            else -> {
+                                ScreenTransitions.crossFade()
+                            }
+                        }
+                    },
+                    modifier = Modifier.fillMaxSize(),
+                    label = "screen_transition"
+                ) { currentScreen ->
+                    when (currentScreen) {
+                        NavigationRoute.PROFILE -> {
+                            ProfileScreen(
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
+
+                        NavigationRoute.ORGANIZATION -> {
+                            OrganizationScreen(
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
+
+                        NavigationRoute.CUSTOMER -> {
+                            CustomerScreen(
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
+
+                        NavigationRoute.CATEGORIES -> {
+                            CategoriesScreen(
+                                modifier = Modifier.fillMaxSize(),
+                                onNavigateToDetail = {
+                                    navController.navigate(NavigationRoute.categoryDetail())
+                                }
+                            )
+                        }
+
+                        NavigationRoute.PRODUCTS -> {
+                            ProductsScreen(
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
+
+                        else -> {
+                            MainContent(
+                                modifier = Modifier.fillMaxSize(),
+                                selectedBottomNavItem = uiState.selectedBottomNavItem,
+                                userRole = uiState.userRole,
+                                navController = navController,
+                                onNavigateToContent = { contentType ->
+                                    viewModel.navigateToMainContent(contentType)
+                                },
+                                onNavigateToProfile = { viewModel.navigateToProfile() },
+                                onNavigateToOrganization = { viewModel.navigateToOrganization() },
+                                onNavigateToCustomer = { viewModel.navigateToCustomer() },
+                                onNavigateToCategories = { viewModel.navigateToCategory() },
+                                onNavigateToProducts = { viewModel.navigateToProducts() },
+                                onScrollAlphaChange = { alpha ->
+                                    viewModel.updateScrollAlpha(alpha)
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        if (uiState.showBottomBar) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+            ) {
                 ArkheGlassBottomBar(
                     selectedItem = uiState.selectedBottomNavItem,
                     onItemSelected = { viewModel.selectBottomNavItem(it) },
@@ -92,138 +223,10 @@ fun MainScreen(
                 )
             }
         }
-    ) { paddingValues ->
-        AnimatedContent(
-            targetState = uiState.currentScreen,
-            transitionSpec = {
-                when {
-                    initialState == NavigationRoute.MAIN && targetState == NavigationRoute.PROFILE -> {
-                        ScreenTransitions.slideFromLeft()
-                    }
-
-                    initialState == NavigationRoute.PROFILE && targetState == NavigationRoute.MAIN -> {
-                        ScreenTransitions.slideFromRight()
-                    }
-
-                    initialState == NavigationRoute.MAIN && targetState == NavigationRoute.ORGANIZATION -> {
-                        ScreenTransitions.slideFromLeft()
-                    }
-
-                    initialState == NavigationRoute.ORGANIZATION && targetState == NavigationRoute.MAIN -> {
-                        ScreenTransitions.slideFromRight()
-                    }
-
-                    initialState == NavigationRoute.MAIN && targetState == NavigationRoute.CUSTOMER -> {
-                        ScreenTransitions.slideFromLeft()
-                    }
-
-                    initialState == NavigationRoute.CUSTOMER && targetState == NavigationRoute.MAIN -> {
-                        ScreenTransitions.slideFromRight()
-                    }
-
-                    initialState == NavigationRoute.MAIN && targetState == NavigationRoute.CATEGORIES -> {
-                        ScreenTransitions.slideFromLeft()
-                    }
-
-                    initialState == NavigationRoute.CATEGORIES && targetState == NavigationRoute.MAIN -> {
-                        ScreenTransitions.slideFromRight()
-                    }
-
-                    initialState == NavigationRoute.CATEGORIES && targetState.startsWith("category_detail") -> {
-                        ScreenTransitions.slideFromLeft()
-                    }
-
-                    initialState.startsWith("category_detail") && targetState == NavigationRoute.CATEGORIES -> {
-                        ScreenTransitions.slideFromRight()
-                    }
-
-                    initialState == NavigationRoute.MAIN && targetState == NavigationRoute.PRODUCTS -> {
-                        ScreenTransitions.slideFromLeft()
-                    }
-
-                    initialState == NavigationRoute.PRODUCTS && targetState == NavigationRoute.MAIN -> {
-                        ScreenTransitions.slideFromRight()
-                    }
-
-                    else -> {
-                        ScreenTransitions.crossFade()
-                    }
-                }
-            },
-            modifier = Modifier.fillMaxSize(),
-            label = "screen_transition"
-        ) { currentScreen ->
-            when (currentScreen) {
-                NavigationRoute.PROFILE -> {
-                    ProfileScreen(
-                        modifier = Modifier.padding(paddingValues)
-                    )
-                }
-
-                NavigationRoute.ORGANIZATION -> {
-                    OrganizationScreen(
-                        modifier = Modifier.padding(paddingValues)
-                    )
-                }
-
-                NavigationRoute.CUSTOMER -> {
-                    CustomerScreen(
-                        modifier = Modifier.padding(paddingValues)
-                    )
-                }
-
-                NavigationRoute.CATEGORIES -> {
-                    CategoriesScreen(
-                        modifier = Modifier.padding(paddingValues),
-                        onNavigateToDetail = {
-                            navController.navigate(NavigationRoute.categoryDetail())
-                        }
-                    )
-                }
-
-                NavigationRoute.PRODUCTS -> {
-                    ProductsScreen(
-                        modifier = Modifier.padding(paddingValues)
-                    )
-                }
-
-                else -> {
-                    MainContent(
-                        modifier = Modifier.padding(paddingValues),
-                        selectedBottomNavItem = uiState.selectedBottomNavItem,
-                        userRole = uiState.userRole,
-                        navController = navController,
-                        onNavigateToContent = { contentType ->
-                            viewModel.navigateToMainContent(contentType)
-                        },
-                        onNavigateToProfile = {
-                            viewModel.navigateToProfile()
-                        },
-                        onNavigateToOrganization = {
-                            viewModel.navigateToOrganization()
-                        },
-                        onNavigateToCustomer = {
-                            viewModel.navigateToCustomer()
-                        },
-                        onNavigateToCategories = {
-                            viewModel.navigateToCategory()
-                        },
-                        onNavigateToProducts = {
-                            viewModel.navigateToProducts()
-                        },
-                        onScrollAlphaChange = { alpha ->
-                            viewModel.updateScrollAlpha(alpha)
-                        }
-                    )
-                }
-            }
-        }
 
         if (uiState.isLoading) {
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
+                modifier = Modifier.fillMaxSize()
             ) {
                 LoadingIndicatorSpinner()
             }

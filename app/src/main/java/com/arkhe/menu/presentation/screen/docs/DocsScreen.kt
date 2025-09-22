@@ -1,12 +1,14 @@
 package com.arkhe.menu.presentation.screen.docs
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.arkhe.menu.utils.ScrollStateManager
 import com.arkhe.menu.utils.rememberManagedScrollState
 
@@ -37,7 +39,8 @@ fun DocsScreen(
 
     LazyColumn(
         state = lazyListState,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(bottom = 20.dp)
     ) {
         item {
             DocsContent(

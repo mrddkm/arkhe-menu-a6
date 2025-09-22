@@ -24,9 +24,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,18 +31,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
-import com.arkhe.menu.presentation.ui.theme.AppTheme
 import com.arkhe.menu.presentation.viewmodel.BottomNavItem
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
@@ -53,119 +44,33 @@ import compose.icons.evaicons.outline.Activity
 import compose.icons.evaicons.outline.Grid
 
 @Composable
-fun ArkheBottomBar(
-    selectedItem: BottomNavItem,
-    onItemSelected: (BottomNavItem) -> Unit
-) {
-    NavigationBar(
-        containerColor = MaterialTheme.colorScheme.surfaceContainer
-    ) {
-        BottomNavItem.entries.forEach { item ->
-            NavigationBarItem(
-                selected = selectedItem == item,
-                onClick = { onItemSelected(item) },
-                icon = {
-                    Icon(
-                        imageVector = getIconForItem(item),
-                        contentDescription = item.title
-                    )
-                },
-                label = { Text(item.title) },
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = MaterialTheme.colorScheme.primary,
-                    selectedTextColor = MaterialTheme.colorScheme.primary,
-                    indicatorColor = MaterialTheme.colorScheme.primaryContainer
-                )
-            )
-        }
-    }
-}
-
-@Composable
-fun ArkheGlassBottomBar(
-    selectedItem: BottomNavItem,
-    onItemSelected: (BottomNavItem) -> Unit
-) {
-    NavigationBar(
-        containerColor = MaterialTheme.colorScheme.surfaceContainer
-    ) {
-        BottomNavItem.entries.forEach { item ->
-            NavigationBarItem(
-                selected = selectedItem == item,
-                onClick = { onItemSelected(item) },
-                icon = {
-                    Icon(
-                        imageVector = getIconForItem(item),
-                        contentDescription = item.title,
-                        tint = if (selectedItem == item) MaterialTheme.colorScheme.primary
-                        else MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                },
-                label = {
-                    Text(
-                        text = item.title,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = if (selectedItem == item) MaterialTheme.colorScheme.primary
-                        else MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                },
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = MaterialTheme.colorScheme.primary,
-                    selectedTextColor = MaterialTheme.colorScheme.primary,
-                    indicatorColor = Color.Transparent
-                )
-            )
-        }
-    }
-}
-
-@Composable
 fun ArkheGlassBottomBar(
     selectedItem: BottomNavItem,
     onItemSelected: (BottomNavItem) -> Unit,
     scrollAlpha: Float = 1f
 ) {
-    val density = LocalDensity.current
-
-    // Animasi alpha berdasarkan scroll
     val animatedAlpha by animateFloatAsState(
         targetValue = scrollAlpha,
         animationSpec = tween(300),
         label = "bottom_bar_alpha"
     )
 
-    // Animasi blur berdasarkan scroll
-    val blurRadius by animateFloatAsState(
-        targetValue = if (scrollAlpha < 0.8f) 10f else 0f,
-        animationSpec = tween(300),
-        label = "blur_radius"
-    )
-
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 12.dp)
-            .zIndex(10f)
     ) {
-        // Background blur dan glass effect
         Card(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(68.dp)
-                .shadow(
-                    elevation = 12.dp,
-                    shape = RoundedCornerShape(34.dp),
-                    ambientColor = Color.Black.copy(alpha = 0.1f),
-                    spotColor = Color.Black.copy(alpha = 0.1f)
-                )
                 .clip(RoundedCornerShape(34.dp))
-                .blur(radius = with(density) { blurRadius.dp })
                 .alpha(animatedAlpha),
             shape = RoundedCornerShape(34.dp),
             colors = CardDefaults.cardColors(
                 containerColor = Color.Transparent
             ),
-            elevation = CardDefaults.cardElevation(0.dp)
+            elevation = CardDefaults.cardElevation(8.dp) // Reduced elevation
         ) {
             Box(
                 modifier = Modifier
@@ -173,15 +78,14 @@ fun ArkheGlassBottomBar(
                     .background(
                         brush = Brush.verticalGradient(
                             colors = listOf(
-                                MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.85f),
-                                MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.9f)
+                                MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.75f),
+                                MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.85f)
                             )
                         )
                     )
             )
         }
 
-        // Navigation items
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -283,16 +187,5 @@ private fun getIconForItem(item: BottomNavItem): ImageVector {
         BottomNavItem.DOCS -> EvaIcons.Outline.Grid
         BottomNavItem.TRIPKEUN -> Icons.Rounded.GroupWork
         BottomNavItem.ACTIVITY -> EvaIcons.Outline.Activity
-    }
-}
-
-@Preview
-@Composable
-fun TripkeunBottomBarPreview() {
-    AppTheme {
-        ArkheBottomBar(
-            selectedItem = BottomNavItem.DOCS,
-            onItemSelected = {}
-        )
     }
 }
