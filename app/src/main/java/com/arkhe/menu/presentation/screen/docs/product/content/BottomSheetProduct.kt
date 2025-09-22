@@ -203,7 +203,10 @@ fun BottomSheetProduct(
                 )
                 Text(
                     text = product.productFullName,
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        fontFamily = sourceCodeProFontFamily,
+                        fontWeight = FontWeight.Normal
+                    ),
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                 )
                 Row(

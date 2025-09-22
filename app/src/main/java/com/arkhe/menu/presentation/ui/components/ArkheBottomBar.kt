@@ -61,7 +61,9 @@ fun ArkheGlassBottomBar(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 12.dp)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .background(Color.Transparent)
+            .clip(RoundedCornerShape(34.dp))
     ) {
         Card(
             modifier = Modifier
@@ -73,7 +75,7 @@ fun ArkheGlassBottomBar(
             colors = CardDefaults.cardColors(
                 containerColor = Color.Transparent
             ),
-            elevation = CardDefaults.cardElevation(8.dp) // Reduced elevation
+            elevation = CardDefaults.cardElevation(8.dp)
         ) {
             Box(
                 modifier = Modifier

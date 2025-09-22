@@ -208,7 +208,7 @@ fun DocsContent(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 16.dp)
+                        .padding(start = 16.dp, top = 0.dp, bottom = 0.dp, end = 16.dp)
                 ) {
                     HeaderSection(
                         title = stringResource(R.string.categories),
@@ -257,7 +257,7 @@ fun DocsContent(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 0.dp, top = 8.dp, bottom = 8.dp, end = 0.dp)
+                        .padding(start = 0.dp, top = 0.dp, bottom = 0.dp, end = 0.dp)
                 ) {
                     HeaderSection(
                         title = stringResource(R.string.products),

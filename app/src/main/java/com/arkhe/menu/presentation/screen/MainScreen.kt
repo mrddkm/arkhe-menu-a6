@@ -220,6 +220,7 @@ fun MainScreen(
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
                     .background(Color.Transparent)
+                    .padding(horizontal = 0.dp, vertical = 0.dp)
             ) {
                 ArkheGlassBottomBar(
                     selectedItem = uiState.selectedBottomNavItem,

@@ -6,9 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -22,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.R
@@ -31,9 +30,10 @@ import com.arkhe.menu.domain.model.ProductGroup
 import com.arkhe.menu.domain.model.ProductInformationLanguage
 import com.arkhe.menu.presentation.components.StatusDevelopmentChip
 import com.arkhe.menu.presentation.ui.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
-import compose.icons.evaicons.outline.ChevronRight
+import compose.icons.evaicons.outline.ArrowIosForward
 
 @Composable
 fun ProductGroup(
@@ -99,17 +99,20 @@ fun ProductListItem(
         ) {
             Column(
                 modifier = Modifier
-                    .padding(0.dp)
+                    .padding(0.dp),
+                verticalArrangement = Arrangement.spacedBy(2.dp)
             ) {
                 Text(
                     text = product.productDestination,
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
-                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = product.productFullName,
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontFamily = sourceCodeProFontFamily,
+                        fontWeight = FontWeight.Normal
+                    ),
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )
             }
@@ -120,9 +123,8 @@ fun ProductListItem(
             ) {
                 StatusDevelopmentChip(product.status)
                 Icon(
-                    imageVector = EvaIcons.Outline.ChevronRight,
+                    imageVector = EvaIcons.Outline.ArrowIosForward,
                     contentDescription = null,
-                    modifier = Modifier.size(24.dp),
                     tint = Color.Gray
                 )
             }
@@ -156,28 +158,6 @@ fun ProductGroupPreview() {
 @Composable
 fun ProductListItemPreview() {
     AppTheme {
-        val sampleProduct = Product(
-            id = "1",
-            productCategoryId = "1",
-            categoryName = "Sample Category",
-            categoryType = "Sample Type",
-            productCode = "Sample Code",
-            productFullName = "Chipkeun #01",
-            productDestination = "Gn. Pangradinan",
-            logo = "",
-            status = "Ready",
-            information = ProductInformationLanguage(
-                indonesian = "Sample Indonesian Information",
-                english = "Sample English Information"
-            ),
-            actionInfo = ProductActionInfo(
-                action = "Sample Action",
-                information = ProductInformationLanguage(
-                    indonesian = "Sample Indonesian Action Information",
-                    english = "Sample English Action Information"
-                )
-            )
-        )
         ProductListItem(
             product = sampleProduct,
             onClick = {}
@@ -185,6 +165,7 @@ fun ProductListItemPreview() {
     }
 }
 
+@Suppress("SpellCheckingInspection")
 val sampleProduct = Product(
     id = "1",
     productCategoryId = "1",

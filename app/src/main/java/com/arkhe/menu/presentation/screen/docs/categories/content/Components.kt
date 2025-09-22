@@ -5,9 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -27,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -94,7 +93,7 @@ fun CategoryItemNonScrollable(
     val backgroundColor = parseColorFromHex(category.colors.backgroundColor)
     val iconColor = parseColorFromHex(category.colors.iconColor)
 
-    Surface(onClick = { onClick() }, shape = MaterialTheme.shapes.small) {
+    Surface(onClick = { onClick() }, shape = MaterialTheme.shapes.large) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -116,12 +115,20 @@ fun CategoryItemNonScrollable(
                     tint = iconColor
                 )
             }
-            Column {
-                Text(text = category.name, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                Spacer(Modifier.height(4.dp))
+            Column(
+                verticalArrangement = Arrangement.spacedBy(2.dp)
+            ) {
+                Text(
+                    text = category.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
                 Text(
                     text = "${category.productCount} Products",
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.labelSmall.copy(
+                        fontWeight = FontWeight.Normal
+                    ),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )

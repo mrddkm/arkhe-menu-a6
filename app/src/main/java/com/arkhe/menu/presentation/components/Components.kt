@@ -55,7 +55,7 @@ fun HeaderContent(
         Text(
             text = title,
             style = MaterialTheme.typography.headlineLarge.copy(
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.SemiBold
             ),
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.padding(vertical = 16.dp, horizontal = 4.dp)
@@ -87,7 +87,7 @@ fun HeaderSection(
         ) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.headlineSmall.copy(
+                style = MaterialTheme.typography.titleLarge.copy(
                     fontWeight = FontWeight.Medium
                 ),
                 color = MaterialTheme.colorScheme.primary
