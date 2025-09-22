@@ -7,8 +7,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.arkhe.menu.presentation.screen.MainScreen
 import com.arkhe.menu.presentation.screen.docs.categories.screen.CategoryDetail
+import com.arkhe.menu.presentation.screen.docs.product.ProductDetailScreen
 
 @Composable
 fun ArkheNavigation(
@@ -50,6 +52,29 @@ fun ArkheNavigation(
 
         composable(NavigationRoute.PRODUCTS) {
             MainScreen(navController = navController)
+        }
+
+        composable(
+            route = NavigationRoute.productDetailRoute(),
+            arguments = listOf(
+                navArgument("productId") {
+                    type = androidx.navigation.NavType.StringType
+                },
+                navArgument("source") {
+                    type = androidx.navigation.NavType.StringType
+                }
+            )
+        ) { backStackEntry ->
+            val productId = backStackEntry.arguments?.getString("productId") ?: ""
+            val source = backStackEntry.arguments?.getString("source") ?: ""
+
+            ProductDetailScreen(
+                productId = productId,
+                source = source,
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
         }
 
         /*tripkeun*/

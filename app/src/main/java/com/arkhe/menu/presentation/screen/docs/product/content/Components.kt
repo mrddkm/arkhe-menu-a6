@@ -20,18 +20,22 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.domain.model.ProductActionInfo
 import com.arkhe.menu.domain.model.ProductInformationLanguage
+import com.arkhe.menu.presentation.navigation.NavigationRoute
 import com.arkhe.menu.presentation.ui.theme.AppTheme
 import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductUI(
+    navController: NavController,
     productList: List<Product>
 ) {
     var selectedProduct by remember { mutableStateOf<Product?>(null) }
@@ -79,7 +83,16 @@ fun ProductUI(
             sheetState = sheetState
         ) {
             BottomSheetProduct(
-                product = selectedProduct!!
+                product = selectedProduct!!,
+                onMoreClick = {
+                    navController.navigate(
+                        NavigationRoute.productDetail(
+                            productId = selectedProduct!!.id,
+                            source = "docs"
+                        )
+                    )
+                    showDetailBottomSheet = false
+                }
             )
         }
     }
@@ -123,6 +136,7 @@ fun ProductCardContent(
 fun ProductUIPreview() {
     AppTheme {
         ProductUI(
+            navController = NavController(LocalContext.current),
             productList = listOf(
                 sampleProduct,
                 sampleProduct,

@@ -28,10 +28,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.arkhe.menu.R
 import com.arkhe.menu.data.remote.api.SafeApiResult
 import com.arkhe.menu.di.appModule
@@ -40,6 +42,7 @@ import com.arkhe.menu.di.domainModule
 import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.presentation.components.EmptyUI
 import com.arkhe.menu.presentation.components.LoadingIndicatorSpinner
+import com.arkhe.menu.presentation.navigation.NavigationRoute
 import com.arkhe.menu.presentation.screen.docs.product.content.BottomSheetProduct
 import com.arkhe.menu.presentation.screen.docs.product.screen.BottomSheetProductGroup
 import com.arkhe.menu.presentation.screen.docs.product.screen.HeaderAccordions
@@ -57,6 +60,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductsScreen(
+    navController: NavController,
     modifier: Modifier = Modifier,
     productViewModel: ProductViewModel = koinViewModel()
 ) {
@@ -234,8 +238,12 @@ fun ProductsScreen(
                                 ProductListItem(
                                     product = product,
                                     onClick = {
-                                        selectedProduct = product
-                                        showDetailBottomSheet = true
+                                        navController.navigate(
+                                            NavigationRoute.productDetail(
+                                                productId = product.id,
+                                                source = "products"
+                                            )
+                                        )
                                     }
                                 )
                             }
@@ -294,7 +302,7 @@ fun ProductsScreen(
 @Preview(showBackground = true)
 @Composable
 fun ProductsScreenPreview() {
-    val previewContext = androidx.compose.ui.platform.LocalContext.current
+    val previewContext = LocalContext.current
     KoinApplicationPreview(
         application = {
             androidContext(previewContext)
@@ -306,7 +314,9 @@ fun ProductsScreenPreview() {
         }
     ) {
         AppTheme {
-            ProductsScreen()
+            ProductsScreen(
+                navController = NavController(previewContext)
+            )
         }
     }
 }

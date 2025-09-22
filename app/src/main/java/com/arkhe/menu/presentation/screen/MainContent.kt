@@ -41,6 +41,7 @@ fun MainContent(
         when (selectedBottomNavItem) {
             BottomNavItem.DOCS -> {
                 DocsScreen(
+                    navController = navController,
                     scrollKey = "main_docs_screen",
                     scrollStateManager = scrollStateManager,
                     onNavigateToProfile = onNavigateToProfile,

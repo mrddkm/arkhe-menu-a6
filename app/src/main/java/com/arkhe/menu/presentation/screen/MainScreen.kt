@@ -30,9 +30,6 @@ import com.arkhe.menu.di.appModule
 import com.arkhe.menu.di.dataModule
 import com.arkhe.menu.di.domainModule
 import com.arkhe.menu.presentation.animation.ScreenTransitions
-import com.arkhe.menu.presentation.ui.components.ArkheGlassBottomBar
-import com.arkhe.menu.presentation.ui.components.ArkheTopBar
-import com.arkhe.menu.presentation.screen.user.UserBottomSheet
 import com.arkhe.menu.presentation.components.LoadingIndicatorSpinner
 import com.arkhe.menu.presentation.navigation.NavigationRoute
 import com.arkhe.menu.presentation.screen.docs.categories.CategoriesScreen
@@ -40,6 +37,9 @@ import com.arkhe.menu.presentation.screen.docs.customer.CustomerScreen
 import com.arkhe.menu.presentation.screen.docs.organization.OrganizationScreen
 import com.arkhe.menu.presentation.screen.docs.product.ProductsScreen
 import com.arkhe.menu.presentation.screen.docs.profile.ProfileScreen
+import com.arkhe.menu.presentation.screen.user.UserBottomSheet
+import com.arkhe.menu.presentation.ui.components.ArkheGlassBottomBar
+import com.arkhe.menu.presentation.ui.components.ArkheTopBar
 import com.arkhe.menu.presentation.ui.theme.AppTheme
 import com.arkhe.menu.presentation.viewmodel.MainViewModel
 import org.koin.android.ext.koin.androidContext
@@ -186,6 +186,7 @@ fun MainScreen(
 
                         NavigationRoute.PRODUCTS -> {
                             ProductsScreen(
+                                navController = navController,
                                 modifier = Modifier.fillMaxSize()
                             )
                         }

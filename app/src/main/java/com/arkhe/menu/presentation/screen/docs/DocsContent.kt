@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.arkhe.menu.R
 import com.arkhe.menu.data.remote.api.SafeApiResult
 import com.arkhe.menu.di.appModule
@@ -54,6 +55,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun DocsContent(
+    navController: NavController,
     onNavigateToProfile: () -> Unit,
     onNavigateToOrganization: () -> Unit = {},
     onNavigateToCustomer: () -> Unit = {},
@@ -279,6 +281,7 @@ fun DocsContent(
 
                             if (products.isNotEmpty()) {
                                 ProductUI(
+                                    navController = navController,
                                     productList = products
                                 )
                             } else {
@@ -341,6 +344,7 @@ fun DocsContentPreview() {
     ) {
         AppTheme {
             DocsContent(
+                navController = NavController(previewContext),
                 onNavigateToProfile = {}
             )
         }

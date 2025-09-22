@@ -13,11 +13,17 @@ object NavigationRoute {
     const val CATEGORIES = "categories"
     const val CATEGORY_DETAIL = "category_detail"
     const val PRODUCTS = "products"
+    const val PRODUCT_DETAIL = "product_detail/{productId}/{source}"
 
     /*Tripkeun*/
 
     /*Activity*/
 
     /*Helper functions for navigation with arguments*/
-    fun categoryDetail(): String = "category_detail"
+    fun categoryDetail(): String = CATEGORY_DETAIL
+
+    fun productDetail(productId: String, source: String): String =
+        "product_detail/$productId/$source"
+
+    fun productDetailRoute(): String = PRODUCT_DETAIL
 }

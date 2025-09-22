@@ -9,12 +9,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.arkhe.menu.utils.ScrollStateManager
 import com.arkhe.menu.utils.rememberManagedScrollState
 
 @SuppressLint("FrequentlyChangingValue")
 @Composable
 fun DocsScreen(
+    navController: NavController,
     scrollKey: String,
     scrollStateManager: ScrollStateManager,
     onNavigateToProfile: () -> Unit,
@@ -44,6 +46,7 @@ fun DocsScreen(
     ) {
         item {
             DocsContent(
+                navController = navController,
                 onNavigateToProfile = onNavigateToProfile,
                 onNavigateToOrganization = onNavigateToOrganization,
                 onNavigateToCustomer = onNavigateToCustomer,
