@@ -36,7 +36,9 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.arkhe.menu.presentation.ui.theme.AppTheme
 import com.arkhe.menu.presentation.viewmodel.BottomNavItem
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
@@ -187,5 +189,18 @@ private fun getIconForItem(item: BottomNavItem): ImageVector {
         BottomNavItem.DOCS -> EvaIcons.Outline.Grid
         BottomNavItem.TRIPKEUN -> Icons.Rounded.GroupWork
         BottomNavItem.ACTIVITY -> EvaIcons.Outline.Activity
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ArkheGlassBottomBarPreview() {
+    var selectedItem = BottomNavItem.DOCS
+    AppTheme {
+        ArkheGlassBottomBar(
+            selectedItem = selectedItem,
+            onItemSelected = { selectedItem = it },
+            scrollAlpha = 1f
+        )
     }
 }

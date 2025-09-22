@@ -3,6 +3,7 @@
 package com.arkhe.menu.presentation.screen
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,6 +19,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -78,6 +80,7 @@ fun MainScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .nestedScroll(scrollBehavior.nestedScrollConnection)
+                .background(Color.Transparent)
         ) {
             ArkheTopBar(
                 scrollBehavior = scrollBehavior,
@@ -90,7 +93,8 @@ fun MainScreen(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(bottom = if (uiState.showBottomBar) 92.dp else 0.dp) // Space untuk bottom bar
+                    .padding(bottom = if (uiState.showBottomBar) 92.dp else 0.dp)
+                    .background(Color.Transparent)
             ) {
                 AnimatedContent(
                     targetState = uiState.currentScreen,
@@ -215,6 +219,7 @@ fun MainScreen(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
+                    .background(Color.Transparent)
             ) {
                 ArkheGlassBottomBar(
                     selectedItem = uiState.selectedBottomNavItem,
