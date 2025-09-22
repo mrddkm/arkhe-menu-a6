@@ -48,6 +48,7 @@ fun MainScreen(
     viewModel: MainViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val scrollAlpha by viewModel.scrollAlpha.collectAsState()
 
     DisposableEffect(navController) {
         val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
@@ -86,7 +87,8 @@ fun MainScreen(
             if (uiState.showBottomBar) {
                 ArkheGlassBottomBar(
                     selectedItem = uiState.selectedBottomNavItem,
-                    onItemSelected = { viewModel.selectBottomNavItem(it) }
+                    onItemSelected = { viewModel.selectBottomNavItem(it) },
+                    scrollAlpha = scrollAlpha
                 )
             }
         }
@@ -208,6 +210,9 @@ fun MainScreen(
                         },
                         onNavigateToProducts = {
                             viewModel.navigateToProducts()
+                        },
+                        onScrollAlphaChange = { alpha ->
+                            viewModel.updateScrollAlpha(alpha)
                         }
                     )
                 }

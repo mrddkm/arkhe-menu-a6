@@ -29,6 +29,7 @@ fun MainContent(
     onNavigateToCustomer: (() -> Unit),
     onNavigateToCategories: (() -> Unit),
     onNavigateToProducts: (() -> Unit),
+    onScrollAlphaChange: (Float) -> Unit = {}
 ) {
     val scrollStateManager: ScrollStateManager = koinInject()
 
@@ -46,7 +47,8 @@ fun MainContent(
                     onNavigateToOrganization = onNavigateToOrganization,
                     onNavigateToCustomer = onNavigateToCustomer,
                     onNavigateToCategories = onNavigateToCategories,
-                    onNavigateToProducts = onNavigateToProducts
+                    onNavigateToProducts = onNavigateToProducts,
+                    onScrollAlphaChange = onScrollAlphaChange
                 )
             }
 

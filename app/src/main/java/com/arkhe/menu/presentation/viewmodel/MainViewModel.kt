@@ -20,6 +20,9 @@ class MainViewModel(
     private val _uiState = MutableStateFlow(MainUiState())
     val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
 
+    private val _scrollAlpha = MutableStateFlow(1f)
+    val scrollAlpha: StateFlow<Float> = _scrollAlpha.asStateFlow()
+
     init {
         initializeApp()
     }
@@ -139,6 +142,10 @@ class MainViewModel(
         super.onCleared()
         scrollStateManager.clearAllScrollStates()
     }
+
+    fun updateScrollAlpha(alpha: Float) {
+        _scrollAlpha.value = alpha.coerceIn(0.4f, 1f) // Batasi alpha antara 0.4f dan 1f
+    }
 }
 
 data class MainUiState(
@@ -150,7 +157,8 @@ data class MainUiState(
     val currentContentType: String = "",
     val currentScreen: String = NavigationRoute.MAIN,
     val isLoading: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val scrollAlpha: Float = 1f
 )
 
 enum class BottomNavItem(val title: String) {
