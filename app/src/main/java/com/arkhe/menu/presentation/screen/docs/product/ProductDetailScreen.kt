@@ -1,5 +1,3 @@
-@file:Suppress("SpellCheckingInspection")
-
 package com.arkhe.menu.presentation.screen.docs.product
 
 import android.net.Uri
@@ -45,12 +43,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.arkhe.menu.R
 import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.domain.model.ProductActionInfo
 import com.arkhe.menu.domain.model.ProductInformationLanguage
 import com.arkhe.menu.presentation.components.StatusDevelopmentChip
+import com.arkhe.menu.presentation.navigation.NavigationRoute
 import com.arkhe.menu.presentation.ui.theme.AppTheme
 import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
 import com.arkhe.menu.presentation.viewmodel.ProductViewModel
@@ -69,6 +69,7 @@ fun ProductDetailScreen(
     productId: String,
     source: String,
     onBackClick: () -> Unit,
+    navController: NavController? = null,
     productViewModel: ProductViewModel = koinViewModel(),
     imagePath: String? = null
 ) {
@@ -77,6 +78,59 @@ fun ProductDetailScreen(
 
     LaunchedEffect(productId) {
         product = productViewModel.getProductById(productId)
+    }
+
+    val handleBackNavigation: () -> Unit = {
+        navController?.let { nav ->
+            val popSuccess = when (source) {
+                "products" -> {
+                    nav.popBackStack(NavigationRoute.PRODUCTS, inclusive = false)
+                }
+
+                "docs" -> {
+                    nav.popBackStack(NavigationRoute.MAIN, inclusive = false)
+                }
+
+                else -> {
+                    nav.popBackStack()
+                }
+            }
+
+            if (!popSuccess) {
+                when (source) {
+                    "products" -> {
+                        nav.navigate(NavigationRoute.PRODUCTS) {
+                            popUpTo(NavigationRoute.MAIN) {
+                                inclusive = false
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+
+                    "docs" -> {
+                        nav.navigate(NavigationRoute.MAIN) {
+                            popUpTo(NavigationRoute.MAIN) {
+                                inclusive = false
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+
+                    else -> {
+                        nav.navigate(NavigationRoute.MAIN) {
+                            popUpTo(0) { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    }
+                }
+            }
+        } ?: run {
+            onBackClick()
+        }
     }
 
     Scaffold(
@@ -90,7 +144,7 @@ fun ProductDetailScreen(
                     )
                 },
                 actions = {
-                    IconButton(onClick = onBackClick) {
+                    IconButton(onClick = handleBackNavigation) {
                         Icon(
                             imageVector = EvaIcons.Outline.Close,
                             contentDescription = "Close",
@@ -247,7 +301,6 @@ private fun ProductDetailContent(
                 }
             }
 
-            // Product Info
             Column(
                 modifier = Modifier.weight(1f)
             ) {
@@ -296,7 +349,6 @@ private fun ProductDetailContent(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Product Information
         val informationText = remember(showEnglish, product.information) {
             when {
                 showEnglish && product.information.english.isNotBlank() ->
@@ -342,8 +394,7 @@ private fun ProductDetailContent(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Action Information if available
-        product.actionInfo?.information?.let { actionInfo ->
+        product.actionInfo.information.let { actionInfo ->
             val actionText = remember(showEnglish, actionInfo) {
                 when {
                     showEnglish && actionInfo.english.isNotBlank() ->
@@ -397,7 +448,7 @@ private fun ProductDetailContent(
 @Preview(showBackground = true)
 @Composable
 fun ProductDetailScreenPreview() {
-    val sampleProduct = Product(
+    @Suppress("SpellCheckingInspection") val sampleProduct = Product(
         id = "rtg6wm5iijqC5WIl",
         productCategoryId = "SRS",
         categoryName = "Series",

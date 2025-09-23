@@ -1,9 +1,8 @@
-@file:Suppress("SpellCheckingInspection")
-
 package com.arkhe.menu.presentation.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -55,24 +54,74 @@ fun ArkheNavigation(
         }
 
         composable(
-            route = NavigationRoute.productDetailRoute(),
+            route = NavigationRoute.PRODUCT_DETAIL,
             arguments = listOf(
                 navArgument("productId") {
-                    type = androidx.navigation.NavType.StringType
+                    type = NavType.StringType
+                    nullable = false
                 },
                 navArgument("source") {
-                    type = androidx.navigation.NavType.StringType
+                    type = NavType.StringType
+                    nullable = false
+                    defaultValue = "unknown"
                 }
             )
         ) { backStackEntry ->
             val productId = backStackEntry.arguments?.getString("productId") ?: ""
-            val source = backStackEntry.arguments?.getString("source") ?: ""
+            val source = backStackEntry.arguments?.getString("source") ?: "unknown"
 
             ProductDetailScreen(
                 productId = productId,
                 source = source,
+                navController = navController,
                 onBackClick = {
-                    navController.popBackStack()
+                    val popSuccess = when (source) {
+                        "products" -> {
+                            navController.popBackStack(NavigationRoute.PRODUCTS, false)
+                        }
+
+                        "docs" -> {
+                            navController.popBackStack(NavigationRoute.MAIN, false)
+                        }
+
+                        else -> {
+                            navController.popBackStack()
+                        }
+                    }
+
+                    if (!popSuccess) {
+                        when (source) {
+                            "products" -> {
+                                navController.navigate(NavigationRoute.PRODUCTS) {
+                                    popUpTo(NavigationRoute.MAIN) {
+                                        inclusive = false
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            }
+
+                            "docs" -> {
+                                navController.navigate(NavigationRoute.MAIN) {
+                                    popUpTo(NavigationRoute.MAIN) {
+                                        inclusive = false
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            }
+
+                            else -> {
+                                navController.navigate(NavigationRoute.MAIN) {
+                                    popUpTo(0) {
+                                        inclusive = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            }
+                        }
+                    }
                 }
             )
         }
