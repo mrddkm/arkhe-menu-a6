@@ -7,6 +7,7 @@ object NavigationRoute {
     const val MAIN = "main"
 
     /*Docs*/
+    const val DOCS = "docs"
     const val PROFILE = "profile"
     const val ORGANIZATION = "organization"
     const val CUSTOMER = "customer"

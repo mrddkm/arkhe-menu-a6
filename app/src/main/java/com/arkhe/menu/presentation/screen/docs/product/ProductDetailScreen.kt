@@ -26,8 +26,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -57,8 +55,9 @@ import com.arkhe.menu.presentation.viewmodel.ProductViewModel
 import com.arkhe.menu.utils.Constants
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_RESEARCH
 import compose.icons.EvaIcons
+import compose.icons.evaicons.Fill
 import compose.icons.evaicons.Outline
-import compose.icons.evaicons.outline.Close
+import compose.icons.evaicons.fill.CloseCircle
 import compose.icons.evaicons.outline.Globe
 import org.koin.androidx.compose.koinViewModel
 import java.io.File
@@ -83,11 +82,11 @@ fun ProductDetailScreen(
     val handleBackNavigation: () -> Unit = {
         navController?.let { nav ->
             val popSuccess = when (source) {
-                "products" -> {
+                NavigationRoute.PRODUCTS -> {
                     nav.popBackStack(NavigationRoute.PRODUCTS, inclusive = false)
                 }
 
-                "docs" -> {
+                NavigationRoute.DOCS -> {
                     nav.popBackStack(NavigationRoute.MAIN, inclusive = false)
                 }
 
@@ -98,7 +97,7 @@ fun ProductDetailScreen(
 
             if (!popSuccess) {
                 when (source) {
-                    "products" -> {
+                    NavigationRoute.PRODUCTS -> {
                         nav.navigate(NavigationRoute.PRODUCTS) {
                             popUpTo(NavigationRoute.MAIN) {
                                 inclusive = false
@@ -109,7 +108,7 @@ fun ProductDetailScreen(
                         }
                     }
 
-                    "docs" -> {
+                    NavigationRoute.DOCS -> {
                         nav.navigate(NavigationRoute.MAIN) {
                             popUpTo(NavigationRoute.MAIN) {
                                 inclusive = false
@@ -133,31 +132,7 @@ fun ProductDetailScreen(
         }
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "Product Detail",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                },
-                actions = {
-                    IconButton(onClick = handleBackNavigation) {
-                        Icon(
-                            imageVector = EvaIcons.Outline.Close,
-                            contentDescription = "Close",
-                            tint = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
-            )
-        }
-    ) { paddingValues ->
+    Scaffold { paddingValues ->
         product?.let { productData ->
             ProductDetailContent(
                 product = productData,
@@ -166,7 +141,8 @@ fun ProductDetailScreen(
                 onLanguageToggle = { showEnglish = !showEnglish },
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
+                    .padding(paddingValues),
+                onHandleBackNavigation = handleBackNavigation
             )
         } ?: Box(
             modifier = Modifier
@@ -189,7 +165,8 @@ private fun ProductDetailContent(
     imagePath: String?,
     showEnglish: Boolean,
     onLanguageToggle: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onHandleBackNavigation: () -> Unit = { }
 ) {
     val finalImagePath = product.localImagePath ?: imagePath
 
@@ -198,16 +175,18 @@ private fun ProductDetailContent(
             .verticalScroll(rememberScrollState())
             .padding(16.dp)
     ) {
-        // Header with language toggle
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (product.information.indonesian.isNotEmpty() &&
-                product.information.english.isNotEmpty()
-            ) {
-                Spacer(Modifier.width(48.dp))
+            IconButton(onClick = onHandleBackNavigation) {
+                Icon(
+                    imageVector = EvaIcons.Fill.CloseCircle,
+                    contentDescription = null,
+                    modifier = Modifier.size(32.dp),
+                    tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
+                )
             }
             Text(
                 text = Constants.Product.PRODUCT_LABEL,
@@ -222,13 +201,13 @@ private fun ProductDetailContent(
                     if (showEnglish) {
                         Icon(
                             imageVector = EvaIcons.Outline.Globe,
-                            contentDescription = "Toggle Language English",
+                            contentDescription = null,
                             modifier = Modifier.size(24.dp),
                         )
                     } else {
                         Image(
                             painter = painterResource(R.drawable.ic_id_indonesia),
-                            contentDescription = "Toggle Language Indonesia",
+                            contentDescription = null,
                             modifier = Modifier
                                 .size(24.dp)
                                 .border(0.5.dp, Color.LightGray, shape = CircleShape),
@@ -242,13 +221,11 @@ private fun ProductDetailContent(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Product header with image and basic info
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Product Image
             Box(
                 modifier = Modifier
                     .size(80.dp)
