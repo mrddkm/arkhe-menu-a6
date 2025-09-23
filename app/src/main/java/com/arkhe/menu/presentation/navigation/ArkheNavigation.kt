@@ -9,7 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.arkhe.menu.presentation.screen.MainScreen
 import com.arkhe.menu.presentation.screen.docs.categories.screen.CategoryDetail
-import com.arkhe.menu.presentation.screen.docs.product.ProductDetailScreen
+import com.arkhe.menu.presentation.screen.docs.product.detail.ProductDetailScreen
 
 @Composable
 fun ArkheNavigation(

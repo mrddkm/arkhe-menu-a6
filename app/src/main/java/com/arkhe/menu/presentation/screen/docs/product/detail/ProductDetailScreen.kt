@@ -1,4 +1,4 @@
-package com.arkhe.menu.presentation.screen.docs.product
+package com.arkhe.menu.presentation.screen.docs.product.detail
 
 import android.net.Uri
 import androidx.compose.foundation.Image
@@ -47,10 +47,8 @@ import com.arkhe.menu.R
 import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.domain.model.ProductActionInfo
 import com.arkhe.menu.domain.model.ProductInformationLanguage
-import com.arkhe.menu.presentation.components.StatusDevelopmentChip
 import com.arkhe.menu.presentation.navigation.NavigationRoute
 import com.arkhe.menu.presentation.ui.theme.AppTheme
-import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
 import com.arkhe.menu.presentation.viewmodel.ProductViewModel
 import com.arkhe.menu.utils.Constants
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_RESEARCH
@@ -169,14 +167,13 @@ private fun ProductDetailContent(
     onHandleBackNavigation: () -> Unit = { }
 ) {
     val finalImagePath = product.localImagePath ?: imagePath
-
     Column(
-        modifier = modifier
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp)
+        modifier = modifier.padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -218,13 +215,10 @@ private fun ProductDetailContent(
                 Spacer(Modifier.width(48.dp))
             }
         }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Box(
                 modifier = Modifier
@@ -277,149 +271,120 @@ private fun ProductDetailContent(
                     }
                 }
             }
-
             Column(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(2.dp)
             ) {
                 Text(
-                    text = product.productDestination,
+                    text = "“${product.productDestination}”",
                     style = MaterialTheme.typography.headlineMedium,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold
                 )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = product.productFullName,
-                    style = MaterialTheme.typography.bodyLarge.copy(
-                        fontFamily = sourceCodeProFontFamily,
-                        fontWeight = FontWeight.Normal
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                DetailAccordions(
+                    title = product.productFullName,
+                    product = product
                 )
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(
-                    horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = product.productCode,
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            fontFamily = sourceCodeProFontFamily,
-                            fontWeight = FontWeight.Normal
-                        ),
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "${product.categoryName}/${product.categoryType}",
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            fontFamily = sourceCodeProFontFamily,
-                            fontWeight = FontWeight.Normal
-                        ),
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    StatusDevelopmentChip(product.status)
-                }
             }
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
-
-        val informationText = remember(showEnglish, product.information) {
-            when {
-                showEnglish && product.information.english.isNotBlank() ->
-                    product.information.english
-
-                product.information.indonesian.isNotBlank() ->
-                    product.information.indonesian
-
-                product.information.english.isNotBlank() ->
-                    product.information.english
-
-                else -> "No information available"
-            }
-        }
-
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant
-            ),
-            shape = RoundedCornerShape(12.dp)
+        Column(
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .fillMaxWidth()
+                .padding(top = 12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp)
-            ) {
-                Text(
-                    text = "Information",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(bottom = 12.dp)
-                )
-                Text(
-                    text = informationText,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    lineHeight = MaterialTheme.typography.bodyLarge.lineHeight
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        product.actionInfo.information.let { actionInfo ->
-            val actionText = remember(showEnglish, actionInfo) {
+            val informationText = remember(showEnglish, product.information) {
                 when {
-                    showEnglish && actionInfo.english.isNotBlank() ->
-                        actionInfo.english
+                    showEnglish && product.information.english.isNotBlank() ->
+                        product.information.english
 
-                    actionInfo.indonesian.isNotBlank() ->
-                        actionInfo.indonesian
+                    product.information.indonesian.isNotBlank() ->
+                        product.information.indonesian
 
-                    actionInfo.english.isNotBlank() ->
-                        actionInfo.english
+                    product.information.english.isNotBlank() ->
+                        product.information.english
 
-                    else -> null
+                    else -> "No information available"
                 }
             }
-
-            actionText?.let { text ->
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
-                    ),
-                    shape = RoundedCornerShape(12.dp)
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                ),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp)
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(20.dp)
-                    ) {
-                        Text(
-                            text = "Additional Information",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.padding(bottom = 12.dp)
-                        )
-                        Text(
-                            text = text,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            lineHeight = MaterialTheme.typography.bodyLarge.lineHeight
-                        )
-                    }
+                    Text(
+                        text = informationText,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        lineHeight = MaterialTheme.typography.bodyLarge.lineHeight
+                    )
                 }
             }
-        }
 
-        Spacer(modifier = Modifier.height(32.dp))
+//        Spacer(modifier = Modifier.height(24.dp))
+
+//        product.actionInfo.information.let { actionInfo ->
+//            val actionText = remember(showEnglish, actionInfo) {
+//                when {
+//                    showEnglish && actionInfo.english.isNotBlank() ->
+//                        actionInfo.english
+//
+//                    actionInfo.indonesian.isNotBlank() ->
+//                        actionInfo.indonesian
+//
+//                    actionInfo.english.isNotBlank() ->
+//                        actionInfo.english
+//
+//                    else -> null
+//                }
+//            }
+//
+//            actionText?.let { text ->
+//                Card(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    colors = CardDefaults.cardColors(
+//                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
+//                    ),
+//                    shape = RoundedCornerShape(12.dp)
+//                ) {
+//                    Column(
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .padding(20.dp)
+//                    ) {
+//                        Text(
+//                            text = "Additional Information",
+//                            style = MaterialTheme.typography.titleMedium,
+//                            fontWeight = FontWeight.SemiBold,
+//                            color = MaterialTheme.colorScheme.primary,
+//                            modifier = Modifier.padding(bottom = 12.dp)
+//                        )
+//                        Text(
+//                            text = text,
+//                            style = MaterialTheme.typography.bodyLarge,
+//                            color = MaterialTheme.colorScheme.onSurface,
+//                            lineHeight = MaterialTheme.typography.bodyLarge.lineHeight
+//                        )
+//                    }
+//                }
+//            }
+//        }
+        }
+        Spacer(modifier = Modifier.height(16.dp))
     }
+
+
 }
 
 @Preview(showBackground = true)
@@ -436,8 +401,8 @@ fun ProductDetailScreenPreview() {
         logo = "",
         status = STATISTICS_RESEARCH,
         information = ProductInformationLanguage(
-            indonesian = "Lorem Ipsum adalah contoh teks atau dummy dalam industri percetakan dan penataan huruf atau typesetting. Lorem Ipsum telah menjadi standar contoh teks sejak tahun 1500an, saat seorang tukang cetak yang tidak dikenal mengambil sebuah kumpulan teks dan mengacaknya untuk membuat sebuah buku contoh huruf. Ia tidak hanya bertahan selama 5 abad, tapi juga telah beralih ke penataan huruf elektronik, tanpa ada perubahan apapun.",
-            english = "Lorem ipsum dolor sit amet consectetur adipiscing elit. Sit amet consectetur adipiscing elit quisque faucibus ex. Adipiscing elit quisque faucibus ex sapien vitae pellentesque. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante."
+            indonesian = "Indonesia Lorem Ipsum adalah contoh teks atau dummy dalam industri percetakan dan penataan huruf atau typesetting. Lorem Ipsum telah menjadi standar contoh teks sejak tahun 1500an, saat seorang tukang cetak yang tidak dikenal mengambil sebuah kumpulan teks dan mengacaknya untuk membuat sebuah buku contoh huruf. Ia tidak hanya bertahan selama 5 abad, tapi juga telah beralih ke penataan huruf elektronik, tanpa ada perubahan apapun. Lorem Ipsum adalah contoh teks atau dummy dalam industri percetakan dan penataan huruf atau typesetting. Lorem Ipsum telah menjadi standar contoh teks sejak tahun 1500an, saat seorang tukang cetak yang tidak dikenal mengambil sebuah kumpulan teks dan mengacaknya untuk membuat sebuah buku contoh huruf. Ia tidak hanya bertahan selama 5 abad, tapi juga telah beralih ke penataan huruf elektronik, tanpa ada perubahan apapun. Lorem Ipsum adalah contoh teks atau dummy dalam industri percetakan dan penataan huruf atau typesetting. Lorem Ipsum telah menjadi standar contoh teks sejak tahun 1500an, saat seorang tukang cetak yang tidak dikenal mengambil sebuah kumpulan teks dan mengacaknya untuk membuat sebuah buku contoh huruf. Ia tidak hanya bertahan selama 5 abad, tapi juga telah beralih ke penataan huruf elektronik, tanpa ada perubahan apapun. Lorem Ipsum adalah contoh teks atau dummy dalam industri percetakan dan penataan huruf atau typesetting. Lorem Ipsum telah menjadi standar contoh teks sejak tahun 1500an, saat seorang tukang cetak yang tidak dikenal mengambil sebuah kumpulan teks dan mengacaknya untuk membuat sebuah buku contoh huruf. Ia tidak hanya bertahan selama 5 abad, tapi juga telah beralih ke penataan huruf elektronik, tanpa ada perubahan apapun.",
+            english = "English Lorem Ipsum adalah contoh teks atau dummy dalam industri percetakan dan penataan huruf atau typesetting. Lorem Ipsum telah menjadi standar contoh teks sejak tahun 1500an, saat seorang tukang cetak yang tidak dikenal mengambil sebuah kumpulan teks dan mengacaknya untuk membuat sebuah buku contoh huruf. Ia tidak hanya bertahan selama 5 abad, tapi juga telah beralih ke penataan huruf elektronik, tanpa ada perubahan apapun. Lorem Ipsum adalah contoh teks atau dummy dalam industri percetakan dan penataan huruf atau typesetting. Lorem Ipsum telah menjadi standar contoh teks sejak tahun 1500an, saat seorang tukang cetak yang tidak dikenal mengambil sebuah kumpulan teks dan mengacaknya untuk membuat sebuah buku contoh huruf. Ia tidak hanya bertahan selama 5 abad, tapi juga telah beralih ke penataan huruf elektronik, tanpa ada perubahan apapun. Lorem Ipsum adalah contoh teks atau dummy dalam industri percetakan dan penataan huruf atau typesetting. Lorem Ipsum telah menjadi standar contoh teks sejak tahun 1500an, saat seorang tukang cetak yang tidak dikenal mengambil sebuah kumpulan teks dan mengacaknya untuk membuat sebuah buku contoh huruf. Ia tidak hanya bertahan selama 5 abad, tapi juga telah beralih ke penataan huruf elektronik, tanpa ada perubahan apapun. Lorem Ipsum adalah contoh teks atau dummy dalam industri percetakan dan penataan huruf atau typesetting. Lorem Ipsum telah menjadi standar contoh teks sejak tahun 1500an, saat seorang tukang cetak yang tidak dikenal mengambil sebuah kumpulan teks dan mengacaknya untuk membuat sebuah buku contoh huruf. Ia tidak hanya bertahan selama 5 abad, tapi juga telah beralih ke penataan huruf elektronik, tanpa ada perubahan apapun."
         ),
         actionInfo = ProductActionInfo(
             action = "product",

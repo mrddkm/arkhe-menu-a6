@@ -25,12 +25,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.R
 import com.arkhe.menu.domain.model.Product
-import com.arkhe.menu.domain.model.ProductActionInfo
 import com.arkhe.menu.domain.model.ProductGroup
-import com.arkhe.menu.domain.model.ProductInformationLanguage
 import com.arkhe.menu.presentation.components.StatusDevelopmentChip
 import com.arkhe.menu.presentation.ui.theme.AppTheme
 import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
+import com.arkhe.menu.utils.sampleProduct
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.ArrowIosForward
@@ -164,27 +163,3 @@ fun ProductListItemPreview() {
         )
     }
 }
-
-@Suppress("SpellCheckingInspection")
-val sampleProduct = Product(
-    id = "1",
-    productCategoryId = "1",
-    categoryName = "Sample Category",
-    categoryType = "Sample Type",
-    productCode = "Sample Code",
-    productFullName = "Chipkeun #01",
-    productDestination = "Gn. Pangradinan",
-    logo = "",
-    status = "Ready",
-    information = ProductInformationLanguage(
-        indonesian = "Sample Indonesian Information",
-        english = "Sample English Information"
-    ),
-    actionInfo = ProductActionInfo(
-        action = "Sample Action",
-        information = ProductInformationLanguage(
-            indonesian = "Sample Indonesian Action Information",
-            english = "Sample English Action Information"
-        )
-    )
-)
