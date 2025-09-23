@@ -220,7 +220,7 @@ fun DocsContent(
                     when (categoriesState) {
                         is SafeApiResult.Loading -> {
                             LoadingIndicatorSpinner(
-                                message = stringResource(R.string.profile)
+                                message = stringResource(R.string.categories)
                             )
                         }
 
@@ -271,7 +271,7 @@ fun DocsContent(
                     when (productsState) {
                         is SafeApiResult.Loading -> {
                             LoadingIndicatorSpinner(
-                                message = stringResource(R.string.profile)
+                                message = stringResource(R.string.products)
                             )
                         }
 
