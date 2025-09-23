@@ -1,5 +1,3 @@
-@file:Suppress("SpellCheckingInspection")
-
 package com.arkhe.menu.presentation.ui.components
 
 import androidx.compose.animation.core.animateDpAsState
@@ -37,13 +35,31 @@ fun ArkheTopBar(
     isInMainContent: Boolean,
     currentContentType: String,
     onBackClick: () -> Unit,
-    onUserIconClick: () -> Unit
+    onUserIconClick: () -> Unit,
+    alwaysShowWhenInContent: Boolean = true
 ) {
-    val overlap = scrollBehavior.state.overlappedFraction.coerceIn(0f, 1f)
+    val overlap = when {
+        isInMainContent && alwaysShowWhenInContent -> {
+            maxOf(0.3f, scrollBehavior.state.overlappedFraction.coerceIn(0f, 1f))
+        }
 
-    val targetBlur = (16f * overlap).dp
+        else -> {
+            scrollBehavior.state.overlappedFraction.coerceIn(0f, 1f)
+        }
+    }
+
+    val targetBlur = if (isInMainContent && alwaysShowWhenInContent) {
+        (8f * (overlap - 0.3f).coerceAtLeast(0f) / 0.7f).dp
+    } else {
+        (16f * overlap).dp
+    }
     val animatedBlur by animateDpAsState(targetValue = targetBlur)
-    val targetAlpha = 0.8f * overlap
+
+    val targetAlpha = if (isInMainContent && alwaysShowWhenInContent) {
+        0.25f + (0.65f * overlap)
+    } else {
+        0.8f * overlap
+    }
     val animatedAlpha by animateFloatAsState(targetValue = targetAlpha)
 
     TopAppBar(
@@ -75,7 +91,7 @@ fun ArkheTopBar(
                 }
             }
         },
-        colors = TopAppBarDefaults.largeTopAppBarColors(
+        colors = TopAppBarDefaults.mediumTopAppBarColors(
             containerColor = Color.Transparent,
             scrolledContainerColor = Color.Transparent
         ),
