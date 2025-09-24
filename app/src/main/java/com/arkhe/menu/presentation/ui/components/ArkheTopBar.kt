@@ -76,7 +76,7 @@ fun ArkheTopBar(
                         imageVector = EvaIcons.Outline.ArrowIosBack,
                         contentDescription = null,
                         modifier = Modifier.fillMaxSize(),
-                        tint = MaterialTheme.colorScheme.primary
+                        tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
             }

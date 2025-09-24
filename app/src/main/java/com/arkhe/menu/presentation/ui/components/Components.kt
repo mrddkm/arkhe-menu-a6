@@ -9,9 +9,11 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -20,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -40,6 +43,7 @@ import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_INITIATION
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_READY
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_RESEARCH
 import com.arkhe.menu.utils.getDevelopmentColor
+import com.arkhe.menu.utils.sampleProduct
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Fill
 import compose.icons.evaicons.Outline
@@ -100,12 +104,24 @@ fun HeaderSection(
             Icon(
                 imageVector = EvaIcons.Outline.ArrowIosForward,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
+                tint = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
             )
         }
     }
+}
+
+@Composable
+fun HeaderLabel(
+    label: String
+) {
+    Text(
+        text = label,
+        style = MaterialTheme.typography.titleMedium,
+        fontWeight = FontWeight.Medium,
+        color = MaterialTheme.colorScheme.onSurface
+    )
 }
 
 @Composable
@@ -220,7 +236,7 @@ fun StatusDevelopmentChip(
 }
 
 @Composable
-fun LanguageIconEn(){
+fun LanguageIconEn() {
     Icon(
         imageVector = EvaIcons.Outline.Globe,
         contentDescription = null,
@@ -230,7 +246,7 @@ fun LanguageIconEn(){
 }
 
 @Composable
-fun LanguageIconId(){
+fun LanguageIconId() {
     Image(
         painter = painterResource(R.drawable.ic_id_indonesia),
         contentDescription = null,
@@ -240,6 +256,90 @@ fun LanguageIconId(){
     )
 }
 
+@Composable
+fun ProductInfoItem(
+    label: String = "",
+    value: String? = null,
+    valueCompose: @Composable (() -> Unit)? = null,
+    useHorizontalDivider: Boolean = true
+) {
+    Column(
+        modifier = Modifier.padding(start = 24.dp, bottom = 6.dp)
+    ) {
+        if (useHorizontalDivider) {
+            HorizontalDivider(
+                thickness = 1.dp,
+                color = Color.Gray.copy(alpha = 0.2f)
+            )
+        }
+        Spacer(modifier = Modifier.height(6.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 4.dp, bottom = 4.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Box(
+                modifier = Modifier.padding(end = 24.dp)
+            ) {
+                if (value != null) {
+                    Text(
+                        text = value,
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            fontFamily = sourceCodeProFontFamily,
+                            fontWeight = FontWeight.Normal
+                        ),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                } else if (valueCompose != null) {
+                    valueCompose()
+                }
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ProductInfoItemPreview() {
+    AppTheme {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                ProductInfoItem(
+                    label = "Status",
+                    valueCompose = { StatusDevelopmentChip(sampleProduct.status) },
+                    useHorizontalDivider = false
+                )
+                ProductInfoItem(
+                    label = "Code",
+                    value = sampleProduct.productCode,
+                    useHorizontalDivider = true
+                )
+                ProductInfoItem(
+                    label = "Category",
+                    value = sampleProduct.categoryName,
+                    useHorizontalDivider = true
+                )
+            }
+        }
+    }
+}
+
+/*
 @Preview(showBackground = true)
 @Composable
 fun HeaderScreenPreview() {
@@ -267,4 +367,4 @@ fun MoreSectionPreview() {
     AppTheme {
         MoreSection(onMoreClick = {})
     }
-}
+}*/

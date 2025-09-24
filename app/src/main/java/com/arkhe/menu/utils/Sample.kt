@@ -3,7 +3,9 @@
 package com.arkhe.menu.utils
 
 import com.arkhe.menu.domain.model.Product
-import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_RESEARCH
+import com.arkhe.menu.domain.model.ProductActionInfo
+import com.arkhe.menu.domain.model.ProductInformationLanguage
+import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_READY
 
 val sampleProduct = Product(
     id = "rtg6wm5iijqC5WIl",
@@ -12,18 +14,29 @@ val sampleProduct = Product(
     categoryType = "Regular",
     productCode = "MN04",
     productFullName = "Mountain Series #04",
+    productTagLine = "Goes to Papandayan",
     productDestination = "Gn. Papandayan",
     logo = "",
-    status = STATISTICS_RESEARCH,
-    information = com.arkhe.menu.domain.model.ProductInformationLanguage(
+    status = STATISTICS_READY,
+    hikeDistance = "8390",
+    hikeDuration = "08:13",
+    hikeElevationGain = "467",
+    hikeAltitude = "2665",
+    hikeLevelId = "4",
+    hikeLevelName = "Moderate",
+    hikeLevelInformation = ProductInformationLanguage(
+        indonesian = "Tingkat Menengah (Moderate): Level ini menantang pendaki yang sudah memiliki pengalaman dan kondisi fisik yang lebih baik. Jalur pendakiannya bisa lebih bervariasi, seperti melewati medan yang berbatu, akar pohon, atau tanjakan yang lebih curam. Durasi pendakiannya bisa lebih dari satu hari, seringkali memerlukan bermalam di alam terbuka. Pendaki mungkin perlu membawa perlengkapan yang lebih lengkap, termasuk tenda, kompor, dan perlengkapan navigasi. Terkadang, ada juga jalur yang memerlukan sedikit penggunaan tali atau alat bantu lain, tapi tidak terlalu rumit.",
+        english = "Moderate Level: This level challenges hikers who already have some experience and better physical condition. The climbing path can be more varied, such as traversing rocky terrain, tree roots, or steeper inclines. The duration of the climb can be more than one day, often requiring an overnight stay outdoors. Hikers may need to bring more complete gear, including a tent, stove, and navigation equipment. Sometimes, there are also paths that require a little use of ropes or other tools, but are not overly complex."
+    ),
+    information = ProductInformationLanguage(
         indonesian = "Lorem Ipsum adalah contoh teks atau dummy dalam industri percetakan dan penataan huruf atau typesetting. Lorem Ipsum telah menjadi standar contoh teks sejak tahun 1500an",
         english = "Lorem ipsum dolor sit amet consectetur adipiscing elit. Sit amet consectetur adipiscing elit quisque faucibus ex. Adipiscing elit quisque faucibus ex sapien vitae pellentesque."
     ),
-    actionInfo = com.arkhe.menu.domain.model.ProductActionInfo(
+    actionInfo = ProductActionInfo(
         action = "product",
-        information = com.arkhe.menu.domain.model.ProductInformationLanguage(
-            indonesian = "Lorem Ipsum hanyalah contoh teks dalam industri percetakan dan penataan huruf. Lorem Ipsum telah menjadi contoh teks standar industri sejak tahun 1500-an.",
-            english = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s."
+        information = ProductInformationLanguage(
+            indonesian = "Lorem Ipsum hanyalah contoh teks dalam industri percetakan dan penataan huruf.",
+            english = "Lorem Ipsum is simply dummy text of the printing and typesetting industry."
         )
     ),
     localImagePath = null

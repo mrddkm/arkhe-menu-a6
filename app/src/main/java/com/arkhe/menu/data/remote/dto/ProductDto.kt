@@ -24,9 +24,18 @@ data class ProductDataDto(
     val categoryType: String,
     val productCode: String,
     val productFullName: String,
+    val productTagLine: String,
     val productDestination: String,
     val logo: String,
     val status: String,
+    val hikeDistance: String,
+    val hikeDuration: String,
+    val hikeElevationGain: String,
+    val hikeAltitude: String,
+    val hikeLevelId: String,
+    val hikeLevelName: String,
+    val hikeLevelInformationId: String,
+    val hikeLevelInformationEn: String,
     val informationId: String,
     val informationEn: String
 )
@@ -38,13 +47,6 @@ data class ProductInfoDto(
     val actionInformationEn: String
 ) {
     companion object {
-        @Suppress("Unused")
-        fun empty() = ProductInfoDto(
-            action = "",
-            actionInformationId = "",
-            actionInformationEn = ""
-        )
-
         fun parseError() = ProductInfoDto(
             action = "parse_error",
             actionInformationId = "JSON parsing failed",

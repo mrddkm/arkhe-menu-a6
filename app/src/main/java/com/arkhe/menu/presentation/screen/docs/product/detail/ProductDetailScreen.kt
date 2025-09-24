@@ -16,10 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -45,8 +42,6 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.arkhe.menu.R
 import com.arkhe.menu.domain.model.Product
-import com.arkhe.menu.domain.model.ProductActionInfo
-import com.arkhe.menu.domain.model.ProductInformationLanguage
 import com.arkhe.menu.presentation.navigation.NavigationRoute
 import com.arkhe.menu.presentation.ui.components.LanguageIconEn
 import com.arkhe.menu.presentation.ui.components.LanguageIconId
@@ -54,7 +49,7 @@ import com.arkhe.menu.presentation.ui.theme.AppTheme
 import com.arkhe.menu.presentation.ui.theme.montserratFontFamily
 import com.arkhe.menu.presentation.viewmodel.ProductViewModel
 import com.arkhe.menu.utils.Constants
-import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_RESEARCH
+import com.arkhe.menu.utils.sampleProduct
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.Close
@@ -312,76 +307,20 @@ private fun ProductDetailContent(
                     else -> "No information available"
                 }
             }
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                ),
-                shape = RoundedCornerShape(12.dp)
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
-                    Text(
-                        text = informationText,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
-                        textAlign = TextAlign.Left
-                    )
-                }
+                Text(
+                    text = informationText,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
+                    textAlign = TextAlign.Left
+                )
             }
-
-//        Spacer(modifier = Modifier.height(24.dp))
-
-//        product.actionInfo.information.let { actionInfo ->
-//            val actionText = remember(showEnglish, actionInfo) {
-//                when {
-//                    showEnglish && actionInfo.english.isNotBlank() ->
-//                        actionInfo.english
-//
-//                    actionInfo.indonesian.isNotBlank() ->
-//                        actionInfo.indonesian
-//
-//                    actionInfo.english.isNotBlank() ->
-//                        actionInfo.english
-//
-//                    else -> null
-//                }
-//            }
-//
-//            actionText?.let { text ->
-//                Card(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    colors = CardDefaults.cardColors(
-//                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
-//                    ),
-//                    shape = RoundedCornerShape(12.dp)
-//                ) {
-//                    Column(
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .padding(20.dp)
-//                    ) {
-//                        Text(
-//                            text = "Additional Information",
-//                            style = MaterialTheme.typography.titleMedium,
-//                            fontWeight = FontWeight.SemiBold,
-//                            color = MaterialTheme.colorScheme.primary,
-//                            modifier = Modifier.padding(bottom = 12.dp)
-//                        )
-//                        Text(
-//                            text = text,
-//                            style = MaterialTheme.typography.bodyLarge,
-//                            color = MaterialTheme.colorScheme.onSurface,
-//                            lineHeight = MaterialTheme.typography.bodyLarge.lineHeight
-//                        )
-//                    }
-//                }
-//            }
-//        }
         }
         Spacer(modifier = Modifier.height(16.dp))
     }
@@ -392,29 +331,6 @@ private fun ProductDetailContent(
 @Preview(showBackground = true)
 @Composable
 fun ProductDetailScreenPreview() {
-    @Suppress("SpellCheckingInspection") val sampleProduct = Product(
-        id = "rtg6wm5iijqC5WIl",
-        productCategoryId = "SRS",
-        categoryName = "Series",
-        categoryType = "Regular",
-        productCode = "MN04",
-        productFullName = "Mountain Series #04",
-        productDestination = "Gn. Papandayan",
-        logo = "",
-        status = STATISTICS_RESEARCH,
-        information = ProductInformationLanguage(
-            indonesian = "Indonesia Lorem Ipsum adalah contoh teks atau dummy dalam industri percetakan dan penataan huruf atau typesetting. Lorem Ipsum telah menjadi standar contoh teks sejak tahun 1500an, saat seorang tukang cetak yang tidak dikenal mengambil sebuah kumpulan teks dan mengacaknya untuk membuat sebuah buku contoh huruf. Ia tidak hanya bertahan selama 5 abad, tapi juga telah beralih ke penataan huruf elektronik, tanpa ada perubahan apapun. Lorem Ipsum adalah contoh teks atau dummy dalam industri percetakan dan penataan huruf atau typesetting. Lorem Ipsum telah menjadi standar contoh teks sejak tahun 1500an, saat seorang tukang cetak yang tidak dikenal mengambil sebuah kumpulan teks dan mengacaknya untuk membuat sebuah buku contoh huruf. Ia tidak hanya bertahan selama 5 abad, tapi juga telah beralih ke penataan huruf elektronik, tanpa ada perubahan apapun. Lorem Ipsum adalah contoh teks atau dummy dalam industri percetakan dan penataan huruf atau typesetting. Lorem Ipsum telah menjadi standar contoh teks sejak tahun 1500an, saat seorang tukang cetak yang tidak dikenal mengambil sebuah kumpulan teks dan mengacaknya untuk membuat sebuah buku contoh huruf. Ia tidak hanya bertahan selama 5 abad, tapi juga telah beralih ke penataan huruf elektronik, tanpa ada perubahan apapun. Lorem Ipsum adalah contoh teks atau dummy dalam industri percetakan dan penataan huruf atau typesetting. Lorem Ipsum telah menjadi standar contoh teks sejak tahun 1500an, saat seorang tukang cetak yang tidak dikenal mengambil sebuah kumpulan teks dan mengacaknya untuk membuat sebuah buku contoh huruf. Ia tidak hanya bertahan selama 5 abad, tapi juga telah beralih ke penataan huruf elektronik, tanpa ada perubahan apapun.",
-            english = "English Lorem Ipsum adalah contoh teks atau dummy dalam industri percetakan dan penataan huruf atau typesetting. Lorem Ipsum telah menjadi standar contoh teks sejak tahun 1500an, saat seorang tukang cetak yang tidak dikenal mengambil sebuah kumpulan teks dan mengacaknya untuk membuat sebuah buku contoh huruf. Ia tidak hanya bertahan selama 5 abad, tapi juga telah beralih ke penataan huruf elektronik, tanpa ada perubahan apapun. Lorem Ipsum adalah contoh teks atau dummy dalam industri percetakan dan penataan huruf atau typesetting. Lorem Ipsum telah menjadi standar contoh teks sejak tahun 1500an, saat seorang tukang cetak yang tidak dikenal mengambil sebuah kumpulan teks dan mengacaknya untuk membuat sebuah buku contoh huruf. Ia tidak hanya bertahan selama 5 abad, tapi juga telah beralih ke penataan huruf elektronik, tanpa ada perubahan apapun. Lorem Ipsum adalah contoh teks atau dummy dalam industri percetakan dan penataan huruf atau typesetting. Lorem Ipsum telah menjadi standar contoh teks sejak tahun 1500an, saat seorang tukang cetak yang tidak dikenal mengambil sebuah kumpulan teks dan mengacaknya untuk membuat sebuah buku contoh huruf. Ia tidak hanya bertahan selama 5 abad, tapi juga telah beralih ke penataan huruf elektronik, tanpa ada perubahan apapun. Lorem Ipsum adalah contoh teks atau dummy dalam industri percetakan dan penataan huruf atau typesetting. Lorem Ipsum telah menjadi standar contoh teks sejak tahun 1500an, saat seorang tukang cetak yang tidak dikenal mengambil sebuah kumpulan teks dan mengacaknya untuk membuat sebuah buku contoh huruf. Ia tidak hanya bertahan selama 5 abad, tapi juga telah beralih ke penataan huruf elektronik, tanpa ada perubahan apapun."
-        ),
-        actionInfo = ProductActionInfo(
-            action = "product",
-            information = ProductInformationLanguage(
-                indonesian = "Lorem Ipsum hanyalah contoh teks dalam industri percetakan dan penataan huruf. Lorem Ipsum telah menjadi contoh teks standar industri sejak tahun 1500-an, ketika pencetak yang tidak dikenal mengambil galley jenis dan merombaknya untuk membuat buku spesimen jenis.",
-                english = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book."
-            )
-        ),
-        localImagePath = null
-    )
     AppTheme {
         ProductDetailContent(
             product = sampleProduct,

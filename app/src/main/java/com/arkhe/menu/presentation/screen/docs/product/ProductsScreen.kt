@@ -7,16 +7,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -40,12 +40,12 @@ import com.arkhe.menu.di.appModule
 import com.arkhe.menu.di.dataModule
 import com.arkhe.menu.di.domainModule
 import com.arkhe.menu.domain.model.Product
-import com.arkhe.menu.presentation.ui.components.EmptyUI
-import com.arkhe.menu.presentation.ui.components.LoadingIndicatorSpinner
 import com.arkhe.menu.presentation.navigation.NavigationRoute
 import com.arkhe.menu.presentation.screen.docs.product.screen.BottomSheetProductGroup
 import com.arkhe.menu.presentation.screen.docs.product.screen.HeaderAccordions
 import com.arkhe.menu.presentation.screen.docs.product.screen.ProductListItem
+import com.arkhe.menu.presentation.ui.components.EmptyUI
+import com.arkhe.menu.presentation.ui.components.LoadingIndicatorSpinner
 import com.arkhe.menu.presentation.ui.theme.AppTheme
 import com.arkhe.menu.presentation.viewmodel.ProductViewModel
 import compose.icons.EvaIcons
@@ -188,7 +188,9 @@ fun ProductsScreen(
                                 ) {
                                     Icon(
                                         imageVector = EvaIcons.Outline.Info,
-                                        contentDescription = null
+                                        contentDescription = null,
+                                        modifier = Modifier.size(24.dp),
+                                        tint = MaterialTheme.colorScheme.primary
                                     )
                                 }
                                 Button(
@@ -203,7 +205,9 @@ fun ProductsScreen(
                                 ) {
                                     Icon(
                                         imageVector = EvaIcons.Outline.Refresh,
-                                        contentDescription = null
+                                        contentDescription = null,
+                                        modifier = Modifier.size(24.dp),
+                                        tint = MaterialTheme.colorScheme.primary
                                     )
                                 }
                             }
@@ -223,10 +227,8 @@ fun ProductsScreen(
                 }
 
                 selectedGroup?.let { group ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+                    Surface(
+                        shape = MaterialTheme.shapes.medium
                     ) {
                         LazyColumn(
                             verticalArrangement = Arrangement.spacedBy(0.dp)

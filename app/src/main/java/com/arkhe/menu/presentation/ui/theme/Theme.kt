@@ -19,46 +19,61 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 
 private val lightScheme = lightColorScheme(
-    primary = PrimaryLight,
-    background = BackgroundLight,
-    surface = SurfaceLight,
+    primary = BlueLight,
     onPrimary = Color.White,
+
+    background = BackgroundLight,
     onBackground = TextPrimaryLight,
+
+    surface = SurfaceLight,
     onSurface = TextPrimaryLight,
-    onSurfaceVariant = TextSecondaryLight,
-    outline = DividerLight,
+
     error = ErrorLight,
+    onError = Color.White,
 )
 
 private val darkScheme = darkColorScheme(
-    primary = PrimaryDark,
-    background = BackgroundDark,
-    surface = SurfaceDark,
+    primary = BlueDark,
     onPrimary = Color.White,
+
+    background = BackgroundDark,
     onBackground = TextPrimaryDark,
+
+    surface = SurfaceDark,
     onSurface = TextPrimaryDark,
-    onSurfaceVariant = TextSecondaryDark,
-    outline = DividerDark,
+
     error = ErrorDark,
+    onError = Color.Black,
 )
 
 /*
 private val lightScheme = lightColorScheme(
-    primary = LightPrimary,
-    onPrimary = LightOnPrimary,
-    surface = LightSurface,
-    onSurface = LightOnSurface,
-    background = LightBackground,
+    primary = PrimaryLight,
+    onPrimary = Color.White,
+    background = BackgroundLight,
+    onBackground = TextPrimaryLight,
+    surface = SurfaceLight,
+    onSurface = TextPrimaryLight,
+    error = ErrorLight,
+    onError = Color.White,
+    onSurfaceVariant = TextSecondaryLight,
+    outline = DividerLight,
 )
 
 private val darkScheme = darkColorScheme(
-    primary = DarkPrimary,
-    onPrimary = DarkOnPrimary,
-    surface = DarkSurface,
-    onSurface = DarkOnSurface,
-    background = DarkBackground,
+    primary = PrimaryDark,
+    onPrimary = Color.White,
+    background = BackgroundDark,
+    onBackground = TextPrimaryDark,
+    surface = SurfaceDark,
+    onSurface = TextPrimaryDark,
+    error = ErrorDark,
+    onError = Color.Black,
+    onSurfaceVariant = TextSecondaryDark,
+    outline = DividerDark,
 )
 */
+
 
 @Composable
 fun AppTheme(

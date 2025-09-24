@@ -7,16 +7,12 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -35,12 +31,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import com.arkhe.menu.R
 import com.arkhe.menu.presentation.screen.docs.categories.content.StatisticItem
+import com.arkhe.menu.presentation.ui.components.LanguageIconEn
+import com.arkhe.menu.presentation.ui.components.LanguageIconId
 import com.arkhe.menu.presentation.viewmodel.CategoryViewModel
 import com.arkhe.menu.utils.Constants.CurrentLanguage.ENGLISH
 import com.arkhe.menu.utils.Constants.CurrentLanguage.INDONESIAN
@@ -53,7 +49,6 @@ import com.arkhe.menu.utils.getDevelopmentColor
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.ArrowIosForward
-import compose.icons.evaicons.outline.Globe
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -82,7 +77,7 @@ fun HeaderAccordions(
                         style = MaterialTheme.typography.headlineSmall.copy(
                             fontWeight = FontWeight.SemiBold
                         ),
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -95,23 +90,9 @@ fun HeaderAccordions(
                                     onClick = { showEnglish = !showEnglish }
                                 ) {
                                     if (showEnglish) {
-                                        Icon(
-                                            imageVector = EvaIcons.Outline.Globe,
-                                            contentDescription = "Toggle Language English",
-                                            modifier = Modifier.size(24.dp),
-                                        )
+                                        LanguageIconEn()
                                     } else {
-                                        Image(
-                                            painter = painterResource(R.drawable.ic_id_indonesia),
-                                            contentDescription = "Toggle Language Indonesia",
-                                            modifier = Modifier
-                                                .size(24.dp)
-                                                .border(
-                                                    0.5.dp,
-                                                    Color.LightGray,
-                                                    shape = CircleShape
-                                                ),
-                                        )
+                                        LanguageIconId()
                                     }
                                 }
                             }
@@ -124,7 +105,7 @@ fun HeaderAccordions(
                                 contentDescription = null,
                                 modifier = Modifier
                                     .rotate(degrees),
-                                tint = Color.Gray
+                                tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }
