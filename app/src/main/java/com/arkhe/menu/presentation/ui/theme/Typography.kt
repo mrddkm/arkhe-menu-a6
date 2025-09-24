@@ -14,6 +14,13 @@ val sourceCodeProFontFamily = FontFamily(
     Font(R.font.source_code_pro_bold, FontWeight.Bold)
 )
 
+val montserratFontFamily = FontFamily(
+    Font(R.font.montserrat_regular, FontWeight.Normal),
+    Font(R.font.montserrat_medium, FontWeight.Medium),
+    Font(R.font.montserrat_semi_bold, FontWeight.SemiBold),
+    Font(R.font.montserrat_bold, FontWeight.Bold)
+)
+
 val montserratAlternatesFontFamily = FontFamily(
     Font(R.font.montserrat_alternates_medium, FontWeight.Medium),
     Font(R.font.montserrat_alternates_bold, FontWeight.Bold)
@@ -25,20 +32,20 @@ val poppinsFontFamily = FontFamily(
     Font(R.font.poppins_light, FontWeight.Light),
     Font(R.font.poppins_medium, FontWeight.Medium),
     Font(R.font.poppins_semi_bold, FontWeight.SemiBold),
-    Font(R.font.poppins_bold, FontWeight.Bold),
+    Font(R.font.poppins_bold, FontWeight.Bold)
 )
 
 val Typography = Typography(
     displayLarge = TextStyle(
         fontFamily = poppinsFontFamily,
-        fontWeight = FontWeight.Bold,
+        fontWeight = FontWeight.SemiBold,
         fontSize = 57.sp,
         lineHeight = 64.sp,
         letterSpacing = 0.sp
     ),
     displayMedium = TextStyle(
         fontFamily = poppinsFontFamily,
-        fontWeight = FontWeight.Bold,
+        fontWeight = FontWeight.SemiBold,
         fontSize = 45.sp,
         lineHeight = 52.sp,
         letterSpacing = 0.sp
