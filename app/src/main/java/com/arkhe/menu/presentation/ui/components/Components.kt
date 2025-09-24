@@ -1,9 +1,11 @@
 @file:Suppress("SpellCheckingInspection")
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.arkhe.menu.presentation.components
+package com.arkhe.menu.presentation.ui.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,10 +28,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.arkhe.menu.R
 import com.arkhe.menu.presentation.ui.theme.AppTheme
 import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_INITIATION
@@ -41,6 +45,7 @@ import compose.icons.evaicons.Fill
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.fill.MoreHorizontal
 import compose.icons.evaicons.outline.ArrowIosForward
+import compose.icons.evaicons.outline.Globe
 
 @Composable
 fun HeaderContent(
@@ -57,8 +62,8 @@ fun HeaderContent(
             style = MaterialTheme.typography.headlineLarge.copy(
                 fontWeight = FontWeight.SemiBold
             ),
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(vertical = 16.dp, horizontal = 4.dp)
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.padding(vertical = 10.dp, horizontal = 4.dp)
         )
     }
 }
@@ -90,7 +95,7 @@ fun HeaderSection(
                 style = MaterialTheme.typography.titleLarge.copy(
                     fontWeight = FontWeight.Medium
                 ),
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.onSurface
             )
             Icon(
                 imageVector = EvaIcons.Outline.ArrowIosForward,
@@ -126,14 +131,14 @@ fun MoreSection(
                 modifier = Modifier
                     .size(24.dp)
                     .clip(CircleShape)
-                    .background(Color.LightGray),
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = EvaIcons.Fill.MoreHorizontal,
                     contentDescription = null,
                     modifier = Modifier.size(20.dp),
-                    tint = Color.DarkGray
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
             Spacer(modifier = Modifier.width(8.dp))
@@ -145,13 +150,13 @@ fun MoreSection(
                 Text(
                     text = "More",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color.DarkGray.copy(alpha = 1.5f)
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Icon(
                     imageVector = EvaIcons.Outline.ArrowIosForward,
                     contentDescription = null,
                     modifier = Modifier.size(24.dp),
-                    tint = Color.Gray
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
         }
@@ -212,6 +217,27 @@ fun StatusDevelopmentChip(
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
         )
     }
+}
+
+@Composable
+fun LanguageIconEn(){
+    Icon(
+        imageVector = EvaIcons.Outline.Globe,
+        contentDescription = null,
+        modifier = Modifier.size(24.dp),
+        tint = MaterialTheme.colorScheme.primary
+    )
+}
+
+@Composable
+fun LanguageIconId(){
+    Image(
+        painter = painterResource(R.drawable.ic_id_indonesia),
+        contentDescription = null,
+        modifier = Modifier
+            .size(22.dp)
+            .border(0.5.dp, MaterialTheme.colorScheme.primary.copy(0.3f), shape = CircleShape),
+    )
 }
 
 @Preview(showBackground = true)

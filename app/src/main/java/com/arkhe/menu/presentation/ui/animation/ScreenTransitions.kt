@@ -1,6 +1,6 @@
 @file:Suppress("SpellCheckingInspection")
 
-package com.arkhe.menu.presentation.animation
+package com.arkhe.menu.presentation.ui.animation
 
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.core.EaseInOut

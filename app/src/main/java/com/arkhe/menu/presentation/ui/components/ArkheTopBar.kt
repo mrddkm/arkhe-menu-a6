@@ -75,7 +75,8 @@ fun ArkheTopBar(
                     Icon(
                         imageVector = EvaIcons.Outline.ArrowIosBack,
                         contentDescription = null,
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 }
             }
@@ -86,7 +87,8 @@ fun ArkheTopBar(
                     Icon(
                         imageVector = Icons.Rounded.AccountCircle,
                         contentDescription = null,
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 }
             }

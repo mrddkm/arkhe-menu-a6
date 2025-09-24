@@ -1,4 +1,4 @@
-package com.arkhe.menu.presentation.components
+package com.arkhe.menu.presentation.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

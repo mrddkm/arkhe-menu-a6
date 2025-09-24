@@ -5,7 +5,6 @@ package com.arkhe.menu.presentation.screen.docs.product.content
 import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,7 +21,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -34,24 +32,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.arkhe.menu.R
 import com.arkhe.menu.domain.model.Product
-import com.arkhe.menu.presentation.components.MoreSection
-import com.arkhe.menu.presentation.components.StatusDevelopmentChip
+import com.arkhe.menu.presentation.ui.components.LanguageIconEn
+import com.arkhe.menu.presentation.ui.components.LanguageIconId
+import com.arkhe.menu.presentation.ui.components.MoreSection
+import com.arkhe.menu.presentation.ui.components.StatusDevelopmentChip
 import com.arkhe.menu.presentation.ui.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.montserratFontFamily
 import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
 import com.arkhe.menu.utils.Constants
 import com.arkhe.menu.utils.sampleProduct
-import compose.icons.EvaIcons
-import compose.icons.evaicons.Outline
-import compose.icons.evaicons.outline.Globe
 import java.io.File
 
 @Composable
@@ -83,7 +81,7 @@ fun BottomSheetProduct(
                 text = Constants.Product.PRODUCT_LABEL,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.primary,
+                color = MaterialTheme.colorScheme.onSurface,
             )
             if (product.information.indonesian.isNotEmpty() && product.information.english.isNotEmpty()
             ) {
@@ -91,19 +89,9 @@ fun BottomSheetProduct(
                     onClick = { showEnglish = !showEnglish }
                 ) {
                     if (showEnglish) {
-                        Icon(
-                            imageVector = EvaIcons.Outline.Globe,
-                            contentDescription = "Toggle Language English",
-                            modifier = Modifier.size(24.dp),
-                        )
+                        LanguageIconEn()
                     } else {
-                        Image(
-                            painter = painterResource(R.drawable.ic_id_indonesia),
-                            contentDescription = "Toggle Language Indonesia",
-                            modifier = Modifier
-                                .size(24.dp)
-                                .border(0.5.dp, Color.LightGray, shape = CircleShape),
-                        )
+                        LanguageIconId()
                     }
                 }
             } else {
@@ -199,8 +187,11 @@ fun BottomSheetProduct(
             ) {
                 Text(
                     text = "“${product.productDestination}”",
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.primary
+                    style = MaterialTheme.typography.headlineSmall.copy(
+                        fontFamily = montserratFontFamily,
+                        fontWeight = FontWeight.SemiBold
+                    ),
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
                     text = product.productFullName,
@@ -208,7 +199,7 @@ fun BottomSheetProduct(
                         fontFamily = sourceCodeProFontFamily,
                         fontWeight = FontWeight.Normal
                     ),
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                 )
                 Row(
                     horizontalArrangement = Arrangement.Start,
@@ -220,7 +211,7 @@ fun BottomSheetProduct(
                             fontFamily = sourceCodeProFontFamily,
                             fontWeight = FontWeight.Normal
                         ),
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
@@ -229,7 +220,7 @@ fun BottomSheetProduct(
                             fontFamily = sourceCodeProFontFamily,
                             fontWeight = FontWeight.Normal
                         ),
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     StatusDevelopmentChip(product.status)
@@ -265,8 +256,10 @@ fun BottomSheetProduct(
             ) {
                 Text(
                     text = informationText,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
+                    textAlign = TextAlign.Left
                 )
             }
         }

@@ -2,7 +2,7 @@ package com.arkhe.menu.presentation.screen.docs.product.detail
 
 import android.net.Uri
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,10 +35,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -48,15 +48,16 @@ import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.domain.model.ProductActionInfo
 import com.arkhe.menu.domain.model.ProductInformationLanguage
 import com.arkhe.menu.presentation.navigation.NavigationRoute
+import com.arkhe.menu.presentation.ui.components.LanguageIconEn
+import com.arkhe.menu.presentation.ui.components.LanguageIconId
 import com.arkhe.menu.presentation.ui.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.montserratFontFamily
 import com.arkhe.menu.presentation.viewmodel.ProductViewModel
 import com.arkhe.menu.utils.Constants
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_RESEARCH
 import compose.icons.EvaIcons
-import compose.icons.evaicons.Fill
 import compose.icons.evaicons.Outline
-import compose.icons.evaicons.fill.CloseCircle
-import compose.icons.evaicons.outline.Globe
+import compose.icons.evaicons.outline.Close
 import org.koin.androidx.compose.koinViewModel
 import java.io.File
 
@@ -178,37 +179,35 @@ private fun ProductDetailContent(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = onHandleBackNavigation) {
-                Icon(
-                    imageVector = EvaIcons.Fill.CloseCircle,
-                    contentDescription = null,
-                    modifier = Modifier.size(32.dp),
-                    tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
-                )
+                Box(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = EvaIcons.Outline.Close,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
             }
             Text(
                 text = Constants.Product.PRODUCT_LABEL,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.primary,
+                color = MaterialTheme.colorScheme.onSurface,
             )
             if (product.information.indonesian.isNotEmpty() &&
                 product.information.english.isNotEmpty()
             ) {
                 IconButton(onClick = onLanguageToggle) {
                     if (showEnglish) {
-                        Icon(
-                            imageVector = EvaIcons.Outline.Globe,
-                            contentDescription = null,
-                            modifier = Modifier.size(24.dp),
-                        )
+                        LanguageIconEn()
                     } else {
-                        Image(
-                            painter = painterResource(R.drawable.ic_id_indonesia),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(24.dp)
-                                .border(0.5.dp, Color.LightGray, shape = CircleShape),
-                        )
+                        LanguageIconId()
                     }
                 }
             } else {
@@ -279,9 +278,11 @@ private fun ProductDetailContent(
             ) {
                 Text(
                     text = "“${product.productDestination}”",
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.headlineMedium.copy(
+                        fontFamily = montserratFontFamily,
+                        fontWeight = FontWeight.SemiBold
+                    ),
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 DetailAccordions(
                     title = product.productFullName,
@@ -321,13 +322,14 @@ private fun ProductDetailContent(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(20.dp)
+                        .padding(16.dp)
                 ) {
                     Text(
                         text = informationText,
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurface,
-                        lineHeight = MaterialTheme.typography.bodyLarge.lineHeight
+                        lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
+                        textAlign = TextAlign.Left
                     )
                 }
             }

@@ -32,11 +32,11 @@ import com.arkhe.menu.di.domainModule
 import com.arkhe.menu.domain.model.Category
 import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.domain.model.Profile
-import com.arkhe.menu.presentation.components.EmptyUI
-import com.arkhe.menu.presentation.components.ErrorUI
-import com.arkhe.menu.presentation.components.HeaderContent
-import com.arkhe.menu.presentation.components.HeaderSection
-import com.arkhe.menu.presentation.components.LoadingIndicatorSpinner
+import com.arkhe.menu.presentation.ui.components.EmptyUI
+import com.arkhe.menu.presentation.ui.components.ErrorUI
+import com.arkhe.menu.presentation.ui.components.HeaderContent
+import com.arkhe.menu.presentation.ui.components.HeaderSection
+import com.arkhe.menu.presentation.ui.components.LoadingIndicatorSpinner
 import com.arkhe.menu.presentation.screen.docs.categories.content.CategoriesNonScrollableUI
 import com.arkhe.menu.presentation.screen.docs.organization.ext.Organization
 import com.arkhe.menu.presentation.screen.docs.organization.ext.PersonilDetailBottomSheet

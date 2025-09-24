@@ -2,9 +2,7 @@
 
 package com.arkhe.menu.presentation.screen.docs.categories.content
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,17 +32,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.arkhe.menu.R
 import com.arkhe.menu.domain.model.Category
 import com.arkhe.menu.domain.model.CategoryActionInfo
 import com.arkhe.menu.domain.model.CategoryColors
 import com.arkhe.menu.domain.model.CategoryInformationLanguage
-import com.arkhe.menu.presentation.components.MoreSection
 import com.arkhe.menu.presentation.screen.docs.categories.screen.parseColorFromHex
+import com.arkhe.menu.presentation.ui.components.LanguageIconEn
+import com.arkhe.menu.presentation.ui.components.LanguageIconId
+import com.arkhe.menu.presentation.ui.components.MoreSection
 import com.arkhe.menu.presentation.ui.theme.AppTheme
 import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
 import com.arkhe.menu.utils.Constants
@@ -56,9 +54,7 @@ import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_TOTAL
 import com.arkhe.menu.utils.getDevelopmentColor
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Fill
-import compose.icons.evaicons.Outline
 import compose.icons.evaicons.fill.Droplet
-import compose.icons.evaicons.outline.Globe
 
 @Composable
 fun BottomSheetCategory(
@@ -97,19 +93,9 @@ fun BottomSheetCategory(
                     onClick = { showEnglish = !showEnglish }
                 ) {
                     if (showEnglish) {
-                        Icon(
-                            imageVector = EvaIcons.Outline.Globe,
-                            contentDescription = "Toggle Language English",
-                            modifier = Modifier.size(24.dp),
-                        )
+                        LanguageIconEn()
                     } else {
-                        Image(
-                            painter = painterResource(R.drawable.ic_id_indonesia),
-                            contentDescription = "Toggle Language Indonesia",
-                            modifier = Modifier
-                                .size(24.dp)
-                                .border(0.5.dp, Color.LightGray, shape = CircleShape),
-                        )
+                        LanguageIconId()
                     }
                 }
             } else {

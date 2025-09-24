@@ -5,17 +5,14 @@ package com.arkhe.menu.presentation.screen.docs.profile.screen
 import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,7 +23,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -34,15 +30,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.arkhe.menu.R
-import com.arkhe.menu.domain.model.ProfileActionInfo
 import com.arkhe.menu.domain.model.Profile
+import com.arkhe.menu.domain.model.ProfileActionInfo
 import com.arkhe.menu.domain.model.ProfileInformationLanguage
 import com.arkhe.menu.domain.model.SocialMedia
+import com.arkhe.menu.presentation.ui.components.LanguageIconEn
+import com.arkhe.menu.presentation.ui.components.LanguageIconId
 import com.arkhe.menu.presentation.ui.theme.AppTheme
 import com.arkhe.menu.utils.DateUtils.formatBirthDate
-import compose.icons.EvaIcons
-import compose.icons.evaicons.Outline
-import compose.icons.evaicons.outline.Globe
 import java.io.File
 
 @Composable
@@ -72,10 +67,6 @@ fun ProfileDescription(profile: Profile) {
                     imagePath.let {
                         val file = File(it)
                         if (file.exists()) {
-                            Log.d(
-                                "ProfileDescription",
-                                "📂 imagePath=$imagePath size=${file.length()} bytes"
-                            )
                             Uri.fromFile(file)
                         } else null
                     }
@@ -130,19 +121,9 @@ fun ProfileDescription(profile: Profile) {
                         onClick = { showEnglish = !showEnglish }
                     ) {
                         if (showEnglish) {
-                            Icon(
-                                imageVector = EvaIcons.Outline.Globe,
-                                contentDescription = "Toggle Language English",
-                                modifier = Modifier.size(24.dp),
-                            )
+                            LanguageIconEn()
                         } else {
-                            Image(
-                                painter = painterResource(R.drawable.ic_id_indonesia),
-                                contentDescription = "Toggle Language Indonesia",
-                                modifier = Modifier
-                                    .size(24.dp)
-                                    .border(0.5.dp, Color.LightGray, shape = CircleShape),
-                            )
+                            LanguageIconId()
                         }
                     }
                 }

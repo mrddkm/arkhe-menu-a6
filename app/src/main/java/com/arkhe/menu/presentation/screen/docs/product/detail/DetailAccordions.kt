@@ -36,7 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.domain.model.Product
-import com.arkhe.menu.presentation.components.StatusDevelopmentChip
+import com.arkhe.menu.presentation.ui.components.StatusDevelopmentChip
 import com.arkhe.menu.presentation.ui.theme.AppTheme
 import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
 import com.arkhe.menu.utils.sampleProduct
@@ -76,14 +76,14 @@ fun DetailAccordions(
                                 fontFamily = sourceCodeProFontFamily,
                                 fontWeight = FontWeight.Normal
                             ),
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                         )
                         Icon(
                             imageVector = EvaIcons.Outline.ChevronRight,
                             contentDescription = null,
                             modifier = Modifier
                                 .rotate(degrees),
-                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 }
@@ -152,8 +152,7 @@ private fun AnimatedVisibilityContent(
 @Composable
 fun AnimatedVisibilityContentPreview() {
     AppTheme {
-        DetailAccordions(
-            title = "Waterfalls Series #3",
+        AnimatedVisibilityContent(
             product = sampleProduct
         )
     }

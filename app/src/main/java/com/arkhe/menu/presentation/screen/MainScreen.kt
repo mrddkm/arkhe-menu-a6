@@ -29,8 +29,8 @@ import androidx.navigation.compose.rememberNavController
 import com.arkhe.menu.di.appModule
 import com.arkhe.menu.di.dataModule
 import com.arkhe.menu.di.domainModule
-import com.arkhe.menu.presentation.animation.ScreenTransitions
-import com.arkhe.menu.presentation.components.LoadingIndicatorSpinner
+import com.arkhe.menu.presentation.ui.animation.ScreenTransitions
+import com.arkhe.menu.presentation.ui.components.LoadingIndicatorSpinner
 import com.arkhe.menu.presentation.navigation.NavigationRoute
 import com.arkhe.menu.presentation.screen.docs.categories.CategoriesScreen
 import com.arkhe.menu.presentation.screen.docs.customer.CustomerScreen
