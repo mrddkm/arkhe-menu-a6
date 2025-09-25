@@ -1,6 +1,7 @@
 package com.arkhe.menu.presentation.screen.docs.product.detail
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,9 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Place
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -29,13 +27,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.domain.model.Product
+import com.arkhe.menu.presentation.ui.components.ErrorIncompleteData
+import com.arkhe.menu.presentation.ui.components.ProductDestinationItem
 import com.arkhe.menu.presentation.ui.components.ProductInfoItem
 import com.arkhe.menu.presentation.ui.components.StatusDevelopmentChip
 import com.arkhe.menu.presentation.ui.theme.AppTheme
 import com.arkhe.menu.utils.sampleProduct
+import compose.icons.EvaIcons
+import compose.icons.evaicons.Outline
+import compose.icons.evaicons.outline.FileText
+import compose.icons.evaicons.outline.Info
+import compose.icons.evaicons.outline.Pin
+import compose.icons.evaicons.outline.RadioButtonOff
 
 @Composable
 fun AnimatedVisibilityTabContent(
@@ -44,8 +51,8 @@ fun AnimatedVisibilityTabContent(
     var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
 
     val tabs = listOf(
-        "Product" to Icons.Default.ShoppingCart,
-        "Destination" to Icons.Default.Place
+        "Product" to EvaIcons.Outline.FileText,
+        "Destination" to EvaIcons.Outline.Pin
     )
 
     Column(
@@ -143,6 +150,12 @@ fun ProductScreen(
                 value = product.categoryType,
                 useHorizontalDivider = true
             )
+            ProductInfoItem(
+                label = "Tagline",
+                value = product.productTagLine,
+                useHorizontalDivider = true,
+                maxLine = 2
+            )
         }
     }
 }
@@ -162,31 +175,82 @@ fun DestinationScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            ProductInfoItem(
-                label = "Altitude",
-                value = product.hikeAltitude,
-                useHorizontalDivider = false
-            )
-            ProductInfoItem(
-                label = "Distance",
-                value = product.hikeDistance,
-                useHorizontalDivider = true
-            )
-            ProductInfoItem(
-                label = "Type",
-                value = product.hikeDuration,
-                useHorizontalDivider = true
-            )
-            ProductInfoItem(
-                label = "Type",
-                value = product.hikeElevationGain,
-                useHorizontalDivider = true
-            )
-            ProductInfoItem(
-                label = "Type",
-                value = product.hikeLevelName,
-                useHorizontalDivider = true
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 4.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(2.dp)
+            ) {
+                Text(
+                    text = "Level",
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        fontWeight = FontWeight.Normal
+                    ),
+                    color = Color.Gray
+                )
+                Row(
+                    modifier = Modifier
+                        .clickable { },
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Text(
+                        text = product.hikeLevelName,
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Normal
+                        ),
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Icon(
+                        imageVector = EvaIcons.Outline.Info,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            }
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    ProductDestinationItem(
+                        modifier = Modifier.weight(1f),
+                        label = "Distance",
+                        value = product.hikeDistance,
+                        icon = EvaIcons.Outline.RadioButtonOff
+                    )
+                    ProductDestinationItem(
+                        modifier = Modifier.weight(1f),
+                        label = "Duration",
+                        value = product.hikeDuration,
+                        icon = EvaIcons.Outline.RadioButtonOff,
+                        isParser = false
+                    )
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    ProductDestinationItem(
+                        modifier = Modifier.weight(1f),
+                        label = "Altitude",
+                        value = product.hikeAltitude,
+                        icon = EvaIcons.Outline.RadioButtonOff
+                    )
+                    ProductDestinationItem(
+                        modifier = Modifier.weight(1f),
+                        label = "Elevation Gain",
+                        value = product.hikeElevationGain,
+                        icon = EvaIcons.Outline.RadioButtonOff
+                    )
+                }
+            }
+            ErrorIncompleteData(product)
         }
     }
 }
@@ -195,7 +259,7 @@ fun DestinationScreen(
 @Composable
 fun RoundedTabsScreenPreview() {
     AppTheme {
-        AnimatedVisibilityTabContent(
+        DestinationScreen(
             sampleProduct
         )
     }

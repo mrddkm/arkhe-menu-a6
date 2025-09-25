@@ -32,8 +32,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -44,14 +46,17 @@ import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_INITIATION
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_READY
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_RESEARCH
+import com.arkhe.menu.utils.DistanceResult
 import com.arkhe.menu.utils.getDevelopmentColor
 import com.arkhe.menu.utils.sampleProduct
+import com.arkhe.menu.utils.toDistanceResult
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Fill
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.fill.MoreHorizontal
 import compose.icons.evaicons.outline.ArrowIosForward
 import compose.icons.evaicons.outline.Globe
+import compose.icons.evaicons.outline.RadioButtonOff
 
 @Composable
 fun HeaderContent(
@@ -270,7 +275,8 @@ fun ProductInfoItem(
     label: String = "",
     value: String? = null,
     valueCompose: @Composable (() -> Unit)? = null,
-    useHorizontalDivider: Boolean = true
+    useHorizontalDivider: Boolean = true,
+    maxLine: Int = 1
 ) {
     Column(
         modifier = Modifier.padding(start = 24.dp, bottom = 6.dp)
@@ -304,6 +310,7 @@ fun ProductInfoItem(
                             fontFamily = sourceCodeProFontFamily,
                             fontWeight = FontWeight.Normal
                         ),
+                        maxLines = maxLine,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 } else if (valueCompose != null) {
@@ -314,7 +321,126 @@ fun ProductInfoItem(
     }
 }
 
+@Composable
+fun ProductDestinationItem(
+    modifier: Modifier = Modifier,
+    label: String,
+    value: String,
+    icon: ImageVector,
+    isParser: Boolean = true
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.size(32.dp),
+            tint = MaterialTheme.colorScheme.primary
+        )
+        Column(
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.spacedBy(2.dp)
+        ) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodySmall.copy(
+                    fontWeight = FontWeight.Normal
+                ),
+                color = Color.Gray
+            )
+            if (isParser) {
+                DistanceText(value)
+            } else {
+                if (value == "00:00"){
+                    Text(
+                        text = "⎯".repeat(3),
+                        color = Color.Red,
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            fontFamily = FontFamily.Monospace
+                        )
+                    )
+                } else {
+                    Text(
+                        text = value,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontFamily = FontFamily.Monospace,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun DistanceText(
+    distanceString: String,
+    modifier: Modifier = Modifier,
+    numberColor: Color = MaterialTheme.colorScheme.onSurface,
+    unitColor: Color = Color.Gray,
+    messageColor: Color = Color.Red,
+    placeholderColor: Color = Color.LightGray
+) {
+    when (val result = distanceString.toDistanceResult()) {
+        is DistanceResult.Hidden -> {
+            Text(
+                text = "⎯".repeat(3),
+                color = placeholderColor,
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontFamily = FontFamily.Monospace
+                ),
+                modifier = modifier
+            )
+        }
+
+        is DistanceResult.Incomplete -> {
+            Text(
+                text = "⎯".repeat(3),
+                color = messageColor,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = modifier
+            )
+        }
+
+        is DistanceResult.Value -> {
+            Row(
+                modifier = modifier,
+                verticalAlignment = Alignment.Bottom
+            ) {
+                Text(
+                    text = result.number,
+                    color = numberColor,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontFamily = FontFamily.Monospace
+                )
+                Text(
+                    text = result.unit,
+                    color = unitColor,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
+    }
+}
+
 @Preview(showBackground = true)
+@Composable
+fun StatusDevelopmentChipPreview() {
+    AppTheme {
+        ProductDestinationItem(
+            label = "Altitude",
+            value = sampleProduct.hikeAltitude,
+            icon = EvaIcons.Outline.RadioButtonOff
+        )
+    }
+}
+
+/*@Preview(showBackground = true)
 @Composable
 fun ProductInfoItemPreview() {
     AppTheme {
@@ -346,7 +472,7 @@ fun ProductInfoItemPreview() {
             }
         }
     }
-}
+}*/
 
 /*
 @Preview(showBackground = true)
