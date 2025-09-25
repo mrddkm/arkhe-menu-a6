@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -194,9 +195,17 @@ fun ProductsScreen(
                                     )
                                 }
                                 Button(
-                                    onClick = { showGroupBottomSheet = true }
+                                    onClick = { showGroupBottomSheet = true },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.primary.copy(
+                                            alpha = 0.3f
+                                        ),
+                                        contentColor = MaterialTheme.colorScheme.primary
+                                    )
                                 ) {
-                                    Text(group.seriesName)
+                                    Text(
+                                        text = group.seriesName
+                                    )
                                 }
                                 IconButton(
                                     onClick = {
@@ -206,7 +215,7 @@ fun ProductsScreen(
                                     Icon(
                                         imageVector = EvaIcons.Outline.Refresh,
                                         contentDescription = null,
-                                        modifier = Modifier.size(24.dp),
+                                        modifier = Modifier.size(22.dp),
                                         tint = MaterialTheme.colorScheme.primary
                                     )
                                 }
@@ -219,7 +228,13 @@ fun ProductsScreen(
                         }
                     } ?: run {
                         Button(
-                            onClick = { showGroupBottomSheet = true }
+                            onClick = { showGroupBottomSheet = true },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary.copy(
+                                    alpha = 0.3f
+                                ),
+                                contentColor = MaterialTheme.colorScheme.primary
+                            )
                         ) {
                             Text(stringResource(R.string.browse_groups))
                         }

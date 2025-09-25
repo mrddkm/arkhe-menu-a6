@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,15 +28,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.domain.model.Product
-import com.arkhe.menu.presentation.ui.components.ProductInfoItem
-import com.arkhe.menu.presentation.ui.components.StatusDevelopmentChip
-import com.arkhe.menu.presentation.ui.theme.AppTheme
 import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
-import com.arkhe.menu.utils.sampleProduct
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.ChevronRight
@@ -95,7 +89,7 @@ fun DetailAccordions(
                     ),
                     exit = shrinkVertically()
                 ) {
-                    AnimatedVisibilityContent(
+                    AnimatedVisibilityTabContent(
                         product = product
                     )
                 }
@@ -104,6 +98,7 @@ fun DetailAccordions(
     }
 }
 
+/*
 @Composable
 private fun AnimatedVisibilityContent(
     product: Product
@@ -151,4 +146,4 @@ fun AnimatedVisibilityContentPreview() {
             product = sampleProduct
         )
     }
-}
+}*/
