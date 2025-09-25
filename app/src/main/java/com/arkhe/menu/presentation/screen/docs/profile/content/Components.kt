@@ -51,7 +51,7 @@ fun ProfileUI(
                     AsyncImage(
                         model = imageModel,
                         contentDescription = "Profile Logo",
-                        modifier = Modifier.size(96.dp),
+                        modifier = Modifier.size(64.dp),
                         placeholder = painterResource(R.drawable.image_outline),
                         error = painterResource(R.drawable.alert_triangle_outline),
                         onError = {
@@ -72,7 +72,7 @@ fun ProfileUI(
                 else -> {
                     Image(
                         painter = painterResource(R.drawable.image_outline),
-                        contentDescription = "Default Logo",
+                        contentDescription = null,
                         modifier = Modifier.size(96.dp)
                     )
                 }
@@ -85,7 +85,7 @@ fun ProfileUI(
                     fontFamily = montserratAlternatesFontFamily,
                     fontWeight = FontWeight.Medium
                 ),
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.onSurface
             )
             Text(
                 text = profile.tagline,

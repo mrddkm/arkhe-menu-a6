@@ -221,7 +221,7 @@ fun ProductsScreen(
                         Button(
                             onClick = { showGroupBottomSheet = true }
                         ) {
-                            Text("Browse Groups")
+                            Text(stringResource(R.string.browse_groups))
                         }
                     }
                 }
@@ -254,7 +254,7 @@ fun ProductsScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         EmptyUI(
-                            message = "Select Product Groups",
+                            message = stringResource(R.string.select_groups),
                             isButtonLoad = false
                         )
                     }

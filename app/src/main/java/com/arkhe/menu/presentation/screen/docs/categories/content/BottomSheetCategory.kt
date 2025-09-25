@@ -15,13 +15,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -40,16 +38,18 @@ import com.arkhe.menu.domain.model.CategoryActionInfo
 import com.arkhe.menu.domain.model.CategoryColors
 import com.arkhe.menu.domain.model.CategoryInformationLanguage
 import com.arkhe.menu.presentation.screen.docs.categories.screen.parseColorFromHex
+import com.arkhe.menu.presentation.ui.components.HeaderLabel
+import com.arkhe.menu.presentation.ui.components.HeaderTitleSecondary
 import com.arkhe.menu.presentation.ui.components.LanguageIconEn
 import com.arkhe.menu.presentation.ui.components.LanguageIconId
 import com.arkhe.menu.presentation.ui.components.MoreSection
 import com.arkhe.menu.presentation.ui.theme.AppTheme
 import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
-import com.arkhe.menu.utils.Constants
+import com.arkhe.menu.utils.Constants.Category.CATEGORY_TITLE
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_INITIATION
-import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_LABEL
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_READY
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_RESEARCH
+import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_TITLE
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_TOTAL
 import com.arkhe.menu.utils.getDevelopmentColor
 import compose.icons.EvaIcons
@@ -81,11 +81,8 @@ fun BottomSheetCategory(
             ) {
                 Spacer(Modifier.width(48.dp))
             }
-            Text(
-                text = Constants.Category.CATEGORY_LABEL,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.primary,
+            HeaderTitleSecondary(
+                title = CATEGORY_TITLE
             )
             if (category.information.indonesian.isNotEmpty() && category.information.english.isNotEmpty()
             ) {
@@ -133,7 +130,7 @@ fun BottomSheetCategory(
                         text = category.name,
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         text = category.type,
@@ -145,40 +142,46 @@ fun BottomSheetCategory(
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Column(
-            modifier = Modifier.padding(8.dp)
+        Surface(
+            shape = MaterialTheme.shapes.large
         ) {
-            Text(
-                text = STATISTICS_LABEL,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+            Column(
+                modifier = Modifier.padding(
+                    start = 32.dp,
+                    end = 32.dp,
+                    top = 16.dp,
+                    bottom = 16.dp
+                ),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                StatisticItem(
-                    label = STATISTICS_TOTAL,
-                    value = category.productCount.toString(),
-                    color = getDevelopmentColor(STATISTICS_TOTAL)
+                HeaderLabel(
+                    label = STATISTICS_TITLE
                 )
-                StatisticItem(
-                    label = STATISTICS_READY,
-                    value = category.ready.toString(),
-                    color = getDevelopmentColor(STATISTICS_READY)
-                )
-                StatisticItem(
-                    label = STATISTICS_RESEARCH,
-                    value = category.research.toString(),
-                    color = getDevelopmentColor(STATISTICS_RESEARCH)
-                )
-                StatisticItem(
-                    label = STATISTICS_INITIATION,
-                    value = category.initiation.toString(),
-                    color = getDevelopmentColor(STATISTICS_INITIATION)
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    StatisticItem(
+                        label = STATISTICS_TOTAL,
+                        value = category.productCount.toString(),
+                        color = getDevelopmentColor(STATISTICS_TOTAL)
+                    )
+                    StatisticItem(
+                        label = STATISTICS_READY,
+                        value = category.ready.toString(),
+                        color = getDevelopmentColor(STATISTICS_READY)
+                    )
+                    StatisticItem(
+                        label = STATISTICS_RESEARCH,
+                        value = category.research.toString(),
+                        color = getDevelopmentColor(STATISTICS_RESEARCH)
+                    )
+                    StatisticItem(
+                        label = STATISTICS_INITIATION,
+                        value = category.initiation.toString(),
+                        color = getDevelopmentColor(STATISTICS_INITIATION)
+                    )
+                }
             }
         }
         Spacer(modifier = Modifier.height(8.dp))
@@ -196,24 +199,16 @@ fun BottomSheetCategory(
                 else -> "No information available"
             }
         }
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant
-            ),
-            shape = RoundedCornerShape(8.dp)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Text(
-                    text = informationText,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
+            Text(
+                text = informationText,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
         }
         Spacer(modifier = Modifier.height(24.dp))
         MoreSection(onMoreClick = {})

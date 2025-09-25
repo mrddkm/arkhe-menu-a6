@@ -36,16 +36,16 @@ object Constants {
     }
 
     object Product {
-        const val PRODUCT_LABEL = "Product"
+        const val PRODUCT_TITLE = "Product"
         const val PRODUCT_GROUP_LABEL = "Product Group"
     }
 
     object Category {
-        const val CATEGORY_LABEL = "Category"
+        const val CATEGORY_TITLE = "Category"
     }
 
     object Statistics {
-        const val STATISTICS_LABEL = "Statistics"
+        const val STATISTICS_TITLE = "Statistics"
         const val STATISTICS_TOTAL = "Total"
         const val STATISTICS_READY = "Ready"
         const val STATISTICS_RESEARCH = "Research"

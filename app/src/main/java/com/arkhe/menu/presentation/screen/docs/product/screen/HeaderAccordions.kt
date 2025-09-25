@@ -44,7 +44,7 @@ import com.arkhe.menu.presentation.viewmodel.ProductViewModel
 import com.arkhe.menu.utils.Constants.CurrentLanguage.ENGLISH
 import com.arkhe.menu.utils.Constants.CurrentLanguage.INDONESIAN
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_INITIATION
-import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_LABEL
+import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_TITLE
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_READY
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_RESEARCH
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_TOTAL
@@ -187,7 +187,7 @@ fun AnimatedVisibilityContent(
                 modifier = Modifier.padding(start = 32.dp, end = 32.dp, top = 16.dp, bottom = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                HeaderLabel(STATISTICS_LABEL)
+                HeaderLabel(STATISTICS_TITLE)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween

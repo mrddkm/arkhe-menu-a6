@@ -190,7 +190,7 @@ private fun ProductDetailContent(
                 }
             }
             Text(
-                text = Constants.Product.PRODUCT_LABEL,
+                text = Constants.Product.PRODUCT_TITLE,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface,
