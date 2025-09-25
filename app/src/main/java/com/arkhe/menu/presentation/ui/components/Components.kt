@@ -32,7 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
@@ -56,7 +56,6 @@ import compose.icons.evaicons.Outline
 import compose.icons.evaicons.fill.MoreHorizontal
 import compose.icons.evaicons.outline.ArrowIosForward
 import compose.icons.evaicons.outline.Globe
-import compose.icons.evaicons.outline.RadioButtonOff
 
 @Composable
 fun HeaderContent(
@@ -326,7 +325,7 @@ fun ProductDestinationItem(
     modifier: Modifier = Modifier,
     label: String,
     value: String,
-    icon: ImageVector,
+    icon: Painter,
     isParser: Boolean = true
 ) {
     Row(
@@ -337,10 +336,10 @@ fun ProductDestinationItem(
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Icon(
-            imageVector = icon,
+            painter = icon,
             contentDescription = null,
             modifier = Modifier.size(32.dp),
-            tint = MaterialTheme.colorScheme.primary
+            tint = Color.Gray
         )
         Column(
             horizontalAlignment = Alignment.Start,
@@ -435,7 +434,7 @@ fun StatusDevelopmentChipPreview() {
         ProductDestinationItem(
             label = "Altitude",
             value = sampleProduct.hikeAltitude,
-            icon = EvaIcons.Outline.RadioButtonOff
+            icon = painterResource(R.drawable.ic_elevation)
         )
     }
 }

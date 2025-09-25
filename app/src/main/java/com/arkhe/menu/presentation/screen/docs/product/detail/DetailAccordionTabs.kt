@@ -27,9 +27,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.arkhe.menu.R
 import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.presentation.ui.components.ErrorIncompleteData
 import com.arkhe.menu.presentation.ui.components.ProductDestinationItem
@@ -42,7 +44,6 @@ import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.FileText
 import compose.icons.evaicons.outline.Info
 import compose.icons.evaicons.outline.Pin
-import compose.icons.evaicons.outline.RadioButtonOff
 
 @Composable
 fun AnimatedVisibilityTabContent(
@@ -222,13 +223,13 @@ fun DestinationScreen(
                         modifier = Modifier.weight(1f),
                         label = "Distance",
                         value = product.hikeDistance,
-                        icon = EvaIcons.Outline.RadioButtonOff
+                        icon = painterResource(R.drawable.ic_distance)
                     )
                     ProductDestinationItem(
                         modifier = Modifier.weight(1f),
                         label = "Duration",
                         value = product.hikeDuration,
-                        icon = EvaIcons.Outline.RadioButtonOff,
+                        icon = painterResource(R.drawable.ic_duration),
                         isParser = false
                     )
                 }
@@ -240,13 +241,13 @@ fun DestinationScreen(
                         modifier = Modifier.weight(1f),
                         label = "Altitude",
                         value = product.hikeAltitude,
-                        icon = EvaIcons.Outline.RadioButtonOff
+                        icon = painterResource(R.drawable.ic_altitude)
                     )
                     ProductDestinationItem(
                         modifier = Modifier.weight(1f),
                         label = "Elevation Gain",
                         value = product.hikeElevationGain,
-                        icon = EvaIcons.Outline.RadioButtonOff
+                        icon = painterResource(R.drawable.ic_elevation)
                     )
                 }
             }
