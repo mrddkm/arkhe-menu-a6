@@ -45,65 +45,70 @@ fun ProductGroup(
     onClick: () -> Unit
 ) {
     val context = LocalContext.current
-
     val representativeProduct = group.products.firstOrNull()
     val imagePath = representativeProduct?.localImagePath
 
-    Row(
+    Column(
         modifier = Modifier
             .clickable { onClick() }
-            .fillMaxWidth()
-            .padding(bottom = 8.dp, top = 4.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(start = 0.dp, top = 8.dp, bottom = 0.dp, end = 0.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Box(
+        Row(
             modifier = Modifier
-                .size(50.dp)
-                .clip(CircleShape),
-            contentAlignment = Alignment.Center
+                .fillMaxWidth()
+                .padding(start = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            if (!imagePath.isNullOrBlank() && File(imagePath).exists()) {
-                AsyncImage(
-                    model = ImageRequest.Builder(context)
-                        .data(File(imagePath))
-                        .crossfade(true)
-                        .build(),
-                    contentDescription = "Product Group Image - ${group.seriesName}",
-                    modifier = Modifier
-                        .size(50.dp)
-                        .clip(CircleShape),
-                    contentScale = ContentScale.Crop,
-                    placeholder = painterResource(R.drawable.image_outline),
-                    fallback = painterResource(R.drawable.alert_triangle_outline),
-                    error = painterResource(R.drawable.alert_triangle_outline)
-                )
-            } else {
-                Image(
-                    painter = painterResource(R.drawable.image_outline),
-                    contentDescription = "Default Product Group Image",
-                    modifier = Modifier
-                        .size(60.dp)
-                        .clip(CircleShape),
-                    contentScale = ContentScale.Crop
+            Box(
+                modifier = Modifier
+                    .size(50.dp)
+                    .clip(CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                if (!imagePath.isNullOrBlank() && File(imagePath).exists()) {
+                    AsyncImage(
+                        model = ImageRequest.Builder(context)
+                            .data(File(imagePath))
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = "Product Group Image - ${group.seriesName}",
+                        modifier = Modifier
+                            .size(50.dp)
+                            .clip(CircleShape),
+                        contentScale = ContentScale.Crop,
+                        placeholder = painterResource(R.drawable.image_outline),
+                        fallback = painterResource(R.drawable.alert_triangle_outline),
+                        error = painterResource(R.drawable.alert_triangle_outline)
+                    )
+                } else {
+                    Image(
+                        painter = painterResource(R.drawable.image_outline),
+                        contentDescription = "Default Product Group Image",
+                        modifier = Modifier
+                            .size(60.dp)
+                            .clip(CircleShape),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 12.dp)
+            ) {
+                Text(
+                    text = group.seriesName,
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
         }
-        Column (
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 12.dp)
-        ) {
-            Text(
-                text = group.seriesName,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            HorizontalDivider(
-                modifier = Modifier.padding(horizontal = 0.dp),
-                thickness = 1.dp,
-                color = Color.Gray.copy(alpha = 0.2f)
-            )
-        }
+        HorizontalDivider(
+            modifier = Modifier.padding(start = 70.dp),
+            thickness = 1.dp,
+            color = Color.Gray.copy(alpha = 0.2f)
+        )
     }
 }
 

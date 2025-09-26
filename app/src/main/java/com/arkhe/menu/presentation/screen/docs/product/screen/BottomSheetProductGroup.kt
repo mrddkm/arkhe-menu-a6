@@ -25,7 +25,7 @@ fun BottomSheetProductGroup(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 0.dp, start = 16.dp, end = 16.dp, bottom = 32.dp),
+            .padding(top = 0.dp, start = 16.dp, end = 16.dp, bottom = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
