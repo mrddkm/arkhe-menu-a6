@@ -19,10 +19,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.arkhe.menu.R
 import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.domain.model.ProductGroup
@@ -33,37 +37,61 @@ import com.arkhe.menu.utils.sampleProduct
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.ArrowIosForward
+import java.io.File
 
 @Composable
 fun ProductGroup(
     group: ProductGroup,
     onClick: () -> Unit
 ) {
+    val context = LocalContext.current
+
+    val representativeProduct = group.products.firstOrNull()
+    val imagePath = representativeProduct?.localImagePath
+
     Row(
         modifier = Modifier
             .clickable { onClick() }
             .fillMaxWidth()
-            .padding(start = 8.dp, top = 8.dp, bottom = 0.dp, end = 0.dp),
+            .padding(bottom = 8.dp, top = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
-                .size(42.dp)
-                .clip(CircleShape)
-                .padding(start = 0.dp, top = 0.dp, bottom = 6.dp, end = 0.dp),
+                .size(50.dp)
+                .clip(CircleShape),
             contentAlignment = Alignment.Center
         ) {
-            Image(
-                painter = painterResource(R.drawable.mn),
-                contentDescription = null,
-                modifier = Modifier.size(42.dp)
-            )
+            if (!imagePath.isNullOrBlank() && File(imagePath).exists()) {
+                AsyncImage(
+                    model = ImageRequest.Builder(context)
+                        .data(File(imagePath))
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = "Product Group Image - ${group.seriesName}",
+                    modifier = Modifier
+                        .size(50.dp)
+                        .clip(CircleShape),
+                    contentScale = ContentScale.Crop,
+                    placeholder = painterResource(R.drawable.image_outline),
+                    fallback = painterResource(R.drawable.alert_triangle_outline),
+                    error = painterResource(R.drawable.alert_triangle_outline)
+                )
+            } else {
+                Image(
+                    painter = painterResource(R.drawable.image_outline),
+                    contentDescription = "Default Product Group Image",
+                    modifier = Modifier
+                        .size(60.dp)
+                        .clip(CircleShape),
+                    contentScale = ContentScale.Crop
+                )
+            }
         }
-        Column(
+        Column (
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 8.dp, top = 10.dp, bottom = 0.dp, end = 0.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .padding(start = 12.dp)
         ) {
             Text(
                 text = group.seriesName,
@@ -77,7 +105,6 @@ fun ProductGroup(
             )
         }
     }
-
 }
 
 @Composable

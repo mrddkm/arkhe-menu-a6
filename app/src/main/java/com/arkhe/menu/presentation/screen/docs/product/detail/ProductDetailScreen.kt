@@ -324,8 +324,6 @@ private fun ProductDetailContent(
         }
         Spacer(modifier = Modifier.height(16.dp))
     }
-
-
 }
 
 @Preview(showBackground = true)
