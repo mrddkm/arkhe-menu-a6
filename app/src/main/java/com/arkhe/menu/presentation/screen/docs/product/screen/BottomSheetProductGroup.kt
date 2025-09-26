@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.domain.model.ProductGroup
 import com.arkhe.menu.presentation.ui.components.HeaderBottomSheet
+import com.arkhe.menu.presentation.ui.components.HeaderLabel
 import com.arkhe.menu.utils.Constants.Product.PRODUCT_GROUP_LABEL
 
 @Composable
@@ -24,8 +25,8 @@ fun BottomSheetProductGroup(
             .padding(top = 0.dp, start = 16.dp, end = 16.dp, bottom = 32.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        HeaderBottomSheet(
-            title = PRODUCT_GROUP_LABEL,
+        HeaderLabel(
+            label = PRODUCT_GROUP_LABEL
         )
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(0.dp)
