@@ -6,7 +6,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.domain.model.ProductGroup
@@ -23,21 +26,26 @@ fun BottomSheetProductGroup(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 0.dp, start = 16.dp, end = 16.dp, bottom = 32.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         HeaderLabel(
             label = PRODUCT_GROUP_LABEL
         )
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(0.dp)
+        Surface(
+            shape = MaterialTheme.shapes.medium
         ) {
-            items(productGroups) { group ->
-                ProductGroup(
-                    group = group,
-                    onClick = {
-                        onProductGroupClick(group)
-                    }
-                )
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(0.dp)
+            ) {
+                items(productGroups) { group ->
+                    ProductGroup(
+                        group = group,
+                        onClick = {
+                            onProductGroupClick(group)
+                        }
+                    )
+                }
             }
         }
     }
