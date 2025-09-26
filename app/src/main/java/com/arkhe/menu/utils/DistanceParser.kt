@@ -9,7 +9,7 @@ sealed class DistanceResult {
 }
 
 @SuppressLint("DefaultLocale")
-fun String.toDistanceResult(): DistanceResult {
+fun String.toDistanceResult(isMdpl: Boolean = false): DistanceResult {
     val trimmed = this.trim()
 
     return when (trimmed) {
@@ -20,6 +20,12 @@ fun String.toDistanceResult(): DistanceResult {
             when {
                 meter == null || meter < 0 -> DistanceResult.Hidden
                 meter == 0 -> DistanceResult.Incomplete
+                isMdpl -> {
+                    DistanceResult.Value(
+                        number = meter.toString(),
+                        unit = "mdpl"
+                    )
+                }
                 meter >= 1000 -> {
                     val km = meter / 1000.0
                     DistanceResult.Value(

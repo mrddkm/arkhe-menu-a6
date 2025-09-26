@@ -1,4 +1,3 @@
-@file:Suppress("SpellCheckingInspection")
 @file:OptIn(ExperimentalMaterial3Api::class)
 
 package com.arkhe.menu.presentation.ui.components
@@ -326,7 +325,8 @@ fun ProductDestinationItem(
     label: String,
     value: String,
     icon: Painter,
-    isParser: Boolean = true
+    isParser: Boolean = true,
+    isMdpl: Boolean = false
 ) {
     Row(
         modifier = modifier
@@ -353,23 +353,38 @@ fun ProductDestinationItem(
                 color = Color.Gray
             )
             if (isParser) {
-                DistanceText(value)
+                DistanceText(
+                    distanceString = value,
+                    isMdpl = isMdpl
+                )
             } else {
-                if (value == "00:00"){
-                    Text(
-                        text = "⎯".repeat(3),
-                        color = Color.Red,
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            fontFamily = FontFamily.Monospace
+                when (value) {
+                    "00:00" -> {
+                        Text(
+                            text = "⎯".repeat(3),
+                            color = Color.Red,
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                fontFamily = sourceCodeProFontFamily
+                            )
                         )
-                    )
-                } else {
-                    Text(
-                        text = value,
-                        style = MaterialTheme.typography.titleLarge,
-                        fontFamily = FontFamily.Monospace,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
+                    }
+                    "-" -> {
+                        Text(
+                            text = "⎯".repeat(3),
+                            color = Color.Gray,
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                fontFamily = sourceCodeProFontFamily
+                            )
+                        )
+                    }
+                    else -> {
+                        Text(
+                            text = value,
+                            style = MaterialTheme.typography.titleLarge,
+                            fontFamily = sourceCodeProFontFamily,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
                 }
             }
         }
@@ -378,20 +393,21 @@ fun ProductDestinationItem(
 
 @Composable
 fun DistanceText(
-    distanceString: String,
     modifier: Modifier = Modifier,
+    distanceString: String,
+    isMdpl: Boolean = false,
     numberColor: Color = MaterialTheme.colorScheme.onSurface,
     unitColor: Color = Color.Gray,
     messageColor: Color = Color.Red,
-    placeholderColor: Color = Color.LightGray
+    placeholderColor: Color = Color.Gray
 ) {
-    when (val result = distanceString.toDistanceResult()) {
+    when (val result = distanceString.toDistanceResult(isMdpl)) {
         is DistanceResult.Hidden -> {
             Text(
                 text = "⎯".repeat(3),
                 color = placeholderColor,
                 style = MaterialTheme.typography.bodyMedium.copy(
-                    fontFamily = FontFamily.Monospace
+                    fontFamily = sourceCodeProFontFamily
                 ),
                 modifier = modifier
             )
@@ -401,7 +417,9 @@ fun DistanceText(
             Text(
                 text = "⎯".repeat(3),
                 color = messageColor,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontFamily = sourceCodeProFontFamily
+                ),
                 modifier = modifier
             )
         }
@@ -415,7 +433,7 @@ fun DistanceText(
                     text = result.number,
                     color = numberColor,
                     style = MaterialTheme.typography.titleLarge,
-                    fontFamily = FontFamily.Monospace
+                    fontFamily = sourceCodeProFontFamily
                 )
                 Text(
                     text = result.unit,

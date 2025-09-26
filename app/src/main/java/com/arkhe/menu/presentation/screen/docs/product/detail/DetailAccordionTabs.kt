@@ -239,9 +239,10 @@ fun DestinationScreen(
                 ) {
                     ProductDestinationItem(
                         modifier = Modifier.weight(1f),
-                        label = "Altitude",
+                        label = "Altitude (m)",
                         value = product.hikeAltitude,
-                        icon = painterResource(R.drawable.ic_altitude)
+                        icon = painterResource(R.drawable.ic_altitude),
+                        isMdpl = true
                     )
                     ProductDestinationItem(
                         modifier = Modifier.weight(1f),
