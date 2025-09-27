@@ -44,9 +44,9 @@ import com.arkhe.menu.presentation.viewmodel.ProductViewModel
 import com.arkhe.menu.utils.Constants.CurrentLanguage.ENGLISH
 import com.arkhe.menu.utils.Constants.CurrentLanguage.INDONESIAN
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_INITIATION
-import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_TITLE
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_READY
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_RESEARCH
+import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_TITLE
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_TOTAL
 import com.arkhe.menu.utils.getDevelopmentColor
 import compose.icons.EvaIcons
@@ -64,7 +64,7 @@ fun HeaderAccordions(
     var showEnglish by remember { mutableStateOf(false) }
     LazyColumn {
         item {
-            var expanded by remember { mutableStateOf(false) }
+            var expanded by remember { mutableStateOf(true) }
             val degrees by animateFloatAsState(if (expanded) -90f else 90f)
             Column {
                 Row(
@@ -184,7 +184,12 @@ fun AnimatedVisibilityContent(
             shape = MaterialTheme.shapes.large
         ) {
             Column(
-                modifier = Modifier.padding(start = 32.dp, end = 32.dp, top = 16.dp, bottom = 16.dp),
+                modifier = Modifier.padding(
+                    start = 32.dp,
+                    end = 32.dp,
+                    top = 16.dp,
+                    bottom = 16.dp
+                ),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 HeaderLabel(STATISTICS_TITLE)
