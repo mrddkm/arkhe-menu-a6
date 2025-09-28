@@ -14,8 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,18 +32,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import com.arkhe.menu.presentation.screen.docs.categories.content.StatisticItem
 import com.arkhe.menu.presentation.ui.components.LanguageIconEn
 import com.arkhe.menu.presentation.ui.components.LanguageIconId
 import com.arkhe.menu.presentation.viewmodel.CategoryViewModel
 import com.arkhe.menu.utils.Constants.CurrentLanguage.ENGLISH
 import com.arkhe.menu.utils.Constants.CurrentLanguage.INDONESIAN
-import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_INITIATION
-import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_TITLE
-import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_READY
-import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_RESEARCH
-import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_TOTAL
-import com.arkhe.menu.utils.getDevelopmentColor
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.ArrowIosForward
@@ -61,7 +52,7 @@ fun HeaderAccordions(
     var showEnglish by remember { mutableStateOf(false) }
     LazyColumn {
         item {
-            var expanded by remember { mutableStateOf(false) }
+            var expanded by remember { mutableStateOf(true) }
             val degrees by animateFloatAsState(if (expanded) -90f else 90f)
             Column {
                 Row(
@@ -163,59 +154,15 @@ fun AnimatedVisibilityContent(
                     else -> "No information available"
                 }
             }
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                ),
-                shape = RoundedCornerShape(8.dp)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                ) {
-                    Text(
-                        text = informationText,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-            }
-        }
-        Column(
-            modifier = Modifier.padding(start = 32.dp, end = 32.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Text(
-                text = STATISTICS_TITLE,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                StatisticItem(
-                    label = STATISTICS_TOTAL,
-                    value = "0",
-                    color = getDevelopmentColor(STATISTICS_TOTAL)
-                )
-                StatisticItem(
-                    label = STATISTICS_READY,
-                    value = "0",
-                    color = getDevelopmentColor(STATISTICS_READY)
-                )
-                StatisticItem(
-                    label = STATISTICS_RESEARCH,
-                    value = "0",
-                    color = getDevelopmentColor(STATISTICS_RESEARCH)
-                )
-                StatisticItem(
-                    label = STATISTICS_INITIATION,
-                    value = "0",
-                    color = getDevelopmentColor(STATISTICS_INITIATION)
+                Text(
+                    text = informationText,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
         }

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -27,9 +28,10 @@ import androidx.compose.ui.unit.dp
 import com.arkhe.menu.R
 import com.arkhe.menu.data.remote.api.SafeApiResult
 import com.arkhe.menu.domain.model.Category
-import com.arkhe.menu.presentation.ui.components.LoadingIndicatorSpinner
 import com.arkhe.menu.presentation.screen.docs.categories.screen.CategoryItem
+import com.arkhe.menu.presentation.screen.docs.categories.screen.CategoriesTabs
 import com.arkhe.menu.presentation.screen.docs.categories.screen.HeaderAccordions
+import com.arkhe.menu.presentation.ui.components.LoadingIndicatorSpinner
 import com.arkhe.menu.presentation.viewmodel.CategoryViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -73,10 +75,6 @@ fun CategoriesScreen(
             .fillMaxSize()
             .padding(8.dp)
     ) {
-        HeaderAccordions(
-            title = stringResource(R.string.categories)
-        )
-
         when (categoriesState) {
             is SafeApiResult.Loading -> {
                 LoadingIndicatorSpinner(
@@ -151,7 +149,18 @@ fun CategoriesScreen(
             }
 
             is SafeApiResult.Success -> {
-                val categories = (categoriesState as SafeApiResult.Success<List<Category>>).data
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 0.dp, start = 8.dp, end = 8.dp, bottom = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    HeaderAccordions(
+                        title = stringResource(R.string.categories)
+                    )
+                }
+                CategoriesTabs()
+                /*val categories = (categoriesState as SafeApiResult.Success<List<Category>>).data
                 if (categories.isEmpty()) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
@@ -198,7 +207,7 @@ fun CategoriesScreen(
                             )
                         }
                     }
-                }
+                }*/
             }
         }
     }
