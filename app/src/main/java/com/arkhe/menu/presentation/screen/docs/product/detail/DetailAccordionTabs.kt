@@ -106,9 +106,7 @@ fun AnimatedVisibilityTabContent(
                 )
             }
         }
-
         Spacer(modifier = Modifier.height(16.dp))
-
         when (selectedTabIndex) {
             0 -> ProductScreen(product)
             1 -> DestinationScreen(product)
