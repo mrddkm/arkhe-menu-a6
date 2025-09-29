@@ -8,14 +8,18 @@ import androidx.lifecycle.viewModelScope
 import com.arkhe.menu.data.local.preferences.SessionManager
 import com.arkhe.menu.data.remote.api.SafeApiResult
 import com.arkhe.menu.domain.model.Category
+import com.arkhe.menu.domain.model.CategoryName
 import com.arkhe.menu.domain.usecase.category.CategoryUseCases
 import com.arkhe.menu.utils.Constants.CurrentLanguage.ENGLISH
 import com.arkhe.menu.utils.Constants.CurrentLanguage.INDONESIAN
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class CategoryViewModel(
@@ -215,6 +219,23 @@ class CategoryViewModel(
         } catch (e: Exception) {
             Log.e(TAG, "❌ Error updating scroll position: ${e.message}", e)
         }
+    }
+
+    fun getCategoryNames(): List<CategoryName> {
+        return (categoriesState.value as? SafeApiResult.Success)?.data?.map {
+            CategoryName(
+                id = it.id,
+                name = it.name,
+                colors = it.colors   // ambil dari Category
+            )
+        } ?: emptyList()
+    }
+
+    fun getCategoryTypes(): List<String> {
+        return (categoriesState.value as? SafeApiResult.Success)?.data
+            ?.map { it.type }
+            ?.distinct()
+            ?: emptyList()
     }
 
     fun getScrollPosition(): Int = _lastScrollPosition.value

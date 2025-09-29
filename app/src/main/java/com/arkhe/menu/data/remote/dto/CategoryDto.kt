@@ -37,13 +37,6 @@ data class CategoryInfoDto(
     val actionInformationEn: String
 ) {
     companion object {
-        @Suppress("Unused")
-        fun empty() = CategoryInfoDto(
-            action = "",
-            actionInformationId = "",
-            actionInformationEn = ""
-        )
-
         fun parseError() = CategoryInfoDto(
             action = "parse_error",
             actionInformationId = "JSON parsing failed",

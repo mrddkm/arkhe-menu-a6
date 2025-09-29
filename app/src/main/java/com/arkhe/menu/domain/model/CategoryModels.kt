@@ -51,6 +51,12 @@ data class Category(
     val actionInfo: CategoryActionInfo
 )
 
+data class CategoryName(
+    val id: String,
+    val name: String,
+    val colors: CategoryColors
+)
+
 data class CategoryColors(
     val backgroundColor: String,
     val iconColor: String
