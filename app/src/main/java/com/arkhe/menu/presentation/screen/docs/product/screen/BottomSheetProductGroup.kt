@@ -12,15 +12,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.arkhe.menu.domain.model.ProductGroup
-import com.arkhe.menu.presentation.ui.components.HeaderBottomSheet
+import com.arkhe.menu.domain.model.ProductByGroup
 import com.arkhe.menu.presentation.ui.components.HeaderLabel
 import com.arkhe.menu.utils.Constants.Product.PRODUCT_GROUP_LABEL
 
 @Composable
 fun BottomSheetProductGroup(
-    productGroups: List<ProductGroup>,
-    onProductGroupClick: (ProductGroup) -> Unit
+    productByGroups: List<ProductByGroup>,
+    onProductGroupClick: (ProductByGroup) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -38,7 +37,7 @@ fun BottomSheetProductGroup(
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(0.dp)
             ) {
-                items(productGroups) { group ->
+                items(productByGroups) { group ->
                     ProductGroup(
                         group = group,
                         onClick = {

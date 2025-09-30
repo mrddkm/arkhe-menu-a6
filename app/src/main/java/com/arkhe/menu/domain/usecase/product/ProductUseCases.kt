@@ -2,7 +2,7 @@ package com.arkhe.menu.domain.usecase.product
 
 import com.arkhe.menu.data.remote.api.SafeApiResult
 import com.arkhe.menu.domain.model.Product
-import com.arkhe.menu.domain.model.ProductGroup
+import com.arkhe.menu.domain.model.ProductByGroup
 import com.arkhe.menu.domain.repository.ProductRepository
 import kotlinx.coroutines.flow.Flow
 
@@ -45,7 +45,7 @@ class GetProductsByNamePrefixUseCase(
 class GetProductGroupsUseCase(
     private val repository: ProductRepository
 ) {
-    suspend operator fun invoke(): List<ProductGroup> {
+    suspend operator fun invoke(): List<ProductByGroup> {
         return repository.getProductGroups()
     }
 }

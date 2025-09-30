@@ -11,7 +11,7 @@ import com.arkhe.menu.data.remote.api.NetworkErrorHandler
 import com.arkhe.menu.data.remote.api.SafeApiResult
 import com.arkhe.menu.domain.model.NetworkException
 import com.arkhe.menu.domain.model.Product
-import com.arkhe.menu.domain.model.ProductGroup
+import com.arkhe.menu.domain.model.ProductByGroup
 import com.arkhe.menu.domain.repository.ProductRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -233,7 +233,7 @@ class ProductRepositoryImpl(
         }
     }
 
-    override suspend fun getProductGroups(): List<ProductGroup> {
+    override suspend fun getProductGroups(): List<ProductByGroup> {
         return try {
             val allProducts = localDataSource.getAllProducts().take(1)
                 .map { it.toDomainList() }
@@ -248,7 +248,7 @@ class ProductRepositoryImpl(
             }
 
             grouped.map { (seriesName, products) ->
-                ProductGroup(seriesName, products.sortedBy { it.productCode })
+                ProductByGroup(seriesName, products.sortedBy { it.productCode })
             }.sortedBy { it.seriesName }
         } catch (e: Exception) {
             Log.e(TAG, "Failed to get product groups: ${e.message}", e)

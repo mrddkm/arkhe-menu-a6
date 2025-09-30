@@ -65,7 +65,7 @@ fun ProductsScreen(
     productViewModel: ProductViewModel = koinViewModel()
 ) {
     val productsState by productViewModel.productsState.collectAsState()
-    val productGroups by productViewModel.productGroups.collectAsState()
+    val productGroups by productViewModel.productByGroups.collectAsState()
     val selectedGroup by productViewModel.selectedGroup.collectAsState()
     val filteredProducts by productViewModel.filteredProducts.collectAsState()
 
@@ -289,7 +289,7 @@ fun ProductsScreen(
             sheetState = sheetState
         ) {
             BottomSheetProductGroup(
-                productGroups = productGroups,
+                productByGroups = productGroups,
                 onProductGroupClick = { group ->
                     productViewModel.selectProductGroup(group)
                     showGroupBottomSheet = false

@@ -43,8 +43,10 @@ import coil.compose.AsyncImage
 import com.arkhe.menu.R
 import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.presentation.navigation.NavigationRoute
+import com.arkhe.menu.presentation.ui.components.FeedSection
 import com.arkhe.menu.presentation.ui.components.LanguageIconEn
 import com.arkhe.menu.presentation.ui.components.LanguageIconId
+import com.arkhe.menu.presentation.ui.components.TimeMachineSection
 import com.arkhe.menu.presentation.ui.theme.AppTheme
 import com.arkhe.menu.presentation.ui.theme.montserratFontFamily
 import com.arkhe.menu.presentation.viewmodel.ProductViewModel
@@ -290,8 +292,9 @@ private fun ProductDetailContent(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
                 .fillMaxWidth()
-                .padding(top = 12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(top = 8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             val informationText = remember(showEnglish, product.information) {
                 when {
@@ -320,6 +323,14 @@ private fun ProductDetailContent(
                     lineHeight = MaterialTheme.typography.bodyLarge.lineHeight,
                     textAlign = TextAlign.Left
                 )
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceAround,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                FeedSection { }
+                TimeMachineSection()
             }
         }
         Spacer(modifier = Modifier.height(16.dp))

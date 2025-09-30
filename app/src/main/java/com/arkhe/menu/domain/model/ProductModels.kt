@@ -85,8 +85,18 @@ data class Product(
 }
 
 /*UI grouping model*/
-data class ProductGroup(
+data class ProductByGroup(
     val seriesName: String,
+    val products: List<Product>
+)
+
+data class ProductByCategory(
+    val name: String,
+    val products: List<Product>
+)
+
+data class ProductByType(
+    val type: String,
     val products: List<Product>
 )
 

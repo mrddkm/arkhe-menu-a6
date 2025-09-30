@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -35,8 +34,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.arkhe.menu.data.remote.api.SafeApiResult
 import com.arkhe.menu.presentation.viewmodel.CategoryViewModel
 import compose.icons.EvaIcons
+import compose.icons.evaicons.Fill
 import compose.icons.evaicons.Outline
-import compose.icons.evaicons.outline.FileText
+import compose.icons.evaicons.fill.Droplet
 import compose.icons.evaicons.outline.Pin
 
 @Composable
@@ -44,7 +44,7 @@ fun CategoriesTabs() {
     var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
 
     val tabs = listOf(
-        "Categories" to EvaIcons.Outline.FileText,
+        "Categories" to EvaIcons.Fill.Droplet,
         "Type" to EvaIcons.Outline.Pin
     )
 
@@ -107,7 +107,15 @@ fun CategoriesTabs() {
 }
 
 @Composable
-private fun CategoriesTabContent() {
+private fun CategoriesTabContent(viewModel: CategoryViewModel = viewModel()) {
+    val categories by viewModel.categoriesState.collectAsState()
+    var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
+
+    val categoryNames = when (categories) {
+        is SafeApiResult.Success -> viewModel.getCategoryNames()
+        else -> emptyList()
+    }
+
     Surface(
         shape = MaterialTheme.shapes.large
     ) {
@@ -118,62 +126,56 @@ private fun CategoriesTabContent() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            CategoriesTabItems()
+            TabRow(
+                selectedTabIndex = selectedTabIndex,
+                indicator = { tabPositions ->
+                    TabRowDefaults.SecondaryIndicator(
+                        Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
+                        height = 3.dp,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            ) {
+                categoryNames.forEachIndexed { index, categoryName ->
+                    Tab(
+                        selected = selectedTabIndex == index,
+                        onClick = { selectedTabIndex = index },
+                        text = {
+                            Box(
+                                modifier = Modifier
+                                    .size(18.dp)
+                            ) {
+                                Icon(
+                                    imageVector = EvaIcons.Fill.Droplet,
+                                    contentDescription = null,
+                                    tint = parseColorFromHex(categoryName.colors.iconColor),
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
+                        }
+                    )
+                }
+            }
+            if (categoryNames.isNotEmpty()) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Text(
+                        text = categoryNames[selectedTabIndex].name,
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+            }
         }
     }
 }
 
 @Composable
-fun CategoriesTabItems(viewModel: CategoryViewModel = viewModel()) {
-    val categories by viewModel.categoriesState.collectAsState()
-    var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
-
-    val categoryNames = when (categories) {
-        is SafeApiResult.Success -> viewModel.getCategoryNames()
-        else -> emptyList()
-    }
-
-    Column {
-        TabRow(
-            selectedTabIndex = selectedTabIndex,
-            indicator = { tabPositions ->
-                TabRowDefaults.SecondaryIndicator(
-                    Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                    height = 3.dp,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
-        ) {
-            categoryNames.forEachIndexed { index, categoryName ->
-                Tab(
-                    selected = selectedTabIndex == index,
-                    onClick = { selectedTabIndex = index },
-                    text = {
-                        Box(
-                            modifier = Modifier
-                                .size(12.dp)
-                                .clip(CircleShape)
-                                .background(parseColorFromHex(categoryName.colors.iconColor))
-                        )
-                    }
-                )
-            }
-        }
-        if (categoryNames.isNotEmpty()) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                Text(
-                    text = categoryNames[selectedTabIndex].name,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
-        }
-    }
+fun CategoriesTabItems() {
 }
 
 @Composable
@@ -186,46 +188,56 @@ private fun TypeTabContent(viewModel: CategoryViewModel = viewModel()) {
         else -> emptyList()
     }
 
-    Column {
-        TabRow(
-            selectedTabIndex = selectedTabIndex,
-            indicator = { tabPositions ->
-                TabRowDefaults.SecondaryIndicator(
-                    Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                    height = 3.dp,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
+    Surface(
+        shape = MaterialTheme.shapes.large
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            categoryTypes.forEachIndexed { index, categoryType ->
-                Tab(
-                    selected = selectedTabIndex == index,
-                    onClick = { selectedTabIndex = index },
-                    text = {
-                        Text(
-                            text = categoryType,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = if (selectedTabIndex == index)
-                                MaterialTheme.colorScheme.primary
-                            else
-                                Color.Gray
-                        )
-                    }
-                )
-            }
-        }
-        if (categoryTypes.isNotEmpty()) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
+            TabRow(
+                selectedTabIndex = selectedTabIndex,
+                indicator = { tabPositions ->
+                    TabRowDefaults.SecondaryIndicator(
+                        Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
+                        height = 3.dp,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
             ) {
-                Text(
-                    text = categoryTypes[selectedTabIndex],
-                    style = MaterialTheme.typography.bodyMedium,
-                )
+                categoryTypes.forEachIndexed { index, categoryType ->
+                    Tab(
+                        selected = selectedTabIndex == index,
+                        onClick = { selectedTabIndex = index },
+                        text = {
+                            Text(
+                                text = categoryType,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = if (selectedTabIndex == index)
+                                    MaterialTheme.colorScheme.primary
+                                else
+                                    Color.Gray
+                            )
+                        }
+                    )
+                }
+            }
+            if (categoryTypes.isNotEmpty()) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Text(
+                        text = categoryTypes[selectedTabIndex],
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
             }
         }
     }

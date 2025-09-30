@@ -20,6 +20,7 @@ object ScreenTransitions {
     /**
      * Slide transition dari kanan ke kiri (forward navigation)
      */
+    @Suppress("unused")
     fun slideFromRight(): ContentTransform {
         return slideInHorizontally(
             initialOffsetX = { fullWidth -> fullWidth },
@@ -37,6 +38,7 @@ object ScreenTransitions {
     /**
      * Slide transition dari kiri ke kanan (back navigation)
      */
+    @Suppress("unused")
     fun slideFromLeft(): ContentTransform {
         return slideInHorizontally(
             initialOffsetX = { fullWidth -> -fullWidth },
@@ -54,6 +56,7 @@ object ScreenTransitions {
     /**
      * No animation untuk transisi yang tidak perlu animasi
      */
+    @Suppress("unused")
     fun noAnimation(): ContentTransform {
         return fadeIn(
             animationSpec = tween(0)

@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.arkhe.menu.data.local.preferences.SessionManager
 import com.arkhe.menu.data.remote.api.SafeApiResult
 import com.arkhe.menu.domain.model.Product
-import com.arkhe.menu.domain.model.ProductGroup
+import com.arkhe.menu.domain.model.ProductByGroup
 import com.arkhe.menu.domain.model.ProductStatistics
 import com.arkhe.menu.domain.usecase.product.ProductUseCases
 import com.arkhe.menu.utils.Constants.CurrentLanguage.ENGLISH
@@ -37,11 +37,11 @@ class ProductViewModel(
     private val _selectedProduct = MutableStateFlow<Product?>(null)
     val selectedProduct: StateFlow<Product?> = _selectedProduct.asStateFlow()
 
-    private val _productGroups = MutableStateFlow<List<ProductGroup>>(emptyList())
-    val productGroups: StateFlow<List<ProductGroup>> = _productGroups.asStateFlow()
+    private val _productByGroups = MutableStateFlow<List<ProductByGroup>>(emptyList())
+    val productByGroups: StateFlow<List<ProductByGroup>> = _productByGroups.asStateFlow()
 
-    private val _selectedGroup = MutableStateFlow<ProductGroup?>(null)
-    val selectedGroup: StateFlow<ProductGroup?> = _selectedGroup.asStateFlow()
+    private val _selectedGroup = MutableStateFlow<ProductByGroup?>(null)
+    val selectedGroup: StateFlow<ProductByGroup?> = _selectedGroup.asStateFlow()
 
     private val _filteredProducts = MutableStateFlow<List<Product>>(emptyList())
     val filteredProducts: StateFlow<List<Product>> = _filteredProducts.asStateFlow()
@@ -219,7 +219,7 @@ class ProductViewModel(
 
                 else -> {
                     Log.d(TAG, "✅ Data already loaded")
-                    if (_productGroups.value.isEmpty()) {
+                    if (_productByGroups.value.isEmpty()) {
                         Log.d(TAG, "🔄 Product groups not loaded, loading now...")
                         loadProductGroups()
                     }
@@ -232,9 +232,9 @@ class ProductViewModel(
         viewModelScope.launch {
             try {
                 val groups = productUseCases.getProductGroups()
-                _productGroups.value = groups
+                _productByGroups.value = groups
             } catch (_: Exception) {
-                _productGroups.value = emptyList()
+                _productByGroups.value = emptyList()
             }
         }
     }
@@ -251,7 +251,7 @@ class ProductViewModel(
         _selectedProduct.value = null
     }
 
-    fun selectProductGroup(group: ProductGroup) {
+    fun selectProductGroup(group: ProductByGroup) {
         _selectedGroup.value = group
         _filteredProducts.value = group.products
     }

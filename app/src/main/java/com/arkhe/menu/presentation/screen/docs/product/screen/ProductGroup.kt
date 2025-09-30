@@ -30,7 +30,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.arkhe.menu.R
 import com.arkhe.menu.domain.model.Product
-import com.arkhe.menu.domain.model.ProductGroup
+import com.arkhe.menu.domain.model.ProductByGroup
 import com.arkhe.menu.presentation.ui.components.StatusDevelopmentChip
 import com.arkhe.menu.presentation.ui.theme.AppTheme
 import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
@@ -42,7 +42,7 @@ import java.io.File
 
 @Composable
 fun ProductGroup(
-    group: ProductGroup,
+    group: ProductByGroup,
     onClick: () -> Unit
 ) {
     val context = LocalContext.current
@@ -79,7 +79,7 @@ fun ProductGroup(
                             .clip(CircleShape),
                         contentScale = ContentScale.Crop,
                         placeholder = painterResource(R.drawable.image_outline),
-                        fallback = painterResource(R.drawable.alert_triangle_outline),
+                        fallback = painterResource(R.drawable.bitrise),
                         error = painterResource(R.drawable.alert_triangle_outline)
                     )
                 } else {
@@ -174,7 +174,7 @@ fun ProductListItem(
 @Composable
 fun ProductGroupPreview() {
     AppTheme {
-        val sampleGroup = ProductGroup(
+        val sampleGroup = ProductByGroup(
             seriesName = "Mountain Series",
             products = listOf(
                 sampleProduct

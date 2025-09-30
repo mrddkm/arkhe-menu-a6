@@ -29,8 +29,6 @@ import androidx.navigation.compose.rememberNavController
 import com.arkhe.menu.di.appModule
 import com.arkhe.menu.di.dataModule
 import com.arkhe.menu.di.domainModule
-import com.arkhe.menu.presentation.ui.animation.ScreenTransitions
-import com.arkhe.menu.presentation.ui.components.LoadingIndicatorSpinner
 import com.arkhe.menu.presentation.navigation.NavigationRoute
 import com.arkhe.menu.presentation.screen.docs.categories.CategoriesScreen
 import com.arkhe.menu.presentation.screen.docs.customer.CustomerScreen
@@ -38,8 +36,10 @@ import com.arkhe.menu.presentation.screen.docs.organization.OrganizationScreen
 import com.arkhe.menu.presentation.screen.docs.product.ProductsScreen
 import com.arkhe.menu.presentation.screen.docs.profile.ProfileScreen
 import com.arkhe.menu.presentation.screen.user.UserBottomSheet
+import com.arkhe.menu.presentation.ui.animation.ScreenTransitions
 import com.arkhe.menu.presentation.ui.components.ArkheGlassBottomBar
 import com.arkhe.menu.presentation.ui.components.ArkheTopBar
+import com.arkhe.menu.presentation.ui.components.LoadingIndicatorSpinner
 import com.arkhe.menu.presentation.ui.theme.AppTheme
 import com.arkhe.menu.presentation.viewmodel.MainViewModel
 import org.koin.android.ext.koin.androidContext
@@ -101,55 +101,55 @@ fun MainScreen(
                     transitionSpec = {
                         when {
                             initialState == NavigationRoute.MAIN && targetState == NavigationRoute.PROFILE -> {
-                                ScreenTransitions.slideFromLeft()
+                                ScreenTransitions.crossFade()
                             }
 
                             initialState == NavigationRoute.PROFILE && targetState == NavigationRoute.MAIN -> {
-                                ScreenTransitions.slideFromRight()
+                                ScreenTransitions.crossFade()
                             }
 
                             initialState == NavigationRoute.MAIN && targetState == NavigationRoute.ORGANIZATION -> {
-                                ScreenTransitions.slideFromLeft()
+                                ScreenTransitions.crossFade()
                             }
 
                             initialState == NavigationRoute.ORGANIZATION && targetState == NavigationRoute.MAIN -> {
-                                ScreenTransitions.slideFromRight()
+                                ScreenTransitions.crossFade()
                             }
 
                             initialState == NavigationRoute.MAIN && targetState == NavigationRoute.CUSTOMER -> {
-                                ScreenTransitions.slideFromLeft()
+                                ScreenTransitions.crossFade()
                             }
 
                             initialState == NavigationRoute.CUSTOMER && targetState == NavigationRoute.MAIN -> {
-                                ScreenTransitions.slideFromRight()
+                                ScreenTransitions.crossFade()
                             }
 
                             initialState == NavigationRoute.MAIN && targetState == NavigationRoute.CATEGORIES -> {
-                                ScreenTransitions.slideFromLeft()
+                                ScreenTransitions.crossFade()
                             }
 
                             initialState == NavigationRoute.CATEGORIES && targetState == NavigationRoute.MAIN -> {
-                                ScreenTransitions.slideFromRight()
+                                ScreenTransitions.crossFade()
                             }
 
                             initialState == NavigationRoute.CATEGORIES && targetState.startsWith("category_detail") -> {
-                                ScreenTransitions.slideFromLeft()
+                                ScreenTransitions.crossFade()
                             }
 
                             initialState.startsWith("category_detail") && targetState == NavigationRoute.CATEGORIES -> {
-                                ScreenTransitions.slideFromRight()
+                                ScreenTransitions.crossFade()
                             }
 
                             initialState == NavigationRoute.MAIN && targetState == NavigationRoute.PRODUCTS -> {
-                                ScreenTransitions.slideFromLeft()
+                                ScreenTransitions.crossFade()
                             }
 
                             initialState == NavigationRoute.PRODUCTS && targetState == NavigationRoute.MAIN -> {
-                                ScreenTransitions.slideFromRight()
+                                ScreenTransitions.crossFade()
                             }
 
                             else -> {
-                                ScreenTransitions.crossFade()
+                                ScreenTransitions.noAnimation()
                             }
                         }
                     },

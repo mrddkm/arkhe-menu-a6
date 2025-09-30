@@ -226,7 +226,7 @@ class CategoryViewModel(
             CategoryName(
                 id = it.id,
                 name = it.name,
-                colors = it.colors   // ambil dari Category
+                colors = it.colors
             )
         } ?: emptyList()
     }

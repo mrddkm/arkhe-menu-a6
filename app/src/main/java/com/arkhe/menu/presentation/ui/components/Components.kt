@@ -5,7 +5,6 @@ package com.arkhe.menu.presentation.ui.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,6 +22,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -34,7 +34,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -54,6 +53,8 @@ import compose.icons.evaicons.Fill
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.fill.MoreHorizontal
 import compose.icons.evaicons.outline.ArrowIosForward
+import compose.icons.evaicons.outline.Camera
+import compose.icons.evaicons.outline.Clock
 import compose.icons.evaicons.outline.Globe
 
 @Composable
@@ -86,7 +87,7 @@ fun HeaderSection(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = paddingStart, top = 4.dp, end = 8.dp, bottom = 12.dp),
+            .padding(start = paddingStart, top = 16.dp, end = 8.dp, bottom = 10.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color.Transparent
         ),
@@ -94,8 +95,7 @@ fun HeaderSection(
     ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .clickable { onHeaderClick() },
+                .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(0.dp)
         ) {
@@ -106,13 +106,18 @@ fun HeaderSection(
                 ),
                 color = MaterialTheme.colorScheme.onSurface
             )
-            Icon(
-                imageVector = EvaIcons.Outline.ArrowIosForward,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-            )
+            IconButton(
+                onClick = { onHeaderClick() }
+            ) {
+                Icon(
+                    imageVector = EvaIcons.Outline.ArrowIosForward,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier
+                        .size(24.dp)
+                        .align(Alignment.CenterVertically)
+                )
+            }
         }
     }
 }
@@ -192,20 +197,75 @@ fun MoreSection(
 }
 
 @Composable
-fun HeaderBottomSheet(
-    title: String
+fun FeedSection(
+    onFeedClick: () -> Unit
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
+    Surface(
+        onClick = onFeedClick,
+        shape = MaterialTheme.shapes.medium
     ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.primary,
-        )
+        Row(
+            modifier = Modifier
+                .width(170.dp)
+                .padding(start = 8.dp, top = 12.dp, end = 8.dp, bottom = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(24.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.surface),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = EvaIcons.Outline.Camera,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+            }
+            Spacer(modifier = Modifier.width(12.dp))
+            Text(
+                text = stringResource(R.string.feeds),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
+    }
+}
+
+@Composable
+fun TimeMachineSection() {
+    Surface(
+        shape = MaterialTheme.shapes.medium
+    ) {
+        Row(
+            modifier = Modifier
+                .width(170.dp)
+                .padding(start = 8.dp, top = 12.dp, end = 8.dp, bottom = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(24.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.surface),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = EvaIcons.Outline.Clock,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+            }
+            Spacer(modifier = Modifier.width(12.dp))
+            Text(
+                text = stringResource(R.string.time_machine),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        }
     }
 }
 
@@ -368,6 +428,7 @@ fun ProductDestinationItem(
                             )
                         )
                     }
+
                     "-" -> {
                         Text(
                             text = "⎯".repeat(3),
@@ -377,6 +438,7 @@ fun ProductDestinationItem(
                             )
                         )
                     }
+
                     else -> {
                         Text(
                             text = value,
