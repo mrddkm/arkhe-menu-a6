@@ -25,7 +25,7 @@ object Constants {
         const val DATABASE_NAME = "arkhe_menu_database"
         const val DATABASE_VERSION = 1
         const val PROFILE_TABLE = "profiles"
-        const val CATEGORY_TABLE = "categories"
+        const val CATEGORIES_TABLE = "categories"
         const val PRODUCT_TABLE = "products"
         const val DATASTORE_NAME = "app_preferences"
     }
@@ -33,15 +33,6 @@ object Constants {
     object CurrentLanguage {
         const val INDONESIAN = "id"
         const val ENGLISH = "en"
-    }
-
-    object Product {
-        const val PRODUCT_TITLE = "Product"
-        const val PRODUCT_GROUP_LABEL = "Product Group"
-    }
-
-    object Category {
-        const val CATEGORY_TITLE = "Category"
     }
 
     object Statistics {

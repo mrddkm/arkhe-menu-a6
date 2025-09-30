@@ -90,16 +90,6 @@ data class ProductByGroup(
     val products: List<Product>
 )
 
-data class ProductByCategory(
-    val name: String,
-    val products: List<Product>
-)
-
-data class ProductByType(
-    val type: String,
-    val products: List<Product>
-)
-
 data class ProductActionInfo(
     val action: String,
     val information: ProductInformationLanguage

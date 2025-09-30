@@ -31,7 +31,11 @@
     <string name="organization">Organization</string>
     <string name="customer">Sobatkeun</string>
     <string name="categories">Categories</string>
+    <string name="category">Category</string>
+    <string name="type">Type</string>
     <string name="products">Products</string>
+    <string name="product">Product</string>
+    <string name="product_group">Product Group</string>
 
     <!--tripkeun Menu-->
     <string name="create_receipt">Create Receipt</string>

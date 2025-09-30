@@ -25,6 +25,4 @@ object NavigationRoute {
 
     fun productDetail(productId: String, source: String): String =
         "product_detail/$productId/$source"
-
-    fun productDetailRoute(): String = PRODUCT_DETAIL
 }

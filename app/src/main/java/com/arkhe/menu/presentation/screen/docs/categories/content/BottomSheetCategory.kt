@@ -30,9 +30,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.arkhe.menu.R
 import com.arkhe.menu.domain.model.Category
 import com.arkhe.menu.domain.model.CategoryActionInfo
 import com.arkhe.menu.domain.model.CategoryColors
@@ -45,7 +47,6 @@ import com.arkhe.menu.presentation.ui.components.LanguageIconId
 import com.arkhe.menu.presentation.ui.components.MoreSection
 import com.arkhe.menu.presentation.ui.theme.AppTheme
 import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
-import com.arkhe.menu.utils.Constants.Category.CATEGORY_TITLE
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_INITIATION
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_READY
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_RESEARCH
@@ -82,7 +83,7 @@ fun BottomSheetCategory(
                 Spacer(Modifier.width(48.dp))
             }
             HeaderTitleSecondary(
-                title = CATEGORY_TITLE
+                title = stringResource(R.string.category)
             )
             if (category.information.indonesian.isNotEmpty() && category.information.english.isNotEmpty()
             ) {

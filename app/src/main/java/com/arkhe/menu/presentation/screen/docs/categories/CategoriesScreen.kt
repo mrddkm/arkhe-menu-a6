@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.arkhe.menu.R
 import com.arkhe.menu.data.remote.api.SafeApiResult
 import com.arkhe.menu.domain.model.Category
@@ -38,6 +39,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @SuppressLint("FrequentlyChangingValue")
 @Composable
 fun CategoriesScreen(
+    navController: NavController,
     modifier: Modifier = Modifier,
     categoryViewModel: CategoryViewModel = koinViewModel(),
     onNavigateToDetail: () -> Unit = {}
@@ -159,55 +161,7 @@ fun CategoriesScreen(
                         title = stringResource(R.string.categories)
                     )
                 }
-                CategoriesTabs()
-                /*val categories = (categoriesState as SafeApiResult.Success<List<Category>>).data
-                if (categories.isEmpty()) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.TopCenter
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "No categories data available",
-                                style = MaterialTheme.typography.headlineSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                textAlign = TextAlign.Center
-                            )
-
-                            Button(
-                                onClick = {
-                                    isRefreshing = true
-                                    categoryViewModel.refreshCategories()
-                                },
-                                enabled = !isRefreshing,
-                                modifier = Modifier.padding(top = 16.dp)
-                            ) {
-                                Text(if (isRefreshing) "Refreshing..." else "Refresh")
-                            }
-                        }
-                    }
-                } else {
-                    LazyColumn(
-                        state = listState,
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        items(
-                            items = categories,
-                            key = { it.id }
-                        ) { category ->
-                            CategoryItem(
-                                category = category,
-                                onClick = {
-                                    categoryViewModel.selectCategory(category)
-                                    onNavigateToDetail()
-                                }
-                            )
-                        }
-                    }
-                }*/
+                CategoriesTabs(navController)
             }
         }
     }

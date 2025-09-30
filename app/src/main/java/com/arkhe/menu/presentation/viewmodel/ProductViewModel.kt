@@ -273,6 +273,28 @@ class ProductViewModel(
         }
     }
 
+    fun filterProductsByCategoryName(categoryName: String) {
+        viewModelScope.launch {
+            try {
+                val products = (productsState.value as? SafeApiResult.Success)?.data ?: emptyList()
+                _filteredProducts.value = products.filter { it.categoryName == categoryName }
+            } catch (_: Exception) {
+                _filteredProducts.value = emptyList()
+            }
+        }
+    }
+
+    fun filterProductsByCategoryType(categoryType: String) {
+        viewModelScope.launch {
+            try {
+                val products = (productsState.value as? SafeApiResult.Success)?.data ?: emptyList()
+                _filteredProducts.value = products.filter { it.categoryType == categoryType }
+            } catch (_: Exception) {
+                _filteredProducts.value = emptyList()
+            }
+        }
+    }
+
     suspend fun getProductById(id: String): Product? {
         return productUseCases.getProduct(id)
     }

@@ -177,6 +177,7 @@ fun MainScreen(
 
                         NavigationRoute.CATEGORIES -> {
                             CategoriesScreen(
+                                navController = navController,
                                 modifier = Modifier.fillMaxSize(),
                                 onNavigateToDetail = {
                                     navController.navigate(NavigationRoute.categoryDetail())

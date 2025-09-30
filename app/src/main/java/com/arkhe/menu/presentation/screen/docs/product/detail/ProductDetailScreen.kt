@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -50,7 +51,6 @@ import com.arkhe.menu.presentation.ui.components.TimeMachineSection
 import com.arkhe.menu.presentation.ui.theme.AppTheme
 import com.arkhe.menu.presentation.ui.theme.montserratFontFamily
 import com.arkhe.menu.presentation.viewmodel.ProductViewModel
-import com.arkhe.menu.utils.Constants
 import com.arkhe.menu.utils.sampleProduct
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
@@ -86,6 +86,10 @@ fun ProductDetailScreen(
                     nav.popBackStack(NavigationRoute.MAIN, inclusive = false)
                 }
 
+                NavigationRoute.CATEGORIES -> {
+                    nav.popBackStack(NavigationRoute.CATEGORIES, inclusive = false)
+                }
+
                 else -> {
                     nav.popBackStack()
                 }
@@ -106,6 +110,17 @@ fun ProductDetailScreen(
 
                     NavigationRoute.DOCS -> {
                         nav.navigate(NavigationRoute.MAIN) {
+                            popUpTo(NavigationRoute.MAIN) {
+                                inclusive = false
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+
+                    NavigationRoute.CATEGORIES -> {
+                        nav.navigate(NavigationRoute.CATEGORIES) {
                             popUpTo(NavigationRoute.MAIN) {
                                 inclusive = false
                                 saveState = true
@@ -192,7 +207,7 @@ private fun ProductDetailContent(
                 }
             }
             Text(
-                text = Constants.Product.PRODUCT_TITLE,
+                text = stringResource(R.string.product),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface,

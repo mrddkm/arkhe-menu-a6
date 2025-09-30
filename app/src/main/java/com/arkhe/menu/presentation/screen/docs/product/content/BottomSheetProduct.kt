@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,7 +47,6 @@ import com.arkhe.menu.presentation.ui.components.StatusDevelopmentChip
 import com.arkhe.menu.presentation.ui.theme.AppTheme
 import com.arkhe.menu.presentation.ui.theme.montserratFontFamily
 import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
-import com.arkhe.menu.utils.Constants.Product.PRODUCT_TITLE
 import com.arkhe.menu.utils.sampleProduct
 import java.io.File
 
@@ -76,7 +76,7 @@ fun BottomSheetProduct(
                 Spacer(Modifier.width(48.dp))
             }
             HeaderTitleSecondary(
-                title = PRODUCT_TITLE
+                title = stringResource(R.string.product)
             )
             if (product.information.indonesian.isNotEmpty() && product.information.english.isNotEmpty()
             ) {

@@ -87,7 +87,7 @@ fun ProductUI(
                     navController.navigate(
                         NavigationRoute.productDetail(
                             productId = selectedProduct!!.id,
-                            source = "docs"
+                            source = NavigationRoute.DOCS
                         )
                     )
                     showDetailBottomSheet = false

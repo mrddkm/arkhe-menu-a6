@@ -11,10 +11,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.arkhe.menu.R
 import com.arkhe.menu.domain.model.ProductByGroup
 import com.arkhe.menu.presentation.ui.components.HeaderLabel
-import com.arkhe.menu.utils.Constants.Product.PRODUCT_GROUP_LABEL
 
 @Composable
 fun BottomSheetProductGroup(
@@ -29,7 +30,7 @@ fun BottomSheetProductGroup(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         HeaderLabel(
-            label = PRODUCT_GROUP_LABEL
+            label = stringResource(R.string.product_group)
         )
         Surface(
             shape = MaterialTheme.shapes.medium

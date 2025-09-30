@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.arkhe.menu.utils.Constants
 
-@Entity(tableName = Constants.Database.CATEGORY_TABLE)
+@Entity(tableName = Constants.Database.CATEGORIES_TABLE)
 data class CategoryEntity(
     @PrimaryKey
     val id: String,

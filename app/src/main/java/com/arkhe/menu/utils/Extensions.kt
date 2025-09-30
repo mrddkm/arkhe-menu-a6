@@ -1,7 +1,8 @@
-@file:Suppress("SpellCheckingInspection")
-
 package com.arkhe.menu.utils
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.arkhe.menu.R
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -15,8 +16,18 @@ fun formatDate(date: Date): String {
 }
 
 /*Currency formatting*/
-@Suppress("DEPRECATION")
+@Suppress("UNUSED", "DEPRECATION")
 fun formatCurrency(amount: Double): String {
     val formatter = NumberFormat.getCurrencyInstance(Locale("id", "ID"))
     return formatter.format(amount)
+}
+
+/*Single or Multiple*/
+@Composable
+fun formatItemCount(count: Int): String {
+    return if (count > 1) {
+        "$count ${stringResource(R.string.products)}"
+    } else {
+        "$count ${stringResource(R.string.product)}"
+    }
 }

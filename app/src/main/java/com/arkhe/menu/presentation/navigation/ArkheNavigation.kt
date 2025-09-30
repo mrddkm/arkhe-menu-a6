@@ -76,12 +76,16 @@ fun ArkheNavigation(
                 navController = navController,
                 onBackClick = {
                     val popSuccess = when (source) {
-                        "products" -> {
+                        NavigationRoute.PRODUCTS -> {
                             navController.popBackStack(NavigationRoute.PRODUCTS, false)
                         }
 
-                        "docs" -> {
+                        NavigationRoute.DOCS -> {
                             navController.popBackStack(NavigationRoute.MAIN, false)
+                        }
+
+                        NavigationRoute.CATEGORIES -> {
+                            navController.popBackStack(NavigationRoute.CATEGORIES, false)
                         }
 
                         else -> {
@@ -91,7 +95,7 @@ fun ArkheNavigation(
 
                     if (!popSuccess) {
                         when (source) {
-                            "products" -> {
+                            NavigationRoute.PRODUCTS -> {
                                 navController.navigate(NavigationRoute.PRODUCTS) {
                                     popUpTo(NavigationRoute.MAIN) {
                                         inclusive = false
@@ -101,9 +105,19 @@ fun ArkheNavigation(
                                 }
                             }
 
-                            "docs" -> {
+                            NavigationRoute.DOCS -> {
                                 navController.navigate(NavigationRoute.MAIN) {
                                     popUpTo(NavigationRoute.MAIN) {
+                                        inclusive = false
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            }
+
+                            NavigationRoute.CATEGORIES -> {
+                                navController.navigate(NavigationRoute.CATEGORIES) {
+                                    popUpTo(NavigationRoute.CATEGORIES) {
                                         inclusive = false
                                     }
                                     launchSingleTop = true

@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -29,10 +31,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import com.arkhe.menu.R
 import com.arkhe.menu.data.remote.api.SafeApiResult
+import com.arkhe.menu.presentation.navigation.NavigationRoute
 import com.arkhe.menu.presentation.viewmodel.CategoryViewModel
+import com.arkhe.menu.presentation.viewmodel.ProductViewModel
+import com.arkhe.menu.utils.formatItemCount
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Fill
 import compose.icons.evaicons.Outline
@@ -40,12 +48,14 @@ import compose.icons.evaicons.fill.Droplet
 import compose.icons.evaicons.outline.Pin
 
 @Composable
-fun CategoriesTabs() {
+fun CategoriesTabs(
+    navController: NavController
+) {
     var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
 
     val tabs = listOf(
-        "Categories" to EvaIcons.Fill.Droplet,
-        "Type" to EvaIcons.Outline.Pin
+        stringResource(R.string.category) to EvaIcons.Fill.Droplet,
+        stringResource(R.string.type) to EvaIcons.Outline.Pin
     )
 
     Column(
@@ -100,19 +110,24 @@ fun CategoriesTabs() {
         }
         Spacer(modifier = Modifier.height(16.dp))
         when (selectedTabIndex) {
-            0 -> CategoriesTabContent()
-            1 -> TypeTabContent()
+            0 -> CategoriesTabContent(navController)
+            1 -> TypeTabContent(navController)
         }
     }
 }
 
 @Composable
-private fun CategoriesTabContent(viewModel: CategoryViewModel = viewModel()) {
-    val categories by viewModel.categoriesState.collectAsState()
+private fun CategoriesTabContent(
+    navController: NavController
+) {
+    val categoryViewModel: CategoryViewModel = viewModel()
+    val productViewModel: ProductViewModel = viewModel()
+    val categories by categoryViewModel.categoriesState.collectAsState()
+
     var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
 
     val categoryNames = when (categories) {
-        is SafeApiResult.Success -> viewModel.getCategoryNames()
+        is SafeApiResult.Success -> categoryViewModel.getCategoryNames()
         else -> emptyList()
     }
 
@@ -139,7 +154,10 @@ private fun CategoriesTabContent(viewModel: CategoryViewModel = viewModel()) {
                 categoryNames.forEachIndexed { index, categoryName ->
                     Tab(
                         selected = selectedTabIndex == index,
-                        onClick = { selectedTabIndex = index },
+                        onClick = {
+                            selectedTabIndex = index
+                            productViewModel.filterProductsByCategoryName(categoryNames[index].name)
+                        },
                         text = {
                             Box(
                                 modifier = Modifier
@@ -156,17 +174,37 @@ private fun CategoriesTabContent(viewModel: CategoryViewModel = viewModel()) {
                     )
                 }
             }
-            if (categoryNames.isNotEmpty()) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
-                    Text(
-                        text = categoryNames[selectedTabIndex].name,
-                        style = MaterialTheme.typography.bodyMedium,
+            val filteredProducts by productViewModel.filteredProducts.collectAsState()
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(
+                    text = categoryNames[selectedTabIndex].name,
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+                Text(
+                    text = formatItemCount(filteredProducts.size),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(0.dp)
+            ) {
+                items(filteredProducts) { product ->
+                    CategoriesProductsListItem(
+                        product = product,
+                        onClick = {
+                            navController.navigate(
+                                NavigationRoute.productDetail(
+                                    productId = product.id,
+                                    source = NavigationRoute.CATEGORIES
+                                )
+                            )
+                        }
                     )
                 }
             }
@@ -175,16 +213,16 @@ private fun CategoriesTabContent(viewModel: CategoryViewModel = viewModel()) {
 }
 
 @Composable
-fun CategoriesTabItems() {
-}
-
-@Composable
-private fun TypeTabContent(viewModel: CategoryViewModel = viewModel()) {
-    val categories by viewModel.categoriesState.collectAsState()
+private fun TypeTabContent(
+    navController: NavController
+) {
+    val categoriesViewModel: CategoryViewModel = viewModel()
+    val productViewModel: ProductViewModel = viewModel()
+    val categories by categoriesViewModel.categoriesState.collectAsState()
     var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
 
     val categoryTypes = when (categories) {
-        is SafeApiResult.Success -> viewModel.getCategoryTypes()
+        is SafeApiResult.Success -> categoriesViewModel.getCategoryTypes()
         else -> emptyList()
     }
 
@@ -194,7 +232,7 @@ private fun TypeTabContent(viewModel: CategoryViewModel = viewModel()) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp),
+                .padding(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -211,7 +249,10 @@ private fun TypeTabContent(viewModel: CategoryViewModel = viewModel()) {
                 categoryTypes.forEachIndexed { index, categoryType ->
                     Tab(
                         selected = selectedTabIndex == index,
-                        onClick = { selectedTabIndex = index },
+                        onClick = {
+                            selectedTabIndex = index
+                            productViewModel.filterProductsByCategoryType(categoryTypes[index])
+                        },
                         text = {
                             Text(
                                 text = categoryType,
@@ -225,17 +266,33 @@ private fun TypeTabContent(viewModel: CategoryViewModel = viewModel()) {
                     )
                 }
             }
-            if (categoryTypes.isNotEmpty()) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
-                    Text(
-                        text = categoryTypes[selectedTabIndex],
-                        style = MaterialTheme.typography.bodyMedium,
+            val filteredProducts by productViewModel.filteredProducts.collectAsState()
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                Text(
+                    text = formatItemCount(filteredProducts.size),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(0.dp)
+            ) {
+                items(filteredProducts) { product ->
+                    CategoriesProductsListItem(
+                        product = product,
+                        onClick = {
+                            navController.navigate(
+                                NavigationRoute.productDetail(
+                                    productId = product.id,
+                                    source = NavigationRoute.CATEGORIES
+                                )
+                            )
+                        }
                     )
                 }
             }

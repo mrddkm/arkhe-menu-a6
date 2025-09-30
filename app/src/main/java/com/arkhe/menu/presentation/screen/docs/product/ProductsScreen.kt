@@ -49,6 +49,7 @@ import com.arkhe.menu.presentation.ui.components.EmptyUI
 import com.arkhe.menu.presentation.ui.components.LoadingIndicatorSpinner
 import com.arkhe.menu.presentation.ui.theme.AppTheme
 import com.arkhe.menu.presentation.viewmodel.ProductViewModel
+import com.arkhe.menu.utils.formatItemCount
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.Info
@@ -166,18 +167,17 @@ fun ProductsScreen(
                         title = stringResource(R.string.products)
                     )
                 }
-
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp),
+                        .padding(10.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     selectedGroup?.let { group ->
                         Column(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -221,7 +221,7 @@ fun ProductsScreen(
                                 }
                             }
                             Text(
-                                text = group.products.size.toString() + " products",
+                                text = formatItemCount(group.products.size),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -255,7 +255,7 @@ fun ProductsScreen(
                                         navController.navigate(
                                             NavigationRoute.productDetail(
                                                 productId = product.id,
-                                                source = "products"
+                                                source = NavigationRoute.PRODUCTS
                                             )
                                         )
                                     }
