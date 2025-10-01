@@ -195,7 +195,7 @@ private fun CategoriesTabContent(
                 verticalArrangement = Arrangement.spacedBy(0.dp)
             ) {
                 items(filteredProducts) { product ->
-                    CategoriesProductsListItem(
+                    CategoriesProductsItems(
                         product = product,
                         onClick = {
                             navController.navigate(
@@ -283,7 +283,7 @@ private fun TypeTabContent(
                 verticalArrangement = Arrangement.spacedBy(0.dp)
             ) {
                 items(filteredProducts) { product ->
-                    CategoriesProductsListItem(
+                    CategoriesProductsItems(
                         product = product,
                         onClick = {
                             navController.navigate(

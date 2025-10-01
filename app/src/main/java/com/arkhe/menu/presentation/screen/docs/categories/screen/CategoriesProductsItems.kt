@@ -24,7 +24,7 @@ import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.ArrowIosForward
 
 @Composable
-fun CategoriesProductsListItem(
+fun CategoriesProductsItems(
     product: Product,
     onClick: () -> Unit
 ) {
