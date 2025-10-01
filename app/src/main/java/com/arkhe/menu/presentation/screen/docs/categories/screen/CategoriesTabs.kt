@@ -22,18 +22,15 @@ import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.arkhe.menu.R
 import com.arkhe.menu.data.remote.api.SafeApiResult
@@ -46,12 +43,14 @@ import compose.icons.evaicons.Fill
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.fill.Droplet
 import compose.icons.evaicons.outline.Pin
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun CategoriesTabs(
-    navController: NavController
+    navController: NavController,
+    categoryViewModel: CategoryViewModel = koinViewModel()
 ) {
-    var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
+    val selectedTabIndex by categoryViewModel.selectedParentTab.collectAsState()
 
     val tabs = listOf(
         stringResource(R.string.category) to EvaIcons.Fill.Droplet,
@@ -74,7 +73,7 @@ fun CategoriesTabs(
                 val selected = selectedTabIndex == index
                 Tab(
                     selected = selected,
-                    onClick = { selectedTabIndex = index },
+                    onClick = { categoryViewModel.updateParentTab(index) },
                     modifier = Modifier
                         .background(
                             if (selectedTabIndex == index) MaterialTheme.colorScheme.primary.copy(
@@ -110,7 +109,7 @@ fun CategoriesTabs(
         }
         Spacer(modifier = Modifier.height(16.dp))
         when (selectedTabIndex) {
-            0 -> CategoriesTabContent(navController)
+            0 -> CategoriesTabContent(navController, categoryViewModel)
             1 -> TypeTabContent(navController)
         }
     }
@@ -118,17 +117,24 @@ fun CategoriesTabs(
 
 @Composable
 private fun CategoriesTabContent(
-    navController: NavController
+    navController: NavController,
+    categoryViewModel: CategoryViewModel = koinViewModel(),
+    productViewModel: ProductViewModel = koinViewModel()
 ) {
-    val categoryViewModel: CategoryViewModel = viewModel()
-    val productViewModel: ProductViewModel = viewModel()
     val categories by categoryViewModel.categoriesState.collectAsState()
-
-    var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
+    val selectedTabIndex by categoryViewModel.selectedCategoryTab.collectAsState()
 
     val categoryNames = when (categories) {
         is SafeApiResult.Success -> categoryViewModel.getCategoryNames()
         else -> emptyList()
+    }
+
+    LaunchedEffect(categoryNames, selectedTabIndex) {
+        if (categoryNames.isNotEmpty() && selectedTabIndex < categoryNames.size) {
+            productViewModel.filterProductsByCategoryName(
+                categoryNames[selectedTabIndex].name
+            )
+        }
     }
 
     Surface(
@@ -144,19 +150,21 @@ private fun CategoriesTabContent(
             TabRow(
                 selectedTabIndex = selectedTabIndex,
                 indicator = { tabPositions ->
-                    TabRowDefaults.SecondaryIndicator(
-                        Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                        height = 3.dp,
-                        color = MaterialTheme.colorScheme.primary
-                    )
+                    if (tabPositions.isNotEmpty() && selectedTabIndex < tabPositions.size) {
+                        TabRowDefaults.SecondaryIndicator(
+                            Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
+                            height = 3.dp,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
             ) {
                 categoryNames.forEachIndexed { index, categoryName ->
                     Tab(
                         selected = selectedTabIndex == index,
                         onClick = {
-                            selectedTabIndex = index
-                            productViewModel.filterProductsByCategoryName(categoryNames[index].name)
+                            categoryViewModel.updateCategoryTab(index)
+                            productViewModel.filterProductsByCategoryName(categoryName.name)
                         },
                         text = {
                             Box(
@@ -214,16 +222,24 @@ private fun CategoriesTabContent(
 
 @Composable
 private fun TypeTabContent(
-    navController: NavController
+    navController: NavController,
+    categoryViewModel: CategoryViewModel = koinViewModel(),
+    productViewModel: ProductViewModel = koinViewModel()
 ) {
-    val categoriesViewModel: CategoryViewModel = viewModel()
-    val productViewModel: ProductViewModel = viewModel()
-    val categories by categoriesViewModel.categoriesState.collectAsState()
-    var selectedTabIndex by rememberSaveable { mutableIntStateOf(0) }
+    val categories by categoryViewModel.categoriesState.collectAsState()
+    val selectedTabIndex by categoryViewModel.selectedTypeTab.collectAsState()
 
     val categoryTypes = when (categories) {
-        is SafeApiResult.Success -> categoriesViewModel.getCategoryTypes()
+        is SafeApiResult.Success -> categoryViewModel.getCategoryTypes()
         else -> emptyList()
+    }
+
+    LaunchedEffect(categoryTypes, selectedTabIndex) {
+        if (categoryTypes.isNotEmpty() && selectedTabIndex < categoryTypes.size) {
+            productViewModel.filterProductsByCategoryType(
+                categoryTypes[selectedTabIndex]
+            )
+        }
     }
 
     Surface(
@@ -239,19 +255,21 @@ private fun TypeTabContent(
             TabRow(
                 selectedTabIndex = selectedTabIndex,
                 indicator = { tabPositions ->
-                    TabRowDefaults.SecondaryIndicator(
-                        Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                        height = 3.dp,
-                        color = MaterialTheme.colorScheme.primary
-                    )
+                    if (tabPositions.isNotEmpty() && selectedTabIndex < tabPositions.size) {
+                        TabRowDefaults.SecondaryIndicator(
+                            Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
+                            height = 3.dp,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
             ) {
                 categoryTypes.forEachIndexed { index, categoryType ->
                     Tab(
                         selected = selectedTabIndex == index,
                         onClick = {
-                            selectedTabIndex = index
-                            productViewModel.filterProductsByCategoryType(categoryTypes[index])
+                            categoryViewModel.updateTypeTab(index)
+                            productViewModel.filterProductsByCategoryType(categoryType)
                         },
                         text = {
                             Text(

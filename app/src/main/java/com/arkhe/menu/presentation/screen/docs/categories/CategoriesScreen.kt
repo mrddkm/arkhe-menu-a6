@@ -29,8 +29,8 @@ import androidx.navigation.NavController
 import com.arkhe.menu.R
 import com.arkhe.menu.data.remote.api.SafeApiResult
 import com.arkhe.menu.domain.model.Category
-import com.arkhe.menu.presentation.screen.docs.categories.screen.CategoryItem
 import com.arkhe.menu.presentation.screen.docs.categories.screen.CategoriesTabs
+import com.arkhe.menu.presentation.screen.docs.categories.screen.CategoryItem
 import com.arkhe.menu.presentation.screen.docs.categories.screen.HeaderAccordions
 import com.arkhe.menu.presentation.ui.components.LoadingIndicatorSpinner
 import com.arkhe.menu.presentation.viewmodel.CategoryViewModel
@@ -161,7 +161,10 @@ fun CategoriesScreen(
                         title = stringResource(R.string.categories)
                     )
                 }
-                CategoriesTabs(navController)
+                CategoriesTabs(
+                    navController = navController,
+                    categoryViewModel = categoryViewModel
+                )
             }
         }
     }

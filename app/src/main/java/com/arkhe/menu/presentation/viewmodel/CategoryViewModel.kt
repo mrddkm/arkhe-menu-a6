@@ -41,6 +41,15 @@ class CategoryViewModel(
     private val _lastScrollPosition = MutableStateFlow(0)
     val lastScrollPosition: StateFlow<Int> = _lastScrollPosition.asStateFlow()
 
+    private val _selectedParentTab = MutableStateFlow(0)
+    val selectedParentTab: StateFlow<Int> = _selectedParentTab.asStateFlow()
+
+    private val _selectedCategoryTab = MutableStateFlow(0)
+    val selectedCategoryTab: StateFlow<Int> = _selectedCategoryTab.asStateFlow()
+
+    private val _selectedTypeTab = MutableStateFlow(0)
+    val selectedTypeTab: StateFlow<Int> = _selectedTypeTab.asStateFlow()
+
     private var isInitialized = false
 
     init {
@@ -239,4 +248,16 @@ class CategoryViewModel(
     }
 
     fun getScrollPosition(): Int = _lastScrollPosition.value
+
+    fun updateParentTab(index: Int) {
+        _selectedParentTab.value = index
+    }
+
+    fun updateCategoryTab(index: Int) {
+        _selectedCategoryTab.value = index
+    }
+
+    fun updateTypeTab(index: Int) {
+        _selectedTypeTab.value = index
+    }
 }
