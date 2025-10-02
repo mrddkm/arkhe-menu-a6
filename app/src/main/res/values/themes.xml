@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.TripkeunApp" parent="android:Theme.Material.Light.NoActionBar" />
+    <!-- Theme for Google Splash Screen API -->
+    <style name="Theme.ArkheSplash" parent="Theme.SplashScreen">
+        <!-- Background Color for Google Splash -->
+        <item name="windowSplashScreenBackground">@color/splash_bg</item>
+        <!-- The icon that appears in the middle -->
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <!-- Duration of Animation Icon (Optional) -->
+        <item name="windowSplashScreenAnimationDuration">500</item>
+        <!-- Theme after Splash is finished -->
+        <item name="postSplashScreenTheme">@style/Theme.ArkheTheme</item>
+    </style>
+
+    <style name="Theme.ArkheTheme" parent="android:Theme.Material.Light.NoActionBar" >
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
 </resources>

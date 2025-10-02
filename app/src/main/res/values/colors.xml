@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="splash_bg">#667eea</color>
     <color name="tripkeun_primary">#4CAF50</color>
     <color name="tripkeun_primary_variant">#2E7D32</color>
     <color name="tripkeun_secondary">#66BB6A</color>
