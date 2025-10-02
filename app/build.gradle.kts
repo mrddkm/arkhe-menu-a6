@@ -101,6 +101,7 @@ dependencies {
 
     implementation(libs.bundles.icons)
     implementation(libs.bundles.animation)
+    implementation(libs.androidx.core.splashscreen)
 
     ksp(libs.androidx.room.compiler)
 

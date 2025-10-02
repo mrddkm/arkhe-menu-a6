@@ -1,21 +1,15 @@
 [versions]
-#noinspection AndroidGradlePluginVersion
-agp = "8.12.1"
-#noinspection NewerVersionAvailable
-kotlin = "2.2.0"
-googleKsp = "2.2.0-2.0.2"
+agp = "8.13.0"
+kotlin = "2.2.20"
+googleKsp = "2.2.20-2.0.3"
 coreKtx = "1.17.0"
-#noinspection GradleDependency
-lifecycleRuntimeKtx = "2.9.2"
+lifecycleRuntimeKtx = "2.9.4"
 activityCompose = "1.11.0"
-#noinspection GradleDependency
-composeBom = "2025.08.00"
-composeNavigation = "2.9.4"
-#noinspection NewerVersionAvailable
-koin = "4.1.0"
-room = "2.8.0"
-#noinspection NewerVersionAvailable
-ktor = "3.2.3"
+composeBom = "2025.09.01"
+composeNavigation = "2.9.5"
+koin = "4.1.1"
+room = "2.8.1"
+ktor = "3.3.0"
 datastore = "1.1.7"
 materialIcons = "1.7.8"
 junit = "4.13.2"
@@ -24,6 +18,7 @@ espressoCore = "3.7.0"
 composeIcons = "1.1.1"
 coil="2.7.0"
 lottie-compose = "6.6.9"
+core-splashscreen = "1.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -37,6 +32,7 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "composeNavigation" }
+androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "core-splashscreen" }
 
 koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
 koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koin" }
@@ -66,8 +62,8 @@ lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", versio
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-org-jetbrains-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 google-ksp = { id = "com.google.devtools.ksp", version.ref = "googleKsp" }
+org-jetbrains-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 org-jetbrains-kotlin-plugin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 
