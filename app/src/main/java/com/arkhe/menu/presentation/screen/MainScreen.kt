@@ -16,16 +16,10 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -57,13 +51,13 @@ fun MainScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val scrollAlpha by viewModel.scrollAlpha.collectAsState()
-    val density = LocalDensity.current
-
-    var topBarHeightPx by remember { mutableIntStateOf(0) }
-    var bottomBarHeightPx by remember { mutableIntStateOf(0) }
-
-    val topBarHeight = with(density) { topBarHeightPx.toDp() }
-    val bottomBarHeight = with(density) { bottomBarHeightPx.toDp() }
+//    val density = LocalDensity.current
+//
+//    var topBarHeightPx by remember { mutableIntStateOf(0) }
+//    var bottomBarHeightPx by remember { mutableIntStateOf(0) }
+//
+//    val topBarHeight = with(density) { topBarHeightPx.toDp() }
+//    val bottomBarHeight = with(density) { bottomBarHeightPx.toDp() }
 
     DisposableEffect(navController) {
         val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
@@ -144,11 +138,7 @@ fun MainScreen(
                 }
             },
             modifier = Modifier
-                .fillMaxSize()
-                .padding(
-                    top = topBarHeight,
-                    bottom = if (uiState.showBottomBar) bottomBarHeight else 0.dp
-                ),
+                .fillMaxSize(),
             label = "screen_transition"
         ) { currentScreen ->
             when (currentScreen) {
@@ -214,10 +204,6 @@ fun MainScreen(
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .padding(horizontal = 16.dp, vertical = 8.dp)
-                .onGloballyPositioned { coordinates ->
-                    topBarHeightPx = coordinates.size.height
-                }
-                .zIndex(1f)
         ) {
             Surface(
                 tonalElevation = 6.dp,
@@ -241,10 +227,6 @@ fun MainScreen(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(horizontal = 16.dp, vertical = 16.dp)
-                    .onGloballyPositioned { coordinates ->
-                        bottomBarHeightPx = coordinates.size.height
-                    }
-                    .zIndex(1f)
             ) {
                 Surface(
                     tonalElevation = 6.dp,
