@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.arkhe.menu.utils.ScrollStateManager
@@ -24,7 +25,9 @@ fun DocsScreen(
     onNavigateToCustomer: () -> Unit = {},
     onNavigateToCategories: () -> Unit = {},
     onNavigateToProducts: () -> Unit = {},
-    onScrollAlphaChange: (Float) -> Unit = {}
+    onScrollAlphaChange: (Float) -> Unit = {},
+    topBarHeight: Dp = 0.dp,
+    bottomBarHeight: Dp = 0.dp
 ) {
     val lazyListState = rememberManagedScrollState(
         key = scrollKey,
@@ -42,7 +45,10 @@ fun DocsScreen(
     LazyColumn(
         state = lazyListState,
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(bottom = 20.dp)
+        contentPadding = PaddingValues(
+            top = topBarHeight,
+            bottom = bottomBarHeight
+        )
     ) {
         item {
             DocsContent(

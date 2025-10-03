@@ -16,8 +16,13 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -51,13 +56,12 @@ fun MainScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val scrollAlpha by viewModel.scrollAlpha.collectAsState()
-//    val density = LocalDensity.current
-//
-//    var topBarHeightPx by remember { mutableIntStateOf(0) }
-//    var bottomBarHeightPx by remember { mutableIntStateOf(0) }
-//
-//    val topBarHeight = with(density) { topBarHeightPx.toDp() }
-//    val bottomBarHeight = with(density) { bottomBarHeightPx.toDp() }
+
+    var topBarHeightPx by remember { mutableIntStateOf(0) }
+    var bottomBarHeightPx by remember { mutableIntStateOf(0) }
+    val density = LocalDensity.current
+    val topBarHeight = with(density) { topBarHeightPx.toDp() }
+    val bottomBarHeight = with(density) { bottomBarHeightPx.toDp() }
 
     DisposableEffect(navController) {
         val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
@@ -193,7 +197,9 @@ fun MainScreen(
                         onNavigateToProducts = { viewModel.navigateToProducts() },
                         onScrollAlphaChange = { alpha ->
                             viewModel.updateScrollAlpha(alpha)
-                        }
+                        },
+                        topBarHeight = topBarHeight,
+                        bottomBarHeight = bottomBarHeight
                     )
                 }
             }
@@ -204,6 +210,9 @@ fun MainScreen(
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .padding(horizontal = 16.dp, vertical = 8.dp)
+                .onGloballyPositioned { coords ->
+                    topBarHeightPx = coords.size.height
+                }
         ) {
             Surface(
                 tonalElevation = 6.dp,
@@ -226,7 +235,9 @@ fun MainScreen(
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(horizontal = 16.dp, vertical = 16.dp)
+                    .onGloballyPositioned { coords ->
+                        bottomBarHeightPx = coords.size.height
+                    }
             ) {
                 Surface(
                     tonalElevation = 6.dp,

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.arkhe.menu.domain.model.UserRole
@@ -29,7 +30,9 @@ fun MainContent(
     onNavigateToCustomer: (() -> Unit),
     onNavigateToCategories: (() -> Unit),
     onNavigateToProducts: (() -> Unit),
-    onScrollAlphaChange: (Float) -> Unit = {}
+    onScrollAlphaChange: (Float) -> Unit = {},
+    topBarHeight: Dp = 0.dp,
+    bottomBarHeight: Dp = 0.dp
 ) {
     val scrollStateManager: ScrollStateManager = koinInject()
 
@@ -49,7 +52,9 @@ fun MainContent(
                     onNavigateToCustomer = onNavigateToCustomer,
                     onNavigateToCategories = onNavigateToCategories,
                     onNavigateToProducts = onNavigateToProducts,
-                    onScrollAlphaChange = onScrollAlphaChange
+                    onScrollAlphaChange = onScrollAlphaChange,
+                    topBarHeight = topBarHeight,
+                    bottomBarHeight = bottomBarHeight
                 )
             }
 
