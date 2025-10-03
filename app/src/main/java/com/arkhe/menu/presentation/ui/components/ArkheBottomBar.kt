@@ -60,14 +60,12 @@ fun ArkheGlassBottomBar(
 
     Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(horizontal = 8.dp, vertical = 4.dp)
             .background(Color.Transparent)
             .clip(RoundedCornerShape(34.dp))
     ) {
         Card(
             modifier = Modifier
-                .fillMaxWidth()
                 .height(68.dp)
                 .clip(RoundedCornerShape(34.dp))
                 .alpha(animatedAlpha),
