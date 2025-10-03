@@ -52,8 +52,8 @@ fun ProfileUI(
                         model = imageModel,
                         contentDescription = "Profile Logo",
                         modifier = Modifier.size(64.dp),
-                        placeholder = painterResource(R.drawable.image_outline),
-                        error = painterResource(R.drawable.alert_triangle_outline),
+                        placeholder = painterResource(R.drawable.ic_image),
+                        error = painterResource(R.drawable.ic_alert_triangle),
                         onError = {
                             Log.e(
                                 "DocsContent",
@@ -71,7 +71,7 @@ fun ProfileUI(
 
                 else -> {
                     Image(
-                        painter = painterResource(R.drawable.image_outline),
+                        painter = painterResource(R.drawable.ic_image),
                         contentDescription = null,
                         modifier = Modifier.size(96.dp)
                     )

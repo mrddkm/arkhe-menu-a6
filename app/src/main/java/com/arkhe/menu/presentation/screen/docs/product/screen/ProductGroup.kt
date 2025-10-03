@@ -78,13 +78,13 @@ fun ProductGroup(
                             .size(50.dp)
                             .clip(CircleShape),
                         contentScale = ContentScale.Crop,
-                        placeholder = painterResource(R.drawable.image_outline),
-                        fallback = painterResource(R.drawable.bitrise),
-                        error = painterResource(R.drawable.alert_triangle_outline)
+                        placeholder = painterResource(R.drawable.ic_image),
+                        fallback = painterResource(R.drawable.ic_bitrise),
+                        error = painterResource(R.drawable.ic_alert_triangle)
                     )
                 } else {
                     Image(
-                        painter = painterResource(R.drawable.image_outline),
+                        painter = painterResource(R.drawable.ic_image),
                         contentDescription = "Default Product Group Image",
                         modifier = Modifier
                             .size(50.dp)

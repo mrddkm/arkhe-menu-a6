@@ -77,8 +77,8 @@ fun ProfileDescription(profile: Profile) {
                             model = imageModel,
                             contentDescription = "Profile Logo",
                             modifier = Modifier.size(96.dp),
-                            placeholder = painterResource(R.drawable.image_outline),
-                            error = painterResource(R.drawable.alert_triangle_outline),
+                            placeholder = painterResource(R.drawable.ic_image),
+                            error = painterResource(R.drawable.ic_alert_triangle),
                             onError = { error ->
                                 Log.e(
                                     "ProfileDescription",
@@ -93,7 +93,7 @@ fun ProfileDescription(profile: Profile) {
 
                     else -> {
                         Image(
-                            painter = painterResource(R.drawable.image_outline),
+                            painter = painterResource(R.drawable.ic_image),
                             contentDescription = "Default Logo",
                             modifier = Modifier.size(96.dp)
                         )

@@ -116,8 +116,8 @@ fun BottomSheetProduct(
                                     .size(64.dp)
                                     .clip(CircleShape),
                                 contentScale = ContentScale.Crop,
-                                placeholder = painterResource(R.drawable.image_outline),
-                                error = painterResource(R.drawable.alert_triangle_outline),
+                                placeholder = painterResource(R.drawable.ic_image),
+                                error = painterResource(R.drawable.ic_alert_triangle),
                                 onLoading = {
                                     Log.d("BottomSheetProduct", "🔄 Image loading: $finalImagePath")
                                 },
@@ -136,7 +136,7 @@ fun BottomSheetProduct(
                             )
                         } else {
                             Image(
-                                painter = painterResource(R.drawable.image_outline),
+                                painter = painterResource(R.drawable.ic_image),
                                 contentDescription = null,
                                 modifier = Modifier.size(64.dp)
                             )
@@ -151,8 +151,8 @@ fun BottomSheetProduct(
                                 .size(64.dp)
                                 .clip(CircleShape),
                             contentScale = ContentScale.Crop,
-                            placeholder = painterResource(R.drawable.image_outline),
-                            error = painterResource(R.drawable.alert_triangle_outline),
+                            placeholder = painterResource(R.drawable.ic_image),
+                            error = painterResource(R.drawable.ic_alert_triangle),
                             onError = { error ->
                                 Log.e(
                                     "BottomSheetProduct",
@@ -170,7 +170,7 @@ fun BottomSheetProduct(
 
                     else -> {
                         Image(
-                            painter = painterResource(R.drawable.image_outline),
+                            painter = painterResource(R.drawable.ic_image),
                             contentDescription = null,
                             modifier = Modifier.size(64.dp)
                         )
