@@ -62,7 +62,9 @@ fun MainContent(
                 TripkeunScreen(
                     scrollKey = "main_tripkeun_screen",
                     scrollStateManager = scrollStateManager,
-                    onNavigateToContent = onNavigateToContent
+                    onNavigateToContent = onNavigateToContent,
+                    topBarHeight = topBarHeight,
+                    bottomBarHeight = bottomBarHeight
                 )
             }
 
@@ -71,7 +73,9 @@ fun MainContent(
                     scrollKey = "main_activity_screen",
                     scrollStateManager = scrollStateManager,
                     userRole = userRole,
-                    onNavigateToContent = onNavigateToContent
+                    onNavigateToContent = onNavigateToContent,
+                    topBarHeight = topBarHeight,
+                    bottomBarHeight = bottomBarHeight
                 )
             }
         }
