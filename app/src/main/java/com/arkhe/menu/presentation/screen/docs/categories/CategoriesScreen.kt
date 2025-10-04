@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.arkhe.menu.R
@@ -42,8 +43,10 @@ fun CategoriesScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
     categoryViewModel: CategoryViewModel = koinViewModel(),
-    onNavigateToDetail: () -> Unit = {}
+    onNavigateToDetail: () -> Unit = {},
+    topBarHeight: Dp = 0.dp
 ) {
+    val topBarHeightPlus = topBarHeight + 16.dp
     val categoriesState by categoryViewModel.categoriesState.collectAsState()
     var isRefreshing by remember { mutableStateOf(false) }
     val lastSuccess = remember { mutableStateOf<List<Category>?>(null) }
@@ -74,8 +77,7 @@ fun CategoriesScreen(
 
     Column(
         modifier = modifier
-            .fillMaxSize()
-            .padding(8.dp)
+            .padding(top = topBarHeightPlus, start = 8.dp, end = 8.dp, bottom = 8.dp)
     ) {
         when (categoriesState) {
             is SafeApiResult.Loading -> {
@@ -154,7 +156,7 @@ fun CategoriesScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 0.dp, start = 8.dp, end = 8.dp, bottom = 16.dp),
+                        .padding(top = 0.dp, start = 8.dp, end = 8.dp, bottom = 8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     HeaderAccordions(

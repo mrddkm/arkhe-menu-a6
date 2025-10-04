@@ -101,7 +101,7 @@ fun DocsContent(
             modifier = Modifier
                 .clickable { onNavigateToProfile() }
                 .fillMaxWidth()
-                .padding(8.dp),
+                .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
             Column(

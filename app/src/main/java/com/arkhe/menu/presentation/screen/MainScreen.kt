@@ -148,7 +148,8 @@ fun MainScreen(
             when (currentScreen) {
                 NavigationRoute.PROFILE -> {
                     ProfileScreen(
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
+                        topBarHeight = topBarHeight
                     )
                 }
 
@@ -170,14 +171,16 @@ fun MainScreen(
                         modifier = Modifier.fillMaxSize(),
                         onNavigateToDetail = {
                             navController.navigate(NavigationRoute.categoryDetail())
-                        }
+                        },
+                        topBarHeight = topBarHeight
                     )
                 }
 
                 NavigationRoute.PRODUCTS -> {
                     ProductsScreen(
                         navController = navController,
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
+                        topBarHeight = topBarHeight
                     )
                 }
 

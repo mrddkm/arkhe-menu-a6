@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.R
 import com.arkhe.menu.data.remote.api.SafeApiResult
@@ -32,10 +33,10 @@ import com.arkhe.menu.domain.model.Profile
 import com.arkhe.menu.domain.model.ProfileActionInfo
 import com.arkhe.menu.domain.model.ProfileInformationLanguage
 import com.arkhe.menu.domain.model.SocialMedia
-import com.arkhe.menu.presentation.ui.components.LoadingIndicatorSpinner
 import com.arkhe.menu.presentation.screen.docs.profile.screen.ProfileDescription
 import com.arkhe.menu.presentation.screen.docs.profile.screen.ProfileTagLine
 import com.arkhe.menu.presentation.screen.docs.profile.screen.SocialMediaCard
+import com.arkhe.menu.presentation.ui.components.LoadingIndicatorSpinner
 import com.arkhe.menu.presentation.ui.theme.AppTheme
 import com.arkhe.menu.presentation.viewmodel.ProfileViewModel
 import org.koin.compose.viewmodel.koinViewModel
@@ -44,7 +45,9 @@ import org.koin.compose.viewmodel.koinViewModel
 fun ProfileScreen(
     modifier: Modifier = Modifier,
     profileViewModel: ProfileViewModel = koinViewModel(),
+    topBarHeight: Dp = 0.dp
 ) {
+    val topBarHeightPlus = topBarHeight + 8.dp
     val profileState by profileViewModel.profilesState.collectAsState()
     val scrollState = rememberScrollState()
     val uriHandler = LocalUriHandler.current
@@ -69,9 +72,8 @@ fun ProfileScreen(
 
     Column(
         modifier = modifier
-            .fillMaxSize()
             .verticalScroll(scrollState)
-            .padding(8.dp)
+            .padding(top = topBarHeightPlus, start = 8.dp, end = 8.dp, bottom = 8.dp)
     ) {
         when (profileState) {
             is SafeApiResult.Loading -> {

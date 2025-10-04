@@ -63,7 +63,8 @@ fun HeaderContent(
 ) {
     Row(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .padding(start = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(0.dp)
     ) {
@@ -553,13 +554,12 @@ fun ProductInfoItemPreview() {
     }
 }*/
 
-/*
 @Preview(showBackground = true)
 @Composable
 fun HeaderScreenPreview() {
     AppTheme {
         HeaderContent(
-            title = "Docs"
+            title = stringResource(R.string.docs)
         )
     }
 }
@@ -569,7 +569,7 @@ fun HeaderScreenPreview() {
 fun HeaderSectionPreview() {
     AppTheme {
         HeaderSection(
-            title = "Header Title",
+            title = stringResource(R.string.categories),
             onHeaderClick = {}
         )
     }
@@ -581,4 +581,4 @@ fun MoreSectionPreview() {
     AppTheme {
         MoreSection(onMoreClick = {})
     }
-}*/
+}

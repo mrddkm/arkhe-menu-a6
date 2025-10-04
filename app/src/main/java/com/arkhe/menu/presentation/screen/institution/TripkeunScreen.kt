@@ -18,6 +18,9 @@ fun TripkeunScreen(
     topBarHeight: Dp = 0.dp,
     bottomBarHeight: Dp = 0.dp
 ) {
+    val topBarHeightPlus = topBarHeight + 16.dp
+    val bottomBarHeightPlus = bottomBarHeight + 16.dp
+
     val lazyListState = rememberManagedScrollState(
         key = scrollKey,
         scrollStateManager = scrollStateManager
@@ -27,8 +30,8 @@ fun TripkeunScreen(
         state = lazyListState,
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(
-            top = topBarHeight,
-            bottom = bottomBarHeight
+            top = topBarHeightPlus,
+            bottom = bottomBarHeightPlus
         )
     ) {
         item {

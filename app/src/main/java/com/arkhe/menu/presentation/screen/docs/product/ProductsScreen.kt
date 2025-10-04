@@ -33,6 +33,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.arkhe.menu.R
@@ -63,8 +64,10 @@ import org.koin.compose.viewmodel.koinViewModel
 fun ProductsScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
-    productViewModel: ProductViewModel = koinViewModel()
+    productViewModel: ProductViewModel = koinViewModel(),
+    topBarHeight: Dp = 0.dp
 ) {
+    val topBarHeightPlus = topBarHeight + 16.dp
     val productsState by productViewModel.productsState.collectAsState()
     val productGroups by productViewModel.productByGroups.collectAsState()
     val selectedGroup by productViewModel.selectedGroup.collectAsState()
@@ -97,8 +100,7 @@ fun ProductsScreen(
 
     Column(
         modifier = modifier
-            .fillMaxSize()
-            .padding(8.dp)
+            .padding(top = topBarHeightPlus, start = 8.dp, end = 8.dp, bottom = 8.dp)
     ) {
         when (productsState) {
             is SafeApiResult.Loading -> {
@@ -160,7 +162,7 @@ fun ProductsScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 0.dp, start = 8.dp, end = 8.dp, bottom = 16.dp),
+                        .padding(top = 0.dp, start = 8.dp, end = 8.dp, bottom = 8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     HeaderAccordions(

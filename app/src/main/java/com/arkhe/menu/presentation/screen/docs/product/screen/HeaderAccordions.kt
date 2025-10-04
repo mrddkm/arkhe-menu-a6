@@ -64,7 +64,7 @@ fun HeaderAccordions(
     var showEnglish by remember { mutableStateOf(false) }
     LazyColumn {
         item {
-            var expanded by remember { mutableStateOf(true) }
+            var expanded by remember { mutableStateOf(false) }
             val degrees by animateFloatAsState(if (expanded) -90f else 90f)
             Column {
                 Row(
