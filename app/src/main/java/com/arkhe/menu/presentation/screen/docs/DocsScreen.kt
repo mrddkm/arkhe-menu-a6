@@ -29,7 +29,7 @@ fun DocsScreen(
     topBarHeight: Dp = 0.dp,
     bottomBarHeight: Dp = 0.dp
 ) {
-    val topBarHeightPlus = topBarHeight + 16.dp
+    val topBarHeightPlus = topBarHeight + 8.dp
     val bottomBarHeightPlus = bottomBarHeight + 16.dp
     val lazyListState = rememberManagedScrollState(
         key = scrollKey,

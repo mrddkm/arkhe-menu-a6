@@ -5,7 +5,10 @@ package com.arkhe.menu.presentation.screen
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -83,7 +86,9 @@ fun MainScreen(
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
         AnimatedContent(
             targetState = uiState.currentScreen,
             transitionSpec = {
@@ -142,7 +147,8 @@ fun MainScreen(
                 }
             },
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .systemBarsPadding(),
             label = "screen_transition"
         ) { currentScreen ->
             when (currentScreen) {
@@ -211,8 +217,9 @@ fun MainScreen(
         /*--- Floating TopBar ---*/
         Box(
             modifier = Modifier
+                .statusBarsPadding()
                 .align(Alignment.TopCenter)
-                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .padding(horizontal = 16.dp, vertical = 0.dp)
                 .onGloballyPositioned { coords ->
                     topBarHeightPx = coords.size.height
                 }
@@ -220,7 +227,7 @@ fun MainScreen(
             Surface(
                 tonalElevation = 6.dp,
                 shadowElevation = 12.dp,
-                shape = MaterialTheme.shapes.medium,
+                shape = MaterialTheme.shapes.large,
                 color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
             ) {
                 ArkheTopBar(
@@ -237,6 +244,7 @@ fun MainScreen(
         if (uiState.showBottomBar) {
             Box(
                 modifier = Modifier
+                    .navigationBarsPadding()
                     .align(Alignment.BottomCenter)
                     .onGloballyPositioned { coords ->
                         bottomBarHeightPx = coords.size.height

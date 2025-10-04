@@ -34,11 +34,9 @@ class MainActivity : ComponentActivity() {
                     var showCustomSplash by remember { mutableStateOf(true) }
 
                     LaunchedEffect(Unit) {
-                        /*Eliminate Google Splash after 300ms*/
                         delay(2000)
                         keepSplashOnScreen = false
 
-                        /*Show Custom Splash for 2.5 Seconds*/
                         delay(3500)
                         showCustomSplash = false
                     }
