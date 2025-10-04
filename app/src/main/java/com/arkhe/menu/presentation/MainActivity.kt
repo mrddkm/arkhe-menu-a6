@@ -34,10 +34,10 @@ class MainActivity : ComponentActivity() {
                     var showCustomSplash by remember { mutableStateOf(true) }
 
                     LaunchedEffect(Unit) {
-                        delay(2000)
+                        delay(1200)
                         keepSplashOnScreen = false
 
-                        delay(3500)
+                        delay(2500)
                         showCustomSplash = false
                     }
 

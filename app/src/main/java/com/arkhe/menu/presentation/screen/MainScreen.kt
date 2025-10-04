@@ -5,6 +5,7 @@ package com.arkhe.menu.presentation.screen
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -245,12 +246,15 @@ fun MainScreen(
             Box(
                 modifier = Modifier
                     .navigationBarsPadding()
+                    .padding(horizontal = 8.dp, vertical = 0.dp)
                     .align(Alignment.BottomCenter)
                     .onGloballyPositioned { coords ->
                         bottomBarHeightPx = coords.size.height
                     }
             ) {
                 Surface(
+                    modifier = Modifier
+                        .height(68.dp),
                     tonalElevation = 6.dp,
                     shadowElevation = 12.dp,
                     shape = MaterialTheme.shapes.large,
