@@ -47,7 +47,7 @@ import compose.icons.evaicons.outline.Activity
 import compose.icons.evaicons.outline.Grid
 
 @Composable
-fun ArkheGlassBottomBar(
+fun ArkheBottomBar(
     selectedItem: BottomNavItem,
     onItemSelected: (BottomNavItem) -> Unit,
     scrollAlpha: Float = 1f
@@ -198,7 +198,7 @@ private fun getIconForItem(item: BottomNavItem): ImageVector {
 fun ArkheGlassBottomBarPreview() {
     var selectedItem = BottomNavItem.DOCS
     AppTheme {
-        ArkheGlassBottomBar(
+        ArkheBottomBar(
             selectedItem = selectedItem,
             onItemSelected = { selectedItem = it },
             scrollAlpha = 1f

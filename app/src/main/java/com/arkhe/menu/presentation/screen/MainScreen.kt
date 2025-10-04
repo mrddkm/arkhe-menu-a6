@@ -42,7 +42,7 @@ import com.arkhe.menu.presentation.screen.docs.product.ProductsScreen
 import com.arkhe.menu.presentation.screen.docs.profile.ProfileScreen
 import com.arkhe.menu.presentation.screen.user.UserBottomSheet
 import com.arkhe.menu.presentation.ui.animation.ScreenTransitions
-import com.arkhe.menu.presentation.ui.components.ArkheGlassBottomBar
+import com.arkhe.menu.presentation.ui.components.ArkheBottomBar
 import com.arkhe.menu.presentation.ui.components.ArkheTopBar
 import com.arkhe.menu.presentation.ui.components.LoadingIndicatorSpinner
 import com.arkhe.menu.presentation.ui.theme.AppTheme
@@ -256,7 +256,7 @@ fun MainScreen(
                     shape = MaterialTheme.shapes.large,
                     color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
                 ) {
-                    ArkheGlassBottomBar(
+                    ArkheBottomBar(
                         selectedItem = uiState.selectedBottomNavItem,
                         onItemSelected = { viewModel.selectBottomNavItem(it) },
                         scrollAlpha = scrollAlpha
