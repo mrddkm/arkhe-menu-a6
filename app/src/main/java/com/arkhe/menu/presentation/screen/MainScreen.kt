@@ -220,7 +220,7 @@ fun MainScreen(
             modifier = Modifier
                 .statusBarsPadding()
                 .align(Alignment.TopCenter)
-                .padding(horizontal = 16.dp, vertical = 0.dp)
+                .padding(horizontal = 16.dp, vertical = 6.dp)
                 .onGloballyPositioned { coords ->
                     topBarHeightPx = coords.size.height
                 }
@@ -246,7 +246,7 @@ fun MainScreen(
             Box(
                 modifier = Modifier
                     .navigationBarsPadding()
-                    .padding(horizontal = 8.dp, vertical = 0.dp)
+                    .padding(horizontal = 8.dp, vertical = 6.dp)
                     .align(Alignment.BottomCenter)
                     .onGloballyPositioned { coords ->
                         bottomBarHeightPx = coords.size.height

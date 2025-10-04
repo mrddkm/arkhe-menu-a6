@@ -21,9 +21,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.arkhe.menu.R
 import com.arkhe.menu.presentation.ui.theme.AppTheme
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
@@ -97,8 +99,15 @@ fun ArkheTopBar(
                     fontSize = 24.sp,
                     color = Color.Green.copy(alpha = 0.7f),
                     modifier = Modifier
-                        .background(Color.Transparent)
-                        .padding(start = 2.dp, end = 4.dp)
+                        .padding(start = 2.dp, end = 16.dp)
+                )
+            } else {
+                Text(
+                    text = "•",
+                    fontSize = 24.sp,
+                    color = Color.Green.copy(alpha = 0.7f),
+                    modifier = Modifier
+                        .padding(end = 16.dp)
                 )
             }
         },
@@ -126,8 +135,8 @@ fun TripkeunTopBarPreview() {
     AppTheme {
         ArkheTopBar(
             scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(),
-            isInMainContent = false,
-            currentContentType = "Home",
+            isInMainContent = true,
+            currentContentType = stringResource(R.string.docs),
             onBackClick = {},
             onUserIconClick = {}
         )
