@@ -54,15 +54,10 @@ class ProductViewModel(
     private var _persistentSelectedSeriesName: String? = null
 
     init {
-        Log.d("init", "## ProductViewModel::initialized ##")
-        Log.d(TAG, "  - categoryUseCases: $productUseCases")
-        Log.d(TAG, "  - sessionManager: $sessionManager")
-
         viewModelScope.launch {
             try {
                 productUseCases.getProducts(sessionManager.getTokenForApiCall())
                     .collectLatest { productsResult ->
-                        Log.d(TAG, "📊 Products result: ${productsResult::class.simpleName}")
                         _productsState.value = productsResult
 
                         if (productsResult is SafeApiResult.Success && productsResult.data.isNotEmpty()) {
@@ -80,11 +75,7 @@ class ProductViewModel(
         productCategoryId: String = "ALL",
         forceRefresh: Boolean = false
     ) {
-        Log.d(TAG, "========== loadProducts ==========")
-        Log.d(TAG, "forceRefresh: $forceRefresh")
-
         if (!forceRefresh) {
-            Log.d(TAG, "Using local DB data flow, no API call.")
             return
         }
 
@@ -94,20 +85,14 @@ class ProductViewModel(
                 _productsState.value = SafeApiResult.Loading
 
                 val sessionToken = sessionManager.getTokenForApiCall()
-                Log.d(TAG, "🔑 Token from SessionManager: ${sessionToken.take(8)}...")
 
                 val result = productUseCases.syncProducts(sessionToken, productCategoryId)
                 when (result) {
                     is SafeApiResult.Loading -> {
-                        Log.d(TAG, "⏳ Products loading...")
                         _productsState.value = result
                     }
 
                     is SafeApiResult.Success -> {
-                        Log.d(TAG, "✅ Products loaded successfully: ${result.data.size} items")
-                        result.data.forEach { product ->
-                            Log.d(TAG, "📋 Category: ${product.productDestination}")
-                        }
                         _productsState.value = result
                         loadProductGroups()
                     }
@@ -132,17 +117,9 @@ class ProductViewModel(
                 errorMessage.contains("authentication")
 
         if (isTokenError && !alreadyRetried) {
-            Log.d(
-                TAG,
-                "🔄 Token error detected, refreshing and retrying..."
-            )
             viewModelScope.launch {
                 try {
                     val newToken = sessionManager.ensureTokenAvailable()
-                    Log.d(
-                        TAG,
-                        "🔑 Retrying with refreshed token: ${newToken.take(8)}..."
-                    )
                     loadProducts(_currentProductCategoryId.value, forceRefresh = true)
                 } catch (e: Exception) {
                     Log.e(
@@ -155,11 +132,6 @@ class ProductViewModel(
     }
 
     fun ensureDataLoaded() {
-        Log.d(
-            TAG,
-            "ensureDataLoaded called - isInitialized: $isInitialized, currentState: ${_productsState.value::class.simpleName}"
-        )
-
         if (!isInitialized) {
             viewModelScope.launch {
                 try {
@@ -169,10 +141,8 @@ class ProductViewModel(
                     when (productsResult) {
                         is SafeApiResult.Success -> {
                             if (productsResult.data.isEmpty()) {
-                                Log.d(TAG, "🆕 No local data found, syncing categories from API...")
                                 loadProducts(_currentProductCategoryId.value, forceRefresh = true)
                             } else {
-                                Log.d(TAG, "🆗 Local data found, no need to sync.")
                                 _productsState.value = productsResult
                                 loadProductGroups()
                             }
@@ -187,14 +157,9 @@ class ProductViewModel(
                         }
 
                         SafeApiResult.Loading -> {
-                            Log.d(TAG, "🆗 Loading...")
                         }
 
                         null -> {
-                            Log.d(
-                                TAG,
-                                "🆗 null result, loading fresh data..."
-                            )
                             loadProducts(_currentProductCategoryId.value, forceRefresh = true)
                         }
                     }
@@ -211,18 +176,14 @@ class ProductViewModel(
         } else {
             when (_productsState.value) {
                 is SafeApiResult.Error -> {
-                    Log.d(TAG, "🔄 Retrying after error...")
                     loadProducts(_currentProductCategoryId.value, forceRefresh = false)
                 }
 
                 is SafeApiResult.Loading -> {
-                    Log.d(TAG, "⏳ Already loading, waiting...")
                 }
 
                 else -> {
-                    Log.d(TAG, "✅ Data already loaded")
                     if (_productByGroups.value.isEmpty()) {
-                        Log.d(TAG, "🔄 Product groups not loaded, loading now...")
                         loadProductGroups()
                     }
                 }
@@ -236,7 +197,6 @@ class ProductViewModel(
                 val groups = productUseCases.getProductGroups()
                 _productByGroups.value = groups
 
-                Log.d(TAG, "📦 Loaded ${groups.size} product groups")
                 restoreSelectedGroupIfNeeded()
             } catch (_: Exception) {
                 _productByGroups.value = emptyList()
@@ -246,31 +206,22 @@ class ProductViewModel(
 
     private fun restoreSelectedGroupIfNeeded() {
         _persistentSelectedSeriesName?.let { seriesName ->
-            Log.d(TAG, "🔍 restoreSelectedGroupIfNeeded - seriesName: $seriesName")
-            Log.d(TAG, "   - current selectedGroup: ${_selectedGroup.value?.seriesName}")
-            Log.d(TAG, "   - productByGroups size: ${_productByGroups.value.size}")
-
             if (_selectedGroup.value?.seriesName != seriesName) {
                 val restoredGroup = _productByGroups.value.find { it.seriesName == seriesName }
                 if (restoredGroup != null) {
-                    Log.d(TAG, "🔄 Restoring group: $seriesName")
                     _selectedGroup.value = restoredGroup
                     _filteredProducts.value = restoredGroup.products
-                    Log.d(
-                        TAG,
-                        "✅ Successfully restored group: $seriesName with ${restoredGroup.products.size} products"
-                    )
                 } else {
                     Log.w(TAG, "⚠️ Could not find group to restore: $seriesName")
                 }
             } else {
-                Log.d(
+                Log.w(
                     TAG,
-                    "ℹ️ Group already correctly selected: ${_selectedGroup.value?.seriesName}"
+                    "⚠️ Group already correctly selected: ${_selectedGroup.value?.seriesName}"
                 )
             }
         } ?: run {
-            Log.d(TAG, "ℹ️ No persistent selected group to restore")
+            Log.w(TAG, "⚠️ No persistent selected group to restore")
         }
     }
 
@@ -289,25 +240,16 @@ class ProductViewModel(
     fun selectProductGroup(group: ProductByGroup) {
         _selectedGroup.value = group
         _filteredProducts.value = group.products
-
         _persistentSelectedSeriesName = group.seriesName
-        Log.d(TAG, "✅ Selected and persisted group: ${group.seriesName} with ${group.products.size} products")
     }
 
     fun clearSelectedGroup() {
         _selectedGroup.value = null
         _filteredProducts.value = emptyList()
-
         _persistentSelectedSeriesName = null
-        Log.d(TAG, "✅ Cleared selected group")
     }
 
     fun restoreSelectedGroup() {
-        Log.d(TAG, "🔄 restoreSelectedGroup called manually")
-        Log.d(TAG, "   - _persistentSelectedSeriesName: $_persistentSelectedSeriesName")
-        Log.d(TAG, "   - _selectedGroup.value: ${_selectedGroup.value?.seriesName}")
-        Log.d(TAG, "   - _productByGroups.value.size: ${_productByGroups.value.size}")
-
         restoreSelectedGroupIfNeeded()
     }
 

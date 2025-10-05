@@ -1,6 +1,5 @@
 package com.arkhe.menu.presentation.screen.docs.product
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -93,7 +92,6 @@ fun ProductsScreen(
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
-                Log.d("ProductsScreen", "🔄 ON_RESUME - calling restoreSelectedGroup")
                 productViewModel.restoreSelectedGroup()
             }
         }
@@ -109,10 +107,6 @@ fun ProductsScreen(
 
     LaunchedEffect(productGroups.size) {
         if (productGroups.isNotEmpty()) {
-            Log.d(
-                "ProductsScreen",
-                "📦 productGroups loaded: ${productGroups.size} - calling restoreSelectedGroup"
-            )
             productViewModel.restoreSelectedGroup()
         }
     }
@@ -285,15 +279,6 @@ fun ProductsScreen(
                                 ProductListItem(
                                     product = product,
                                     onClick = {
-                                        Log.d(
-                                            "ProductsScreen",
-                                            "🔍 Navigate to detail - product: ${product.id}"
-                                        )
-                                        Log.d(
-                                            "ProductsScreen",
-                                            "   - selectedGroup: ${selectedGroup?.seriesName}"
-                                        )
-
                                         navController.navigate(
                                             NavigationRoute.productDetail(
                                                 productId = product.id,

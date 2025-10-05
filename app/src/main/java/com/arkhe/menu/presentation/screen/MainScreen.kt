@@ -73,7 +73,6 @@ fun MainScreen(
 
     DisposableEffect(navController) {
         val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
-            android.util.Log.d("MainScreen", "🧭 Destination changed to: ${destination.route}")
             viewModel.updateNavigationState(destination.route)
         }
         navController.addOnDestinationChangedListener(listener)

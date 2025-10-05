@@ -85,7 +85,6 @@ class MainViewModel(
 
     private fun navigateToSubScreen(route: String) {
         val currentBottomNavTitle = _uiState.value.selectedBottomNavItem.title
-
         _uiState.value = _uiState.value.copy(
             isInMainContent = true,
             showBottomBar = false,
@@ -97,9 +96,19 @@ class MainViewModel(
     /*Navigation State Management*/
     fun updateNavigationState(currentRoute: String?) {
         val currentState = _uiState.value
+        when {
+            currentRoute != null && (currentRoute.startsWith("product_detail") || currentRoute.startsWith(
+                "category_detail"
+            )) -> {
+                return
+            }
 
-        when (currentRoute) {
-            NavigationRoute.MAIN -> {
+            currentRoute == NavigationRoute.MAIN -> {
+                if (currentState.isInMainContent &&
+                    currentState.currentScreen != NavigationRoute.MAIN
+                ) {
+                    return
+                }
                 if (currentState.isInMainContent || !currentState.showBottomBar) {
                     _uiState.value = currentState.copy(
                         isInMainContent = false,
@@ -110,20 +119,18 @@ class MainViewModel(
                 }
             }
 
-            NavigationRoute.PROFILE,
-            NavigationRoute.ORGANIZATION,
-            NavigationRoute.CUSTOMER,
-            NavigationRoute.CATEGORIES,
-            NavigationRoute.PRODUCTS -> {
+            currentRoute == NavigationRoute.PROFILE ||
+                    currentRoute == NavigationRoute.ORGANIZATION ||
+                    currentRoute == NavigationRoute.CUSTOMER ||
+                    currentRoute == NavigationRoute.CATEGORIES ||
+                    currentRoute == NavigationRoute.PRODUCTS -> {
                 val bottomNavTitle = currentState.selectedBottomNavItem.title
-                if (!currentState.isInMainContent || currentState.showBottomBar || currentState.currentContentType != bottomNavTitle) {
-                    _uiState.value = currentState.copy(
-                        isInMainContent = true,
-                        showBottomBar = false,
-                        currentContentType = bottomNavTitle,
-                        currentScreen = currentRoute
-                    )
-                }
+                _uiState.value = currentState.copy(
+                    isInMainContent = true,
+                    showBottomBar = false,
+                    currentContentType = bottomNavTitle,
+                    currentScreen = currentRoute
+                )
             }
         }
     }
