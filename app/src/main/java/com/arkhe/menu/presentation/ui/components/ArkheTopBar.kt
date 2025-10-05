@@ -1,6 +1,7 @@
 package com.arkhe.menu.presentation.ui.components
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -23,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -47,19 +49,25 @@ fun ArkheTopBar(
     val offset = scrollBehavior.state.contentOffset
     val isScrolled = remember(offset) { offset < -20f }
 
-    val backgroundColor by animateColorAsState(
-        targetValue = if (isScrolled)
-            MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.65f)
-        else
-            MaterialTheme.colorScheme.background,
-        animationSpec = tween(400),
-        label = "topbar_bg_color"
+    val backgroundColor = MaterialTheme.colorScheme.background
+    val glassColor = MaterialTheme.colorScheme.surfaceContainer
+
+    val targetColor by animateColorAsState(
+        targetValue = if (isScrolled) glassColor else backgroundColor,
+        animationSpec = tween(durationMillis = 400),
+        label = "topbar_color"
     )
 
-    val animatedAlpha by animateFloatAsState(
-        targetValue = if (isScrolled) 1f else 0.9f,
-        animationSpec = tween(400),
+    val targetAlpha by animateFloatAsState(
+        targetValue = if (isScrolled) 0.95f else 1f,
+        animationSpec = tween(durationMillis = 400),
         label = "topbar_alpha"
+    )
+
+    val targetBlur by animateDpAsState(
+        targetValue = if (isScrolled) 12.dp else 0.dp,
+        animationSpec = tween(durationMillis = 400),
+        label = "topbar_blur"
     )
 
     Box(
@@ -70,12 +78,13 @@ fun ArkheTopBar(
         Box(
             modifier = Modifier
                 .matchParentSize()
+                .blur(targetBlur)
                 .background(
                     brush = Brush.verticalGradient(
                         colors = listOf(
-                            backgroundColor,
-                            backgroundColor.copy(alpha = 0.75f),
-                            backgroundColor.copy(alpha = 0.55f)
+                            targetColor.copy(alpha = targetAlpha * 0.6f),
+                            targetColor.copy(alpha = targetAlpha * 0.8f),
+                            targetColor.copy(alpha = targetAlpha)
                         )
                     )
                 )
@@ -127,8 +136,8 @@ fun ArkheTopBar(
             },
             scrollBehavior = scrollBehavior,
             colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = backgroundColor.copy(alpha = animatedAlpha),
-                scrolledContainerColor = backgroundColor.copy(alpha = animatedAlpha)
+                containerColor = Color.Transparent,
+                scrolledContainerColor = Color.Transparent
             )
         )
     }
