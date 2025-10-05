@@ -49,7 +49,7 @@ fun ArkheTopBar(
 
     val backgroundColor by animateColorAsState(
         targetValue = if (isScrolled)
-            MaterialTheme.colorScheme.surfaceContainer
+            MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.65f)
         else
             MaterialTheme.colorScheme.background,
         animationSpec = tween(400),
@@ -66,7 +66,6 @@ fun ArkheTopBar(
         modifier = Modifier
             .fillMaxWidth()
             .height(64.dp)
-            .background(Color.Transparent)
     ) {
         Box(
             modifier = Modifier
@@ -74,9 +73,9 @@ fun ArkheTopBar(
                 .background(
                     brush = Brush.verticalGradient(
                         colors = listOf(
-                            backgroundColor.copy(alpha = animatedAlpha),
-                            backgroundColor.copy(alpha = animatedAlpha * 0.9f),
-                            backgroundColor.copy(alpha = animatedAlpha * 0.7f)
+                            backgroundColor,
+                            backgroundColor.copy(alpha = 0.75f),
+                            backgroundColor.copy(alpha = 0.55f)
                         )
                     )
                 )
@@ -128,8 +127,8 @@ fun ArkheTopBar(
             },
             scrollBehavior = scrollBehavior,
             colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = Color.Transparent,
-                scrolledContainerColor = Color.Transparent
+                containerColor = backgroundColor.copy(alpha = animatedAlpha),
+                scrolledContainerColor = backgroundColor.copy(alpha = animatedAlpha)
             )
         )
     }
