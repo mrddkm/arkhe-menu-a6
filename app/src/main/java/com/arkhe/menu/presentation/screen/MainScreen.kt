@@ -85,7 +85,7 @@ fun MainScreen(
         }
     }
 
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -209,7 +209,8 @@ fun MainScreen(
                             viewModel.updateScrollAlpha(alpha)
                         },
                         topBarHeight = topBarHeight,
-                        bottomBarHeight = bottomBarHeight
+                        bottomBarHeight = bottomBarHeight,
+                        scrollBehavior = scrollBehavior
                     )
                 }
             }
@@ -229,7 +230,7 @@ fun MainScreen(
                 tonalElevation = 6.dp,
                 shadowElevation = 12.dp,
                 shape = MaterialTheme.shapes.large,
-                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
+                color = MaterialTheme.colorScheme.background
             ) {
                 ArkheTopBar(
                     scrollBehavior = scrollBehavior,

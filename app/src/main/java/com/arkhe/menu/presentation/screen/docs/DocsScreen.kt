@@ -5,15 +5,22 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.arkhe.menu.utils.ScrollStateManager
 import com.arkhe.menu.utils.rememberManagedScrollState
 
+object NoOpScrollConnection : NestedScrollConnection
+
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("FrequentlyChangingValue")
 @Composable
 fun DocsScreen(
@@ -27,7 +34,8 @@ fun DocsScreen(
     onNavigateToProducts: () -> Unit = {},
     onScrollAlphaChange: (Float) -> Unit = {},
     topBarHeight: Dp = 0.dp,
-    bottomBarHeight: Dp = 0.dp
+    bottomBarHeight: Dp = 0.dp,
+    scrollBehavior: TopAppBarScrollBehavior?
 ) {
     val topBarHeightPlus = topBarHeight + 8.dp
     val bottomBarHeightPlus = bottomBarHeight + 16.dp
@@ -46,7 +54,9 @@ fun DocsScreen(
 
     LazyColumn(
         state = lazyListState,
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .nestedScroll(scrollBehavior?.nestedScrollConnection ?: NoOpScrollConnection),
         contentPadding = PaddingValues(
             top = topBarHeightPlus,
             bottom = bottomBarHeightPlus

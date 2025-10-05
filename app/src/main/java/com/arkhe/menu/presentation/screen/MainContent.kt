@@ -5,6 +5,8 @@ package com.arkhe.menu.presentation.screen
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
@@ -18,6 +20,7 @@ import com.arkhe.menu.presentation.viewmodel.BottomNavItem
 import com.arkhe.menu.utils.ScrollStateManager
 import org.koin.compose.koinInject
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainContent(
     modifier: Modifier = Modifier,
@@ -32,7 +35,8 @@ fun MainContent(
     onNavigateToProducts: (() -> Unit),
     onScrollAlphaChange: (Float) -> Unit = {},
     topBarHeight: Dp = 0.dp,
-    bottomBarHeight: Dp = 0.dp
+    bottomBarHeight: Dp = 0.dp,
+    scrollBehavior: TopAppBarScrollBehavior? = null
 ) {
     val scrollStateManager: ScrollStateManager = koinInject()
 
@@ -54,7 +58,8 @@ fun MainContent(
                     onNavigateToProducts = onNavigateToProducts,
                     onScrollAlphaChange = onScrollAlphaChange,
                     topBarHeight = topBarHeight,
-                    bottomBarHeight = bottomBarHeight
+                    bottomBarHeight = bottomBarHeight,
+                    scrollBehavior = scrollBehavior
                 )
             }
 
