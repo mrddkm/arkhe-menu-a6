@@ -50,7 +50,7 @@ fun ArkheTopBar(
     val isScrolled = remember(offset) { offset < -20f }
 
     val backgroundColor = MaterialTheme.colorScheme.background
-    val glassColor = MaterialTheme.colorScheme.surfaceContainer
+    val glassColor = MaterialTheme.colorScheme.surfaceContainer.copy(0.5f)
 
     val targetColor by animateColorAsState(
         targetValue = if (isScrolled) glassColor else backgroundColor,
@@ -59,7 +59,7 @@ fun ArkheTopBar(
     )
 
     val targetAlpha by animateFloatAsState(
-        targetValue = if (isScrolled) 0.95f else 1f,
+        targetValue = if (isScrolled) 0.95f else 1.1f,
         animationSpec = tween(durationMillis = 400),
         label = "topbar_alpha"
     )
@@ -82,8 +82,8 @@ fun ArkheTopBar(
                 .background(
                     brush = Brush.verticalGradient(
                         colors = listOf(
-                            targetColor.copy(alpha = targetAlpha * 0.6f),
-                            targetColor.copy(alpha = targetAlpha * 0.8f),
+                            targetColor.copy(alpha = targetAlpha * 0.85f),
+                            targetColor.copy(alpha = targetAlpha * 0.95f),
                             targetColor.copy(alpha = targetAlpha)
                         )
                     )
