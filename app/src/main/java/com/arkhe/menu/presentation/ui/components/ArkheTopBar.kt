@@ -66,6 +66,7 @@ fun ArkheTopBar(
         modifier = Modifier
             .fillMaxWidth()
             .height(64.dp)
+            .background(Color.Transparent)
     ) {
         Box(
             modifier = Modifier
