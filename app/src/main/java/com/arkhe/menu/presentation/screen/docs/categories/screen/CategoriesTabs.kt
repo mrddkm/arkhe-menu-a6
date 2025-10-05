@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -143,7 +143,7 @@ private fun CategoriesTabContent(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp),
+                .padding(0.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -199,21 +199,26 @@ private fun CategoriesTabContent(
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(0.dp)
+            Surface(
+                shape = MaterialTheme.shapes.medium
             ) {
-                items(filteredProducts) { product ->
-                    CategoriesProductsItems(
-                        product = product,
-                        onClick = {
-                            navController.navigate(
-                                NavigationRoute.productDetail(
-                                    productId = product.id,
-                                    source = NavigationRoute.CATEGORIES
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(0.dp)
+                ) {
+                    itemsIndexed(filteredProducts) { index, product ->
+                        CategoriesProductsItems(
+                            product = product,
+                            onClick = {
+                                navController.navigate(
+                                    NavigationRoute.productDetail(
+                                        productId = product.id,
+                                        source = NavigationRoute.CATEGORIES
+                                    )
                                 )
-                            )
-                        }
-                    )
+                            },
+                            showDivider = index < filteredProducts.lastIndex
+                        )
+                    }
                 }
             }
         }
@@ -248,7 +253,7 @@ private fun TypeTabContent(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
+                .padding(0.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -297,21 +302,26 @@ private fun TypeTabContent(
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(0.dp)
+            Surface(
+                shape = MaterialTheme.shapes.medium
             ) {
-                items(filteredProducts) { product ->
-                    CategoriesProductsItems(
-                        product = product,
-                        onClick = {
-                            navController.navigate(
-                                NavigationRoute.productDetail(
-                                    productId = product.id,
-                                    source = NavigationRoute.CATEGORIES
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(0.dp)
+                ) {
+                    itemsIndexed(filteredProducts) { index, product ->
+                        CategoriesProductsItems(
+                            product = product,
+                            onClick = {
+                                navController.navigate(
+                                    NavigationRoute.productDetail(
+                                        productId = product.id,
+                                        source = NavigationRoute.CATEGORIES
+                                    )
                                 )
-                            )
-                        }
-                    )
+                            },
+                            showDivider = index < filteredProducts.lastIndex
+                        )
+                    }
                 }
             }
         }

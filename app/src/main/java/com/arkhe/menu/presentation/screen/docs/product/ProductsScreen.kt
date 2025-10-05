@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -281,7 +281,7 @@ fun ProductsScreen(
                         LazyColumn(
                             verticalArrangement = Arrangement.spacedBy(0.dp)
                         ) {
-                            items(filteredProducts) { product ->
+                            itemsIndexed(filteredProducts) { index, product ->
                                 ProductListItem(
                                     product = product,
                                     onClick = {
@@ -300,7 +300,8 @@ fun ProductsScreen(
                                                 source = NavigationRoute.PRODUCTS
                                             )
                                         )
-                                    }
+                                    },
+                                    showDivider = index < filteredProducts.lastIndex
                                 )
                             }
                         }

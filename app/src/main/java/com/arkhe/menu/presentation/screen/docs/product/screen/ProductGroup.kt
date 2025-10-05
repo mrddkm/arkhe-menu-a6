@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -43,7 +45,8 @@ import java.io.File
 @Composable
 fun ProductGroup(
     group: ProductByGroup,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    showDivider: Boolean = true
 ) {
     val context = LocalContext.current
     val representativeProduct = group.products.firstOrNull()
@@ -52,7 +55,7 @@ fun ProductGroup(
     Column(
         modifier = Modifier
             .clickable { onClick() }
-            .padding(start = 0.dp, top = 8.dp, bottom = 0.dp, end = 0.dp),
+            .padding(start = 16.dp, top = 8.dp, bottom = 0.dp, end = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Row(
@@ -106,18 +109,21 @@ fun ProductGroup(
                 )
             }
         }
-        HorizontalDivider(
-            modifier = Modifier.padding(start = 70.dp),
-            thickness = 1.dp,
-            color = Color.Gray.copy(alpha = 0.2f)
-        )
+        if (showDivider) {
+            HorizontalDivider(
+                modifier = Modifier.padding(start = 70.dp),
+                thickness = 1.dp,
+                color = Color.Gray.copy(alpha = 0.2f)
+            )
+        } else Spacer(modifier = Modifier.height(8.dp))
     }
 }
 
 @Composable
 fun ProductListItem(
     product: Product,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    showDivider: Boolean = true
 ) {
     Column(
         modifier = Modifier
@@ -162,11 +168,13 @@ fun ProductListItem(
                 )
             }
         }
-        HorizontalDivider(
-            modifier = Modifier.padding(horizontal = 0.dp),
-            thickness = 1.dp,
-            color = Color.Gray.copy(alpha = 0.2f)
-        )
+        if (showDivider) {
+            HorizontalDivider(
+                modifier = Modifier.padding(horizontal = 0.dp),
+                thickness = 1.dp,
+                color = Color.Gray.copy(alpha = 0.2f)
+            )
+        } else Spacer(modifier = Modifier.height(8.dp))
     }
 }
 

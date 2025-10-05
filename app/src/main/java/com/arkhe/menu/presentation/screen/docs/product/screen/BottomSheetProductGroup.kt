@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -24,8 +24,7 @@ fun BottomSheetProductGroup(
 ) {
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 0.dp, start = 16.dp, end = 16.dp, bottom = 16.dp),
+            .fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -38,12 +37,13 @@ fun BottomSheetProductGroup(
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(0.dp)
             ) {
-                items(productByGroups) { group ->
+                itemsIndexed(productByGroups) { index, group ->
                     ProductGroup(
                         group = group,
                         onClick = {
                             onProductGroupClick(group)
-                        }
+                        },
+                        showDivider = index < productByGroups.lastIndex
                     )
                 }
             }
