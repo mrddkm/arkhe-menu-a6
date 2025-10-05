@@ -49,6 +49,7 @@ import com.arkhe.menu.presentation.ui.components.ArkheTopBar
 import com.arkhe.menu.presentation.ui.components.LoadingIndicatorSpinner
 import com.arkhe.menu.presentation.ui.theme.AppTheme
 import com.arkhe.menu.presentation.viewmodel.MainViewModel
+import com.arkhe.menu.presentation.viewmodel.ProductViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.KoinApplicationPreview
@@ -62,6 +63,8 @@ fun MainScreen(
     val uiState by viewModel.uiState.collectAsState()
     val scrollAlpha by viewModel.scrollAlpha.collectAsState()
 
+    val productViewModel: ProductViewModel = koinViewModel(key = "main_product_viewmodel")
+
     var topBarHeightPx by remember { mutableIntStateOf(0) }
     var bottomBarHeightPx by remember { mutableIntStateOf(0) }
     val density = LocalDensity.current
@@ -70,6 +73,7 @@ fun MainScreen(
 
     DisposableEffect(navController) {
         val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
+            android.util.Log.d("MainScreen", "🧭 Destination changed to: ${destination.route}")
             viewModel.updateNavigationState(destination.route)
         }
         navController.addOnDestinationChangedListener(listener)
@@ -188,6 +192,7 @@ fun MainScreen(
                     ProductsScreen(
                         navController = navController,
                         modifier = Modifier.fillMaxSize(),
+                        productViewModel = productViewModel,
                         topBarHeight = topBarHeight
                     )
                 }

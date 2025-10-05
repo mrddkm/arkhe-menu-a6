@@ -1,5 +1,6 @@
 package com.arkhe.menu.presentation.screen.docs.product
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -35,6 +37,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import com.arkhe.menu.R
 import com.arkhe.menu.data.remote.api.SafeApiResult
@@ -64,7 +69,9 @@ import org.koin.compose.viewmodel.koinViewModel
 fun ProductsScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
-    productViewModel: ProductViewModel = koinViewModel(),
+    productViewModel: ProductViewModel = koinViewModel(
+        key = "main_product_viewmodel"
+    ),
     topBarHeight: Dp = 0.dp
 ) {
     val topBarHeightPlus = topBarHeight + 16.dp
@@ -82,8 +89,32 @@ fun ProductsScreen(
         confirmValueChange = { true }
     )
 
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                Log.d("ProductsScreen", "🔄 ON_RESUME - calling restoreSelectedGroup")
+                productViewModel.restoreSelectedGroup()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
     LaunchedEffect(Unit) {
         productViewModel.ensureDataLoaded()
+    }
+
+    LaunchedEffect(productGroups.size) {
+        if (productGroups.isNotEmpty()) {
+            Log.d(
+                "ProductsScreen",
+                "📦 productGroups loaded: ${productGroups.size} - calling restoreSelectedGroup"
+            )
+            productViewModel.restoreSelectedGroup()
+        }
     }
 
     LaunchedEffect(productsState) {
@@ -254,6 +285,15 @@ fun ProductsScreen(
                                 ProductListItem(
                                     product = product,
                                     onClick = {
+                                        Log.d(
+                                            "ProductsScreen",
+                                            "🔍 Navigate to detail - product: ${product.id}"
+                                        )
+                                        Log.d(
+                                            "ProductsScreen",
+                                            "   - selectedGroup: ${selectedGroup?.seriesName}"
+                                        )
+
                                         navController.navigate(
                                             NavigationRoute.productDetail(
                                                 productId = product.id,

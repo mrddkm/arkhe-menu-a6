@@ -51,6 +51,8 @@ class ProductViewModel(
 
     private var isInitialized = false
 
+    private var _persistentSelectedSeriesName: String? = null
+
     init {
         Log.d("init", "## ProductViewModel::initialized ##")
         Log.d(TAG, "  - categoryUseCases: $productUseCases")
@@ -233,9 +235,42 @@ class ProductViewModel(
             try {
                 val groups = productUseCases.getProductGroups()
                 _productByGroups.value = groups
+
+                Log.d(TAG, "📦 Loaded ${groups.size} product groups")
+                restoreSelectedGroupIfNeeded()
             } catch (_: Exception) {
                 _productByGroups.value = emptyList()
             }
+        }
+    }
+
+    private fun restoreSelectedGroupIfNeeded() {
+        _persistentSelectedSeriesName?.let { seriesName ->
+            Log.d(TAG, "🔍 restoreSelectedGroupIfNeeded - seriesName: $seriesName")
+            Log.d(TAG, "   - current selectedGroup: ${_selectedGroup.value?.seriesName}")
+            Log.d(TAG, "   - productByGroups size: ${_productByGroups.value.size}")
+
+            if (_selectedGroup.value?.seriesName != seriesName) {
+                val restoredGroup = _productByGroups.value.find { it.seriesName == seriesName }
+                if (restoredGroup != null) {
+                    Log.d(TAG, "🔄 Restoring group: $seriesName")
+                    _selectedGroup.value = restoredGroup
+                    _filteredProducts.value = restoredGroup.products
+                    Log.d(
+                        TAG,
+                        "✅ Successfully restored group: $seriesName with ${restoredGroup.products.size} products"
+                    )
+                } else {
+                    Log.w(TAG, "⚠️ Could not find group to restore: $seriesName")
+                }
+            } else {
+                Log.d(
+                    TAG,
+                    "ℹ️ Group already correctly selected: ${_selectedGroup.value?.seriesName}"
+                )
+            }
+        } ?: run {
+            Log.d(TAG, "ℹ️ No persistent selected group to restore")
         }
     }
 
@@ -254,11 +289,26 @@ class ProductViewModel(
     fun selectProductGroup(group: ProductByGroup) {
         _selectedGroup.value = group
         _filteredProducts.value = group.products
+
+        _persistentSelectedSeriesName = group.seriesName
+        Log.d(TAG, "✅ Selected and persisted group: ${group.seriesName} with ${group.products.size} products")
     }
 
     fun clearSelectedGroup() {
         _selectedGroup.value = null
         _filteredProducts.value = emptyList()
+
+        _persistentSelectedSeriesName = null
+        Log.d(TAG, "✅ Cleared selected group")
+    }
+
+    fun restoreSelectedGroup() {
+        Log.d(TAG, "🔄 restoreSelectedGroup called manually")
+        Log.d(TAG, "   - _persistentSelectedSeriesName: $_persistentSelectedSeriesName")
+        Log.d(TAG, "   - _selectedGroup.value: ${_selectedGroup.value?.seriesName}")
+        Log.d(TAG, "   - _productByGroups.value.size: ${_productByGroups.value.size}")
+
+        restoreSelectedGroupIfNeeded()
     }
 
     fun filterProductsByPrefix(prefix: String) {

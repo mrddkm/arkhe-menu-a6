@@ -1,6 +1,7 @@
 package com.arkhe.menu.presentation.screen.docs.product.detail
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -25,6 +26,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,6 +60,8 @@ import compose.icons.evaicons.outline.Close
 import org.koin.androidx.compose.koinViewModel
 import java.io.File
 
+private const val TAG = "ProductDetailScreen"
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductDetailScreen(
@@ -65,80 +69,47 @@ fun ProductDetailScreen(
     source: String,
     onBackClick: () -> Unit,
     navController: NavController? = null,
-    productViewModel: ProductViewModel = koinViewModel(),
+    productViewModel: ProductViewModel = koinViewModel(
+        key = "main_product_viewmodel"
+    ),
     imagePath: String? = null
 ) {
     var product by remember { mutableStateOf<Product?>(null) }
     var showEnglish by remember { mutableStateOf(false) }
+
+    val selectedGroup by productViewModel.selectedGroup.collectAsState()
+    LaunchedEffect(Unit) {
+        Log.d(TAG, "🎬 ProductDetailScreen launched")
+        Log.d(TAG, "   - productId: $productId")
+        Log.d(TAG, "   - source: $source")
+        Log.d(TAG, "   - selectedGroup: ${selectedGroup?.seriesName}")
+    }
 
     LaunchedEffect(productId) {
         product = productViewModel.getProductById(productId)
     }
 
     val handleBackNavigation: () -> Unit = {
+        Log.d(TAG, "🔙 handleBackNavigation called")
+        Log.d(TAG, "   - current selectedGroup: ${selectedGroup?.seriesName}")
+        Log.d(TAG, "   - source: $source")
+
         navController?.let { nav ->
-            val popSuccess = when (source) {
-                NavigationRoute.PRODUCTS -> {
-                    nav.popBackStack(NavigationRoute.PRODUCTS, inclusive = false)
-                }
-
-                NavigationRoute.DOCS -> {
-                    nav.popBackStack(NavigationRoute.MAIN, inclusive = false)
-                }
-
-                NavigationRoute.CATEGORIES -> {
-                    nav.popBackStack(NavigationRoute.CATEGORIES, inclusive = false)
-                }
-
-                else -> {
-                    nav.popBackStack()
-                }
-            }
+            Log.d(TAG, "   - Calling popBackStack()")
+            val popSuccess = nav.popBackStack()
+            Log.d(TAG, "   - popSuccess: $popSuccess")
 
             if (!popSuccess) {
-                when (source) {
-                    NavigationRoute.PRODUCTS -> {
-                        nav.navigate(NavigationRoute.PRODUCTS) {
-                            popUpTo(NavigationRoute.MAIN) {
-                                inclusive = false
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
+                Log.w(TAG, "   - popBackStack failed, using fallback navigation to MAIN")
+                nav.navigate(NavigationRoute.MAIN) {
+                    popUpTo(NavigationRoute.MAIN) {
+                        inclusive = true
                     }
-
-                    NavigationRoute.DOCS -> {
-                        nav.navigate(NavigationRoute.MAIN) {
-                            popUpTo(NavigationRoute.MAIN) {
-                                inclusive = false
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }
-
-                    NavigationRoute.CATEGORIES -> {
-                        nav.navigate(NavigationRoute.CATEGORIES) {
-                            popUpTo(NavigationRoute.MAIN) {
-                                inclusive = false
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }
-
-                    else -> {
-                        nav.navigate(NavigationRoute.MAIN) {
-                            popUpTo(0) { inclusive = true }
-                            launchSingleTop = true
-                        }
-                    }
+                    launchSingleTop = true
                 }
             }
         } ?: run {
+            Log.d(TAG, "   - Using onBackClick callback")
             onBackClick()
         }
     }

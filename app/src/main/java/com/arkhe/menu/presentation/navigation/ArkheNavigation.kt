@@ -1,6 +1,13 @@
 package com.arkhe.menu.presentation.navigation
 
+import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -10,11 +17,33 @@ import androidx.navigation.navArgument
 import com.arkhe.menu.presentation.screen.MainScreen
 import com.arkhe.menu.presentation.screen.docs.categories.screen.CategoryDetail
 import com.arkhe.menu.presentation.screen.docs.product.detail.ProductDetailScreen
+import com.arkhe.menu.presentation.viewmodel.ProductViewModel
+import org.koin.compose.viewmodel.koinViewModel
+
+private const val TAG = "ArkheNavigation"
 
 @Composable
 fun ArkheNavigation(
     navController: NavHostController = rememberNavController()
 ) {
+    var lastMainRoute by remember { mutableStateOf(NavigationRoute.MAIN) }
+
+    DisposableEffect(navController) {
+        val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
+            val route = destination.route
+            Log.d(TAG, "🧭 Navigation: $route")
+
+            if (route != null && !route.startsWith("product_detail") && !route.startsWith("category_detail")) {
+                lastMainRoute = route
+                Log.d(TAG, "   - Saved lastMainRoute: $lastMainRoute")
+            }
+        }
+        navController.addOnDestinationChangedListener(listener)
+        onDispose {
+            navController.removeOnDestinationChangedListener(listener)
+        }
+    }
+
     NavHost(
         navController = navController,
         startDestination = NavigationRoute.MAIN
@@ -70,70 +99,29 @@ fun ArkheNavigation(
             val productId = backStackEntry.arguments?.getString("productId") ?: ""
             val source = backStackEntry.arguments?.getString("source") ?: "unknown"
 
+            val productViewModel: ProductViewModel = koinViewModel(key = "main_product_viewmodel")
+
             ProductDetailScreen(
                 productId = productId,
                 source = source,
                 navController = navController,
+                productViewModel = productViewModel,
                 onBackClick = {
-                    val popSuccess = when (source) {
-                        NavigationRoute.PRODUCTS -> {
-                            navController.popBackStack(NavigationRoute.PRODUCTS, false)
-                        }
+                    Log.d(TAG, "🔙 ProductDetail onBackClick")
+                    Log.d(TAG, "   - source: $source")
+                    Log.d(TAG, "   - lastMainRoute: $lastMainRoute")
 
-                        NavigationRoute.DOCS -> {
-                            navController.popBackStack(NavigationRoute.MAIN, false)
-                        }
+                    val popSuccess = navController.popBackStack()
 
-                        NavigationRoute.CATEGORIES -> {
-                            navController.popBackStack(NavigationRoute.CATEGORIES, false)
-                        }
-
-                        else -> {
-                            navController.popBackStack()
-                        }
-                    }
+                    Log.d(TAG, "   - popSuccess: $popSuccess")
 
                     if (!popSuccess) {
-                        when (source) {
-                            NavigationRoute.PRODUCTS -> {
-                                navController.navigate(NavigationRoute.PRODUCTS) {
-                                    popUpTo(NavigationRoute.MAIN) {
-                                        inclusive = false
-                                    }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
+                        Log.w(TAG, "   - popBackStack failed, navigating to MAIN as fallback")
+                        navController.navigate(NavigationRoute.MAIN) {
+                            popUpTo(NavigationRoute.MAIN) {
+                                inclusive = true
                             }
-
-                            NavigationRoute.DOCS -> {
-                                navController.navigate(NavigationRoute.MAIN) {
-                                    popUpTo(NavigationRoute.MAIN) {
-                                        inclusive = false
-                                    }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            }
-
-                            NavigationRoute.CATEGORIES -> {
-                                navController.navigate(NavigationRoute.CATEGORIES) {
-                                    popUpTo(NavigationRoute.CATEGORIES) {
-                                        inclusive = false
-                                    }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            }
-
-                            else -> {
-                                navController.navigate(NavigationRoute.MAIN) {
-                                    popUpTo(0) {
-                                        inclusive = true
-                                    }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            }
+                            launchSingleTop = true
                         }
                     }
                 }
