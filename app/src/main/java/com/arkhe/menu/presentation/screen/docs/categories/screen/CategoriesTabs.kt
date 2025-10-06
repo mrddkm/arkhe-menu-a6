@@ -15,11 +15,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PrimaryTabRow
+import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
+import androidx.compose.material3.TabRowDefaults.SecondaryIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -62,12 +62,13 @@ fun CategoriesTabs(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        TabRow(
+        PrimaryTabRow(
             selectedTabIndex = selectedTabIndex,
             modifier = Modifier
                 .clip(MaterialTheme.shapes.large)
                 .height(40.dp),
-            indicator = {}
+            indicator = {},
+            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
         ) {
             tabs.forEachIndexed { index, (title, icon) ->
                 val selected = selectedTabIndex == index
@@ -76,10 +77,8 @@ fun CategoriesTabs(
                     onClick = { categoryViewModel.updateParentTab(index) },
                     modifier = Modifier
                         .background(
-                            if (selectedTabIndex == index) MaterialTheme.colorScheme.primary.copy(
-                                alpha = 0.3f
-                            )
-                            else MaterialTheme.colorScheme.surface
+                            if (selected) MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+                            else Color.Transparent
                         )
                         .padding(horizontal = 16.dp, vertical = 6.dp),
                     text = {
@@ -97,7 +96,7 @@ fun CategoriesTabs(
                             }
                             Text(
                                 text = title,
-                                color = if (selectedTabIndex == index)
+                                color = if (selected)
                                     MaterialTheme.colorScheme.primary
                                 else
                                     Color.Gray
@@ -142,21 +141,19 @@ private fun CategoriesTabContent(
     ) {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(0.dp),
+                .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            TabRow(
+            SecondaryTabRow(
                 selectedTabIndex = selectedTabIndex,
-                indicator = { tabPositions ->
-                    if (tabPositions.isNotEmpty() && selectedTabIndex < tabPositions.size) {
-                        TabRowDefaults.SecondaryIndicator(
-                            Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                            height = 3.dp,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
+                containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
+                indicator = {
+                    SecondaryIndicator(
+                        modifier = Modifier.tabIndicatorOffset(selectedTabIndex),
+                        color = MaterialTheme.colorScheme.primary,
+                        height = 3.dp
+                    )
                 }
             ) {
                 categoryNames.forEachIndexed { index, categoryName ->
@@ -167,10 +164,7 @@ private fun CategoriesTabContent(
                             productViewModel.filterProductsByCategoryName(categoryName.name)
                         },
                         text = {
-                            Box(
-                                modifier = Modifier
-                                    .size(18.dp)
-                            ) {
+                            Box(modifier = Modifier.size(18.dp)) {
                                 Icon(
                                     imageVector = EvaIcons.Fill.Droplet,
                                     contentDescription = null,
@@ -252,21 +246,19 @@ private fun TypeTabContent(
     ) {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(0.dp),
+                .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            TabRow(
+            SecondaryTabRow(
                 selectedTabIndex = selectedTabIndex,
-                indicator = { tabPositions ->
-                    if (tabPositions.isNotEmpty() && selectedTabIndex < tabPositions.size) {
-                        TabRowDefaults.SecondaryIndicator(
-                            Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
-                            height = 3.dp,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
+                containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
+                indicator = {
+                    SecondaryIndicator(
+                        modifier = Modifier.tabIndicatorOffset(selectedTabIndex),
+                        color = MaterialTheme.colorScheme.primary,
+                        height = 3.dp
+                    )
                 }
             ) {
                 categoryTypes.forEachIndexed { index, categoryType ->
@@ -295,7 +287,7 @@ private fun TypeTabContent(
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp)
+                    .padding(12.dp)
             ) {
                 Text(
                     text = formatItemCount(filteredProducts.size),
