@@ -95,7 +95,9 @@ fun BottomSheetProduct(
         }
         Spacer(modifier = Modifier.height(16.dp))
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
@@ -222,7 +224,7 @@ fun BottomSheetProduct(
                 }
             }
         }
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(16.dp))
         val informationText = remember(showEnglish, product.information) {
             when {
                 showEnglish && product.information.english.isNotBlank() ->

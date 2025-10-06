@@ -19,7 +19,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -40,19 +39,12 @@ import com.arkhe.menu.domain.model.CategoryActionInfo
 import com.arkhe.menu.domain.model.CategoryColors
 import com.arkhe.menu.domain.model.CategoryInformationLanguage
 import com.arkhe.menu.presentation.screen.docs.categories.screen.parseColorFromHex
-import com.arkhe.menu.presentation.ui.components.HeaderLabel
 import com.arkhe.menu.presentation.ui.components.HeaderTitleSecondary
 import com.arkhe.menu.presentation.ui.components.LanguageIconEn
 import com.arkhe.menu.presentation.ui.components.LanguageIconId
 import com.arkhe.menu.presentation.ui.components.MoreSection
 import com.arkhe.menu.presentation.ui.theme.AppTheme
 import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
-import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_INITIATION
-import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_READY
-import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_RESEARCH
-import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_TITLE
-import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_TOTAL
-import com.arkhe.menu.utils.getDevelopmentColor
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Fill
 import compose.icons.evaicons.fill.Droplet
@@ -102,7 +94,9 @@ fun BottomSheetCategory(
         }
         Spacer(modifier = Modifier.height(16.dp))
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
@@ -143,49 +137,6 @@ fun BottomSheetCategory(
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Surface(
-            shape = MaterialTheme.shapes.large
-        ) {
-            Column(
-                modifier = Modifier.padding(
-                    start = 32.dp,
-                    end = 32.dp,
-                    top = 16.dp,
-                    bottom = 16.dp
-                ),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                HeaderLabel(
-                    label = STATISTICS_TITLE
-                )
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    StatisticItem(
-                        label = STATISTICS_TOTAL,
-                        value = category.productCount.toString(),
-                        color = getDevelopmentColor(STATISTICS_TOTAL)
-                    )
-                    StatisticItem(
-                        label = STATISTICS_READY,
-                        value = category.ready.toString(),
-                        color = getDevelopmentColor(STATISTICS_READY)
-                    )
-                    StatisticItem(
-                        label = STATISTICS_RESEARCH,
-                        value = category.research.toString(),
-                        color = getDevelopmentColor(STATISTICS_RESEARCH)
-                    )
-                    StatisticItem(
-                        label = STATISTICS_INITIATION,
-                        value = category.initiation.toString(),
-                        color = getDevelopmentColor(STATISTICS_INITIATION)
-                    )
-                }
-            }
-        }
-        Spacer(modifier = Modifier.height(8.dp))
         val informationText = remember(showEnglish, category.information) {
             when {
                 showEnglish && category.information.english.isNotBlank() ->
@@ -211,8 +162,6 @@ fun BottomSheetCategory(
                 color = MaterialTheme.colorScheme.onSurface
             )
         }
-        Spacer(modifier = Modifier.height(24.dp))
-        MoreSection(onMoreClick = {})
     }
 }
 
