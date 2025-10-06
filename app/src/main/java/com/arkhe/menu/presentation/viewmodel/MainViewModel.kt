@@ -137,7 +137,7 @@ class MainViewModel(
 
     fun toggleProfileBottomSheet() {
         _uiState.value = _uiState.value.copy(
-            showProfileBottomSheet = !_uiState.value.showProfileBottomSheet
+            showSettingsBottomSheet = !_uiState.value.showSettingsBottomSheet
         )
     }
 
@@ -160,7 +160,7 @@ data class MainUiState(
     val selectedBottomNavItem: BottomNavItem = BottomNavItem.DOCS,
     val isInMainContent: Boolean = false,
     val showBottomBar: Boolean = true,
-    val showProfileBottomSheet: Boolean = false,
+    val showSettingsBottomSheet: Boolean = false,
     val currentContentType: String = "",
     val currentScreen: String = NavigationRoute.MAIN,
     val isLoading: Boolean = false,

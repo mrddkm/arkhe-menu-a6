@@ -15,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -42,7 +43,7 @@ import com.arkhe.menu.presentation.screen.docs.customer.CustomerScreen
 import com.arkhe.menu.presentation.screen.docs.organization.OrganizationScreen
 import com.arkhe.menu.presentation.screen.docs.product.ProductsScreen
 import com.arkhe.menu.presentation.screen.docs.profile.ProfileScreen
-import com.arkhe.menu.presentation.screen.user.UserBottomSheet
+import com.arkhe.menu.presentation.screen.settings.SettingsBottomSheet
 import com.arkhe.menu.presentation.ui.animation.ScreenTransitions
 import com.arkhe.menu.presentation.ui.components.ArkheBottomBar
 import com.arkhe.menu.presentation.ui.components.ArkheTopBar
@@ -81,11 +82,22 @@ fun MainScreen(
         }
     }
 
-    if (uiState.showProfileBottomSheet) {
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true,
+        confirmValueChange = { true }
+    )
+
+    if (uiState.showSettingsBottomSheet) {
+        LaunchedEffect(Unit) {
+            sheetState.show()
+        }
         ModalBottomSheet(
-            onDismissRequest = { viewModel.toggleProfileBottomSheet() }
+            onDismissRequest = {
+                { viewModel.toggleProfileBottomSheet() }
+            },
+            sheetState = sheetState
         ) {
-            UserBottomSheet()
+            SettingsBottomSheet()
         }
     }
 

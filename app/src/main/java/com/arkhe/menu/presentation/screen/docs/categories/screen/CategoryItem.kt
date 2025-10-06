@@ -28,13 +28,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.domain.model.Category
-import com.arkhe.menu.domain.model.CategoryActionInfo
-import com.arkhe.menu.domain.model.CategoryColors
-import com.arkhe.menu.domain.model.CategoryInformationLanguage
-import com.arkhe.menu.presentation.ui.theme.AppTheme
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_INITIATION
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_READY
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_RESEARCH
@@ -359,65 +354,5 @@ fun parseColorFromHex(hexColor: String): Color {
         Color(cleanHex.toLong(16) or 0x00000000FF000000)
     } catch (_: Exception) {
         Color.Gray
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun CategoryItemPreview() {
-    val sampleCategory = Category(
-        id = "1",
-        name = "Fruits & Vegetables",
-        type = "Food Category",
-        productCount = 120,
-        initiation = 10,
-        research = 20,
-        ready = 90,
-        information = CategoryInformationLanguage(
-            indonesian = "Kategori buah-buahan dan sayuran segar untuk kebutuhan sehari-hari",
-            english = "Fresh fruits and vegetables category for daily needs"
-        ),
-        colors = CategoryColors(
-            backgroundColor = "#FFEB3B",
-            iconColor = "#F57C00"
-        ),
-        actionInfo = CategoryActionInfo(
-            action = "View Products",
-            information = CategoryInformationLanguage(
-                indonesian = "Lihat produk dalam kategori ini",
-                english = "View products in this category"
-            )
-        )
-    )
-
-    AppTheme {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text(
-                text = "List View:",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
-            CategoryItem(
-                category = sampleCategory,
-                onClick = {},
-                isDetailView = false
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                text = "Detail View:",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
-            CategoryItem(
-                category = sampleCategory,
-                onClick = {},
-                isDetailView = true
-            )
-        }
     }
 }
