@@ -46,7 +46,6 @@ import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_READY
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_RESEARCH
 import com.arkhe.menu.utils.DistanceResult
 import com.arkhe.menu.utils.getDevelopmentColor
-import com.arkhe.menu.utils.sampleProduct
 import com.arkhe.menu.utils.toDistanceResult
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Fill
@@ -203,7 +202,8 @@ fun FeedSection(
 ) {
     Surface(
         onClick = onFeedClick,
-        shape = MaterialTheme.shapes.medium
+        shape = MaterialTheme.shapes.medium,
+        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
     ) {
         Row(
             modifier = Modifier
@@ -214,31 +214,34 @@ fun FeedSection(
             Box(
                 modifier = Modifier
                     .size(24.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surface),
+                    .clip(CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = EvaIcons.Outline.Camera,
                     contentDescription = null,
                     modifier = Modifier.size(20.dp),
-                    tint = MaterialTheme.colorScheme.onSurface
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
             Spacer(modifier = Modifier.width(12.dp))
             Text(
                 text = stringResource(R.string.feeds),
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.primary
             )
         }
     }
 }
 
 @Composable
-fun TimeMachineSection() {
+fun TimeMachineSection(
+    onTimeMachineClick: () -> Unit
+) {
     Surface(
-        shape = MaterialTheme.shapes.medium
+        onClick = onTimeMachineClick,
+        shape = MaterialTheme.shapes.medium,
+        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
     ) {
         Row(
             modifier = Modifier
@@ -249,22 +252,21 @@ fun TimeMachineSection() {
             Box(
                 modifier = Modifier
                     .size(24.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.surface),
+                    .clip(CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = EvaIcons.Outline.Clock,
                     contentDescription = null,
                     modifier = Modifier.size(20.dp),
-                    tint = MaterialTheme.colorScheme.onSurface
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
             Spacer(modifier = Modifier.width(12.dp))
             Text(
                 text = stringResource(R.string.time_machine),
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.primary
             )
         }
     }
@@ -508,7 +510,7 @@ fun DistanceText(
     }
 }
 
-@Preview(showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
 fun StatusDevelopmentChipPreview() {
     AppTheme {
@@ -518,7 +520,7 @@ fun StatusDevelopmentChipPreview() {
             icon = painterResource(R.drawable.ic_elevation)
         )
     }
-}
+}*/
 
 /*@Preview(showBackground = true)
 @Composable
@@ -554,7 +556,7 @@ fun ProductInfoItemPreview() {
     }
 }*/
 
-@Preview(showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
 fun HeaderScreenPreview() {
     AppTheme {
@@ -562,9 +564,9 @@ fun HeaderScreenPreview() {
             title = stringResource(R.string.docs)
         )
     }
-}
+}*/
 
-@Preview(showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
 fun HeaderSectionPreview() {
     AppTheme {
@@ -573,12 +575,28 @@ fun HeaderSectionPreview() {
             onHeaderClick = {}
         )
     }
-}
+}*/
 
-@Preview(showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
 fun MoreSectionPreview() {
     AppTheme {
         MoreSection(onMoreClick = {})
+    }
+}*/
+
+@Preview(showBackground = true)
+@Composable
+fun FeedSectionPreview() {
+    AppTheme {
+        FeedSection(onFeedClick = {})
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TimeMachineSectionPreview() {
+    AppTheme {
+        TimeMachineSection(onTimeMachineClick = {})
     }
 }

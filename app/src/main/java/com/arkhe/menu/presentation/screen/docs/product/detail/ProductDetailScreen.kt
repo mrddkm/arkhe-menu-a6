@@ -293,8 +293,8 @@ private fun ProductDetailContent(
                 horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                FeedSection { }
-                TimeMachineSection()
+                FeedSection {}
+                TimeMachineSection {}
             }
         }
         Spacer(modifier = Modifier.height(16.dp))

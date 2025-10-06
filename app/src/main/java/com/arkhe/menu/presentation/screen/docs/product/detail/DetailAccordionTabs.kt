@@ -14,9 +14,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -61,11 +61,12 @@ fun AnimatedVisibilityTabContent(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        TabRow(
+        PrimaryTabRow(
             selectedTabIndex = selectedTabIndex,
             modifier = Modifier
                 .clip(MaterialTheme.shapes.large)
                 .height(40.dp),
+            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
             indicator = {}
         ) {
             tabs.forEachIndexed { index, (title, icon) ->
@@ -75,10 +76,8 @@ fun AnimatedVisibilityTabContent(
                     onClick = { selectedTabIndex = index },
                     modifier = Modifier
                         .background(
-                            if (selectedTabIndex == index) MaterialTheme.colorScheme.primary.copy(
-                                alpha = 0.3f
-                            )
-                            else MaterialTheme.colorScheme.surface
+                            if (selected) MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+                            else Color.Transparent
                         )
                         .padding(horizontal = 16.dp, vertical = 6.dp),
                     text = {
@@ -96,7 +95,7 @@ fun AnimatedVisibilityTabContent(
                             }
                             Text(
                                 text = title,
-                                color = if (selectedTabIndex == index)
+                                color = if (selected)
                                     MaterialTheme.colorScheme.primary
                                 else
                                     Color.Gray
@@ -106,16 +105,63 @@ fun AnimatedVisibilityTabContent(
                 )
             }
         }
+
+//
+//        TabRow(
+//            selectedTabIndex = selectedTabIndex,
+//            modifier = Modifier
+//                .clip(MaterialTheme.shapes.large)
+//                .height(40.dp),
+//            indicator = {}
+//        ) {
+//            tabs.forEachIndexed { index, (title, icon) ->
+//                val selected = selectedTabIndex == index
+//                Tab(
+//                    selected = selected,
+//                    onClick = { selectedTabIndex = index },
+//                    modifier = Modifier
+//                        .background(
+//                            if (selectedTabIndex == index) MaterialTheme.colorScheme.primary.copy(
+//                                alpha = 0.3f
+//                            )
+//                            else MaterialTheme.colorScheme.surface
+//                        )
+//                        .padding(horizontal = 16.dp, vertical = 6.dp),
+//                    text = {
+//                        Row(
+//                            verticalAlignment = Alignment.CenterVertically,
+//                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+//                        ) {
+//                            if (selected) {
+//                                Icon(
+//                                    imageVector = icon,
+//                                    contentDescription = title,
+//                                    tint = MaterialTheme.colorScheme.primary,
+//                                    modifier = Modifier.size(18.dp)
+//                                )
+//                            }
+//                            Text(
+//                                text = title,
+//                                color = if (selectedTabIndex == index)
+//                                    MaterialTheme.colorScheme.primary
+//                                else
+//                                    Color.Gray
+//                            )
+//                        }
+//                    }
+//                )
+//            }
+//        }
         Spacer(modifier = Modifier.height(16.dp))
         when (selectedTabIndex) {
-            0 -> ProductScreen(product)
-            1 -> DestinationScreen(product)
+            0 -> ProductTab(product)
+            1 -> DestinationTab(product)
         }
     }
 }
 
 @Composable
-fun ProductScreen(
+fun ProductTab(
     product: Product
 ) {
     Surface(
@@ -160,7 +206,7 @@ fun ProductScreen(
 }
 
 @Composable
-fun DestinationScreen(
+fun DestinationTab(
     product: Product
 ) {
     Surface(
@@ -259,7 +305,7 @@ fun DestinationScreen(
 @Composable
 fun RoundedTabsScreenPreview() {
     AppTheme {
-        DestinationScreen(
+        DestinationTab(
             sampleProduct
         )
     }
