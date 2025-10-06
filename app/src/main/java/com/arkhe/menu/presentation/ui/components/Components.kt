@@ -358,8 +358,10 @@ fun ProductInfoItem(
         ) {
             Text(
                 text = label,
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurface
+                style = MaterialTheme.typography.bodySmall.copy(
+                    fontWeight = FontWeight.Normal
+                ),
+                color = Color.Gray
             )
             Box(
                 modifier = Modifier.padding(end = 24.dp)

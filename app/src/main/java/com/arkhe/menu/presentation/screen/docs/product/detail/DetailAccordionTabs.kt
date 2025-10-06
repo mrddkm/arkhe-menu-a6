@@ -105,63 +105,16 @@ fun AnimatedVisibilityTabContent(
                 )
             }
         }
-
-//
-//        TabRow(
-//            selectedTabIndex = selectedTabIndex,
-//            modifier = Modifier
-//                .clip(MaterialTheme.shapes.large)
-//                .height(40.dp),
-//            indicator = {}
-//        ) {
-//            tabs.forEachIndexed { index, (title, icon) ->
-//                val selected = selectedTabIndex == index
-//                Tab(
-//                    selected = selected,
-//                    onClick = { selectedTabIndex = index },
-//                    modifier = Modifier
-//                        .background(
-//                            if (selectedTabIndex == index) MaterialTheme.colorScheme.primary.copy(
-//                                alpha = 0.3f
-//                            )
-//                            else MaterialTheme.colorScheme.surface
-//                        )
-//                        .padding(horizontal = 16.dp, vertical = 6.dp),
-//                    text = {
-//                        Row(
-//                            verticalAlignment = Alignment.CenterVertically,
-//                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-//                        ) {
-//                            if (selected) {
-//                                Icon(
-//                                    imageVector = icon,
-//                                    contentDescription = title,
-//                                    tint = MaterialTheme.colorScheme.primary,
-//                                    modifier = Modifier.size(18.dp)
-//                                )
-//                            }
-//                            Text(
-//                                text = title,
-//                                color = if (selectedTabIndex == index)
-//                                    MaterialTheme.colorScheme.primary
-//                                else
-//                                    Color.Gray
-//                            )
-//                        }
-//                    }
-//                )
-//            }
-//        }
         Spacer(modifier = Modifier.height(16.dp))
         when (selectedTabIndex) {
-            0 -> ProductTab(product)
+            0 -> ProductInfoTab(product)
             1 -> DestinationTab(product)
         }
     }
 }
 
 @Composable
-fun ProductTab(
+fun ProductInfoTab(
     product: Product
 ) {
     Surface(
@@ -175,6 +128,28 @@ fun ProductTab(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 4.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(2.dp)
+            ) {
+                Text(
+                    text = "Tagline",
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        fontWeight = FontWeight.Normal
+                    ),
+                    color = Color.Gray
+                )
+                Text(
+                    text = product.productTagLine,
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Normal
+                    ),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
             ProductInfoItem(
                 label = "Status",
                 valueCompose = { StatusDevelopmentChip(product.status) },
@@ -194,12 +169,6 @@ fun ProductTab(
                 label = "Type",
                 value = product.categoryType,
                 useHorizontalDivider = true
-            )
-            ProductInfoItem(
-                label = "Tagline",
-                value = product.productTagLine,
-                useHorizontalDivider = true,
-                maxLine = 2
             )
         }
     }
@@ -303,10 +272,21 @@ fun DestinationTab(
 
 @Preview(showBackground = true)
 @Composable
-fun RoundedTabsScreenPreview() {
+fun ProductInfoTabPreview() {
+    AppTheme {
+        ProductInfoTab(
+            sampleProduct
+        )
+    }
+}
+
+/*
+@Preview(showBackground = true)
+@Composable
+fun DestinationTabPreview() {
     AppTheme {
         DestinationTab(
             sampleProduct
         )
     }
-}
+}*/
