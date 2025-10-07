@@ -19,12 +19,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.presentation.ui.theme.AppTheme
-import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.ArrowIosForward
@@ -34,7 +34,8 @@ import compose.icons.evaicons.outline.Image
 fun AccountItem(
     label: String = "",
     labelInfo: String = "",
-    icon: ImageVector = EvaIcons.Outline.Image,
+    icon: ImageVector? = null,
+    painter: Painter? = null,
     onClick: () -> Unit,
     showDivider: Boolean = true
 ) {
@@ -55,12 +56,28 @@ fun AccountItem(
                     .size(32.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = Color.Gray,
-                    modifier = Modifier.fillMaxSize()
-                )
+                if (icon != null) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = Color.Gray,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                } else if (painter != null) {
+                    Icon(
+                        painter = painter,
+                        contentDescription = null,
+                        tint = Color.Gray,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                } else {
+                    Icon(
+                        imageVector = EvaIcons.Outline.Image,
+                        contentDescription = null,
+                        tint = Color.Gray,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
             }
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -96,7 +113,7 @@ fun AccountItem(
                 thickness = 1.dp,
                 color = Color.Gray.copy(alpha = 0.2f)
             )
-        } else Spacer(modifier = Modifier.height(6.dp))
+        } else Spacer(modifier = Modifier.height(4.dp))
     }
 }
 
