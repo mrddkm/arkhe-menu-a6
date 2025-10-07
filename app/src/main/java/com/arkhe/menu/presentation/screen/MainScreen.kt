@@ -60,10 +60,10 @@ import org.koin.compose.KoinApplicationPreview
 @Composable
 fun MainScreen(
     navController: NavHostController,
-    viewModel: MainViewModel = koinViewModel()
+    mainViewModel: MainViewModel = koinViewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
-    val scrollAlpha by viewModel.scrollAlpha.collectAsState()
+    val uiState by mainViewModel.uiState.collectAsState()
+    val scrollAlpha by mainViewModel.scrollAlpha.collectAsState()
 
     val productViewModel: ProductViewModel = koinViewModel(key = "main_product_viewmodel")
 
@@ -75,7 +75,7 @@ fun MainScreen(
 
     DisposableEffect(navController) {
         val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
-            viewModel.updateNavigationState(destination.route)
+            mainViewModel.updateNavigationState(destination.route)
         }
         navController.addOnDestinationChangedListener(listener)
         onDispose {
@@ -84,7 +84,7 @@ fun MainScreen(
     }
 
     BackHandler(enabled = uiState.showSettingsBottomSheet) {
-        viewModel.toggleProfileBottomSheet()
+        mainViewModel.toggleProfileBottomSheet()
     }
 
     val sheetState = rememberModalBottomSheetState(
@@ -93,7 +93,7 @@ fun MainScreen(
 
     if (uiState.showSettingsBottomSheet) {
         ModalBottomSheet(
-            onDismissRequest = { viewModel.toggleProfileBottomSheet() },
+            onDismissRequest = { mainViewModel.toggleProfileBottomSheet() },
             sheetState = sheetState
         ) {
             SettingsBottomSheet()
@@ -214,15 +214,15 @@ fun MainScreen(
                         userRole = uiState.userRole,
                         navController = navController,
                         onNavigateToContent = { contentType ->
-                            viewModel.navigateToMainContent(contentType)
+                            mainViewModel.navigateToMainContent(contentType)
                         },
-                        onNavigateToProfile = { viewModel.navigateToProfile() },
-                        onNavigateToOrganization = { viewModel.navigateToOrganization() },
-                        onNavigateToCustomer = { viewModel.navigateToCustomer() },
-                        onNavigateToCategories = { viewModel.navigateToCategory() },
-                        onNavigateToProducts = { viewModel.navigateToProducts() },
+                        onNavigateToProfile = { mainViewModel.navigateToProfile() },
+                        onNavigateToOrganization = { mainViewModel.navigateToOrganization() },
+                        onNavigateToCustomer = { mainViewModel.navigateToCustomer() },
+                        onNavigateToCategories = { mainViewModel.navigateToCategory() },
+                        onNavigateToProducts = { mainViewModel.navigateToProducts() },
                         onScrollAlphaChange = { alpha ->
-                            viewModel.updateScrollAlpha(alpha)
+                            mainViewModel.updateScrollAlpha(alpha)
                         },
                         topBarHeight = topBarHeight,
                         bottomBarHeight = bottomBarHeight,
@@ -252,8 +252,8 @@ fun MainScreen(
                     scrollBehavior = scrollBehavior,
                     isInMainContent = uiState.isInMainContent,
                     currentContentType = uiState.currentContentType,
-                    onBackClick = { viewModel.navigateBackToMain() },
-                    onUserIconClick = { viewModel.toggleProfileBottomSheet() }
+                    onBackClick = { mainViewModel.navigateBackToMain() },
+                    onUserIconClick = { mainViewModel.toggleProfileBottomSheet() }
                 )
             }
         }
@@ -279,7 +279,7 @@ fun MainScreen(
                 ) {
                     ArkheBottomBar(
                         selectedItem = uiState.selectedBottomNavItem,
-                        onItemSelected = { viewModel.selectBottomNavItem(it) },
+                        onItemSelected = { mainViewModel.selectBottomNavItem(it) },
                         scrollAlpha = scrollAlpha
                     )
                 }
@@ -298,7 +298,7 @@ fun MainScreen(
 
         uiState.error?.let { error ->
             LaunchedEffect(error) {
-                viewModel.setError(null)
+                mainViewModel.setError(null)
             }
         }
     }

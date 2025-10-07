@@ -1,0 +1,60 @@
+<resources>
+    <!--Main-->
+    <string name="app_name">ArkheMenu</string>
+    <string name="client_short_name">tripkeun</string>
+    <string name="client_long_name">tripkeun Indonesia</string>
+
+    <!--TopBar-->
+    <string name="profile">Profil</string>
+    <string name="settings">Pengaturan</string>
+
+    <!--BottomBar and HeaderContent-->
+    <string name="docs">Docs</string>
+    <string name="tripkeun">tripkeun</string>
+    <string name="activity">Activity</string>
+
+    <!--Common-->
+    <string name="loading">Loading</string>
+    <string name="error_occurred">An error occurred</string>
+    <string name="retry">Retry</string>
+    <string name="save">Simpan</string>
+    <string name="cancel">Batal</string>
+    <string name="delete">Hapus</string>
+    <string name="back">Kembali</string>
+    <string name="more">Lihat lainnya</string>
+    <string name="feeds">Feeds</string>
+    <string name="time_machine">Time Machine</string>
+    <string name="select_groups">Pilih Grup</string>
+    <string name="browse_groups">Telusuri Grup</string>
+    <string name="product_group">Grup Produk</string>
+    <string name="select_language">Select Language</string>
+
+    <!--Docs Menu-->
+    <string name="organization">Organisasi</string>
+    <string name="customer">Sobatkeun</string>
+    <string name="categories">Kategori</string>
+    <string name="category">Kategori</string>
+    <string name="type">Tipe</string>
+    <string name="products">Produk</string>
+    <string name="product">Produk</string>
+    <string name="profile_settings">Profil &amp; Pengaturan</string>
+
+    <!--tripkeun Menu-->
+    <string name="create_receipt">Create Receipt</string>
+    <string name="view_receipts">View Receipts</string>
+
+    <!--Activity Menu-->
+
+    <!-- Profile related strings -->
+    <string name="profile_title">Profil</string>
+    <string name="loading_profile">Loading profil…</string>
+    <string name="error_loading_profile">Gagal memuat profil</string>
+    <string name="retries">Coba kembali</string>
+    <string name="refresh">Refresh</string>
+
+    <!-- Network error messages -->
+    <string name="error_no_internet">Tidak ada koneksi internet</string>
+    <string name="error_timeout">Request timed out</string>
+    <string name="error_server">Kesalahan server</string>
+    <string name="error_unknown">Terjadi kesalahan</string>
+</resources>

@@ -13,6 +13,7 @@ plugins {
     alias(libs.plugins.org.jetbrains.kotlin.plugin.compose)
     alias(libs.plugins.org.jetbrains.kotlin.serialization)
     alias(libs.plugins.google.ksp)
+    id("kotlin-parcelize")
 }
 
 val buildProperties = Properties()

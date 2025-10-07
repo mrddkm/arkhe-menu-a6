@@ -33,6 +33,7 @@ object Constants {
         /*preferences data store*/
         const val DATASTORE_NAME = "app_preferences"
         val THEME_KEY = stringPreferencesKey("theme_mode")
+        val LANGUAGE_CODE_KEY = stringPreferencesKey("language_code")
     }
 
     object CurrentLanguage {

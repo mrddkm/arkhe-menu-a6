@@ -27,6 +27,7 @@
     <string name="select_groups">Select Groups</string>
     <string name="browse_groups">Browse Groups</string>
     <string name="product_group">Product Group</string>
+    <string name="select_language">Select Language</string>
 
     <!--Docs Menu-->
     <string name="organization">Organization</string>

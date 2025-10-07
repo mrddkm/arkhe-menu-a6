@@ -1,6 +1,7 @@
 package com.arkhe.menu.di
 
 import com.arkhe.menu.presentation.viewmodel.CategoryViewModel
+import com.arkhe.menu.presentation.viewmodel.LanguageViewModel
 import com.arkhe.menu.presentation.viewmodel.MainViewModel
 import com.arkhe.menu.presentation.viewmodel.ProductViewModel
 import com.arkhe.menu.presentation.viewmodel.ProfileViewModel
@@ -17,6 +18,8 @@ val appModule = module {
     viewModel { MainViewModel(get(), get()) }
 
     viewModel { ThemeViewModel(get(), get()) }
+
+    viewModel { LanguageViewModel(get(), get()) }
 
     viewModel { ProfileViewModel(get(), get()) }
 
