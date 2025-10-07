@@ -26,7 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.R
-import com.arkhe.menu.presentation.ui.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 
 @Composable
 fun SplashScreen() {
@@ -102,7 +102,7 @@ fun SplashScreen() {
 @Preview(showBackground = true)
 @Composable
 fun SplashScreenPreview() {
-    AppTheme {
+    ArkheTheme {
         SplashScreen()
     }
 }

@@ -37,7 +37,7 @@ import com.arkhe.menu.presentation.ui.components.ErrorIncompleteData
 import com.arkhe.menu.presentation.ui.components.ProductDestinationItem
 import com.arkhe.menu.presentation.ui.components.ProductInfoItem
 import com.arkhe.menu.presentation.ui.components.StatusDevelopmentChip
-import com.arkhe.menu.presentation.ui.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.utils.sampleProduct
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
@@ -273,7 +273,7 @@ fun DestinationTab(
 @Preview(showBackground = true)
 @Composable
 fun ProductInfoTabPreview() {
-    AppTheme {
+    ArkheTheme {
         ProductInfoTab(
             sampleProduct
         )

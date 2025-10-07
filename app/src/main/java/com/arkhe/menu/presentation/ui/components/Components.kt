@@ -39,7 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.R
-import com.arkhe.menu.presentation.ui.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_INITIATION
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_READY
@@ -590,7 +590,7 @@ fun MoreSectionPreview() {
 @Preview(showBackground = true)
 @Composable
 fun FeedSectionPreview() {
-    AppTheme {
+    ArkheTheme {
         FeedSection(onFeedClick = {})
     }
 }
@@ -598,7 +598,7 @@ fun FeedSectionPreview() {
 @Preview(showBackground = true)
 @Composable
 fun TimeMachineSectionPreview() {
-    AppTheme {
+    ArkheTheme {
         TimeMachineSection(onTimeMachineClick = {})
     }
 }

@@ -34,7 +34,7 @@ import com.arkhe.menu.domain.model.CategoryActionInfo
 import com.arkhe.menu.domain.model.CategoryColors
 import com.arkhe.menu.domain.model.CategoryInformationLanguage
 import com.arkhe.menu.presentation.screen.docs.categories.screen.parseColorFromHex
-import com.arkhe.menu.presentation.ui.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Fill
 import compose.icons.evaicons.fill.Droplet
@@ -140,7 +140,7 @@ fun CategoryItemNonScrollable(
 @Preview(showBackground = true)
 @Composable
 fun CategoryCardPreview() {
-    AppTheme {
+    ArkheTheme {
         @Suppress("SpellCheckingInspection")
         CategoriesNonScrollableUI(
             categoriesList = listOf(

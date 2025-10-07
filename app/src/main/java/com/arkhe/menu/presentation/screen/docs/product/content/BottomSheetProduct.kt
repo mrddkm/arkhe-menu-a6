@@ -44,7 +44,7 @@ import com.arkhe.menu.presentation.ui.components.LanguageIconEn
 import com.arkhe.menu.presentation.ui.components.LanguageIconId
 import com.arkhe.menu.presentation.ui.components.MoreSection
 import com.arkhe.menu.presentation.ui.components.StatusDevelopmentChip
-import com.arkhe.menu.presentation.ui.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.ui.theme.montserratFontFamily
 import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
 import com.arkhe.menu.utils.sampleProduct
@@ -260,7 +260,7 @@ fun BottomSheetProduct(
 @Preview(showBackground = true)
 @Composable
 fun BottomSheetProductPreview() {
-    AppTheme {
+    ArkheTheme {
         BottomSheetProduct(
             product = sampleProduct,
             imagePath = null,

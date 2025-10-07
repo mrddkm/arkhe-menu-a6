@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.dp
 import com.arkhe.menu.R
 import com.arkhe.menu.domain.model.UserRole
 import com.arkhe.menu.presentation.ui.components.HeaderContent
-import com.arkhe.menu.presentation.ui.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 
 @Composable
 fun ActivityContent(
@@ -314,7 +314,7 @@ fun ActivityMenuCard(
 @Preview(showBackground = true)
 @Composable
 fun ActivityContentPreview() {
-    AppTheme {
+    ArkheTheme {
         ActivityContent(
             userRole = UserRole.FAGA,
             onNavigateToContent = {}

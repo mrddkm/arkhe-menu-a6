@@ -2,6 +2,8 @@
 
 package com.arkhe.menu.utils
 
+import androidx.datastore.preferences.core.stringPreferencesKey
+
 object Constants {
     const val URL_BASE =
         "https://script.google.com/macros/s/AKfycbxzU5sK4C50geQL1-PWtFm8NeQTErOcY0QGw8XvMfFUOTPKgAYYBZO8p5UuAMVeJ1PCQw/exec"
@@ -22,12 +24,15 @@ object Constants {
     const val MIN_CUSTOMER_NAME_LENGTH = 2
 
     object Database {
+        /*room*/
         const val DATABASE_NAME = "arkhe_menu_database"
         const val DATABASE_VERSION = 1
         const val PROFILE_TABLE = "profiles"
         const val CATEGORIES_TABLE = "categories"
         const val PRODUCT_TABLE = "products"
+        /*preferences data store*/
         const val DATASTORE_NAME = "app_preferences"
+        val THEME_KEY = stringPreferencesKey("theme_mode")
     }
 
     object CurrentLanguage {

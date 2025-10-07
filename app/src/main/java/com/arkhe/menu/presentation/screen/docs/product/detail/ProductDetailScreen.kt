@@ -48,7 +48,7 @@ import com.arkhe.menu.presentation.ui.components.FeedSection
 import com.arkhe.menu.presentation.ui.components.LanguageIconEn
 import com.arkhe.menu.presentation.ui.components.LanguageIconId
 import com.arkhe.menu.presentation.ui.components.TimeMachineSection
-import com.arkhe.menu.presentation.ui.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.ui.theme.montserratFontFamily
 import com.arkhe.menu.presentation.viewmodel.ProductViewModel
 import com.arkhe.menu.utils.sampleProduct
@@ -303,7 +303,7 @@ private fun ProductDetailContent(
 @Preview(showBackground = true)
 @Composable
 fun ProductDetailScreenPreview() {
-    AppTheme {
+    ArkheTheme {
         ProductDetailContent(
             product = sampleProduct,
             imagePath = null,

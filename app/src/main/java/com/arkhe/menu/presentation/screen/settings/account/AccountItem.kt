@@ -24,7 +24,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.arkhe.menu.presentation.ui.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.ArrowIosForward
@@ -120,7 +120,7 @@ fun AccountItem(
 @Preview(showBackground = true)
 @Composable
 fun AccountItemPreview() {
-    AppTheme {
+    ArkheTheme {
         AccountItem(
             label = "Personal Information",
             labelInfo = "Name, Email, Phone Number",

@@ -32,7 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arkhe.menu.R
-import com.arkhe.menu.presentation.ui.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.ArrowIosBack
@@ -147,7 +147,7 @@ fun ArkheTopBar(
 @Preview(showBackground = true)
 @Composable
 fun TripkeunTopBarPreview() {
-    AppTheme {
+    ArkheTheme {
         ArkheTopBar(
             scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(),
             isInMainContent = true,

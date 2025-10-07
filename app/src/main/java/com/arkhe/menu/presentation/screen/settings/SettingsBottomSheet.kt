@@ -27,6 +27,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,21 +39,31 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.R
+import com.arkhe.menu.di.appModule
+import com.arkhe.menu.di.dataModule
+import com.arkhe.menu.di.domainModule
 import com.arkhe.menu.presentation.screen.settings.account.AccountItem
+import com.arkhe.menu.presentation.ui.components.ArkheThemeButtons
 import com.arkhe.menu.presentation.ui.components.HeaderTitleSecondary
-import com.arkhe.menu.presentation.ui.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
+import com.arkhe.menu.presentation.viewmodel.ThemeViewModel
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
-import compose.icons.evaicons.outline.Close
 import compose.icons.evaicons.outline.Person
 import compose.icons.evaicons.outline.Settings
-import compose.icons.evaicons.outline.Settings2
 import compose.icons.evaicons.outline.Shield
 import compose.icons.evaicons.outline.Smartphone
+import org.koin.android.ext.koin.androidContext
+import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.KoinApplicationPreview
 
 @Composable
-fun SettingsBottomSheet() {
+fun SettingsBottomSheet(
+    themeViewModel: ThemeViewModel = koinViewModel()
+) {
+    val currentTheme by themeViewModel.currentTheme.collectAsState()
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -190,6 +202,15 @@ fun SettingsBottomSheet() {
                     ),
                     color = MaterialTheme.colorScheme.onSurface
                 )
+                ArkheThemeButtons(
+                    currentTheme = currentTheme,
+                    onThemeSelected = { pickTheme ->
+                        themeViewModel.setTheme(pickTheme)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp)
+                )
             }
         }
         Spacer(modifier = Modifier.height(16.dp))
@@ -231,7 +252,19 @@ fun SettingsBottomSheet() {
 @Preview(showBackground = true)
 @Composable
 fun UserBottomSheetPreview() {
-    AppTheme {
-        SettingsBottomSheet()
+    val previewContext = androidx.compose.ui.platform.LocalContext.current
+    KoinApplicationPreview(
+        application = {
+            androidContext(previewContext)
+            modules(
+                dataModule,
+                domainModule,
+                appModule
+            )
+        }
+    ) {
+        ArkheTheme {
+            SettingsBottomSheet()
+        }
     }
 }

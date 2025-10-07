@@ -4,6 +4,7 @@ import androidx.room.Room
 import com.arkhe.menu.data.local.LocalDataSource
 import com.arkhe.menu.data.local.database.AppDatabase
 import com.arkhe.menu.data.local.preferences.SessionManager
+import com.arkhe.menu.data.local.preferences.ThemeLocalDataSource
 import com.arkhe.menu.data.local.preferences.dataStore
 import com.arkhe.menu.data.local.storage.ImageStorageManager
 import com.arkhe.menu.data.remote.RemoteDataSource
@@ -12,9 +13,11 @@ import com.arkhe.menu.data.remote.api.TripkeunApiServiceImpl
 import com.arkhe.menu.data.repository.CategoryRepositoryImpl
 import com.arkhe.menu.data.repository.ProductRepositoryImpl
 import com.arkhe.menu.data.repository.ProfileRepositoryImpl
+import com.arkhe.menu.data.repository.ThemeRepositoryImpl
 import com.arkhe.menu.domain.repository.CategoryRepository
 import com.arkhe.menu.domain.repository.ProductRepository
 import com.arkhe.menu.domain.repository.ProfileRepository
+import com.arkhe.menu.domain.repository.ThemeRepository
 import com.arkhe.menu.utils.Constants
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
@@ -120,9 +123,11 @@ val dataModule = module {
     /*Data Sources*/
     single { RemoteDataSource(get()) }
     single { LocalDataSource(get(), get(), get()) }
+    single { ThemeLocalDataSource(get()) }
     single { ImageStorageManager(get()) }
 
     /*Repositories*/
+    single<ThemeRepository> { ThemeRepositoryImpl(get()) }
     single<ProfileRepository> { ProfileRepositoryImpl(get(), get(), get()) }
     single<CategoryRepository> { CategoryRepositoryImpl(get(), get()) }
     single<ProductRepository> { ProductRepositoryImpl(get(), get(), get()) }

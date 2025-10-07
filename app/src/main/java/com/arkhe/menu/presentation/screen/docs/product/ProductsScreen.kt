@@ -52,7 +52,7 @@ import com.arkhe.menu.presentation.screen.docs.product.screen.HeaderAccordions
 import com.arkhe.menu.presentation.screen.docs.product.screen.ProductListItem
 import com.arkhe.menu.presentation.ui.components.EmptyUI
 import com.arkhe.menu.presentation.ui.components.LoadingIndicatorSpinner
-import com.arkhe.menu.presentation.ui.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.viewmodel.ProductViewModel
 import com.arkhe.menu.utils.formatItemCount
 import compose.icons.EvaIcons
@@ -341,7 +341,7 @@ fun ProductsScreenPreview() {
             )
         }
     ) {
-        AppTheme {
+        ArkheTheme {
             ProductsScreen(
                 navController = NavController(previewContext)
             )

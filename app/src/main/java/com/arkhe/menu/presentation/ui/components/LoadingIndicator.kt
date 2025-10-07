@@ -19,7 +19,7 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.arkhe.menu.R
-import com.arkhe.menu.presentation.ui.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 
 @Composable
 fun LoadingIndicatorSpinner(
@@ -58,7 +58,7 @@ fun LoadingIndicatorSpinner(
 @Preview(showBackground = true)
 @Composable
 fun LoadingIndicatorSpinnerPreview() {
-    AppTheme {
+    ArkheTheme {
         LoadingIndicatorSpinner(
             modifier = Modifier,
             message = "Preview"

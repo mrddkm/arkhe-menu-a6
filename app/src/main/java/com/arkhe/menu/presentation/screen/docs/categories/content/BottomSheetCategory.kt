@@ -42,8 +42,7 @@ import com.arkhe.menu.presentation.screen.docs.categories.screen.parseColorFromH
 import com.arkhe.menu.presentation.ui.components.HeaderTitleSecondary
 import com.arkhe.menu.presentation.ui.components.LanguageIconEn
 import com.arkhe.menu.presentation.ui.components.LanguageIconId
-import com.arkhe.menu.presentation.ui.components.MoreSection
-import com.arkhe.menu.presentation.ui.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Fill
@@ -217,7 +216,7 @@ fun BottomSheetCategoryPreview() {
             )
         )
     )
-    AppTheme {
+    ArkheTheme {
         BottomSheetCategory(
             category = sampleCategory
         )

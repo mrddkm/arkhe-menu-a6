@@ -33,7 +33,7 @@ import coil.request.ImageRequest
 import com.arkhe.menu.R
 import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.presentation.ui.components.StatusDevelopmentChip
-import com.arkhe.menu.presentation.ui.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
 import com.arkhe.menu.utils.sampleProduct
 import compose.icons.EvaIcons
@@ -146,7 +146,7 @@ fun CategoriesProductsItems(
 @Preview(showBackground = true)
 @Composable
 fun CategoriesProductsItemsPreview() {
-    AppTheme {
+    ArkheTheme {
         CategoriesProductsItems(
             product = sampleProduct,
             onClick = {}

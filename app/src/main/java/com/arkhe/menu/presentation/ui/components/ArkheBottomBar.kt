@@ -36,7 +36,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import com.arkhe.menu.presentation.ui.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.viewmodel.BottomNavItem
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
@@ -187,7 +187,7 @@ private fun getIconForItem(item: BottomNavItem): ImageVector {
 @Composable
 fun ArkheGlassBottomBarPreview() {
     var selectedItem = BottomNavItem.DOCS
-    AppTheme {
+    ArkheTheme {
         ArkheBottomBar(
             selectedItem = selectedItem,
             onItemSelected = { selectedItem = it },

@@ -37,7 +37,7 @@ import com.arkhe.menu.presentation.screen.docs.profile.screen.ProfileDescription
 import com.arkhe.menu.presentation.screen.docs.profile.screen.ProfileTagLine
 import com.arkhe.menu.presentation.screen.docs.profile.screen.SocialMediaCard
 import com.arkhe.menu.presentation.ui.components.LoadingIndicatorSpinner
-import com.arkhe.menu.presentation.ui.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.viewmodel.ProfileViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -206,7 +206,7 @@ private fun ProfileContent(
 @Preview(showBackground = true)
 @Composable
 fun ProfileScreenPreview() {
-    AppTheme {
+    ArkheTheme {
         val sampleProfile = Profile(
             nameShort = "tripkeun",
             nameLong = "Tripkeun Indonesia",

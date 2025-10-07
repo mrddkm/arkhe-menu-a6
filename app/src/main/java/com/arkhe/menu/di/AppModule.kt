@@ -4,6 +4,7 @@ import com.arkhe.menu.presentation.viewmodel.CategoryViewModel
 import com.arkhe.menu.presentation.viewmodel.MainViewModel
 import com.arkhe.menu.presentation.viewmodel.ProductViewModel
 import com.arkhe.menu.presentation.viewmodel.ProfileViewModel
+import com.arkhe.menu.presentation.viewmodel.ThemeViewModel
 import com.arkhe.menu.utils.ScrollStateManager
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -14,6 +15,8 @@ val appModule = module {
     single { ScrollStateManager() }
 
     viewModel { MainViewModel(get(), get()) }
+
+    viewModel { ThemeViewModel(get(), get()) }
 
     viewModel { ProfileViewModel(get(), get()) }
 

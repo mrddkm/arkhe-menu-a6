@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.presentation.navigation.NavigationRoute
-import com.arkhe.menu.presentation.ui.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
 import com.arkhe.menu.utils.sampleProduct
 
@@ -133,7 +133,7 @@ fun ProductCardContent(
 @Preview(showBackground = true)
 @Composable
 fun ProductUIPreview() {
-    AppTheme {
+    ArkheTheme {
         ProductUI(
             navController = NavController(LocalContext.current),
             productList = listOf(
@@ -151,7 +151,7 @@ fun ProductUIPreview() {
 @Preview(showBackground = true)
 @Composable
 fun ProductSectionPreview() {
-    AppTheme {
+    ArkheTheme {
         ProductCardContent(
             product = sampleProduct,
             onClick = {}

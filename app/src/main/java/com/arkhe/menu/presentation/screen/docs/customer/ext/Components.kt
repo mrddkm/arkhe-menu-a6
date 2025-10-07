@@ -31,7 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.arkhe.menu.presentation.ui.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 
 @Composable
 fun CustomerSection(
@@ -160,7 +160,7 @@ fun CostumerCard(
 @Preview(showBackground = true)
 @Composable
 fun SobatkeunCardPreview() {
-    AppTheme {
+    ArkheTheme {
         CustomerSection(
             customerList = sampleCustomers,
             onCustomerClick = {}

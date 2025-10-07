@@ -17,9 +17,22 @@ import com.arkhe.menu.domain.usecase.profile.GetProfilesUseCase
 import com.arkhe.menu.domain.usecase.profile.ProfileUseCases
 import com.arkhe.menu.domain.usecase.profile.RefreshProfilesUseCase
 import com.arkhe.menu.domain.usecase.profile.SyncProfilesUseCase
+import com.arkhe.menu.domain.usecase.theme.GetCurrentThemeUseCase
+import com.arkhe.menu.domain.usecase.theme.SetThemeUseCase
+import com.arkhe.menu.domain.usecase.theme.ThemeUseCases
 import org.koin.dsl.module
 
 val domainModule = module {
+
+    single { GetCurrentThemeUseCase(get()) }
+    single { SetThemeUseCase(get()) }
+
+    single {
+        ThemeUseCases(
+            getCurrentTheme = get(),
+            setTheme = get()
+        )
+    }
 
     single { GetProfilesUseCase(get()) }
     single { GetProfileUseCase(get()) }

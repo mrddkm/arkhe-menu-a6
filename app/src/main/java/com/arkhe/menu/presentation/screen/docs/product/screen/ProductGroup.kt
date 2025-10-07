@@ -34,7 +34,7 @@ import com.arkhe.menu.R
 import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.domain.model.ProductByGroup
 import com.arkhe.menu.presentation.ui.components.StatusDevelopmentChip
-import com.arkhe.menu.presentation.ui.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
 import com.arkhe.menu.utils.sampleProduct
 import compose.icons.EvaIcons
@@ -181,7 +181,7 @@ fun ProductListItem(
 @Preview(showBackground = true)
 @Composable
 fun ProductGroupPreview() {
-    AppTheme {
+    ArkheTheme {
         val sampleGroup = ProductByGroup(
             seriesName = "Mountain Series",
             products = listOf(
@@ -198,7 +198,7 @@ fun ProductGroupPreview() {
 @Preview(showBackground = true)
 @Composable
 fun ProductListItemPreview() {
-    AppTheme {
+    ArkheTheme {
         ProductListItem(
             product = sampleProduct,
             onClick = {}

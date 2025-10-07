@@ -49,7 +49,7 @@ import com.arkhe.menu.presentation.ui.animation.ScreenTransitions
 import com.arkhe.menu.presentation.ui.components.ArkheBottomBar
 import com.arkhe.menu.presentation.ui.components.ArkheTopBar
 import com.arkhe.menu.presentation.ui.components.LoadingIndicatorSpinner
-import com.arkhe.menu.presentation.ui.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.viewmodel.MainViewModel
 import com.arkhe.menu.presentation.viewmodel.ProductViewModel
 import org.koin.android.ext.koin.androidContext
@@ -318,7 +318,7 @@ fun MainScreenPreview() {
             )
         }
     ) {
-        AppTheme {
+        ArkheTheme {
             MainScreen(navController = rememberNavController())
         }
     }

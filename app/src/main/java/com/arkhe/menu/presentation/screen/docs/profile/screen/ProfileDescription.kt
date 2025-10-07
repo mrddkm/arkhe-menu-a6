@@ -36,7 +36,7 @@ import com.arkhe.menu.domain.model.ProfileInformationLanguage
 import com.arkhe.menu.domain.model.SocialMedia
 import com.arkhe.menu.presentation.ui.components.LanguageIconEn
 import com.arkhe.menu.presentation.ui.components.LanguageIconId
-import com.arkhe.menu.presentation.ui.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.utils.DateUtils.formatBirthDate
 import java.io.File
 
@@ -188,7 +188,7 @@ fun ProfileDescription(profile: Profile) {
 @Preview(showBackground = true)
 @Composable
 fun ProfileHeaderPreview() {
-    AppTheme {
+    ArkheTheme {
         val sampleProfile = Profile(
             nameShort = "tripkeun",
             nameLong = "Tripkeun Indonesia",

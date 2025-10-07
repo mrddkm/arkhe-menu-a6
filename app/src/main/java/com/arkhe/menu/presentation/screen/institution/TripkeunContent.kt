@@ -20,7 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.R
 import com.arkhe.menu.presentation.ui.components.HeaderContent
-import com.arkhe.menu.presentation.ui.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 
 @Composable
 fun TripkeunContent(onNavigateToContent: (String) -> Unit) {
@@ -103,7 +103,7 @@ fun TripkeunContent(onNavigateToContent: (String) -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun TripkeunContentPreview() {
-    AppTheme {
+    ArkheTheme {
         TripkeunContent(onNavigateToContent = {})
     }
 }

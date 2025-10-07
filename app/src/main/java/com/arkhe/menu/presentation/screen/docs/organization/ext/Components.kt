@@ -43,7 +43,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.arkhe.menu.presentation.ui.theme.AppTheme
+import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 
 @Composable
 fun OrganizationSection(
@@ -358,7 +358,7 @@ fun DetailInfoSection(label: String, value: String) {
 @Preview(showBackground = true)
 @Composable
 fun PersonilCardPreview() {
-    AppTheme {
+    ArkheTheme {
         OrganizationSection(
             organizationList = sampleOrganizations,
             onOrganizationClick = { }
