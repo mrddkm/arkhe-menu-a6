@@ -2,6 +2,7 @@
 
 package com.arkhe.menu.presentation.screen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -82,19 +83,17 @@ fun MainScreen(
         }
     }
 
+    BackHandler(enabled = uiState.showSettingsBottomSheet) {
+        viewModel.toggleProfileBottomSheet()
+    }
+
     val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true,
-        confirmValueChange = { true }
+        skipPartiallyExpanded = true
     )
 
     if (uiState.showSettingsBottomSheet) {
-        LaunchedEffect(Unit) {
-            sheetState.show()
-        }
         ModalBottomSheet(
-            onDismissRequest = {
-                { viewModel.toggleProfileBottomSheet() }
-            },
+            onDismissRequest = { viewModel.toggleProfileBottomSheet() },
             sheetState = sheetState
         ) {
             SettingsBottomSheet()
