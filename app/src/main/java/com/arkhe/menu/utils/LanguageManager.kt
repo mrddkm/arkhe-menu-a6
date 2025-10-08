@@ -1,4 +1,4 @@
-package com.arkhe.menu.data.local.preferences
+package com.arkhe.menu.utils
 
 import android.content.Context
 import android.content.res.Configuration

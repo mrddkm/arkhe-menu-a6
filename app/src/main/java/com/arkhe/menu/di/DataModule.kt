@@ -3,7 +3,6 @@ package com.arkhe.menu.di
 import androidx.room.Room
 import com.arkhe.menu.data.local.LocalDataSource
 import com.arkhe.menu.data.local.database.AppDatabase
-import com.arkhe.menu.data.local.preferences.LanguageLocalDataSource
 import com.arkhe.menu.data.local.preferences.SessionManager
 import com.arkhe.menu.data.local.preferences.ThemeLocalDataSource
 import com.arkhe.menu.data.local.preferences.dataStore
@@ -16,6 +15,8 @@ import com.arkhe.menu.data.repository.ProductRepositoryImpl
 import com.arkhe.menu.data.repository.ProfileRepositoryImpl
 import com.arkhe.menu.data.repository.ThemeRepositoryImpl
 import com.arkhe.menu.domain.repository.CategoryRepository
+import com.arkhe.menu.domain.repository.ILanguageRepository
+import com.arkhe.menu.domain.repository.LanguageRepository
 import com.arkhe.menu.domain.repository.ProductRepository
 import com.arkhe.menu.domain.repository.ProfileRepository
 import com.arkhe.menu.domain.repository.ThemeRepository
@@ -125,10 +126,10 @@ val dataModule = module {
     single { RemoteDataSource(get()) }
     single { LocalDataSource(get(), get(), get()) }
     single { ThemeLocalDataSource(get()) }
-    single { LanguageLocalDataSource(get()) }
     single { ImageStorageManager(get()) }
 
     /*Repositories*/
+    single<ILanguageRepository> { LanguageRepository(get()) }
     single<ThemeRepository> { ThemeRepositoryImpl(get()) }
     single<ProfileRepository> { ProfileRepositoryImpl(get(), get(), get()) }
     single<CategoryRepository> { CategoryRepositoryImpl(get(), get()) }

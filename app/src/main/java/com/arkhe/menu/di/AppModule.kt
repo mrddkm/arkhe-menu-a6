@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.arkhe.menu.di
 
 import com.arkhe.menu.presentation.viewmodel.CategoryViewModel
@@ -7,10 +9,10 @@ import com.arkhe.menu.presentation.viewmodel.ProductViewModel
 import com.arkhe.menu.presentation.viewmodel.ProfileViewModel
 import com.arkhe.menu.presentation.viewmodel.ThemeViewModel
 import com.arkhe.menu.utils.ScrollStateManager
+import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
-@Suppress("DEPRECATION")
 val appModule = module {
 
     single { ScrollStateManager() }
@@ -19,7 +21,7 @@ val appModule = module {
 
     viewModel { ThemeViewModel(get(), get()) }
 
-    viewModel { LanguageViewModel(get(), get()) }
+    viewModel { LanguageViewModel(androidContext(), get()) }
 
     viewModel { ProfileViewModel(get(), get()) }
 

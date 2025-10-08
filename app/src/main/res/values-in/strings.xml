@@ -8,6 +8,18 @@
     <string name="profile">Profil</string>
     <string name="settings">Pengaturan</string>
 
+    <!--Settings Bottom Sheet-->
+    <string name="personal_info">Info pribadi</string>
+    <string name="personal_info_desc">Nama, telepon &amp; profil</string>
+    <string name="sign_in_and_security">Login &amp; keamanan</string>
+    <string name="sign_in_and_security_desc">Email, kata sandi &amp; PIN</string>
+    <string name="devices">Perangkat</string>
+    <string name="devices_desc">Pantau perangkat yang Anda gunakan</string>
+    <string name="language">Bahasa</string>
+    <string name="theme">Tema</string>
+    <string name="about">Tentang</string>
+    <string name="about_desc">Gaenta, Arkhe &amp; bantuan</string>
+
     <!--BottomBar and HeaderContent-->
     <string name="docs">Docs</string>
     <string name="tripkeun">tripkeun</string>

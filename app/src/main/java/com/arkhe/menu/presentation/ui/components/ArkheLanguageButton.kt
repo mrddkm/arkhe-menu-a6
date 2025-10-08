@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -19,24 +20,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.arkhe.menu.domain.model.LanguageModels
+import com.arkhe.menu.domain.model.Language
 import com.arkhe.menu.domain.model.Languages
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 
 @Composable
 fun ArkheLanguageButton(
-    selectedLanguage: LanguageModels,
-    onLanguageSelected: (LanguageModels) -> Unit,
+    selectedLanguage: Language,
+    onLanguageSelected: (Language) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, top = 8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             items(Languages.availableLanguages) { language ->
                 LanguageItem(
@@ -45,15 +48,16 @@ fun ArkheLanguageButton(
                     onLanguageSelected = onLanguageSelected
                 )
             }
+
         }
     }
 }
 
 @Composable
 private fun LanguageItem(
-    language: LanguageModels,
+    language: Language,
     isSelected: Boolean,
-    onLanguageSelected: (LanguageModels) -> Unit,
+    onLanguageSelected: (Language) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val colors = if (isSelected) {
@@ -68,35 +72,27 @@ private fun LanguageItem(
         )
     }
 
-    val buttonModifier = if (isSelected) {
-        modifier
-            .width(168.dp)
-            .height(58.dp)
-    } else {
-        modifier
-            .width(160.dp)
-            .height(50.dp)
-    }
-
     if (isSelected) {
         FilledTonalButton(
             onClick = { onLanguageSelected(language) },
-            modifier = buttonModifier,
+            modifier = modifier
+                .width(144.dp)
+                .height(44.dp),
             colors = colors,
             shape = MaterialTheme.shapes.medium,
             contentPadding = PaddingValues(start = 16.dp)
         ) {
             Column(
-                modifier = Modifier.weight(1f)
+                modifier = modifier.weight(1f)
             ) {
                 Text(
                     text = language.nativeName,
-                    style = MaterialTheme.typography.labelLarge,
+                    style = MaterialTheme.typography.labelSmall,
                     fontWeight = FontWeight.Medium
                 )
                 Text(
                     text = language.name,
-                    style = MaterialTheme.typography.labelSmall,
+                    style = MaterialTheme.typography.bodySmall,
                     color = colors.contentColor.copy(alpha = 0.7f)
 
                 )
@@ -105,23 +101,25 @@ private fun LanguageItem(
     } else {
         OutlinedButton(
             onClick = { onLanguageSelected(language) },
-            modifier = buttonModifier,
+            modifier = modifier
+                .width(144.dp)
+                .height(44.dp),
             colors = colors,
             shape = MaterialTheme.shapes.medium,
             contentPadding = PaddingValues(start = 16.dp)
 
         ) {
             Column(
-                modifier = Modifier.weight(1f)
+                modifier = modifier.weight(1f)
             ) {
                 Text(
                     text = language.nativeName,
-                    style = MaterialTheme.typography.labelLarge,
+                    style = MaterialTheme.typography.labelSmall,
                     fontWeight = FontWeight.Medium
                 )
                 Text(
                     text = language.name,
-                    style = MaterialTheme.typography.labelSmall,
+                    style = MaterialTheme.typography.bodySmall,
                     color = colors.contentColor.copy(alpha = 0.7f)
                 )
             }

@@ -8,6 +8,18 @@
     <string name="profile">Profile</string>
     <string name="settings">Settings</string>
 
+    <!--Settings Bottom Sheet-->
+    <string name="personal_info">Personal info</string>
+    <string name="personal_info_desc">Name, phone &amp; profile</string>
+    <string name="sign_in_and_security">Sign-in &amp; security</string>
+    <string name="sign_in_and_security_desc">Email, password &amp; PIN</string>
+    <string name="devices">Devices</string>
+    <string name="devices_desc">Keep track of your devices</string>
+    <string name="language">Language</string>
+    <string name="theme">Theme</string>
+    <string name="about">About</string>
+    <string name="about_desc">Gaenta, Arkhe &amp; support</string>
+
     <!--BottomBar and HeaderContent-->
     <string name="docs">Docs</string>
     <string name="tripkeun">tripkeun</string>

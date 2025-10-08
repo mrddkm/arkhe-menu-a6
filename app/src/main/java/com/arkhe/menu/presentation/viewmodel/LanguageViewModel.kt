@@ -1,12 +1,13 @@
 package com.arkhe.menu.presentation.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import android.content.Context
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.arkhe.menu.data.local.preferences.LanguageLocalDataSource
 import com.arkhe.menu.data.local.preferences.LanguageLocalizedStrings
-import com.arkhe.menu.domain.model.LanguageModels
+import com.arkhe.menu.domain.model.Language
+import com.arkhe.menu.domain.model.LanguageState
 import com.arkhe.menu.domain.model.Languages
+import com.arkhe.menu.domain.repository.ILanguageRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,11 +15,19 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class LanguageViewModel(
-    application: Application,
-    private val languageLocalDataSource: LanguageLocalDataSource
-) : AndroidViewModel(application) {
+    context: Context,
+    private val languageRepository: ILanguageRepository
+) : ViewModel() {
 
-    private val _languageState = MutableStateFlow(LanguageState())
+    private val appContext: Context = context.applicationContext
+
+    private val _languageState = MutableStateFlow(
+        LanguageState(
+            currentLanguage = Languages.ENGLISH,
+            localizedStrings = loadLocalized(Languages.ENGLISH.code)
+        )
+    )
+
     val languageState: StateFlow<LanguageState> = _languageState.asStateFlow()
 
     private val _showBottomSheet = MutableStateFlow(false)
@@ -30,9 +39,9 @@ class LanguageViewModel(
 
     private fun observeLanguageChanges() {
         viewModelScope.launch {
-            languageLocalDataSource.selectedLanguageCode.collect { languageCode ->
+            languageRepository.selectedLanguageCode.collect { languageCode ->
                 val language = Languages.getLanguageByCode(languageCode)
-                val localizedStrings = loadLocalizedStrings(languageCode)
+                val localizedStrings = loadLocalized(languageCode)
 
                 _languageState.value = _languageState.value.copy(
                     currentLanguage = language,
@@ -42,7 +51,11 @@ class LanguageViewModel(
         }
     }
 
-    fun getLocalizedString(key: String): String {
+    private fun loadLocalized(languageCode: String): Map<String, String> {
+        return LanguageLocalizedStrings.getLocalizedStringsMap(appContext, languageCode)
+    }
+
+    fun getLocalized(key: String): String {
         return _languageState.value.localizedStrings[key] ?: ""
     }
 
@@ -54,22 +67,22 @@ class LanguageViewModel(
         _showBottomSheet.value = false
     }
 
-    fun selectLanguage(languageModels: LanguageModels) {
+    fun selectLanguage(language: Language) {
         viewModelScope.launch {
             val currentLanguage = _languageState.value.currentLanguage
 
-            if (currentLanguage.code != languageModels.code) {
+            if (currentLanguage.code != language.code) {
                 _languageState.value = _languageState.value.copy(isChangingLanguage = true)
                 _showBottomSheet.value = false
 
-                languageLocalDataSource.setLanguage(languageModels.code)
+                languageRepository.setLanguage(language.code)
 
                 delay(800)
 
-                val newLocalizedStrings = loadLocalizedStrings(languageModels.code)
+                val newLocalizedStrings = loadLocalized(language.code)
 
                 _languageState.value = _languageState.value.copy(
-                    currentLanguage = languageModels,
+                    currentLanguage = language,
                     localizedStrings = newLocalizedStrings,
                     isChangingLanguage = false
                 )
@@ -78,14 +91,4 @@ class LanguageViewModel(
             }
         }
     }
-
-    private fun loadLocalizedStrings(languageCode: String): Map<String, String> {
-        return LanguageLocalizedStrings.getLocalizedStringsMap(getApplication(), languageCode)
-    }
 }
-
-data class LanguageState(
-    val currentLanguage: LanguageModels = Languages.ENGLISH,
-    val isChangingLanguage: Boolean = false,
-    val localizedStrings: Map<String, String> = emptyMap()
-)

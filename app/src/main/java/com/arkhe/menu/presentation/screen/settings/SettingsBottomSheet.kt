@@ -35,14 +35,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.R
+import com.arkhe.menu.data.local.preferences.Lang
 import com.arkhe.menu.di.appModule
 import com.arkhe.menu.di.dataModule
 import com.arkhe.menu.di.domainModule
+import com.arkhe.menu.di.previewModule
 import com.arkhe.menu.presentation.screen.settings.account.AccountItem
 import com.arkhe.menu.presentation.ui.components.ArkheLanguageButton
 import com.arkhe.menu.presentation.ui.components.ArkheThemeButtons
@@ -65,10 +68,10 @@ import org.koin.compose.KoinApplicationPreview
 @Composable
 fun SettingsBottomSheet(
     themeViewModel: ThemeViewModel = koinViewModel(),
-    languageViewModel: LanguageViewModel = koinViewModel()
+    langViewModel: LanguageViewModel = koinViewModel()
 ) {
     val currentTheme by themeViewModel.currentTheme.collectAsState()
-    val languageState by languageViewModel.languageState.collectAsState()
+    val languageState by langViewModel.languageState.collectAsState()
 
     Column(
         modifier = Modifier
@@ -83,7 +86,7 @@ fun SettingsBottomSheet(
         ) {
             Spacer(Modifier.width(48.dp))
             HeaderTitleSecondary(
-                title = languageViewModel.getLocalizedString("profile_settings"),
+                title = langViewModel.getLocalized(Lang.PROFILE_SETTINGS),
             )
             IconButton(onClick = {}) {
                 Box(
@@ -156,20 +159,20 @@ fun SettingsBottomSheet(
         ) {
             Column {
                 AccountItem(
-                    label = "Personal Info",
-                    labelInfo = "Name, Phone & Profile",
+                    label = langViewModel.getLocalized(Lang.PERSONAL_INFO),
+                    labelInfo = langViewModel.getLocalized(Lang.PERSONAL_INFO_DESC),
                     icon = EvaIcons.Outline.Person,
                     onClick = {}
                 )
                 AccountItem(
-                    label = "Sign-in & Security",
-                    labelInfo = "Email, Password & PIN",
+                    label = langViewModel.getLocalized(Lang.SIGN_IN_AND_SECURITY),
+                    labelInfo = langViewModel.getLocalized(Lang.SIGN_IN_AND_SECURITY_DESC),
                     icon = EvaIcons.Outline.Shield,
                     onClick = {}
                 )
                 AccountItem(
-                    label = "Devices",
-                    labelInfo = "Keep track of your devices",
+                    label = langViewModel.getLocalized(Lang.DEVICES),
+                    labelInfo = langViewModel.getLocalized(Lang.DEVICES_DESC),
                     icon = EvaIcons.Outline.Smartphone,
                     onClick = {},
                     showDivider = false
@@ -201,7 +204,7 @@ fun SettingsBottomSheet(
                         )
                     }
                     Text(
-                        text = "Language",
+                        text = langViewModel.getLocalized(Lang.LANGUAGE),
                         modifier = Modifier
                             .fillMaxWidth(),
                         style = MaterialTheme.typography.titleSmall.copy(
@@ -210,16 +213,14 @@ fun SettingsBottomSheet(
                         color = MaterialTheme.colorScheme.onSurface
                     )
                 }
+                ArkheLanguageButton(
+                    selectedLanguage = languageState.currentLanguage,
+                    onLanguageSelected = langViewModel::selectLanguage,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp)
+                )
             }
-            ArkheLanguageButton(
-                selectedLanguage = languageState.currentLanguage,
-                onLanguageSelected = { pickLanguage ->
-                    languageViewModel.selectLanguage(pickLanguage)
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp)
-            )
         }
         Spacer(modifier = Modifier.height(16.dp))
         Surface(
@@ -246,7 +247,7 @@ fun SettingsBottomSheet(
                         )
                     }
                     Text(
-                        text = "Theme",
+                        text = langViewModel.getLocalized(Lang.THEME),
                         modifier = Modifier
                             .fillMaxWidth(),
                         style = MaterialTheme.typography.titleSmall.copy(
@@ -272,8 +273,8 @@ fun SettingsBottomSheet(
         ) {
             Column {
                 AccountItem(
-                    label = "About",
-                    labelInfo = "Gaenta, Arkhe & Support",
+                    label = langViewModel.getLocalized(Lang.ABOUT),
+                    labelInfo = langViewModel.getLocalized(Lang.DEVICES_DESC),
                     painter = painterResource(R.drawable.ic_ae),
                     onClick = {},
                     showDivider = false
@@ -305,14 +306,15 @@ fun SettingsBottomSheet(
 @Preview(showBackground = true)
 @Composable
 fun UserBottomSheetPreview() {
-    val previewContext = androidx.compose.ui.platform.LocalContext.current
+    val previewContext = LocalContext.current
     KoinApplicationPreview(
         application = {
             androidContext(previewContext)
             modules(
                 dataModule,
                 domainModule,
-                appModule
+                appModule,
+                previewModule
             )
         }
     ) {
