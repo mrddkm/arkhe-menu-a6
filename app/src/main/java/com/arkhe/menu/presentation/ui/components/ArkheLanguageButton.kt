@@ -32,14 +32,13 @@ fun ArkheLanguageButton(
 ) {
     Column(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(start = 16.dp, top = 8.dp),
+            .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             items(Languages.availableLanguages) { language ->
                 LanguageItem(

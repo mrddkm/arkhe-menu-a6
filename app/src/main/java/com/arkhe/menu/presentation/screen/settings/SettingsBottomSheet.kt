@@ -20,7 +20,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Translate
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,12 +28,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -48,8 +44,6 @@ import com.arkhe.menu.di.dataModule
 import com.arkhe.menu.di.domainModule
 import com.arkhe.menu.di.previewModule
 import com.arkhe.menu.presentation.screen.settings.account.AccountItem
-import com.arkhe.menu.presentation.ui.components.ArkheLanguageButton
-import com.arkhe.menu.presentation.ui.components.ArkheThemeButtons
 import com.arkhe.menu.presentation.ui.components.HeaderTitleSecondary
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
@@ -58,7 +52,6 @@ import com.arkhe.menu.presentation.viewmodel.MainViewModel
 import com.arkhe.menu.presentation.viewmodel.ThemeViewModel
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
-import compose.icons.evaicons.outline.ColorPalette
 import compose.icons.evaicons.outline.Person
 import compose.icons.evaicons.outline.Settings
 import compose.icons.evaicons.outline.Shield
@@ -73,9 +66,6 @@ fun SettingsBottomSheet(
     langViewModel: LanguageViewModel = koinViewModel(),
     mainViewModel: MainViewModel = koinViewModel()
 ) {
-    val currentTheme by themeViewModel.currentTheme.collectAsState()
-    val languageState by langViewModel.languageState.collectAsState()
-
     DisposableEffect(Unit) {
         langViewModel.setLanguageChangeCallbacks(
             onStarted = { mainViewModel.onLanguageChangeStarted() },
@@ -194,89 +184,10 @@ fun SettingsBottomSheet(
         Surface(
             shape = MaterialTheme.shapes.medium
         ) {
-            Column {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, top = 10.dp, end = 0.dp, bottom = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(16.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Translate,
-                            contentDescription = null,
-                            modifier = Modifier.fillMaxSize(),
-                            tint = Color.Gray
-                        )
-                    }
-                    Text(
-                        text = langViewModel.getLocalized(Lang.LANGUAGE),
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        style = MaterialTheme.typography.titleSmall.copy(
-                            fontWeight = FontWeight.Medium
-                        ),
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-                ArkheLanguageButton(
-                    selectedLanguage = languageState.currentLanguage,
-                    onLanguageSelected = langViewModel::selectLanguage,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp)
-                )
-            }
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Surface(
-            shape = MaterialTheme.shapes.medium
-        ) {
-            Column {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, top = 10.dp, end = 0.dp, bottom = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(16.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = EvaIcons.Outline.ColorPalette,
-                            contentDescription = null,
-                            modifier = Modifier.fillMaxSize(),
-                            tint = Color.Gray
-                        )
-                    }
-                    Text(
-                        text = langViewModel.getLocalized(Lang.THEME),
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        style = MaterialTheme.typography.titleSmall.copy(
-                            fontWeight = FontWeight.Medium
-                        ),
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-                ArkheThemeButtons(
-                    currentTheme = currentTheme,
-                    onThemeSelected = { pickTheme ->
-                        themeViewModel.setTheme(pickTheme)
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 16.dp)
-                )
-            }
+            SettingsTabs(
+                themeViewModel = themeViewModel,
+                langViewModel = langViewModel
+            )
         }
         Spacer(modifier = Modifier.height(16.dp))
         Surface(
