@@ -69,7 +69,7 @@ fun SettingsTabs(
             selectedTabIndex = selectedTabIndex,
             modifier = Modifier
                 .clip(MaterialTheme.shapes.large)
-                .height(40.dp),
+                .height(32.dp),
             indicator = {},
             containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
         ) {
@@ -83,7 +83,7 @@ fun SettingsTabs(
                             if (selected) MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
                             else Color.Transparent
                         )
-                        .padding(horizontal = 16.dp, vertical = 6.dp),
+                        .padding(horizontal = 16.dp, vertical = 4.dp),
                     text = {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -94,11 +94,12 @@ fun SettingsTabs(
                                     imageVector = icon,
                                     contentDescription = title,
                                     tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(18.dp)
+                                    modifier = Modifier.size(16.dp)
                                 )
                             }
                             Text(
                                 text = title,
+                                style = MaterialTheme.typography.labelSmall,
                                 color = if (selected)
                                     MaterialTheme.colorScheme.primary
                                 else
