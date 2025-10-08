@@ -32,11 +32,6 @@ import com.arkhe.menu.di.domainModule
 import com.arkhe.menu.domain.model.Category
 import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.domain.model.Profile
-import com.arkhe.menu.presentation.ui.components.EmptyUI
-import com.arkhe.menu.presentation.ui.components.ErrorUI
-import com.arkhe.menu.presentation.ui.components.HeaderContent
-import com.arkhe.menu.presentation.ui.components.HeaderSection
-import com.arkhe.menu.presentation.ui.components.LoadingIndicatorSpinner
 import com.arkhe.menu.presentation.screen.docs.categories.content.CategoriesNonScrollableUI
 import com.arkhe.menu.presentation.screen.docs.organization.ext.Organization
 import com.arkhe.menu.presentation.screen.docs.organization.ext.PersonilDetailBottomSheet
@@ -44,6 +39,11 @@ import com.arkhe.menu.presentation.screen.docs.organization.ext.PersonilListBott
 import com.arkhe.menu.presentation.screen.docs.organization.ext.sampleOrganizations
 import com.arkhe.menu.presentation.screen.docs.product.content.ProductUI
 import com.arkhe.menu.presentation.screen.docs.profile.content.ProfileUI
+import com.arkhe.menu.presentation.ui.components.EmptyUI
+import com.arkhe.menu.presentation.ui.components.ErrorUI
+import com.arkhe.menu.presentation.ui.components.HeaderContent
+import com.arkhe.menu.presentation.ui.components.HeaderSection
+import com.arkhe.menu.presentation.ui.components.LoadingIndicatorSpinner
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.viewmodel.CategoryViewModel
 import com.arkhe.menu.presentation.viewmodel.ProductViewModel

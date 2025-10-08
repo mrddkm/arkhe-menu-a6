@@ -20,6 +20,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.R
 import com.arkhe.menu.presentation.ui.components.HeaderContent
+import com.arkhe.menu.presentation.ui.components.LoadingGraySpinner
+import com.arkhe.menu.presentation.ui.components.LoadingIndicatorSpinner
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 
 @Composable
@@ -29,7 +31,6 @@ fun TripkeunContent(onNavigateToContent: (String) -> Unit) {
             title = stringResource(R.string.tripkeun)
         )
 
-        // Main Content: Jadwal Umum Perbulan
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -52,7 +53,6 @@ fun TripkeunContent(onNavigateToContent: (String) -> Unit) {
             }
         }
 
-        // Secondary Content
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -96,6 +96,14 @@ fun TripkeunContent(onNavigateToContent: (String) -> Unit) {
                     )
                 }
             }
+        }
+
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            LoadingIndicatorSpinner()
+            Spacer(modifier = Modifier.height(16.dp))
+            LoadingGraySpinner()
         }
     }
 }
