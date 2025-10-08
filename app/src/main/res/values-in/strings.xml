@@ -19,6 +19,8 @@
     <string name="theme">Tema</string>
     <string name="about">Tentang</string>
     <string name="about_desc">Gaenta, Arkhe &amp; bantuan</string>
+    <string name="changing_language">Mengubah bahasa…</string>
+    <string name="please_wait">Mohon tunggu</string>
 
     <!--BottomBar and HeaderContent-->
     <string name="docs">Docs</string>

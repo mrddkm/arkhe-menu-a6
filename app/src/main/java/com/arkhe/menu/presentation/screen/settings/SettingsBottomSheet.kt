@@ -28,6 +28,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -53,6 +54,7 @@ import com.arkhe.menu.presentation.ui.components.HeaderTitleSecondary
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
 import com.arkhe.menu.presentation.viewmodel.LanguageViewModel
+import com.arkhe.menu.presentation.viewmodel.MainViewModel
 import com.arkhe.menu.presentation.viewmodel.ThemeViewModel
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
@@ -68,10 +70,19 @@ import org.koin.compose.KoinApplicationPreview
 @Composable
 fun SettingsBottomSheet(
     themeViewModel: ThemeViewModel = koinViewModel(),
-    langViewModel: LanguageViewModel = koinViewModel()
+    langViewModel: LanguageViewModel = koinViewModel(),
+    mainViewModel: MainViewModel = koinViewModel()
 ) {
     val currentTheme by themeViewModel.currentTheme.collectAsState()
     val languageState by langViewModel.languageState.collectAsState()
+
+    DisposableEffect(Unit) {
+        langViewModel.setLanguageChangeCallbacks(
+            onStarted = { mainViewModel.onLanguageChangeStarted() },
+            onCompleted = { mainViewModel.onLanguageChangeCompleted() }
+        )
+        onDispose { }
+    }
 
     Column(
         modifier = Modifier
@@ -274,7 +285,7 @@ fun SettingsBottomSheet(
             Column {
                 AccountItem(
                     label = langViewModel.getLocalized(Lang.ABOUT),
-                    labelInfo = langViewModel.getLocalized(Lang.DEVICES_DESC),
+                    labelInfo = langViewModel.getLocalized(Lang.ABOUT_DESC),
                     painter = painterResource(R.drawable.ic_ae),
                     onClick = {},
                     showDivider = false

@@ -35,9 +35,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.arkhe.menu.data.local.preferences.Lang
 import com.arkhe.menu.di.appModule
 import com.arkhe.menu.di.dataModule
 import com.arkhe.menu.di.domainModule
+import com.arkhe.menu.di.previewModule
 import com.arkhe.menu.presentation.navigation.NavigationRoute
 import com.arkhe.menu.presentation.screen.docs.categories.CategoriesScreen
 import com.arkhe.menu.presentation.screen.docs.customer.CustomerScreen
@@ -48,8 +50,10 @@ import com.arkhe.menu.presentation.screen.settings.SettingsBottomSheet
 import com.arkhe.menu.presentation.ui.animation.ScreenTransitions
 import com.arkhe.menu.presentation.ui.components.ArkheBottomBar
 import com.arkhe.menu.presentation.ui.components.ArkheTopBar
+import com.arkhe.menu.presentation.ui.components.LanguageLoadingOverlay
 import com.arkhe.menu.presentation.ui.components.LoadingIndicatorSpinner
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
+import com.arkhe.menu.presentation.viewmodel.LanguageViewModel
 import com.arkhe.menu.presentation.viewmodel.MainViewModel
 import com.arkhe.menu.presentation.viewmodel.ProductViewModel
 import org.koin.android.ext.koin.androidContext
@@ -60,7 +64,8 @@ import org.koin.compose.KoinApplicationPreview
 @Composable
 fun MainScreen(
     navController: NavHostController,
-    mainViewModel: MainViewModel = koinViewModel()
+    mainViewModel: MainViewModel = koinViewModel(),
+    langViewModel: LanguageViewModel = koinViewModel()
 ) {
     val uiState by mainViewModel.uiState.collectAsState()
     val scrollAlpha by mainViewModel.scrollAlpha.collectAsState()
@@ -85,19 +90,6 @@ fun MainScreen(
 
     BackHandler(enabled = uiState.showSettingsBottomSheet) {
         mainViewModel.toggleProfileBottomSheet()
-    }
-
-    val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true
-    )
-
-    if (uiState.showSettingsBottomSheet) {
-        ModalBottomSheet(
-            onDismissRequest = { mainViewModel.toggleProfileBottomSheet() },
-            sheetState = sheetState
-        ) {
-            SettingsBottomSheet()
-        }
     }
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
@@ -286,6 +278,21 @@ fun MainScreen(
             }
         }
 
+        /*--- Setting & Profile BottomSheet ---*/
+        if (uiState.showSettingsBottomSheet) {
+            ModalBottomSheet(
+                onDismissRequest = { mainViewModel.toggleProfileBottomSheet() },
+                sheetState = rememberModalBottomSheetState(
+                    skipPartiallyExpanded = true
+                )
+            ) {
+                SettingsBottomSheet(
+                    langViewModel = langViewModel,
+                    mainViewModel = mainViewModel
+                )
+            }
+        }
+
         /*--- Loading overlay ---*/
         if (uiState.isLoading) {
             Box(
@@ -301,6 +308,13 @@ fun MainScreen(
                 mainViewModel.setError(null)
             }
         }
+
+        /*Language Loading Overlay - appear above all content*/
+        LanguageLoadingOverlay(
+            isVisible = uiState.isLanguageChanging,
+            changingLanguageText = langViewModel.getLocalized(Lang.CHANGING_LANGUAGE),
+            pleaseWaitText = langViewModel.getLocalized(Lang.PLEASE_WAIT)
+        )
     }
 }
 
@@ -314,7 +328,8 @@ fun MainScreenPreview() {
             modules(
                 dataModule,
                 domainModule,
-                appModule
+                appModule,
+                previewModule
             )
         }
     ) {

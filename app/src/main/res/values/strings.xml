@@ -19,6 +19,8 @@
     <string name="theme">Theme</string>
     <string name="about">About</string>
     <string name="about_desc">Gaenta, Arkhe &amp; support</string>
+    <string name="changing_language">Changing language…</string>
+    <string name="please_wait">Please wait</string>
 
     <!--BottomBar and HeaderContent-->
     <string name="docs">Docs</string>

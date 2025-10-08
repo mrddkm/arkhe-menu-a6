@@ -71,6 +71,16 @@ object LanguageLocalizedStrings {
                 R.string.about_desc,
                 languageCode
             ),
+            Lang.CHANGING_LANGUAGE to LanguageManager.getLocalizedString(
+                appContext,
+                R.string.changing_language,
+                languageCode
+            ),
+            Lang.PLEASE_WAIT to LanguageManager.getLocalizedString(
+                appContext,
+                R.string.please_wait,
+                languageCode
+            ),
         )
     }
 }
@@ -88,4 +98,6 @@ object Lang {
     const val THEME = "theme"
     const val ABOUT = "about"
     const val ABOUT_DESC = "about_desc"
+    const val CHANGING_LANGUAGE = "changing_language"
+    const val PLEASE_WAIT = "please_wait"
 }

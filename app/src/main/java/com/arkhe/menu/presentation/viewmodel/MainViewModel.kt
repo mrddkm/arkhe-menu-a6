@@ -141,6 +141,21 @@ class MainViewModel(
         )
     }
 
+    fun onLanguageChangeStarted() {
+        _uiState.value = _uiState.value.copy(
+            showSettingsBottomSheet = false,
+            isLanguageChanging = true
+        )
+    }
+
+    fun onLanguageChangeCompleted() {
+        _uiState.value = _uiState.value.copy(
+            isLanguageChanging = false
+        )
+        // Kembali ke halaman awal
+        navigateBackToMain()
+    }
+
     fun setError(error: String?) {
         _uiState.value = _uiState.value.copy(error = error)
     }
@@ -151,7 +166,7 @@ class MainViewModel(
     }
 
     fun updateScrollAlpha(alpha: Float) {
-        _scrollAlpha.value = alpha.coerceIn(0.4f, 1f) // Batasi alpha antara 0.4f dan 1f
+        _scrollAlpha.value = alpha.coerceIn(0.4f, 1f)
     }
 }
 
@@ -164,6 +179,7 @@ data class MainUiState(
     val currentContentType: String = "",
     val currentScreen: String = NavigationRoute.MAIN,
     val isLoading: Boolean = false,
+    val isLanguageChanging: Boolean = false,
     val error: String? = null,
     val scrollAlpha: Float = 1f
 )

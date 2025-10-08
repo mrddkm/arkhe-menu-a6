@@ -1,3 +1,5 @@
+@file:Suppress("SpellCheckingInspection")
+
 package com.arkhe.menu.presentation.viewmodel
 
 import android.content.Context
@@ -30,8 +32,9 @@ class LanguageViewModel(
 
     val languageState: StateFlow<LanguageState> = _languageState.asStateFlow()
 
-    private val _showBottomSheet = MutableStateFlow(false)
-    val showBottomSheet: StateFlow<Boolean> = _showBottomSheet.asStateFlow()
+    // Tambahkan callback untuk koordinasi dengan MainViewModel
+    private var onLanguageChangeStarted: (() -> Unit)? = null
+    private var onLanguageChangeCompleted: (() -> Unit)? = null
 
     init {
         observeLanguageChanges()
@@ -59,12 +62,12 @@ class LanguageViewModel(
         return _languageState.value.localizedStrings[key] ?: ""
     }
 
-    fun showLanguageSelector() {
-        _showBottomSheet.value = true
-    }
-
-    fun hideLanguageSelector() {
-        _showBottomSheet.value = false
+    fun setLanguageChangeCallbacks(
+        onStarted: () -> Unit,
+        onCompleted: () -> Unit
+    ) {
+        onLanguageChangeStarted = onStarted
+        onLanguageChangeCompleted = onCompleted
     }
 
     fun selectLanguage(language: Language) {
@@ -72,13 +75,19 @@ class LanguageViewModel(
             val currentLanguage = _languageState.value.currentLanguage
 
             if (currentLanguage.code != language.code) {
+                // Set state loading dimulai
                 _languageState.value = _languageState.value.copy(isChangingLanguage = true)
-                _showBottomSheet.value = false
 
+                // Trigger callback untuk tutup bottom sheet dan tampilkan loading
+                onLanguageChangeStarted?.invoke()
+
+                // Simpan bahasa baru
                 languageRepository.setLanguage(language.code)
 
-                delay(800)
+                // Simulasi loading (bisa disesuaikan)
+                delay(1200)
 
+                // Load string baru
                 val newLocalizedStrings = loadLocalized(language.code)
 
                 _languageState.value = _languageState.value.copy(
@@ -86,8 +95,9 @@ class LanguageViewModel(
                     localizedStrings = newLocalizedStrings,
                     isChangingLanguage = false
                 )
-            } else {
-                _showBottomSheet.value = false
+
+                // Trigger callback setelah selesai
+                onLanguageChangeCompleted?.invoke()
             }
         }
     }
