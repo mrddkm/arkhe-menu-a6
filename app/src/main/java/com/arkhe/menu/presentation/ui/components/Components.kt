@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -332,12 +333,13 @@ fun LanguageIconId() {
 }
 
 @Composable
-fun ProductInfoItem(
+fun ColumnInfoItem(
     label: String = "",
     value: String? = null,
     valueCompose: @Composable (() -> Unit)? = null,
     useHorizontalDivider: Boolean = true,
-    maxLine: Int = 1
+    maxLine: Int = 1,
+    textAlign: TextAlign = TextAlign.End
 ) {
     Column(
         modifier = Modifier.padding(start = 24.dp, bottom = 6.dp)
@@ -373,6 +375,7 @@ fun ProductInfoItem(
                             fontFamily = sourceCodeProFontFamily,
                             fontWeight = FontWeight.Normal
                         ),
+                        textAlign = textAlign,
                         maxLines = maxLine,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -385,7 +388,61 @@ fun ProductInfoItem(
 }
 
 @Composable
-fun ProductDestinationItem(
+fun ColumnInfoItemExtended(
+    label: String = "",
+    value: String? = null,
+    valueCompose: @Composable (() -> Unit)? = null,
+    useHorizontalDivider: Boolean = true,
+    maxLine: Int = 1,
+    textAlign: TextAlign = TextAlign.Start
+) {
+    Column(
+        modifier = Modifier.padding(start = 24.dp, bottom = 6.dp)
+    ) {
+        if (useHorizontalDivider) {
+            HorizontalDivider(
+                thickness = 1.dp,
+                color = Color.Gray.copy(alpha = 0.2f)
+            )
+        }
+        Spacer(modifier = Modifier.height(6.dp))
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 4.dp, bottom = 4.dp),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.spacedBy(2.dp)
+        ) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodySmall.copy(
+                    fontWeight = FontWeight.Normal
+                ),
+                color = Color.Gray
+            )
+            Box(
+                modifier = Modifier.padding(end = 24.dp)
+            ) {
+                if (value != null) {
+                    Text(
+                        text = value,
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            fontWeight = FontWeight.Normal
+                        ),
+                        textAlign = textAlign,
+                        maxLines = maxLine,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                } else if (valueCompose != null) {
+                    valueCompose()
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun RowDestinationItem(
     modifier: Modifier = Modifier,
     label: String,
     value: String,

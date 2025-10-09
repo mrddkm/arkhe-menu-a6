@@ -34,8 +34,8 @@ import androidx.compose.ui.unit.dp
 import com.arkhe.menu.R
 import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.presentation.ui.components.ErrorIncompleteData
-import com.arkhe.menu.presentation.ui.components.ProductDestinationItem
-import com.arkhe.menu.presentation.ui.components.ProductInfoItem
+import com.arkhe.menu.presentation.ui.components.RowDestinationItem
+import com.arkhe.menu.presentation.ui.components.ColumnInfoItem
 import com.arkhe.menu.presentation.ui.components.StatusDevelopmentChip
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.utils.sampleProduct
@@ -150,22 +150,22 @@ fun ProductInfoTab(
                     color = MaterialTheme.colorScheme.onSurface
                 )
             }
-            ProductInfoItem(
+            ColumnInfoItem(
                 label = "Status",
                 valueCompose = { StatusDevelopmentChip(product.status) },
                 useHorizontalDivider = false
             )
-            ProductInfoItem(
+            ColumnInfoItem(
                 label = "Code",
                 value = product.productCode,
                 useHorizontalDivider = true
             )
-            ProductInfoItem(
+            ColumnInfoItem(
                 label = "Category",
                 value = product.categoryName,
                 useHorizontalDivider = true
             )
-            ProductInfoItem(
+            ColumnInfoItem(
                 label = "Type",
                 value = product.categoryType,
                 useHorizontalDivider = true
@@ -232,13 +232,13 @@ fun DestinationTab(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    ProductDestinationItem(
+                    RowDestinationItem(
                         modifier = Modifier.weight(1f),
                         label = "Distance",
                         value = product.hikeDistance,
                         icon = painterResource(R.drawable.ic_distance)
                     )
-                    ProductDestinationItem(
+                    RowDestinationItem(
                         modifier = Modifier.weight(1f),
                         label = "Duration",
                         value = product.hikeDuration,
@@ -250,14 +250,14 @@ fun DestinationTab(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    ProductDestinationItem(
+                    RowDestinationItem(
                         modifier = Modifier.weight(1f),
                         label = "Altitude (m)",
                         value = product.hikeAltitude,
                         icon = painterResource(R.drawable.ic_altitude),
                         isMdpl = true
                     )
-                    ProductDestinationItem(
+                    RowDestinationItem(
                         modifier = Modifier.weight(1f),
                         label = "Elevation Gain",
                         value = product.hikeElevationGain,
