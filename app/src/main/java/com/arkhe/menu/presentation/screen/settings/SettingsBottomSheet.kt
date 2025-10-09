@@ -216,13 +216,13 @@ fun SettingsBottomSheet(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Privacy Policy",
+                text = langViewModel.getLocalized(Lang.PRIVACY_POLICY),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                 modifier = Modifier.clickable { onPrivacyPolicyClick() }
             )
             Text(
-                text = "Terms of Service",
+                text = langViewModel.getLocalized(Lang.TERMS_OF_SERVICE),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                 modifier = Modifier.clickable { onTermsOfServiceClick() }

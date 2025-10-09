@@ -1,5 +1,3 @@
-@file:Suppress("SpellCheckingInspection")
-
 package com.arkhe.menu.presentation.viewmodel
 
 import android.content.Context
@@ -32,7 +30,6 @@ class LanguageViewModel(
 
     val languageState: StateFlow<LanguageState> = _languageState.asStateFlow()
 
-    // Tambahkan callback untuk koordinasi dengan MainViewModel
     private var onLanguageChangeStarted: (() -> Unit)? = null
     private var onLanguageChangeCompleted: (() -> Unit)? = null
 
@@ -75,19 +72,14 @@ class LanguageViewModel(
             val currentLanguage = _languageState.value.currentLanguage
 
             if (currentLanguage.code != language.code) {
-                // Set state loading dimulai
                 _languageState.value = _languageState.value.copy(isChangingLanguage = true)
 
-                // Trigger callback untuk tutup bottom sheet dan tampilkan loading
                 onLanguageChangeStarted?.invoke()
 
-                // Simpan bahasa baru
                 languageRepository.setLanguage(language.code)
 
-                // Simulasi loading (bisa disesuaikan)
                 delay(1200)
 
-                // Load string baru
                 val newLocalizedStrings = loadLocalized(language.code)
 
                 _languageState.value = _languageState.value.copy(
@@ -96,7 +88,6 @@ class LanguageViewModel(
                     isChangingLanguage = false
                 )
 
-                // Trigger callback setelah selesai
                 onLanguageChangeCompleted?.invoke()
             }
         }

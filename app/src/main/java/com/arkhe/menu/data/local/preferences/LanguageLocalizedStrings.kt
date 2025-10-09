@@ -71,6 +71,16 @@ object LanguageLocalizedStrings {
                 R.string.about_desc,
                 languageCode
             ),
+            Lang.PRIVACY_POLICY to LanguageManager.getLocalizedString(
+                appContext,
+                R.string.privacy_policy,
+                languageCode
+            ),
+            Lang.TERMS_OF_SERVICE to LanguageManager.getLocalizedString(
+                appContext,
+                R.string.terms_of_service,
+                languageCode
+            ),
             Lang.CHANGING_LANGUAGE to LanguageManager.getLocalizedString(
                 appContext,
                 R.string.changing_language,
@@ -98,6 +108,8 @@ object Lang {
     const val THEME = "theme"
     const val ABOUT = "about"
     const val ABOUT_DESC = "about_desc"
+    const val PRIVACY_POLICY = "privacy_policy"
+    const val TERMS_OF_SERVICE = "terms_of_service"
     const val CHANGING_LANGUAGE = "changing_language"
     const val PLEASE_WAIT = "please_wait"
 }

@@ -1,5 +1,6 @@
 package com.arkhe.menu.presentation.screen.settings.terms
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,29 +12,46 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextLinkStyles
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.arkhe.menu.data.local.preferences.Lang
+import com.arkhe.menu.R
 import com.arkhe.menu.presentation.navigation.NavigationRoute
-import com.arkhe.menu.presentation.viewmodel.LanguageViewModel
+import com.arkhe.menu.presentation.screen.settings.privacy.getStringForLocale
+import com.arkhe.menu.presentation.ui.components.LanguageIconEn
+import com.arkhe.menu.presentation.ui.components.LanguageIconId
+import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
+import com.mikepenz.markdown.m3.Markdown
+import com.mikepenz.markdown.model.DefaultMarkdownColors
+import com.mikepenz.markdown.model.DefaultMarkdownTypography
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.Close
-import org.koin.androidx.compose.koinViewModel
+import java.util.Locale
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TermsScreen(
     onBackClick: () -> Unit,
@@ -55,29 +73,76 @@ fun TermsScreen(
         }
     }
 
+    val context = LocalContext.current
+
+    var showEnglish by remember { mutableStateOf(true) }
+    var markdownText by remember { mutableStateOf("") }
+
+    LaunchedEffect(showEnglish) {
+        markdownText = loadMarkdownFromAssets(context, showEnglish)
+    }
+
     Scaffold { paddingValues ->
         TermsContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues),
-            onHandleBackNavigation = handleBackNavigation
+            onHandleBackNavigation = handleBackNavigation,
+            showEnglish = showEnglish,
+            onLanguageToggle = { showEnglish = !showEnglish },
+            markdownText = markdownText,
+            context = context
         )
     }
 }
 
+@Suppress("DEPRECATION")
 @Composable
 fun TermsContent(
     modifier: Modifier = Modifier,
     onHandleBackNavigation: () -> Unit = { },
-    langViewModel: LanguageViewModel = koinViewModel()
+    showEnglish: Boolean,
+    onLanguageToggle: () -> Unit,
+    markdownText: String,
+    context: Context
 ) {
+    val textInId = getStringForLocale(context, R.string.terms_of_service, Locale("id"))
+    val textInEn = getStringForLocale(context, R.string.terms_of_service, Locale("en"))
+
+    val markdownColors = DefaultMarkdownColors(
+        text = Color.Gray,
+        codeBackground = Color.Gray,
+        inlineCodeBackground = Color.Gray,
+        dividerColor = Color.Gray,
+        tableBackground = Color.Gray
+    )
+
+    val markdownTypography = DefaultMarkdownTypography(
+        h1 = TextStyle(fontFamily = sourceCodeProFontFamily),
+        h2 = TextStyle(fontFamily = sourceCodeProFontFamily),
+        h3 = TextStyle(fontFamily = sourceCodeProFontFamily),
+        h4 = TextStyle(fontFamily = sourceCodeProFontFamily),
+        h5 = TextStyle(fontFamily = sourceCodeProFontFamily),
+        h6 = TextStyle(fontFamily = sourceCodeProFontFamily),
+        text = TextStyle(fontFamily = sourceCodeProFontFamily),
+        code = TextStyle(fontFamily = sourceCodeProFontFamily),
+        inlineCode = TextStyle(fontFamily = sourceCodeProFontFamily),
+        quote = TextStyle(fontFamily = sourceCodeProFontFamily),
+        paragraph = TextStyle(fontFamily = sourceCodeProFontFamily),
+        ordered = TextStyle(fontFamily = sourceCodeProFontFamily),
+        bullet = TextStyle(fontFamily = sourceCodeProFontFamily),
+        list = TextStyle(fontFamily = sourceCodeProFontFamily),
+        textLink = TextLinkStyles(),
+        table = TextStyle(fontFamily = sourceCodeProFontFamily)
+    )
+
     Column(
         modifier = modifier.padding(16.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Start,
+            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = onHandleBackNavigation) {
@@ -96,6 +161,13 @@ fun TermsContent(
                     )
                 }
             }
+            IconButton(onClick = onLanguageToggle) {
+                if (showEnglish) {
+                    LanguageIconEn()
+                } else {
+                    LanguageIconId()
+                }
+            }
         }
         Column(
             modifier = Modifier
@@ -105,39 +177,36 @@ fun TermsContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = langViewModel.getLocalized(Lang.DEVICES),
+                text = textInEn,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface,
             )
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(4.dp))
             Text(
-                text = "Settings and recommendations to keep your account secure",
-                style = MaterialTheme.typography.labelMedium,
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Normal,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                text = textInId,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onSurface,
             )
             Spacer(Modifier.height(8.dp))
         }
-        Surface(
+        Box(
             modifier = Modifier
-                .padding(start = 16.dp, top = 0.dp, bottom = 0.dp, end = 16.dp),
-            shape = MaterialTheme.shapes.medium
+                .fillMaxSize()
+                .padding(start = 8.dp, top = 0.dp, bottom = 0.dp, end = 8.dp)
+                .verticalScroll(rememberScrollState()),
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth(),
-            ) {
-
-            }
-        }
-        Surface(
-            modifier = Modifier
-                .padding(start = 16.dp, top = 24.dp, bottom = 0.dp, end = 16.dp),
-            shape = MaterialTheme.shapes.medium
-        ) {
-
+            Markdown(
+                content = markdownText,
+                colors = markdownColors,
+                typography = markdownTypography
+            )
         }
     }
+}
+
+private fun loadMarkdownFromAssets(context: Context, showEnglish: Boolean): String {
+    val fileName = if (showEnglish) "terms_of_service_en.md" else "terms_of_service_id.md"
+    return context.assets.open(fileName).bufferedReader().use { it.readText() }
 }
