@@ -5,6 +5,7 @@ package com.arkhe.menu.utils
 import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.domain.model.ProductActionInfo
 import com.arkhe.menu.domain.model.ProductInformationLanguage
+import com.arkhe.menu.domain.model.User
 import com.arkhe.menu.utils.Constants.Statistics.STATISTICS_READY
 
 val sampleProduct = Product(
@@ -40,4 +41,32 @@ val sampleProduct = Product(
         )
     ),
     localImagePath = null
+)
+
+val sampleUser = User(
+    id = "1",
+    userId = "230504",
+    mail = "didik.muttaqien@gmail.com",
+    name = "DIDIK MUTTAQIEN",
+    phone = "6285659988939",
+    initial = "DM",
+    nickName = "mrddkm",
+    birthday = "29-03-1985",
+    gender = "Male",
+    photo = "",
+    positionId = "cbo",
+    positionInitial = "CBO",
+    positionName = "Director of BROD",
+    divisionId = "brod",
+    divisionInitial = "BROD",
+    divisionName = "Business, Research, Operational & Development",
+    roles = "moderator",
+    status = "active",
+    sessionActivation = "uPwb5rCTolKz3HsC",
+    sessionActivationAt = "2025-10-09T18=59=31",
+    sessionToken = "ct85o4Kv1s5uiLsr",
+    sessionExpiredAt = "2025-11-08T20=10=20",
+    createdAt = "",
+    updatedAt = "",
+    lastActiveAt = "2025-10-09T20=10=20",
 )

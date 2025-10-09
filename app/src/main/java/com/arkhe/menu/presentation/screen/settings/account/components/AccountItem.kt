@@ -1,4 +1,4 @@
-package com.arkhe.menu.presentation.screen.settings.account
+package com.arkhe.menu.presentation.screen.settings.account.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -122,7 +122,7 @@ fun AccountItem(
 fun AccountItemPreview() {
     ArkheTheme {
         AccountItem(
-            label = "Personal Information",
+            label = "Personal Info",
             labelInfo = "Name, Email, Phone Number",
             icon = EvaIcons.Outline.Image,
             onClick = {}

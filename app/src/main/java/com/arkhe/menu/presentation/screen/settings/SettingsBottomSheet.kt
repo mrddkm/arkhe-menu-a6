@@ -43,7 +43,7 @@ import com.arkhe.menu.di.appModule
 import com.arkhe.menu.di.dataModule
 import com.arkhe.menu.di.domainModule
 import com.arkhe.menu.di.previewModule
-import com.arkhe.menu.presentation.screen.settings.account.AccountItem
+import com.arkhe.menu.presentation.screen.settings.account.components.AccountItem
 import com.arkhe.menu.presentation.ui.components.HeaderTitleSecondary
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
