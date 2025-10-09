@@ -1,4 +1,4 @@
-package com.arkhe.menu.presentation.screen.settings.account
+package com.arkhe.menu.presentation.screen.settings.devices
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -22,35 +22,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.arkhe.menu.data.local.preferences.Lang
-import com.arkhe.menu.di.appModule
-import com.arkhe.menu.di.dataModule
-import com.arkhe.menu.di.domainModule
-import com.arkhe.menu.di.previewModule
-import com.arkhe.menu.domain.model.User
 import com.arkhe.menu.presentation.navigation.NavigationRoute
-import com.arkhe.menu.presentation.screen.settings.account.components.AccountEditItem
-import com.arkhe.menu.presentation.screen.settings.account.components.DetailPersonalAccordions
-import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.viewmodel.LanguageViewModel
-import com.arkhe.menu.utils.sampleUser
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.Close
-import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.compose.koinViewModel
-import org.koin.compose.KoinApplicationPreview
 
 @Composable
-fun PersonalInfoScreen(
+fun DevicesScreen(
     onBackClick: () -> Unit,
-    navController: NavController? = null,
-    user: User
+    navController: NavController? = null
 ) {
     val handleBackNavigation: () -> Unit = {
         navController?.let { nav ->
@@ -69,20 +56,18 @@ fun PersonalInfoScreen(
     }
 
     Scaffold { paddingValues ->
-        PersonalInfoContent(
+        DevicesContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues),
-            onHandleBackNavigation = handleBackNavigation,
-            user = user
+            onHandleBackNavigation = handleBackNavigation
         )
     }
 }
 
 @Composable
-fun PersonalInfoContent(
+fun DevicesContent(
     modifier: Modifier = Modifier,
-    user: User,
     onHandleBackNavigation: () -> Unit = { },
     langViewModel: LanguageViewModel = koinViewModel()
 ) {
@@ -120,23 +105,20 @@ fun PersonalInfoContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = langViewModel.getLocalized(Lang.PERSONAL_INFO),
+                text = langViewModel.getLocalized(Lang.DEVICES),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface,
             )
             Spacer(Modifier.height(8.dp))
             Text(
-                text = "Info about you and your preferences",
+                text = "Settings and recommendations to keep your account secure",
                 style = MaterialTheme.typography.labelMedium,
+                textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Normal,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
             )
-            Spacer(Modifier.height(16.dp))
-            DetailPersonalAccordions(
-                title = "tripkeun",
-                user = user
-            )
+            Spacer(Modifier.height(8.dp))
         }
         Surface(
             modifier = Modifier
@@ -147,53 +129,15 @@ fun PersonalInfoContent(
                 modifier = Modifier
                     .fillMaxWidth(),
             ) {
-                AccountEditItem(
-                    label = "Name",
-                    value = user.name,
-                    info = "Use your real name",
-                    onClick = {}
-                )
-                AccountEditItem(
-                    label = "Initial/NickName",
-                    value = "${user.initial} - ${user.nickName}",
-                    onClick = {}
-                )
-                AccountEditItem(
-                    label = "Birthday",
-                    value = user.birthday,
-                    onClick = {}
-                )
-                AccountEditItem(
-                    label = "Gender",
-                    value = user.gender,
-                    onClick = {},
-                    showDivider = false
-                )
+
             }
         }
-    }
-}
+        Surface(
+            modifier = Modifier
+                .padding(start = 16.dp, top = 24.dp, bottom = 0.dp, end = 16.dp),
+            shape = MaterialTheme.shapes.medium
+        ) {
 
-@Preview(showBackground = true)
-@Composable
-fun PersonalInfoScreenPreview() {
-    val previewContext = LocalContext.current
-    KoinApplicationPreview(
-        application = {
-            androidContext(previewContext)
-            modules(
-                dataModule,
-                domainModule,
-                appModule,
-                previewModule
-            )
-        }
-    ) {
-        ArkheTheme {
-            PersonalInfoScreen(
-                onBackClick = {},
-                user = sampleUser
-            )
         }
     }
 }

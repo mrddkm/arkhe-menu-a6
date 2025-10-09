@@ -64,7 +64,13 @@ import org.koin.compose.KoinApplicationPreview
 fun SettingsBottomSheet(
     themeViewModel: ThemeViewModel = koinViewModel(),
     langViewModel: LanguageViewModel = koinViewModel(),
-    mainViewModel: MainViewModel = koinViewModel()
+    mainViewModel: MainViewModel = koinViewModel(),
+    onPersonalInfoClick: () -> Unit = {},
+    onSignInSecurityClick: () -> Unit = {},
+    onDevicesClick: () -> Unit = {},
+    onAboutClick: () -> Unit = {},
+    onPrivacyPolicyClick: () -> Unit = {},
+    onTermsOfServiceClick: () -> Unit = {}
 ) {
     DisposableEffect(Unit) {
         langViewModel.setLanguageChangeCallbacks(
@@ -163,19 +169,19 @@ fun SettingsBottomSheet(
                     label = langViewModel.getLocalized(Lang.PERSONAL_INFO),
                     labelInfo = langViewModel.getLocalized(Lang.PERSONAL_INFO_DESC),
                     icon = EvaIcons.Outline.Person,
-                    onClick = {}
+                    onClick = { onPersonalInfoClick() }
                 )
                 AccountItem(
                     label = langViewModel.getLocalized(Lang.SIGN_IN_AND_SECURITY),
                     labelInfo = langViewModel.getLocalized(Lang.SIGN_IN_AND_SECURITY_DESC),
                     icon = EvaIcons.Outline.Shield,
-                    onClick = {}
+                    onClick = { onSignInSecurityClick() }
                 )
                 AccountItem(
                     label = langViewModel.getLocalized(Lang.DEVICES),
                     labelInfo = langViewModel.getLocalized(Lang.DEVICES_DESC),
                     icon = EvaIcons.Outline.Smartphone,
-                    onClick = {},
+                    onClick = { onDevicesClick() },
                     showDivider = false
                 )
             }
@@ -198,7 +204,7 @@ fun SettingsBottomSheet(
                     label = langViewModel.getLocalized(Lang.ABOUT),
                     labelInfo = langViewModel.getLocalized(Lang.ABOUT_DESC),
                     painter = painterResource(R.drawable.ic_ae),
-                    onClick = {},
+                    onClick = { onAboutClick() },
                     showDivider = false
                 )
             }
@@ -213,13 +219,13 @@ fun SettingsBottomSheet(
                 text = "Privacy Policy",
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                modifier = Modifier.clickable {}
+                modifier = Modifier.clickable { onPrivacyPolicyClick() }
             )
             Text(
                 text = "Terms of Service",
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                modifier = Modifier.clickable {}
+                modifier = Modifier.clickable { onTermsOfServiceClick() }
             )
         }
     }

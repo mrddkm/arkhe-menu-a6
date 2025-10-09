@@ -27,12 +27,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.arkhe.menu.data.local.preferences.Lang
 import com.arkhe.menu.di.appModule
 import com.arkhe.menu.di.dataModule
 import com.arkhe.menu.di.domainModule
 import com.arkhe.menu.di.previewModule
 import com.arkhe.menu.domain.model.User
+import com.arkhe.menu.presentation.navigation.NavigationRoute
 import com.arkhe.menu.presentation.screen.settings.account.components.AccountEditItem
 import com.arkhe.menu.presentation.screen.settings.account.components.AccountToggleItem
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
@@ -49,10 +51,23 @@ import org.koin.compose.KoinApplicationPreview
 @Composable
 fun SignInSecurityScreen(
     onBackClick: () -> Unit,
+    navController: NavController? = null,
     user: User
 ) {
     val handleBackNavigation: () -> Unit = {
-        onBackClick()
+        navController?.let { nav ->
+            val popSuccess = nav.popBackStack()
+            if (!popSuccess) {
+                nav.navigate(NavigationRoute.MAIN) {
+                    popUpTo(NavigationRoute.MAIN) {
+                        inclusive = true
+                    }
+                    launchSingleTop = true
+                }
+            }
+        } ?: run {
+            onBackClick()
+        }
     }
 
     Scaffold { paddingValues ->

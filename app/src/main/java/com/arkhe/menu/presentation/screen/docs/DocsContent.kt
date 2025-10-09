@@ -1,5 +1,3 @@
-@file:Suppress("SpellCheckingInspection")
-
 package com.arkhe.menu.presentation.screen.docs
 
 import android.util.Log
@@ -67,7 +65,7 @@ fun DocsContent(
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
     var selectedOrganization by remember { mutableStateOf<Organization?>(null) }
-    var showPersonilList by remember { mutableStateOf(false) }
+    var showUserList by remember { mutableStateOf(false) }
 
     val profileState by profileViewModel.profilesState.collectAsState()
     val categoriesState by categoryViewModel.categoriesState.collectAsState()
@@ -315,15 +313,15 @@ fun DocsContent(
         )
     }
 
-    if (showPersonilList) {
+    if (showUserList) {
         PersonilListBottomSheet(
             organizationList = sampleOrganizations,
-            onPersonilClick = { personil ->
-                selectedOrganization = personil
-                showPersonilList = false
+            onPersonilClick = { user ->
+                selectedOrganization = user
+                showUserList = false
                 showBottomSheet = true
             },
-            onDismiss = { showPersonilList = false }
+            onDismiss = { showUserList = false }
         )
     }
 }

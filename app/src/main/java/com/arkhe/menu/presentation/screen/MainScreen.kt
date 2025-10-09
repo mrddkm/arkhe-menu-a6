@@ -88,8 +88,8 @@ fun MainScreen(
         }
     }
 
-    BackHandler(enabled = uiState.showSettingsBottomSheet) {
-        mainViewModel.toggleProfileBottomSheet()
+    BackHandler(enabled = uiState.showProfileSettingsBottomSheet) {
+        mainViewModel.toggleProfileSettingsBottomSheet()
     }
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
@@ -245,7 +245,7 @@ fun MainScreen(
                     isInMainContent = uiState.isInMainContent,
                     currentContentType = uiState.currentContentType,
                     onBackClick = { mainViewModel.navigateBackToMain() },
-                    onUserIconClick = { mainViewModel.toggleProfileBottomSheet() }
+                    onUserIconClick = { mainViewModel.toggleProfileSettingsBottomSheet() }
                 )
             }
         }
@@ -279,16 +279,58 @@ fun MainScreen(
         }
 
         /*--- Setting & Profile BottomSheet ---*/
-        if (uiState.showSettingsBottomSheet) {
+        if (uiState.showProfileSettingsBottomSheet) {
             ModalBottomSheet(
-                onDismissRequest = { mainViewModel.toggleProfileBottomSheet() },
+                onDismissRequest = { mainViewModel.toggleProfileSettingsBottomSheet() },
                 sheetState = rememberModalBottomSheetState(
                     skipPartiallyExpanded = true
                 )
             ) {
                 SettingsBottomSheet(
                     langViewModel = langViewModel,
-                    mainViewModel = mainViewModel
+                    mainViewModel = mainViewModel,
+                    onPersonalInfoClick = {
+                        navController.navigate(
+                            NavigationRoute.personalInfoDetail(
+                                source = NavigationRoute.MAIN
+                            )
+                        )
+                    },
+                    onSignInSecurityClick = {
+                        navController.navigate(
+                            NavigationRoute.signInSecurityDetail(
+                                source = NavigationRoute.MAIN
+                            )
+                        )
+                    },
+                    onDevicesClick = {
+                        navController.navigate(
+                            NavigationRoute.devicesDetail(
+                                source = NavigationRoute.MAIN
+                            )
+                        )
+                    },
+                    onAboutClick = {
+                        navController.navigate(
+                            NavigationRoute.aboutDetail(
+                                source = NavigationRoute.MAIN
+                            )
+                        )
+                    },
+                    onPrivacyPolicyClick = {
+                        navController.navigate(
+                            NavigationRoute.privacyPolicyDetail(
+                                source = NavigationRoute.MAIN
+                            )
+                        )
+                    },
+                    onTermsOfServiceClick = {
+                        navController.navigate(
+                            NavigationRoute.termOfServiceDetail(
+                                source = NavigationRoute.MAIN
+                            )
+                        )
+                    }
                 )
             }
         }

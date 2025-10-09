@@ -135,15 +135,15 @@ class MainViewModel(
         }
     }
 
-    fun toggleProfileBottomSheet() {
+    fun toggleProfileSettingsBottomSheet() {
         _uiState.value = _uiState.value.copy(
-            showSettingsBottomSheet = !_uiState.value.showSettingsBottomSheet
+            showProfileSettingsBottomSheet = !_uiState.value.showProfileSettingsBottomSheet
         )
     }
 
     fun onLanguageChangeStarted() {
         _uiState.value = _uiState.value.copy(
-            showSettingsBottomSheet = false,
+            showProfileSettingsBottomSheet = false,
             isLanguageChanging = true
         )
     }
@@ -175,7 +175,7 @@ data class MainUiState(
     val selectedBottomNavItem: BottomNavItem = BottomNavItem.DOCS,
     val isInMainContent: Boolean = false,
     val showBottomBar: Boolean = true,
-    val showSettingsBottomSheet: Boolean = false,
+    val showProfileSettingsBottomSheet: Boolean = false,
     val currentContentType: String = "",
     val currentScreen: String = NavigationRoute.MAIN,
     val isLoading: Boolean = false,

@@ -10,7 +10,14 @@ import androidx.navigation.navArgument
 import com.arkhe.menu.presentation.screen.MainScreen
 import com.arkhe.menu.presentation.screen.docs.categories.screen.CategoryDetail
 import com.arkhe.menu.presentation.screen.docs.product.detail.ProductDetailScreen
+import com.arkhe.menu.presentation.screen.settings.about.AboutScreen
+import com.arkhe.menu.presentation.screen.settings.account.PersonalInfoScreen
+import com.arkhe.menu.presentation.screen.settings.account.SignInSecurityScreen
+import com.arkhe.menu.presentation.screen.settings.devices.DevicesScreen
+import com.arkhe.menu.presentation.screen.settings.privacy.PrivacyScreen
+import com.arkhe.menu.presentation.screen.settings.terms.TermsScreen
 import com.arkhe.menu.presentation.viewmodel.ProductViewModel
+import com.arkhe.menu.utils.sampleUser
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -92,5 +99,164 @@ fun ArkheNavigation(
         /*tripkeun*/
 
         /*Activity*/
+
+        /*Profile & Settings*/
+        composable(
+            route = NavigationRoute.PERSONAL_INFO_DETAIL,
+            arguments = listOf(
+                navArgument("source") {
+                    type = NavType.StringType
+                    nullable = false
+                    defaultValue = "unknown"
+                }
+            )
+        ) { backStackEntry ->
+            PersonalInfoScreen(
+                onBackClick = {
+                    val popSuccess = navController.popBackStack()
+                    if (!popSuccess) {
+                        navController.navigate(NavigationRoute.MAIN) {
+                            popUpTo(NavigationRoute.MAIN) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
+                    }
+                },
+                navController = navController,
+                user = sampleUser
+            )
+        }
+
+        composable(
+            route = NavigationRoute.SIGN_IN_SECURITY_DETAIL,
+            arguments = listOf(
+                navArgument("source") {
+                    type = NavType.StringType
+                    nullable = false
+                    defaultValue = "unknown"
+                }
+            )
+        ) { backStackEntry ->
+            SignInSecurityScreen(
+                onBackClick = {
+                    val popSuccess = navController.popBackStack()
+                    if (!popSuccess) {
+                        navController.navigate(NavigationRoute.MAIN) {
+                            popUpTo(NavigationRoute.MAIN) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
+                    }
+                },
+                navController = navController,
+                user = sampleUser
+            )
+        }
+
+        composable(
+            route = NavigationRoute.DEVICES_DETAIL,
+            arguments = listOf(
+                navArgument("source") {
+                    type = NavType.StringType
+                    nullable = false
+                    defaultValue = "unknown"
+                }
+            )
+        ) { backStackEntry ->
+            DevicesScreen(
+                onBackClick = {
+                    val popSuccess = navController.popBackStack()
+                    if (!popSuccess) {
+                        navController.navigate(NavigationRoute.MAIN) {
+                            popUpTo(NavigationRoute.MAIN) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
+                    }
+                },
+                navController = navController
+            )
+        }
+
+        composable(
+            route = NavigationRoute.ABOUT_DETAIL,
+            arguments = listOf(
+                navArgument("source") {
+                    type = NavType.StringType
+                    nullable = false
+                    defaultValue = "unknown"
+                }
+            )
+        ) { backStackEntry ->
+            AboutScreen(
+                onBackClick = {
+                    val popSuccess = navController.popBackStack()
+                    if (!popSuccess) {
+                        navController.navigate(NavigationRoute.MAIN) {
+                            popUpTo(NavigationRoute.MAIN) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
+                    }
+                },
+                navController = navController
+            )
+        }
+
+        composable(
+            route = NavigationRoute.PRIVACY_POLICY_DETAIL,
+            arguments = listOf(
+                navArgument("source") {
+                    type = NavType.StringType
+                    nullable = false
+                    defaultValue = "unknown"
+                }
+            )
+        ) { backStackEntry ->
+            PrivacyScreen(
+                onBackClick = {
+                    val popSuccess = navController.popBackStack()
+                    if (!popSuccess) {
+                        navController.navigate(NavigationRoute.MAIN) {
+                            popUpTo(NavigationRoute.MAIN) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
+                    }
+                },
+                navController = navController
+            )
+        }
+
+        composable(
+            route = NavigationRoute.TERMS_OF_SERVICE_DETAIL,
+            arguments = listOf(
+                navArgument("source") {
+                    type = NavType.StringType
+                    nullable = false
+                    defaultValue = "unknown"
+                }
+            )
+        ) { backStackEntry ->
+            TermsScreen(
+                onBackClick = {
+                    val popSuccess = navController.popBackStack()
+                    if (!popSuccess) {
+                        navController.navigate(NavigationRoute.MAIN) {
+                            popUpTo(NavigationRoute.MAIN) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
+                    }
+                },
+                navController = navController
+            )
+        }
     }
 }

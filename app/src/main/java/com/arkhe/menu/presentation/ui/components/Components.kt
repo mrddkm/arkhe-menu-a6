@@ -589,7 +589,7 @@ fun CustomToggle() {
     var isActive by remember { mutableStateOf(false) }
 
     val offsetX by animateDpAsState(
-        targetValue = if (isActive) 28.dp else 0.dp,
+        targetValue = if (isActive) 30.dp else 0.dp,
         animationSpec = spring(
             dampingRatio = Spring.DampingRatioMediumBouncy,
             stiffness = Spring.StiffnessLow
@@ -598,7 +598,8 @@ fun CustomToggle() {
     )
 
     val backgroundColor by animateColorAsState(
-        targetValue = if (isActive) Color(0xFFB9F6CA) else Color(0xFFE0E0E0),
+        targetValue = if (isActive) MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
+        else Color.LightGray,
         label = "bgColorAnim"
     )
 
@@ -614,7 +615,7 @@ fun CustomToggle() {
     ) {
         Box(
             modifier = Modifier
-                .width(50.dp)
+                .width(60.dp)
                 .height(26.dp)
                 .clip(RoundedCornerShape(50))
                 .background(backgroundColor)
@@ -624,7 +625,7 @@ fun CustomToggle() {
             Icon(
                 imageVector = if (isActive) EvaIcons.Outline.ToggleRight else EvaIcons.Outline.ToggleLeft,
                 contentDescription = null,
-                tint = if (isActive) Color(0xFF2E7D32) else Color.Gray,
+                tint = if (isActive) MaterialTheme.colorScheme.primary else Color.Gray,
                 modifier = Modifier
                     .offset(x = offsetX)
                     .size(22.dp)
@@ -637,7 +638,7 @@ fun CustomToggle() {
                     ) {
                         isActive = !isActive
                     }
-                    .padding(4.dp)
+                    .padding(1.dp)
             )
         }
     }
