@@ -154,22 +154,8 @@ fun LoadingWaitingData(
                 iterations = LottieConstants.IterateForever
             )
 
-            val newColor = Color.Gray
-
-            val dynamicProperties = rememberLottieDynamicProperties(
-                rememberLottieDynamicProperty(
-                    property = LottieProperty.COLOR_FILTER,
-                    value = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
-                        newColor.hashCode(),
-                        BlendModeCompat.SCREEN
-                    ),
-                    keyPath = arrayOf("**")
-                )
-            )
-
             LottieAnimation(
                 composition = composition,
-                dynamicProperties = dynamicProperties,
                 progress = { progress },
                 modifier = Modifier.size(120.dp)
             )
@@ -177,7 +163,7 @@ fun LoadingWaitingData(
             Text(
                 text = "$message ...",
                 style = MaterialTheme.typography.bodyMedium,
-                color = newColor,
+                color = Color.Gray,
                 textAlign = TextAlign.Center
             )
 
