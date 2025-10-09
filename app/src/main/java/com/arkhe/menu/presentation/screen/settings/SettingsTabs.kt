@@ -71,7 +71,7 @@ fun SettingsTabs(
                 .clip(MaterialTheme.shapes.large)
                 .height(32.dp),
             indicator = {},
-            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
+            containerColor = MaterialTheme.colorScheme.background.copy(alpha = 0.6f),
         ) {
             tabs.forEachIndexed { index, (title, icon) ->
                 val selected = selectedTabIndex == index
@@ -83,7 +83,7 @@ fun SettingsTabs(
                             if (selected) MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
                             else Color.Transparent
                         )
-                        .padding(horizontal = 16.dp, vertical = 4.dp),
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
                     text = {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,

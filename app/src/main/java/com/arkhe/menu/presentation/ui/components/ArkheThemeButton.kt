@@ -15,6 +15,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,6 +31,7 @@ import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.Moon
 import compose.icons.evaicons.outline.Smartphone
 import compose.icons.evaicons.outline.Sun
+import kotlinx.coroutines.delay
 
 @Composable
 fun ArkheThemeButtons(
@@ -33,6 +39,15 @@ fun ArkheThemeButtons(
     onThemeSelected: (ThemeModels) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var loadingTheme by remember { mutableStateOf<ThemeModels?>(null) }
+
+    LaunchedEffect(currentTheme) {
+        if (loadingTheme != null) {
+            delay(600)
+            loadingTheme = null
+        }
+    }
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -47,7 +62,9 @@ fun ArkheThemeButtons(
             ThemeIconButton(
                 themeMode = ThemeModels.LIGHT,
                 isSelected = currentTheme == ThemeModels.LIGHT,
+                isLoading = loadingTheme == ThemeModels.LIGHT,
                 onClick = {
+                    loadingTheme = ThemeModels.LIGHT
                     onThemeSelected(ThemeModels.LIGHT)
                 }
             )
@@ -55,7 +72,9 @@ fun ArkheThemeButtons(
             ThemeIconButton(
                 themeMode = ThemeModels.SYSTEM,
                 isSelected = currentTheme == ThemeModels.SYSTEM,
+                isLoading = loadingTheme == ThemeModels.SYSTEM,
                 onClick = {
+                    loadingTheme = ThemeModels.SYSTEM
                     onThemeSelected(ThemeModels.SYSTEM)
                 }
             )
@@ -63,7 +82,9 @@ fun ArkheThemeButtons(
             ThemeIconButton(
                 themeMode = ThemeModels.DARK,
                 isSelected = currentTheme == ThemeModels.DARK,
+                isLoading = loadingTheme == ThemeModels.DARK,
                 onClick = {
+                    loadingTheme = ThemeModels.DARK
                     onThemeSelected(ThemeModels.DARK)
                 }
             )
@@ -75,6 +96,7 @@ fun ArkheThemeButtons(
 private fun ThemeIconButton(
     themeMode: ThemeModels,
     isSelected: Boolean,
+    isLoading: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -97,12 +119,12 @@ private fun ThemeIconButton(
     }
 
     val buttonModifier = if (isSelected) {
-        modifier.size(68.dp)
+        modifier.size(64.dp)
     } else {
         modifier.size(60.dp)
     }
 
-    if (isSelected) {
+    if (isSelected || isLoading) {
         FilledTonalButton(
             onClick = onClick,
             modifier = buttonModifier,
@@ -110,24 +132,28 @@ private fun ThemeIconButton(
             shape = MaterialTheme.shapes.medium,
             contentPadding = PaddingValues(4.dp)
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = themeMode.displayName,
-                    modifier = Modifier.size(24.dp)
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = when (themeMode) {
-                        ThemeModels.LIGHT -> "Light"
-                        ThemeModels.DARK -> "Dark"
-                        ThemeModels.SYSTEM -> "System"
-                    },
-                    style = MaterialTheme.typography.labelSmall
-                )
+            if (isLoading) {
+                LoadingGraySpinner(modifier = Modifier.size(24.dp))
+            } else {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = themeMode.displayName,
+                        modifier = Modifier.size(22.dp)
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = when (themeMode) {
+                            ThemeModels.LIGHT -> "Light"
+                            ThemeModels.DARK -> "Dark"
+                            ThemeModels.SYSTEM -> "System"
+                        },
+                        style = MaterialTheme.typography.labelSmall
+                    )
+                }
             }
         }
     } else {
