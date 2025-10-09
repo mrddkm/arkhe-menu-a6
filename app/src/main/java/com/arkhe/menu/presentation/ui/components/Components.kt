@@ -2,9 +2,16 @@
 
 package com.arkhe.menu.presentation.ui.components
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +19,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -27,9 +35,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
@@ -56,6 +69,8 @@ import compose.icons.evaicons.outline.ArrowIosForward
 import compose.icons.evaicons.outline.Camera
 import compose.icons.evaicons.outline.Clock
 import compose.icons.evaicons.outline.Globe
+import compose.icons.evaicons.outline.ToggleLeft
+import compose.icons.evaicons.outline.ToggleRight
 
 @Composable
 fun HeaderContent(
@@ -569,6 +584,73 @@ fun DistanceText(
     }
 }
 
+@Composable
+fun CustomToggle() {
+    var isActive by remember { mutableStateOf(false) }
+
+    val offsetX by animateDpAsState(
+        targetValue = if (isActive) 28.dp else 0.dp,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
+        label = "offsetAnim"
+    )
+
+    val backgroundColor by animateColorAsState(
+        targetValue = if (isActive) Color(0xFFB9F6CA) else Color(0xFFE0E0E0),
+        label = "bgColorAnim"
+    )
+
+    val interactionSource = remember { MutableInteractionSource() }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null
+            ) { isActive = !isActive }
+    ) {
+        Box(
+            modifier = Modifier
+                .width(50.dp)
+                .height(26.dp)
+                .clip(RoundedCornerShape(50))
+                .background(backgroundColor)
+                .padding(horizontal = 4.dp),
+            contentAlignment = Alignment.CenterStart
+        ) {
+            Icon(
+                imageVector = if (isActive) EvaIcons.Outline.ToggleRight else EvaIcons.Outline.ToggleLeft,
+                contentDescription = null,
+                tint = if (isActive) Color(0xFF2E7D32) else Color.Gray,
+                modifier = Modifier
+                    .offset(x = offsetX)
+                    .size(22.dp)
+                    .shadow(4.dp, CircleShape)
+                    .clip(CircleShape)
+                    .background(Color.White)
+                    .clickable(
+                        interactionSource = interactionSource,
+                        indication = LocalIndication.current
+                    ) {
+                        isActive = !isActive
+                    }
+                    .padding(4.dp)
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CustomTogglePreview() {
+    ArkheTheme {
+        CustomToggle()
+    }
+}
+
 /*@Preview(showBackground = true)
 @Composable
 fun StatusDevelopmentChipPreview() {
@@ -644,18 +726,18 @@ fun MoreSectionPreview() {
     }
 }*/
 
-@Preview(showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
 fun FeedSectionPreview() {
     ArkheTheme {
         FeedSection(onFeedClick = {})
     }
-}
+}*/
 
-@Preview(showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
 fun TimeMachineSectionPreview() {
     ArkheTheme {
         TimeMachineSection(onTimeMachineClick = {})
     }
-}
+}*/

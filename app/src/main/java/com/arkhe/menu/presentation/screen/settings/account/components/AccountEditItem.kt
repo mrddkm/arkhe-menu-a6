@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.arkhe.menu.presentation.ui.components.CustomToggle
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
@@ -28,10 +29,11 @@ import compose.icons.evaicons.outline.Edit2
 
 @Composable
 fun AccountEditItem(
-    label: String = "",
-    value: String = "",
+    label: String? = null,
+    value: String? = null,
     info: String? = null,
     onClick: () -> Unit,
+    showIcon: Boolean = true,
     showDivider: Boolean = true
 ) {
     Column(
@@ -48,18 +50,22 @@ fun AccountEditItem(
             Column(
                 verticalArrangement = Arrangement.spacedBy(2.dp)
             ) {
-                Text(
-                    text = label,
-                    style = MaterialTheme.typography.labelLarge.copy(
-                        fontWeight = FontWeight.Normal
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
-                )
-                Text(
-                    text = value,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
+                label?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.labelLarge.copy(
+                            fontWeight = FontWeight.Normal
+                        ),
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+                    )
+                }
+                value?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
                 info?.let {
                     Text(
                         text = it,
@@ -68,11 +74,13 @@ fun AccountEditItem(
                     )
                 }
             }
-            Icon(
-                imageVector = EvaIcons.Outline.Edit2,
-                contentDescription = null,
-                tint = Color.Gray
-            )
+            if (showIcon) {
+                Icon(
+                    imageVector = EvaIcons.Outline.Edit2,
+                    contentDescription = null,
+                    tint = Color.Gray
+                )
+            }
         }
         Spacer(modifier = Modifier.height(2.dp))
     }
@@ -84,6 +92,77 @@ fun AccountEditItem(
             color = Color.Gray.copy(alpha = 0.2f)
         )
     } else Spacer(modifier = Modifier.height(4.dp))
+}
+
+@Composable
+fun AccountToggleItem(
+    label: String? = null,
+    value: String? = null,
+    info: String? = null,
+    showDivider: Boolean = true
+) {
+    Column(
+        modifier = Modifier
+            .padding(start = 20.dp, top = 12.dp, bottom = 0.dp, end = 20.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(2.dp)
+            ) {
+                label?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.labelLarge.copy(
+                            fontWeight = FontWeight.Normal
+                        ),
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+                    )
+                }
+                value?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+                info?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    )
+                }
+            }
+            CustomToggle()
+        }
+        Spacer(modifier = Modifier.height(2.dp))
+    }
+    if (showDivider) {
+        HorizontalDivider(
+            modifier = Modifier
+                .padding(start = 20.dp),
+            thickness = 1.dp,
+            color = Color.Gray.copy(alpha = 0.2f)
+        )
+    } else Spacer(modifier = Modifier.height(4.dp))
+}
+
+@Preview(showBackground = true)
+@Composable
+fun AccountToggleItemPreview() {
+    ArkheTheme {
+        Column {
+            AccountToggleItem(
+                value = "Biometric",
+                showDivider = false
+            )
+        }
+    }
 }
 
 @Preview(showBackground = true)
