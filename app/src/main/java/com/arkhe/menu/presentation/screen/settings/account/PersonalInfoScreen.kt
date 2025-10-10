@@ -24,6 +24,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,6 +59,7 @@ import compose.icons.evaicons.Fill
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.fill.Lock
 import compose.icons.evaicons.outline.Close
+import kotlinx.coroutines.delay
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.KoinApplicationPreview
@@ -66,7 +68,8 @@ import org.koin.compose.KoinApplicationPreview
 fun PersonalInfoScreen(
     onBackClick: () -> Unit,
     navController: NavController? = null,
-    user: User
+    user: User,
+    onUserUpdate: (User) -> Unit
 ) {
     val handleBackNavigation: () -> Unit = {
         navController?.let { nav ->
@@ -90,7 +93,8 @@ fun PersonalInfoScreen(
                 .fillMaxSize()
                 .padding(paddingValues),
             onHandleBackNavigation = handleBackNavigation,
-            user = user
+            user = user,
+            onUserUpdate = onUserUpdate
         )
     }
 }
@@ -100,29 +104,28 @@ fun PersonalInfoScreen(
 fun PersonalInfoContent(
     modifier: Modifier = Modifier,
     user: User,
+    onUserUpdate: (User) -> Unit,
     onHandleBackNavigation: () -> Unit = { },
     langViewModel: LanguageViewModel = koinViewModel()
 ) {
-    var currentUser by remember { mutableStateOf(user) }
+    var editingField by remember { mutableStateOf<String?>(null) }
 
-    var isSheetOpen by remember { mutableStateOf(false) }
-    var editField by remember { mutableStateOf<String?>(null) }
+    var name by remember { mutableStateOf(user.name) }
+    var initial by remember { mutableStateOf(user.initial) }
+    var nickname by remember { mutableStateOf(user.nickName) }
+    var gender by remember { mutableStateOf(user.gender) }
+    var birthday by remember { mutableStateOf(user.birthday) }
 
+    val isNameChanged by remember { derivedStateOf { name != user.name } }
+    val isNicknameChanged by remember { derivedStateOf { initial != user.initial || nickname != user.nickName } }
+    val isGenderChanged by remember { derivedStateOf { gender != user.gender } }
+    val isBirthdayChanged by remember { derivedStateOf { birthday != user.birthday } }
+    val isNameValid by remember { derivedStateOf { name.isNotBlank() } }
+    val isNicknameValid by remember { derivedStateOf { initial.isNotBlank() && nickname.isNotBlank() } }
+    val isGenderValid by remember { derivedStateOf { gender.isNotBlank() } }
+    val isBirthdayValid by remember { derivedStateOf { birthday.isNotBlank() } }
     var textLabelOne by remember { mutableStateOf("") }
     var textLabelTwo by remember { mutableStateOf("") }
-
-    var textValue by remember { mutableStateOf("") }
-    var initial by remember { mutableStateOf(currentUser.initial) }
-    var nickname by remember { mutableStateOf(currentUser.nickName) }
-    var selectedGender by remember { mutableStateOf(currentUser.gender) }
-    var selectedDate by remember { mutableStateOf(currentUser.birthday) }
-
-    val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true,
-        confirmValueChange = { newValue ->
-            newValue != SheetValue.Hidden
-        }
-    )
 
     Column(
         modifier = modifier.padding(16.dp)
@@ -173,7 +176,7 @@ fun PersonalInfoContent(
             Spacer(Modifier.height(16.dp))
             DetailPersonalAccordions(
                 title = "tripkeun",
-                user = currentUser
+                user = user
             )
         }
 
@@ -189,54 +192,48 @@ fun PersonalInfoContent(
             ) {
                 AccountEditItem(
                     label = "Name",
-                    value = currentUser.name,
+                    value = name,
                     info = "Use your legal name",
-                    onClick = {
-                        textLabelOne = "Name"
-                        editField = "name"
-                        textValue = currentUser.name
-                        isSheetOpen = true
-                    }
-                )
+                ) {
+                    editingField = "name"
+                    textLabelOne = "Name"
+                }
                 AccountEditItem(
                     label = "Initial/Nickname",
-                    value = "${currentUser.initial} - ${currentUser.nickName}",
-                    onClick = {
-                        textLabelOne = "Initial"
-                        textLabelTwo = "Nickname"
-                        editField = "nickname"
-                        initial = currentUser.initial
-                        nickname = currentUser.nickName
-                        isSheetOpen = true
-                    }
-                )
+                    value = "$initial - $nickname",
+                ) {
+                    editingField = "nickname"
+                    textLabelOne = "Initial"
+                    textLabelTwo = "Nickname"
+                }
                 AccountEditItem(
                     label = "Birthday",
-                    value = currentUser.birthday,
-                    onClick = {
-                        textLabelOne = "Birthday"
-                        editField = "birthday"
-                        selectedDate = currentUser.birthday
-                        isSheetOpen = true
-                    }
-                )
+                    value = birthday,
+                ) {
+                    editingField = "birthday"
+                    textLabelOne = "Birthday"
+
+                }
                 AccountEditItem(
                     label = "Gender",
-                    value = currentUser.gender,
-                    onClick = {
-                        textLabelOne = "Gender"
-                        editField = "gender"
-                        selectedGender = currentUser.gender
-                        isSheetOpen = true
-                    },
+                    value = gender,
                     showDivider = false
-                )
+                ) {
+                    editingField = "gender"
+                    textLabelOne = "Gender"
+                }
             }
         }
     }
 
     /*--- Dynamic BottomSheet ---*/
-    if (isSheetOpen) {
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true,
+        confirmValueChange = { newValue ->
+            newValue != SheetValue.Hidden
+        }
+    )
+    if (editingField != null) {
         ModalBottomSheet(
             onDismissRequest = { },
             sheetState = sheetState,
@@ -257,32 +254,34 @@ fun PersonalInfoContent(
                 }
             }
         ) {
-            when (editField) {
+            when (editingField) {
                 "name" -> EditBottomSheetBase(
                     title = "Changes to your $textLabelOne will be reflected across your Account.",
-                    isChanged = textValue != currentUser.name,
-                    isValid = textValue.isNotBlank(),
-                    onCancel = { isSheetOpen = false },
+                    isChanged = isNameChanged,
+                    isValid = isNameValid,
+                    onCancel = { editingField = null },
                     onSave = {
-                        currentUser = currentUser.copy(name = textValue)
+                        delay(500)
+                        user.copy(name = name).also(onUserUpdate)
                         true
                     }
                 ) {
                     EditNameField(
-                        value = textValue,
+                        value = name,
                         label = textLabelOne,
-                        onValueChange = { textValue = it },
-                        onClear = { textValue = "" }
+                        onValueChange = { name = it },
+                        onClear = { name = "" }
                     )
                 }
 
                 "nickname" -> EditBottomSheetBase(
                     title = "Changes to your $textLabelOne & $textLabelTwo will be reflected across your Account.",
-                    isChanged = initial != currentUser.initial || nickname != currentUser.nickName,
-                    isValid = initial.isNotBlank() && nickname.isNotBlank(),
-                    onCancel = { isSheetOpen = false },
+                    isChanged = isNicknameChanged,
+                    isValid = isNicknameValid,
+                    onCancel = { editingField = null },
                     onSave = {
-                        currentUser = currentUser.copy(initial = initial, nickName = nickname)
+                        delay(500)
+                        user.copy(initial = initial, nickName = nickname).also(onUserUpdate)
                         true
                     }
                 ) {
@@ -300,35 +299,37 @@ fun PersonalInfoContent(
 
                 "gender" -> EditBottomSheetBase(
                     title = "Update your $textLabelOne to match your real information to complete your personal data.",
-                    isChanged = selectedGender != currentUser.gender,
-                    isValid = selectedGender.isNotBlank(),
-                    onCancel = { isSheetOpen = false },
+                    isChanged = isGenderChanged,
+                    isValid = isGenderValid,
+                    onCancel = { editingField = null },
                     onSave = {
-                        currentUser = currentUser.copy(gender = selectedGender)
+                        delay(500)
+                        user.copy(gender = gender).also(onUserUpdate)
                         true
                     }
                 ) {
                     EditGenderDropdown(
-                        selected = selectedGender,
+                        selected = gender,
                         label = textLabelOne,
-                        onSelect = { selectedGender = it }
+                        onSelect = { gender = it }
                     )
                 }
 
                 "birthday" -> EditBottomSheetBase(
                     title = "Update your birthdate ($textLabelOne) to match your ID card, you never know, someone might plan a surprise for you!",
-                    isChanged = selectedDate != currentUser.birthday,
-                    isValid = selectedDate.isNotBlank(),
-                    onCancel = { isSheetOpen = false },
+                    isChanged = isBirthdayChanged,
+                    isValid = isBirthdayValid,
+                    onCancel = { editingField = null },
                     onSave = {
-                        currentUser = currentUser.copy(birthday = selectedDate)
+                        delay(500)
+                        user.copy(birthday = birthday).also(onUserUpdate)
                         true
                     }
                 ) {
                     EditBirthdayField(
-                        selectedDate = selectedDate,
+                        selectedDate = birthday,
                         label = textLabelOne,
-                        onDateChange = { selectedDate = it }
+                        onDateChange = { birthday = it }
                     )
                 }
             }
@@ -354,7 +355,8 @@ fun PersonalInfoScreenPreview() {
         ArkheTheme {
             PersonalInfoScreen(
                 onBackClick = {},
-                user = sampleUser
+                user = sampleUser,
+                onUserUpdate = {}
             )
         }
     }

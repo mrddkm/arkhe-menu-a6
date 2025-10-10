@@ -124,7 +124,8 @@ fun ArkheNavigation(
                     }
                 },
                 navController = navController,
-                user = sampleUser
+                user = sampleUser,
+                onUserUpdate = {}
             )
         }
 

@@ -32,9 +32,9 @@ fun AccountEditItem(
     label: String? = null,
     value: String? = null,
     info: String? = null,
-    onClick: () -> Unit,
     showIcon: Boolean = true,
-    showDivider: Boolean = true
+    showDivider: Boolean = true,
+    onClick: () -> Unit,
 ) {
     Column(
         modifier = Modifier
