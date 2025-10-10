@@ -41,6 +41,7 @@ import kotlinx.coroutines.launch
 fun EditBottomSheetBase(
     title: String,
     isChanged: Boolean,
+    isValid: Boolean = true,
     onCancel: () -> Unit,
     onSave: suspend () -> Boolean,
     content: @Composable ColumnScope.() -> Unit
@@ -78,7 +79,8 @@ fun EditBottomSheetBase(
             horizontalArrangement = Arrangement.End
         ) {
             TextButton(
-                onClick = onCancel, enabled = !isLoading,
+                onClick = onCancel,
+                enabled = !isLoading,
                 shape = MaterialTheme.shapes.medium
             ) {
                 Row(
@@ -107,7 +109,7 @@ fun EditBottomSheetBase(
                         if (success) onCancel()
                     }
                 },
-                enabled = isChanged && !isLoading,
+                enabled = isChanged && isValid && !isLoading,
                 shape = MaterialTheme.shapes.medium
             ) {
                 if (isLoading)
