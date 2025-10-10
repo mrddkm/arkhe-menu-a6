@@ -65,6 +65,7 @@ fun SettingsBottomSheet(
     themeViewModel: ThemeViewModel = koinViewModel(),
     langViewModel: LanguageViewModel = koinViewModel(),
     mainViewModel: MainViewModel = koinViewModel(),
+    onClose: () -> Unit = {},
     onPersonalInfoClick: () -> Unit = {},
     onSignInSecurityClick: () -> Unit = {},
     onDevicesClick: () -> Unit = {},
@@ -90,7 +91,7 @@ fun SettingsBottomSheet(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = {}) {
+            IconButton(onClick = { onClose() }) {
                 Box(
                     modifier = Modifier
                         .size(24.dp)

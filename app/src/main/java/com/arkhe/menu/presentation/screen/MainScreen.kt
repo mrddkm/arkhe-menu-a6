@@ -11,9 +11,12 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -24,6 +27,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,6 +60,10 @@ import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.viewmodel.LanguageViewModel
 import com.arkhe.menu.presentation.viewmodel.MainViewModel
 import com.arkhe.menu.presentation.viewmodel.ProductViewModel
+import compose.icons.EvaIcons
+import compose.icons.evaicons.Fill
+import compose.icons.evaicons.fill.Lock
+import kotlinx.coroutines.launch
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.KoinApplicationPreview
@@ -150,7 +158,7 @@ fun MainScreen(
                     }
 
                     else -> {
-                        ScreenTransitions.noAnimation()
+                        ScreenTransitions.crossFade()
                     }
                 }
             },
@@ -280,15 +288,43 @@ fun MainScreen(
 
         /*--- Setting & Profile BottomSheet ---*/
         if (uiState.showProfileSettingsBottomSheet) {
+            val coroutineScope = rememberCoroutineScope()
+            val sheetState = rememberModalBottomSheetState(
+                skipPartiallyExpanded = true,
+                confirmValueChange = { newValue ->
+                    newValue != SheetValue.Hidden
+                }
+            )
+
             ModalBottomSheet(
-                onDismissRequest = { mainViewModel.toggleProfileSettingsBottomSheet() },
-                sheetState = rememberModalBottomSheetState(
-                    skipPartiallyExpanded = true
-                )
+                onDismissRequest = { },
+                sheetState = sheetState,
+                dragHandle = {
+                    Box(
+                        modifier = Modifier
+                            .height(22.dp)
+                            .width(22.dp)
+                            .padding(top = 8.dp)
+                            .align(Alignment.Center)
+                    ) {
+                        Icon(
+                            imageVector = EvaIcons.Fill.Lock,
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize(),
+                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                        )
+                    }
+                }
             ) {
                 SettingsBottomSheet(
                     langViewModel = langViewModel,
                     mainViewModel = mainViewModel,
+                    onClose = {
+                        coroutineScope.launch {
+                            sheetState.hide()
+                            mainViewModel.toggleProfileSettingsBottomSheet()
+                        }
+                    },
                     onPersonalInfoClick = {
                         navController.navigate(
                             NavigationRoute.personalInfoDetail(
