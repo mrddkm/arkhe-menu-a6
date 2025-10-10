@@ -132,12 +132,5 @@ fun DevicesContent(
 
             }
         }
-        Surface(
-            modifier = Modifier
-                .padding(start = 16.dp, top = 24.dp, bottom = 0.dp, end = 16.dp),
-            shape = MaterialTheme.shapes.medium
-        ) {
-
-        }
     }
 }

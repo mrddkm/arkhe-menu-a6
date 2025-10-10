@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -52,6 +51,7 @@ import com.arkhe.menu.presentation.viewmodel.MainViewModel
 import com.arkhe.menu.presentation.viewmodel.ThemeViewModel
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
+import compose.icons.evaicons.outline.Close
 import compose.icons.evaicons.outline.Person
 import compose.icons.evaicons.outline.Settings
 import compose.icons.evaicons.outline.Shield
@@ -83,15 +83,29 @@ fun SettingsBottomSheet(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .verticalScroll(rememberScrollState())
-            .padding(top = 0.dp, start = 16.dp, end = 16.dp, bottom = 32.dp)
+            .padding(top = 0.dp, start = 16.dp, end = 16.dp, bottom = 8.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Spacer(Modifier.width(48.dp))
+            IconButton(onClick = {}) {
+                Box(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = EvaIcons.Outline.Close,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
             HeaderTitleSecondary(
                 title = langViewModel.getLocalized(Lang.PROFILE_SETTINGS),
             )
@@ -112,7 +126,13 @@ fun SettingsBottomSheet(
                 }
             }
         }
-        Spacer(modifier = Modifier.height(16.dp))
+    }
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
+            .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 32.dp)
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth(),
