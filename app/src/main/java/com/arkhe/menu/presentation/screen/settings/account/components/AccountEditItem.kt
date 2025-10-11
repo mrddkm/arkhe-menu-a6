@@ -28,7 +28,7 @@ import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.Edit2
 
 @Composable
-fun AccountEditItem(
+fun AccountItem(
     label: String? = null,
     value: String? = null,
     info: String? = null,
@@ -170,14 +170,14 @@ fun AccountToggleItemPreview() {
 fun AccountEditItemPreview() {
     ArkheTheme {
         Column {
-            AccountEditItem(
+            AccountItem(
                 label = "Name",
                 value = "DIDIK MUTTAQIEN",
                 info = "Use your real name",
                 onClick = {},
                 showDivider = true
             )
-            AccountEditItem(
+            AccountItem(
                 label = "Initial/Nick Name",
                 value = "DM - mrddkm",
                 onClick = {},

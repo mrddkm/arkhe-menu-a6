@@ -67,6 +67,7 @@ fun SettingsBottomSheet(
     mainViewModel: MainViewModel = koinViewModel(),
     onClose: () -> Unit = {},
     onPersonalInfoClick: () -> Unit = {},
+    onSignInSecurityExtClick: () -> Unit = {},
     onSignInSecurityClick: () -> Unit = {},
     onDevicesClick: () -> Unit = {},
     onAboutClick: () -> Unit = {},
@@ -191,6 +192,12 @@ fun SettingsBottomSheet(
                     labelInfo = langViewModel.getLocalized(Lang.PERSONAL_INFO_DESC),
                     icon = EvaIcons.Outline.Person,
                     onClick = { onPersonalInfoClick() }
+                )
+                AccountItem(
+                    label = "sign_in_and_security_ext",
+                    labelInfo = langViewModel.getLocalized(Lang.SIGN_IN_AND_SECURITY_DESC),
+                    icon = EvaIcons.Outline.Shield,
+                    onClick = { onSignInSecurityExtClick() }
                 )
                 AccountItem(
                     label = langViewModel.getLocalized(Lang.SIGN_IN_AND_SECURITY),

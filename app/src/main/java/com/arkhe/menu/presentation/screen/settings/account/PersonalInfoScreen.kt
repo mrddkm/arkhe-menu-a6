@@ -44,7 +44,7 @@ import com.arkhe.menu.di.domainModule
 import com.arkhe.menu.di.previewModule
 import com.arkhe.menu.domain.model.User
 import com.arkhe.menu.presentation.navigation.NavigationRoute
-import com.arkhe.menu.presentation.screen.settings.account.components.AccountEditItem
+import com.arkhe.menu.presentation.screen.settings.account.components.AccountItem
 import com.arkhe.menu.presentation.screen.settings.account.components.DetailPersonalAccordions
 import com.arkhe.menu.presentation.ui.components.edit.EditBirthdayField
 import com.arkhe.menu.presentation.ui.components.edit.EditBottomSheetBase
@@ -190,7 +190,7 @@ fun PersonalInfoContent(
                 modifier = Modifier
                     .fillMaxWidth(),
             ) {
-                AccountEditItem(
+                AccountItem(
                     label = "Name",
                     value = name,
                     info = "Use your legal name",
@@ -198,7 +198,7 @@ fun PersonalInfoContent(
                     editingField = "name"
                     textLabelOne = "Name"
                 }
-                AccountEditItem(
+                AccountItem(
                     label = "Initial/Nickname",
                     value = "$initial - $nickname",
                 ) {
@@ -206,7 +206,7 @@ fun PersonalInfoContent(
                     textLabelOne = "Initial"
                     textLabelTwo = "Nickname"
                 }
-                AccountEditItem(
+                AccountItem(
                     label = "Birthday",
                     value = birthday,
                 ) {
@@ -214,7 +214,7 @@ fun PersonalInfoContent(
                     textLabelOne = "Birthday"
 
                 }
-                AccountEditItem(
+                AccountItem(
                     label = "Gender",
                     value = gender,
                     showDivider = false

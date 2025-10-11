@@ -304,7 +304,7 @@ fun MainScreen(
                         modifier = Modifier
                             .height(22.dp)
                             .width(22.dp)
-                            .padding(top = 8.dp)
+                            .padding(top = 6.dp)
                             .align(Alignment.Center)
                     ) {
                         Icon(
@@ -328,6 +328,13 @@ fun MainScreen(
                     onPersonalInfoClick = {
                         navController.navigate(
                             NavigationRoute.personalInfoDetail(
+                                source = NavigationRoute.MAIN
+                            )
+                        )
+                    },
+                    onSignInSecurityExtClick = {
+                        navController.navigate(
+                            NavigationRoute.signInSecurityDetailExt(
                                 source = NavigationRoute.MAIN
                             )
                         )

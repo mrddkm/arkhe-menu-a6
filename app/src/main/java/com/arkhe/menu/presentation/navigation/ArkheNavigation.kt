@@ -12,6 +12,7 @@ import com.arkhe.menu.presentation.screen.docs.categories.screen.CategoryDetail
 import com.arkhe.menu.presentation.screen.docs.product.detail.ProductDetailScreen
 import com.arkhe.menu.presentation.screen.settings.about.AboutScreen
 import com.arkhe.menu.presentation.screen.settings.account.PersonalInfoScreen
+import com.arkhe.menu.presentation.screen.settings.account.SignInSecurityScreen
 import com.arkhe.menu.presentation.screen.settings.account.SignInSecurityScreenExt
 import com.arkhe.menu.presentation.screen.settings.devices.DevicesScreen
 import com.arkhe.menu.presentation.screen.settings.privacy.PrivacyScreen
@@ -132,7 +133,7 @@ fun ArkheNavigation(
         }
 
         composable(
-            route = NavigationRoute.SIGN_IN_SECURITY_DETAIL,
+            route = NavigationRoute.SIGN_IN_SECURITY_DETAIL_EXT,
             arguments = listOf(
                 navArgument("source") {
                     type = NavType.StringType
@@ -154,27 +155,40 @@ fun ArkheNavigation(
                     }
                 },
                 navController = navController,
+                user = sampleUser,
                 passwordData = samplePasswordData,
                 pinData = samplePinData,
+                onUserUpdate = {},
                 onPasswordUpdate = {},
                 onPinUpdate = {}
             )
+        }
 
-            /*            SignInSecurityScreen(
-                            onBackClick = {
-                                val popSuccess = navController.popBackStack()
-                                if (!popSuccess) {
-                                    navController.navigate(NavigationRoute.MAIN) {
-                                        popUpTo(NavigationRoute.MAIN) {
-                                            inclusive = true
-                                        }
-                                        launchSingleTop = true
-                                    }
-                                }
-                            },
-                            navController = navController,
-                            user = sampleUser
-                        )*/
+        composable(
+            route = NavigationRoute.SIGN_IN_SECURITY_DETAIL,
+            arguments = listOf(
+                navArgument("source") {
+                    type = NavType.StringType
+                    nullable = false
+                    defaultValue = "unknown"
+                }
+            )
+        ) { backStackEntry ->
+            SignInSecurityScreen(
+                onBackClick = {
+                    val popSuccess = navController.popBackStack()
+                    if (!popSuccess) {
+                        navController.navigate(NavigationRoute.MAIN) {
+                            popUpTo(NavigationRoute.MAIN) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
+                    }
+                },
+                navController = navController,
+                user = sampleUser
+            )
         }
 
         composable(

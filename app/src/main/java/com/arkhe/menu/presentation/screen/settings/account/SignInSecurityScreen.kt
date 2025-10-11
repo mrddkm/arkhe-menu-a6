@@ -35,7 +35,7 @@ import com.arkhe.menu.di.domainModule
 import com.arkhe.menu.di.previewModule
 import com.arkhe.menu.domain.model.User
 import com.arkhe.menu.presentation.navigation.NavigationRoute
-import com.arkhe.menu.presentation.screen.settings.account.components.AccountEditItem
+import com.arkhe.menu.presentation.screen.settings.account.components.AccountItem
 import com.arkhe.menu.presentation.screen.settings.account.components.AccountToggleItem
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.viewmodel.LanguageViewModel
@@ -146,24 +146,24 @@ fun SignInSecurityContent(
                 modifier = Modifier
                     .fillMaxWidth(),
             ) {
-                AccountEditItem(
+                AccountItem(
                     label = "UserID",
                     value = user.userId,
                     info = "This your account primary",
                     onClick = {},
                     showIcon = false
                 )
-                AccountEditItem(
+                AccountItem(
                     label = "Email",
                     value = user.mail,
                     onClick = {}
                 )
-                AccountEditItem(
+                AccountItem(
                     label = "Phone",
                     value = user.phone,
                     onClick = {}
                 )
-                AccountEditItem(
+                AccountItem(
                     label = "NickName",
                     value = user.nickName,
                     info = "You can edit in Personal Info",
@@ -202,12 +202,12 @@ fun SignInSecurityContent(
                 modifier = Modifier
                     .fillMaxWidth(),
             ) {
-                AccountEditItem(
+                AccountItem(
                     value = "Password",
                     info = "Last changed Jan 10, 2025",
                     onClick = {}
                 )
-                AccountEditItem(
+                AccountItem(
                     value = "PIN Lock",
                     info = "Last changed Jan 10, 2025",
                     onClick = {}
