@@ -1,6 +1,9 @@
 package com.arkhe.menu.presentation.ui.components.edit
 
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -86,7 +89,7 @@ fun <T> EditableInfoScreenBase(
         modifier = modifier
             .fillMaxWidth()
     ) {
-        /*Render setiap field secara efisien*/
+        /*Render each field efficiently*/
         fields.forEach { field ->
             EditableFieldRow(
                 label = field.label,
@@ -100,7 +103,7 @@ fun <T> EditableInfoScreenBase(
         }
     }
 
-    /*--- Bottom sheet (muncul hanya ketika user klik edit) ---*/
+    /*--- Bottom sheet (appears only when the user clicks edit) ---*/
     if (editingField != null) {
         val field = editingField!!
         ModalBottomSheet(
@@ -149,9 +152,31 @@ fun <T> EditableInfoScreenBase(
             }
         ) {
             var value by remember { mutableStateOf(field.getValue(userData)) }
+            var confirmValue by remember { mutableStateOf("") }
+            var isLoading by remember { mutableStateOf(false) }
+
             val isChanged by remember { derivedStateOf { value != field.getValue(userData) } }
             val isValid by remember { derivedStateOf { field.isValid(value) } }
-            var isLoading by remember { mutableStateOf(false) }
+
+            val combinedIsValid by remember(value, confirmValue) {
+                derivedStateOf {
+                    when (field.label?.lowercase()) {
+                        "password", "new password" -> {
+                            val strength = validatePassword(value)
+                            strength.score == 5 && confirmValue.isNotEmpty() && value == confirmValue
+                        }
+
+                        else -> isValid
+                    }
+                }
+            }
+
+            /*✅ Password-specific derived states*/
+            val isPasswordField = field.label?.contains("password", ignoreCase = true) == true
+            val strength by remember(value) { derivedStateOf { validatePassword(value) } }
+            val passwordsMatch by remember(value, confirmValue) {
+                derivedStateOf { confirmValue.isNotEmpty() && value == confirmValue }
+            }
 
             Column(
                 modifier = Modifier
@@ -159,25 +184,27 @@ fun <T> EditableInfoScreenBase(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = title,
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                    )
-                }
+                Text(
+                    text = title,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                    modifier = Modifier.fillMaxWidth()
+                )
 
                 /*Field editor UI*/
-                field.editor(
-                    value
-                ) { value = it }
+                if (isPasswordField) {
+                    EditPasswordFieldWithStrength(
+                        labelNewPassword = "New Password",
+                        valueNewPassword = value,
+                        labelConfirmPassword = "Confirm Password",
+                        valueConfirmPassword = confirmValue,
+                        onNewPasswordChange = { value = it },
+                        onConfirmPasswordChange = { confirmValue = it }
+                    )
+                } else {
+                    field.editor(value) { value = it }
+                }
 
                 /*Action buttons*/
                 Row(
@@ -214,7 +241,7 @@ fun <T> EditableInfoScreenBase(
                                 editingField = null
                             }
                         },
-                        enabled = isChanged && isValid && !isLoading
+                        enabled = isChanged && isValid && combinedIsValid && !isLoading
                     ) {
                         if (isLoading)
                             Row(
@@ -242,6 +269,46 @@ fun <T> EditableInfoScreenBase(
                                 Text("Save")
                             }
                     }
+                }
+
+                // ------------------------------
+                // 🟢 Micro-feedback Password only
+                // ------------------------------
+                AnimatedVisibility(visible = isPasswordField) {
+                    val feedbackText: String
+                    val feedbackColor: Color
+
+                    when {
+                        strength.score < 5 -> {
+                            feedbackText = "⚠️ Password too weak"
+                            feedbackColor = Color(0xFFFFA000)
+                        }
+
+                        !passwordsMatch -> {
+                            feedbackText = "🔒 Passwords don’t match"
+                            feedbackColor = Color(0xFFD50000)
+                        }
+
+                        else -> {
+                            feedbackText = "✅ Ready to save"
+                            feedbackColor = Color(0xFF00C853)
+                        }
+                    }
+
+                    val animatedColor by animateColorAsState(
+                        targetValue = feedbackColor,
+                        animationSpec = tween(300),
+                        label = "feedbackColorAnim"
+                    )
+
+                    Text(
+                        text = feedbackText,
+                        color = animatedColor,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier
+                            .padding(top = 4.dp)
+                            .align(Alignment.End)
+                    )
                 }
             }
         }
@@ -340,23 +407,28 @@ private fun EditableFieldRow(
             color = Color.Gray.copy(alpha = 0.2f)
         )
     } else Spacer(modifier = Modifier.height(4.dp))
-    /*    Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 4.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(text = label, style = MaterialTheme.typography.bodySmall, color = Color.Gray)
-                Text(text = value, style = MaterialTheme.typography.bodyLarge)
-            }
-            IconButton(onClick = onEditClick) {
-                Icon(
-                    imageVector = EvaIcons.Outline.Edit2,
-                    contentDescription = "Edit $label",
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            }
-        }*/
 }
+
+fun validatePassword(password: String): PasswordStrength {
+    val hasLength = password.length >= 8
+    val hasUpper = password.any { it.isUpperCase() }
+    val hasLower = password.any { it.isLowerCase() }
+    val hasDigit = password.any { it.isDigit() }
+    val hasSpecial = password.any { !it.isLetterOrDigit() }
+
+    val score = listOf(hasLength, hasUpper, hasLower, hasDigit, hasSpecial).count { it }
+
+    return when (score) {
+        in 0..2 -> PasswordStrength("Weak", Color.Red, score, false)
+        3, 4 -> PasswordStrength("Medium", Color(0xFFFFC107), score, false)
+        5 -> PasswordStrength("Strong", Color(0xFF00C853), score, true)
+        else -> PasswordStrength("Weak", Color.Red, score, false)
+    }
+}
+
+data class PasswordStrength(
+    val label: String,
+    val color: Color,
+    val score: Int,
+    val isStrongEnough: Boolean
+)

@@ -58,13 +58,13 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import com.arkhe.menu.presentation.screen.settings.account.validatePassword
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.ArrowIosDownward
@@ -427,45 +427,74 @@ fun EditPhoneField(
 
 @Composable
 fun EditPasswordFieldWithStrength(
-    label: String,
-    value: String,
-    onValueChange: (String) -> Unit
+    labelNewPassword: String,
+    valueNewPassword: String,
+    labelConfirmPassword: String,
+    valueConfirmPassword: String,
+    onNewPasswordChange: (String) -> Unit,
+    onConfirmPasswordChange: (String) -> Unit
 ) {
-    val strength by remember(value) { derivedStateOf { validatePassword(value) } }
-    var isVisible by remember { mutableStateOf(false) }
-    val focusRequester = remember { FocusRequester() }
+    val newStrength by remember(valueNewPassword) {
+        derivedStateOf {
+            validatePassword(
+                valueNewPassword
+            )
+        }
+    }
+    var newVisible by remember { mutableStateOf(false) }
+    var confirmVisible by remember { mutableStateOf(false) }
+    val focusNew = remember { FocusRequester() }
+    val focusConfirm = remember { FocusRequester() }
 
-    LaunchedEffect(Unit) { focusRequester.requestFocus() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    val allChecklistPassed by remember(valueNewPassword) {
+        derivedStateOf { newStrength.score == 5 }
+    }
+
+    val passwordsMatch by remember(valueNewPassword, valueConfirmPassword) {
+        derivedStateOf {
+            valueConfirmPassword.isNotEmpty() && valueNewPassword == valueConfirmPassword
+        }
+    }
+
+    // Request focus to New on first composition
+    LaunchedEffect(Unit) { focusNew.requestFocus() }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+
+        // ---------------------------
+        // 🟢 Step 1: NEW PASSWORD
+        // ---------------------------
         OutlinedTextField(
-            value = value,
-            onValueChange = onValueChange,
+            value = valueNewPassword,
+            onValueChange = onNewPasswordChange,
             shape = MaterialTheme.shapes.medium,
-            label = { Text(label) },
+            label = { Text(labelNewPassword) },
             modifier = Modifier
                 .fillMaxWidth()
-                .focusRequester(focusRequester),
+                .focusRequester(focusNew),
             singleLine = true,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done
             ),
-            visualTransformation = if (isVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            visualTransformation = if (newVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
-                val icon = if (isVisible) EvaIcons.Outline.EyeOff else EvaIcons.Outline.Eye
-                IconButton(onClick = { isVisible = !isVisible }) {
+                val icon = if (newVisible) EvaIcons.Outline.EyeOff else EvaIcons.Outline.Eye
+                IconButton(onClick = { newVisible = !newVisible }) {
                     Icon(icon, contentDescription = "Toggle visibility")
                 }
             }
         )
 
-        AnimatedVisibility(visible = value.isNotEmpty()) {
+        // Strength Bar & Checklist (visible while checklist NOT yet all passed)
+        AnimatedVisibility(visible = valueNewPassword.isNotEmpty() && !allChecklistPassed) {
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 val animatedProgress by animateFloatAsState(
-                    targetValue = strength.score / 5f,
-                    animationSpec = tween(durationMillis = 400),
-                    label = "strengthProgress"
+                    targetValue = newStrength.score / 5f,
+                    animationSpec = tween(400),
+                    label = "strengthAnim"
                 )
 
                 LinearProgressIndicator(
@@ -474,19 +503,73 @@ fun EditPasswordFieldWithStrength(
                         .fillMaxWidth()
                         .height(6.dp)
                         .clip(RoundedCornerShape(3.dp)),
-                    color = strength.color,
+                    color = newStrength.color,
                     trackColor = MaterialTheme.colorScheme.surfaceVariant,
                     strokeCap = ProgressIndicatorDefaults.LinearStrokeCap,
                 )
 
                 Text(
-                    text = "Strength: ${strength.label}",
-                    color = strength.color,
+                    text = "Strength: ${newStrength.label}",
+                    color = newStrength.color,
                     style = MaterialTheme.typography.labelMedium
                 )
 
-                PasswordRequirementsChecklist(password = value)
+                PasswordRequirementsChecklist(password = valueNewPassword)
             }
+        }
+
+        // ---------------------------
+        // 🟡 Step 2: CONFIRM PASSWORD (only appear when checklist OK)
+        // ---------------------------
+        AnimatedVisibility(visible = allChecklistPassed) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Spacer(Modifier.height(12.dp))
+                OutlinedTextField(
+                    value = valueConfirmPassword,
+                    onValueChange = onConfirmPasswordChange,
+                    shape = MaterialTheme.shapes.medium,
+                    label = { Text(labelConfirmPassword) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .focusRequester(focusConfirm),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Password,
+                        imeAction = ImeAction.Done
+                    ),
+                    visualTransformation = if (confirmVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                    trailingIcon = {
+                        val icon =
+                            if (confirmVisible) EvaIcons.Outline.EyeOff else EvaIcons.Outline.Eye
+                        IconButton(onClick = { confirmVisible = !confirmVisible }) {
+                            Icon(icon, contentDescription = "Toggle visibility")
+                        }
+                    }
+                )
+
+                val matchColor by animateColorAsState(
+                    if (passwordsMatch) MaterialTheme.colorScheme.onSurface else Color.Gray,
+                    label = "matchColor"
+                )
+
+                Text(
+                    text = when {
+                        valueConfirmPassword.isEmpty() -> "Re-enter your new password"
+                        passwordsMatch -> "Passwords match"
+                        else -> "Passwords do not match"
+                    },
+                    color = matchColor,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+        }
+    }
+
+    LaunchedEffect(allChecklistPassed) {
+        if (allChecklistPassed) {
+            kotlinx.coroutines.delay(150)
+            focusConfirm.requestFocus()
+            keyboardController?.show()
         }
     }
 }
