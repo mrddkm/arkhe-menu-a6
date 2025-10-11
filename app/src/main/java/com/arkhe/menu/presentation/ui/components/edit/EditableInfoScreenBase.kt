@@ -157,7 +157,7 @@ fun <T> EditableInfoScreenBase(
 
             val combinedIsValid by remember(value, confirmValue) {
                 derivedStateOf {
-                    when (field.label?.lowercase()) {
+                    when (field.valueLabel?.lowercase()) {
                         "password", "new password" -> {
                             val strength = validatePassword(value)
                             strength.score == 5 && confirmValue.isNotEmpty() && value == confirmValue
@@ -169,7 +169,7 @@ fun <T> EditableInfoScreenBase(
             }
 
             /*✅ Password-specific derived states*/
-            val isPasswordField = field.label?.contains("password", ignoreCase = true) == true
+            val isPasswordField = field.valueLabel?.contains("password", ignoreCase = true) == true
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
