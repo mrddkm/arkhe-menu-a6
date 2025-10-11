@@ -267,25 +267,16 @@ fun SignInSecurityContentExt(
                     onUserUpdate = onPasswordUpdate,
                     fields = listOf(
                         EditableField(
-                            label = "Password",
                             valueLabel = "Password",
                             info = "Last changed Jan 10, 2025",
                             getValue = { it.newPassword },
                             applyChange = { old, new -> old.copy(newPassword = new) },
                             isValid = { validatePassword(it).isStrongEnough },
                             editor = { value, onValueChange ->
-//                                EditPasswordFieldWithStrength(
-//                                    labelNewPassword = "New Password",
-//                                    valueNewPassword = value,
-//                                    labelConfirmPassword = "Confirm Password",
-//                                    valueConfirmPassword = passwordData.confirmPassword,
-//                                    onNewPasswordChange = onValueChange,
-//                                    onConfirmPasswordChange = {}
-//                                )
                                 OutlinedTextField(
                                     value = value,
                                     onValueChange = onValueChange,
-                                    label = { Text("Password") })
+                                    label = { Text("") })
                             }
                         )
                     )
