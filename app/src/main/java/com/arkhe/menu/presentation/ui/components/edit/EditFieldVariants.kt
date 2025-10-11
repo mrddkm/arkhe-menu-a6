@@ -29,6 +29,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Abc
+import androidx.compose.material.icons.outlined.Password
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -69,10 +72,8 @@ import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.ArrowIosDownward
 import compose.icons.evaicons.outline.Calendar
-import compose.icons.evaicons.outline.Close
 import compose.icons.evaicons.outline.CloseCircle
-import compose.icons.evaicons.outline.Eye
-import compose.icons.evaicons.outline.EyeOff
+import kotlinx.coroutines.delay
 import java.util.Calendar
 
 @Composable
@@ -127,11 +128,9 @@ fun EditNicknameFields(
     onClearNickname: () -> Unit
 ) {
     val focusRequester = remember { FocusRequester() }
-
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
-
     Column {
         OutlinedTextField(
             value = initial,
@@ -359,14 +358,12 @@ fun EditGenderDropdown(
 
 @Composable
 fun EditEmailField(
-    label: String,
+    label: String = "New Email",
     value: String,
     onValueChange: (String) -> Unit
 ) {
     val focusRequester = remember { FocusRequester() }
-
     LaunchedEffect(Unit) { focusRequester.requestFocus() }
-
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
@@ -376,7 +373,12 @@ fun EditEmailField(
             .focusRequester(focusRequester),
         singleLine = true,
         label = { Text(label) },
-        placeholder = { Text("example@email.com") },
+        placeholder = {
+            Text(
+                text = "your@email.com",
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+            )
+        },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Email,
             imeAction = ImeAction.Done
@@ -384,7 +386,11 @@ fun EditEmailField(
         trailingIcon = {
             if (value.isNotEmpty()) {
                 IconButton(onClick = { onValueChange("") }) {
-                    Icon(EvaIcons.Outline.Close, contentDescription = "Clear")
+                    Icon(
+                        imageVector = EvaIcons.Outline.CloseCircle,
+                        contentDescription = null,
+                        tint = Color.Gray
+                    )
                 }
             }
         }
@@ -393,14 +399,12 @@ fun EditEmailField(
 
 @Composable
 fun EditPhoneField(
-    label: String = "Phone Number",
+    label: String = "New Phone Number",
     value: String,
     onValueChange: (String) -> Unit,
 ) {
     val focusRequester = remember { FocusRequester() }
-
     LaunchedEffect(Unit) { focusRequester.requestFocus() }
-
     OutlinedTextField(
         value = value,
         onValueChange = { onValueChange(it.filter { c -> c.isDigit() }) },
@@ -410,7 +414,12 @@ fun EditPhoneField(
             .focusRequester(focusRequester),
         singleLine = true,
         label = { Text(label) },
-        placeholder = { Text("08123456789") },
+        placeholder = {
+            Text(
+                text = "6280000000000",
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+            )
+        },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Number,
             imeAction = ImeAction.Done
@@ -418,7 +427,11 @@ fun EditPhoneField(
         trailingIcon = {
             if (value.isNotEmpty()) {
                 IconButton(onClick = { onValueChange("") }) {
-                    Icon(EvaIcons.Outline.Close, contentDescription = "Clear")
+                    Icon(
+                        imageVector = EvaIcons.Outline.CloseCircle,
+                        contentDescription = null,
+                        tint = Color.Gray
+                    )
                 }
             }
         }
@@ -427,9 +440,9 @@ fun EditPhoneField(
 
 @Composable
 fun EditPasswordFieldWithStrength(
-    labelNewPassword: String,
+    labelNewPassword: String = "New Password",
     valueNewPassword: String,
-    labelConfirmPassword: String,
+    labelConfirmPassword: String = "Confirm Password",
     valueConfirmPassword: String,
     onNewPasswordChange: (String) -> Unit,
     onConfirmPasswordChange: (String) -> Unit
@@ -481,9 +494,13 @@ fun EditPasswordFieldWithStrength(
             ),
             visualTransformation = if (newVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
-                val icon = if (newVisible) EvaIcons.Outline.EyeOff else EvaIcons.Outline.Eye
+                val icon = if (newVisible) Icons.Outlined.Abc else Icons.Outlined.Password
                 IconButton(onClick = { newVisible = !newVisible }) {
-                    Icon(icon, contentDescription = "Toggle visibility")
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = Color.Gray
+                    )
                 }
             }
         )
@@ -540,9 +557,13 @@ fun EditPasswordFieldWithStrength(
                     visualTransformation = if (confirmVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
                         val icon =
-                            if (confirmVisible) EvaIcons.Outline.EyeOff else EvaIcons.Outline.Eye
+                            if (confirmVisible) Icons.Outlined.Abc else Icons.Outlined.Password
                         IconButton(onClick = { confirmVisible = !confirmVisible }) {
-                            Icon(icon, contentDescription = "Toggle visibility")
+                            Icon(
+                                imageVector = icon,
+                                contentDescription = null,
+                                tint = Color.Gray
+                            )
                         }
                     }
                 )
@@ -567,7 +588,7 @@ fun EditPasswordFieldWithStrength(
 
     LaunchedEffect(allChecklistPassed) {
         if (allChecklistPassed) {
-            kotlinx.coroutines.delay(150)
+            delay(150)
             focusConfirm.requestFocus()
             keyboardController?.show()
         }

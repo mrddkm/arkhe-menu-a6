@@ -1,6 +1,4 @@
-@file:Suppress("SpellCheckingInspection")
-
-package com.arkhe.menu.presentation.screen.settings.account.components
+package com.arkhe.menu.presentation.ui.components.settings
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -28,10 +26,10 @@ import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.Edit2
 
 @Composable
-fun AccountItem(
+fun SettingsItem(
     label: String? = null,
+    labelInfo: String? = null,
     value: String? = null,
-    info: String? = null,
     showIcon: Boolean = true,
     showDivider: Boolean = true,
     onClick: () -> Unit,
@@ -66,7 +64,7 @@ fun AccountItem(
                         color = MaterialTheme.colorScheme.onSurface
                     )
                 }
-                info?.let {
+                labelInfo?.let {
                     Text(
                         text = it,
                         style = MaterialTheme.typography.labelSmall,
@@ -95,7 +93,7 @@ fun AccountItem(
 }
 
 @Composable
-fun AccountToggleItem(
+fun SettingsToggleItem(
     label: String? = null,
     value: String? = null,
     info: String? = null,
@@ -157,7 +155,7 @@ fun AccountToggleItem(
 fun AccountToggleItemPreview() {
     ArkheTheme {
         Column {
-            AccountToggleItem(
+            SettingsToggleItem(
                 value = "Biometric",
                 showDivider = false
             )
@@ -170,14 +168,14 @@ fun AccountToggleItemPreview() {
 fun AccountEditItemPreview() {
     ArkheTheme {
         Column {
-            AccountItem(
+            SettingsItem(
                 label = "Name",
                 value = "DIDIK MUTTAQIEN",
-                info = "Use your real name",
+                labelInfo = "Use your real name",
                 onClick = {},
                 showDivider = true
             )
-            AccountItem(
+            SettingsItem(
                 label = "Initial/Nick Name",
                 value = "DM - mrddkm",
                 onClick = {},

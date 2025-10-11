@@ -44,13 +44,13 @@ import com.arkhe.menu.di.domainModule
 import com.arkhe.menu.di.previewModule
 import com.arkhe.menu.domain.model.User
 import com.arkhe.menu.presentation.navigation.NavigationRoute
-import com.arkhe.menu.presentation.screen.settings.account.components.AccountItem
 import com.arkhe.menu.presentation.screen.settings.account.components.DetailPersonalAccordions
 import com.arkhe.menu.presentation.ui.components.edit.EditBirthdayField
 import com.arkhe.menu.presentation.ui.components.edit.EditBottomSheetBase
 import com.arkhe.menu.presentation.ui.components.edit.EditGenderDropdown
 import com.arkhe.menu.presentation.ui.components.edit.EditNameField
 import com.arkhe.menu.presentation.ui.components.edit.EditNicknameFields
+import com.arkhe.menu.presentation.ui.components.settings.SettingsItem
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.viewmodel.LanguageViewModel
 import com.arkhe.menu.utils.sampleUser
@@ -190,15 +190,15 @@ fun PersonalInfoContent(
                 modifier = Modifier
                     .fillMaxWidth(),
             ) {
-                AccountItem(
+                SettingsItem(
                     label = "Name",
                     value = name,
-                    info = "Use your legal name",
+                    labelInfo = "Use your legal name",
                 ) {
                     editingField = "name"
                     textLabelOne = "Name"
                 }
-                AccountItem(
+                SettingsItem(
                     label = "Initial/Nickname",
                     value = "$initial - $nickname",
                 ) {
@@ -206,7 +206,7 @@ fun PersonalInfoContent(
                     textLabelOne = "Initial"
                     textLabelTwo = "Nickname"
                 }
-                AccountItem(
+                SettingsItem(
                     label = "Birthday",
                     value = birthday,
                 ) {
@@ -214,7 +214,7 @@ fun PersonalInfoContent(
                     textLabelOne = "Birthday"
 
                 }
-                AccountItem(
+                SettingsItem(
                     label = "Gender",
                     value = gender,
                     showDivider = false

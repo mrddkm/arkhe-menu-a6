@@ -1,5 +1,6 @@
 package com.arkhe.menu.presentation.screen.settings.account
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,6 +16,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -33,12 +35,22 @@ import com.arkhe.menu.di.appModule
 import com.arkhe.menu.di.dataModule
 import com.arkhe.menu.di.domainModule
 import com.arkhe.menu.di.previewModule
+import com.arkhe.menu.domain.model.PasswordData
+import com.arkhe.menu.domain.model.PinData
 import com.arkhe.menu.domain.model.User
 import com.arkhe.menu.presentation.navigation.NavigationRoute
-import com.arkhe.menu.presentation.screen.settings.account.components.AccountItem
-import com.arkhe.menu.presentation.screen.settings.account.components.AccountToggleItem
+import com.arkhe.menu.presentation.ui.components.edit.AnimatedPinField
+import com.arkhe.menu.presentation.ui.components.edit.EditEmailField
+import com.arkhe.menu.presentation.ui.components.edit.EditPhoneField
+import com.arkhe.menu.presentation.ui.components.edit.EditableField
+import com.arkhe.menu.presentation.ui.components.edit.EditableInfoScreenBase
+import com.arkhe.menu.presentation.ui.components.edit.validatePassword
+import com.arkhe.menu.presentation.ui.components.settings.SettingsItem
+import com.arkhe.menu.presentation.ui.components.settings.SettingsToggleItem
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.viewmodel.LanguageViewModel
+import com.arkhe.menu.utils.samplePasswordData
+import com.arkhe.menu.utils.samplePinData
 import com.arkhe.menu.utils.sampleUser
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
@@ -52,7 +64,12 @@ import org.koin.compose.KoinApplicationPreview
 fun SignInSecurityScreen(
     onBackClick: () -> Unit,
     navController: NavController? = null,
-    user: User
+    user: User,
+    passwordData: PasswordData,
+    pinData: PinData,
+    onUserUpdate: (User) -> Unit,
+    onPasswordUpdate: (PasswordData) -> Unit,
+    onPinUpdate: (PinData) -> Unit
 ) {
     val handleBackNavigation: () -> Unit = {
         navController?.let { nav ->
@@ -71,20 +88,31 @@ fun SignInSecurityScreen(
     }
 
     Scaffold { paddingValues ->
-        SignInSecurityContent(
+        SignInSecurityContentExt(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues),
             onHandleBackNavigation = handleBackNavigation,
-            user = user
+            user = user,
+            passwordData = passwordData,
+            pinData = pinData,
+            onUserUpdate = onUserUpdate,
+            onPasswordUpdate = onPasswordUpdate,
+            onPinUpdate = onPinUpdate
         )
     }
 }
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun SignInSecurityContent(
+fun SignInSecurityContentExt(
     modifier: Modifier = Modifier,
     user: User,
+    passwordData: PasswordData,
+    pinData: PinData,
+    onUserUpdate: (User) -> Unit,
+    onPasswordUpdate: (PasswordData) -> Unit,
+    onPinUpdate: (PinData) -> Unit,
     onHandleBackNavigation: () -> Unit = { },
     langViewModel: LanguageViewModel = koinViewModel()
 ) {
@@ -146,30 +174,61 @@ fun SignInSecurityContent(
                 modifier = Modifier
                     .fillMaxWidth(),
             ) {
-                AccountItem(
+                SettingsItem(
                     label = "UserID",
+                    labelInfo = "Your primary account",
                     value = user.userId,
-                    info = "This your account primary",
-                    onClick = {},
-                    showIcon = false
-                )
-                AccountItem(
-                    label = "Email",
-                    value = user.mail,
-                    onClick = {}
-                )
-                AccountItem(
-                    label = "Phone",
-                    value = user.phone,
-                    onClick = {}
-                )
-                AccountItem(
-                    label = "NickName",
-                    value = user.nickName,
-                    info = "You can edit in Personal Info",
-                    onClick = {},
                     showIcon = false,
-                    showDivider = false
+                    onClick = {},
+                )
+                SettingsItem(
+                    label = "NickName",
+                    labelInfo = "You can edit in Personal Info",
+                    value = user.nickName,
+                    showIcon = false,
+                    onClick = {},
+                )
+                EditableInfoScreenBase(
+                    title = "Change Mail",
+                    userData = user,
+                    onUserUpdate = onUserUpdate,
+                    fields = listOf(
+                        EditableField(
+                            label = "Email",
+                            valueLabel = user.mail,
+                            getValue = { it.mail },
+                            applyChange = { old, new -> old.copy(mail = new) },
+                            isValid = { it.isNotEmpty() },
+                            editor = { value, onValueChange ->
+                                EditEmailField(
+                                    label = "New Mail",
+                                    value = value,
+                                    onValueChange = onValueChange
+                                )
+                            }
+                        )
+                    )
+                )
+                EditableInfoScreenBase(
+                    title = "Change Phone",
+                    userData = user,
+                    onUserUpdate = onUserUpdate,
+                    fields = listOf(
+                        EditableField(
+                            label = "Phone",
+                            valueLabel = user.phone,
+                            getValue = { it.phone },
+                            applyChange = { old, new -> old.copy(phone = new) },
+                            isValid = { it.isNotEmpty() },
+                            editor = { value, onValueChange ->
+                                EditPhoneField(
+                                    label = "New Phone Number",
+                                    value = value,
+                                    onValueChange = onValueChange
+                                )
+                            }
+                        )
+                    )
                 )
             }
         }
@@ -202,17 +261,48 @@ fun SignInSecurityContent(
                 modifier = Modifier
                     .fillMaxWidth(),
             ) {
-                AccountItem(
-                    value = "Password",
-                    info = "Last changed Jan 10, 2025",
-                    onClick = {}
+                EditableInfoScreenBase(
+                    title = "Change Password",
+                    userData = passwordData,
+                    onUserUpdate = onPasswordUpdate,
+                    fields = listOf(
+                        EditableField(
+                            valueLabel = "Password",
+                            info = "Last changed Jan 10, 2025",
+                            getValue = { it.newPassword },
+                            applyChange = { old, new -> old.copy(newPassword = new) },
+                            isValid = { validatePassword(it).isStrongEnough },
+                            editor = { value, onValueChange ->
+                                OutlinedTextField(
+                                    value = value,
+                                    onValueChange = onValueChange,
+                                    label = { Text("") })
+                            }
+                        )
+                    )
                 )
-                AccountItem(
-                    value = "PIN Lock",
-                    info = "Last changed Jan 10, 2025",
-                    onClick = {}
+                EditableInfoScreenBase(
+                    title = "Change PIN",
+                    userData = pinData,
+                    onUserUpdate = onPinUpdate,
+                    fields = listOf(
+                        EditableField(
+                            valueLabel = "PIN Lock",
+                            info = "Last changed Jan 10, 2025",
+                            getValue = { it.newPin },
+                            applyChange = { old, new -> old.copy(newPin = new) },
+                            isValid = { it.length == 4 },
+                            editor = { value, onValueChange ->
+                                AnimatedPinField(
+                                    label = "Enter New PIN",
+                                    value = value,
+                                    onValueChange = onValueChange
+                                )
+                            }
+                        )
+                    )
                 )
-                AccountToggleItem(
+                SettingsToggleItem(
                     value = "Biometric",
                     showDivider = false
                 )
@@ -223,7 +313,7 @@ fun SignInSecurityContent(
 
 @Preview(showBackground = true)
 @Composable
-fun SignInSecurityScreenPreview() {
+fun SignInSecurityScreenExtPreview() {
     val previewContext = LocalContext.current
     KoinApplicationPreview(
         application = {
@@ -239,7 +329,13 @@ fun SignInSecurityScreenPreview() {
         ArkheTheme {
             SignInSecurityScreen(
                 onBackClick = {},
-                user = sampleUser
+                navController = null,
+                user = sampleUser,
+                passwordData = samplePasswordData,
+                pinData = samplePinData,
+                onUserUpdate = {},
+                onPasswordUpdate = {},
+                onPinUpdate = {}
             )
         }
     }

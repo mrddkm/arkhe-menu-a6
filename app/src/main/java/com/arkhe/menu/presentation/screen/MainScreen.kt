@@ -302,9 +302,9 @@ fun MainScreen(
                 dragHandle = {
                     Box(
                         modifier = Modifier
-                            .height(22.dp)
-                            .width(22.dp)
-                            .padding(top = 6.dp)
+                            .height(20.dp)
+                            .width(20.dp)
+                            .padding(top = 8.dp)
                             .align(Alignment.Center)
                     ) {
                         Icon(
@@ -328,13 +328,6 @@ fun MainScreen(
                     onPersonalInfoClick = {
                         navController.navigate(
                             NavigationRoute.personalInfoDetail(
-                                source = NavigationRoute.MAIN
-                            )
-                        )
-                    },
-                    onSignInSecurityExtClick = {
-                        navController.navigate(
-                            NavigationRoute.signInSecurityDetailExt(
                                 source = NavigationRoute.MAIN
                             )
                         )

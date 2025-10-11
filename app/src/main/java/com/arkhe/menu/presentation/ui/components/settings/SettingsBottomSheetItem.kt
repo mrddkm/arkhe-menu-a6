@@ -1,4 +1,4 @@
-package com.arkhe.menu.presentation.screen.settings.account.components
+package com.arkhe.menu.presentation.ui.components.settings
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -31,13 +31,13 @@ import compose.icons.evaicons.outline.ArrowIosForward
 import compose.icons.evaicons.outline.Image
 
 @Composable
-fun AccountItem(
+fun SettingsBottomSheetItem(
     label: String = "",
     labelInfo: String = "",
     icon: ImageVector? = null,
     painter: Painter? = null,
+    showDivider: Boolean = true,
     onClick: () -> Unit,
-    showDivider: Boolean = true
 ) {
     Column(
         modifier = Modifier
@@ -121,7 +121,7 @@ fun AccountItem(
 @Composable
 fun AccountItemPreview() {
     ArkheTheme {
-        AccountItem(
+        SettingsBottomSheetItem(
             label = "Personal Info",
             labelInfo = "Name, Email, Phone Number",
             icon = EvaIcons.Outline.Image,

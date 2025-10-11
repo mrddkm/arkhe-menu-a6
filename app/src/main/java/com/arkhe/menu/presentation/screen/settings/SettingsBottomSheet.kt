@@ -42,7 +42,7 @@ import com.arkhe.menu.di.appModule
 import com.arkhe.menu.di.dataModule
 import com.arkhe.menu.di.domainModule
 import com.arkhe.menu.di.previewModule
-import com.arkhe.menu.presentation.screen.settings.account.components.AccountItem
+import com.arkhe.menu.presentation.ui.components.settings.SettingsBottomSheetItem
 import com.arkhe.menu.presentation.ui.components.HeaderTitleSecondary
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
@@ -67,7 +67,6 @@ fun SettingsBottomSheet(
     mainViewModel: MainViewModel = koinViewModel(),
     onClose: () -> Unit = {},
     onPersonalInfoClick: () -> Unit = {},
-    onSignInSecurityExtClick: () -> Unit = {},
     onSignInSecurityClick: () -> Unit = {},
     onDevicesClick: () -> Unit = {},
     onAboutClick: () -> Unit = {},
@@ -187,25 +186,19 @@ fun SettingsBottomSheet(
             shape = MaterialTheme.shapes.medium
         ) {
             Column {
-                AccountItem(
+                SettingsBottomSheetItem(
                     label = langViewModel.getLocalized(Lang.PERSONAL_INFO),
                     labelInfo = langViewModel.getLocalized(Lang.PERSONAL_INFO_DESC),
                     icon = EvaIcons.Outline.Person,
                     onClick = { onPersonalInfoClick() }
                 )
-                AccountItem(
-                    label = "sign_in_and_security_ext",
-                    labelInfo = langViewModel.getLocalized(Lang.SIGN_IN_AND_SECURITY_DESC),
-                    icon = EvaIcons.Outline.Shield,
-                    onClick = { onSignInSecurityExtClick() }
-                )
-                AccountItem(
+                SettingsBottomSheetItem(
                     label = langViewModel.getLocalized(Lang.SIGN_IN_AND_SECURITY),
                     labelInfo = langViewModel.getLocalized(Lang.SIGN_IN_AND_SECURITY_DESC),
                     icon = EvaIcons.Outline.Shield,
                     onClick = { onSignInSecurityClick() }
                 )
-                AccountItem(
+                SettingsBottomSheetItem(
                     label = langViewModel.getLocalized(Lang.DEVICES),
                     labelInfo = langViewModel.getLocalized(Lang.DEVICES_DESC),
                     icon = EvaIcons.Outline.Smartphone,
@@ -228,7 +221,7 @@ fun SettingsBottomSheet(
             shape = MaterialTheme.shapes.medium
         ) {
             Column {
-                AccountItem(
+                SettingsBottomSheetItem(
                     label = langViewModel.getLocalized(Lang.ABOUT),
                     labelInfo = langViewModel.getLocalized(Lang.ABOUT_DESC),
                     painter = painterResource(R.drawable.ic_ae),

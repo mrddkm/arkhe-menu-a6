@@ -14,7 +14,6 @@ object NavigationRoute {
     const val PRODUCTS = "products"
     const val PRODUCT_DETAIL = "product_detail/{productId}/{source}"
     const val PERSONAL_INFO_DETAIL = "personal_info_detail/{source}"
-    const val SIGN_IN_SECURITY_DETAIL_EXT = "sign_in_security_detail_ext/{source}"
     const val SIGN_IN_SECURITY_DETAIL = "sign_in_security_detail/{source}"
     const val DEVICES_DETAIL = "devices_detail/{source}"
     const val ABOUT_DETAIL = "about_detail/{source}"
@@ -33,10 +32,6 @@ object NavigationRoute {
 
     fun personalInfoDetail(source: String): String =
         "personal_info_detail/$source"
-
-    /*Examples Optimized*/
-    fun signInSecurityDetailExt(source: String): String =
-        "sign_in_security_detail_ext/$source"
 
     fun signInSecurityDetail(source: String): String =
         "sign_in_security_detail/$source"
