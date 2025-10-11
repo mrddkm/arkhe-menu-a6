@@ -1,9 +1,6 @@
 package com.arkhe.menu.presentation.ui.components.edit
 
 import android.widget.Toast
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -173,11 +170,6 @@ fun <T> EditableInfoScreenBase(
 
             /*✅ Password-specific derived states*/
             val isPasswordField = field.label?.contains("password", ignoreCase = true) == true
-            val strength by remember(value) { derivedStateOf { validatePassword(value) } }
-            val passwordsMatch by remember(value, confirmValue) {
-                derivedStateOf { confirmValue.isNotEmpty() && value == confirmValue }
-            }
-
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -269,46 +261,6 @@ fun <T> EditableInfoScreenBase(
                                 Text("Save")
                             }
                     }
-                }
-
-                // ------------------------------
-                // 🟢 Micro-feedback Password only
-                // ------------------------------
-                AnimatedVisibility(visible = isPasswordField) {
-                    val feedbackText: String
-                    val feedbackColor: Color
-
-                    when {
-                        strength.score < 5 -> {
-                            feedbackText = "⚠️ Password too weak"
-                            feedbackColor = Color(0xFFFFA000)
-                        }
-
-                        !passwordsMatch -> {
-                            feedbackText = "🔒 Passwords don’t match"
-                            feedbackColor = Color(0xFFD50000)
-                        }
-
-                        else -> {
-                            feedbackText = "✅ Ready to save"
-                            feedbackColor = Color(0xFF00C853)
-                        }
-                    }
-
-                    val animatedColor by animateColorAsState(
-                        targetValue = feedbackColor,
-                        animationSpec = tween(300),
-                        label = "feedbackColorAnim"
-                    )
-
-                    Text(
-                        text = feedbackText,
-                        color = animatedColor,
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier
-                            .padding(top = 4.dp)
-                            .align(Alignment.End)
-                    )
                 }
             }
         }
