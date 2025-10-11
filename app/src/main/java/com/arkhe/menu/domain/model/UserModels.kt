@@ -21,6 +21,7 @@ data class UserData(
     val id: String,
     val userId: String,
     val password: String,
+    val pin: String,
     val activationCode: String,
     val mail: String,
     val name: String,
@@ -76,4 +77,14 @@ data class User(
     val updatedAt: String,
     val lastActiveAt: String,
     val localImagePath: String? = null
+)
+
+data class PasswordData(
+    val newPassword: String = "",
+    val confirmPassword: String = ""
+)
+
+data class PinData(
+    val newPin: String = "",
+    val confirmPin: String = ""
 )

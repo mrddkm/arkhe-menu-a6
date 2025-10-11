@@ -12,11 +12,13 @@ import com.arkhe.menu.presentation.screen.docs.categories.screen.CategoryDetail
 import com.arkhe.menu.presentation.screen.docs.product.detail.ProductDetailScreen
 import com.arkhe.menu.presentation.screen.settings.about.AboutScreen
 import com.arkhe.menu.presentation.screen.settings.account.PersonalInfoScreen
-import com.arkhe.menu.presentation.screen.settings.account.SignInSecurityScreen
+import com.arkhe.menu.presentation.screen.settings.account.SignInSecurityScreenExt
 import com.arkhe.menu.presentation.screen.settings.devices.DevicesScreen
 import com.arkhe.menu.presentation.screen.settings.privacy.PrivacyScreen
 import com.arkhe.menu.presentation.screen.settings.terms.TermsScreen
 import com.arkhe.menu.presentation.viewmodel.ProductViewModel
+import com.arkhe.menu.utils.samplePasswordData
+import com.arkhe.menu.utils.samplePinData
 import com.arkhe.menu.utils.sampleUser
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -139,7 +141,7 @@ fun ArkheNavigation(
                 }
             )
         ) { backStackEntry ->
-            SignInSecurityScreen(
+            SignInSecurityScreenExt(
                 onBackClick = {
                     val popSuccess = navController.popBackStack()
                     if (!popSuccess) {
@@ -152,8 +154,27 @@ fun ArkheNavigation(
                     }
                 },
                 navController = navController,
-                user = sampleUser
+                passwordData = samplePasswordData,
+                pinData = samplePinData,
+                onPasswordUpdate = {},
+                onPinUpdate = {}
             )
+
+            /*            SignInSecurityScreen(
+                            onBackClick = {
+                                val popSuccess = navController.popBackStack()
+                                if (!popSuccess) {
+                                    navController.navigate(NavigationRoute.MAIN) {
+                                        popUpTo(NavigationRoute.MAIN) {
+                                            inclusive = true
+                                        }
+                                        launchSingleTop = true
+                                    }
+                                }
+                            },
+                            navController = navController,
+                            user = sampleUser
+                        )*/
         }
 
         composable(

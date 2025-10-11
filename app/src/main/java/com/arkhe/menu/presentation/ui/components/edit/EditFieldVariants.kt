@@ -35,11 +35,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.ArrowIosDownward
 import compose.icons.evaicons.outline.Calendar
+import compose.icons.evaicons.outline.Close
 import compose.icons.evaicons.outline.CloseCircle
 import java.util.Calendar
 
@@ -323,4 +325,69 @@ fun EditGenderDropdown(
             }
         }
     }
+}
+
+@Composable
+fun EditEmailField(
+    value: String,
+    onValueChange: (String) -> Unit
+) {
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) { focusRequester.requestFocus() }
+
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        modifier = Modifier
+            .fillMaxWidth()
+            .focusRequester(focusRequester),
+        singleLine = true,
+        label = { Text("Email") },
+        placeholder = { Text("example@email.com") },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Email,
+            imeAction = ImeAction.Done
+        ),
+        trailingIcon = {
+            if (value.isNotEmpty()) {
+                IconButton(onClick = { onValueChange("") }) {
+                    Icon(EvaIcons.Outline.Close, contentDescription = "Clear")
+                }
+            }
+        }
+    )
+}
+
+@Composable
+fun EditPhoneField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String = "Phone Number"
+) {
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) { focusRequester.requestFocus() }
+
+    OutlinedTextField(
+        value = value,
+        onValueChange = { onValueChange(it.filter { c -> c.isDigit() }) },
+        modifier = Modifier
+            .fillMaxWidth()
+            .focusRequester(focusRequester),
+        singleLine = true,
+        label = { Text(label) },
+        placeholder = { Text("08123456789") },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Number,
+            imeAction = ImeAction.Done
+        ),
+        trailingIcon = {
+            if (value.isNotEmpty()) {
+                IconButton(onClick = { onValueChange("") }) {
+                    Icon(EvaIcons.Outline.Close, contentDescription = "Clear")
+                }
+            }
+        }
+    )
 }

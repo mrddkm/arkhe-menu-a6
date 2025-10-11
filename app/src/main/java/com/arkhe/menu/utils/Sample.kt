@@ -2,6 +2,8 @@
 
 package com.arkhe.menu.utils
 
+import com.arkhe.menu.domain.model.PasswordData
+import com.arkhe.menu.domain.model.PinData
 import com.arkhe.menu.domain.model.Product
 import com.arkhe.menu.domain.model.ProductActionInfo
 import com.arkhe.menu.domain.model.ProductInformationLanguage
@@ -70,3 +72,7 @@ val sampleUser = User(
     updatedAt = "",
     lastActiveAt = "2025-10-09T20=10=20",
 )
+
+val samplePasswordData = PasswordData()
+
+val samplePinData = PinData()
