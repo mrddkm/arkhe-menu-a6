@@ -80,8 +80,7 @@ import java.util.Calendar
 fun EditNameField(
     value: String,
     label: String = "Name",
-    onValueChange: (String) -> Unit,
-    onClear: () -> Unit
+    onValueChange: (String) -> Unit
 ) {
     val focusRequester = remember { FocusRequester() }
 
@@ -104,7 +103,7 @@ fun EditNameField(
         ),
         trailingIcon = {
             if (value.isNotEmpty()) {
-                IconButton(onClick = onClear) {
+                IconButton(onClick = { onValueChange("") }) {
                     Icon(
                         imageVector = EvaIcons.Outline.CloseCircle,
                         contentDescription = null,
@@ -123,9 +122,7 @@ fun EditNicknameFields(
     nickname: String,
     labelNickname: String = "Nickname",
     onInitialChange: (String) -> Unit,
-    onNicknameChange: (String) -> Unit,
-    onClearInitial: () -> Unit,
-    onClearNickname: () -> Unit
+    onNicknameChange: (String) -> Unit
 ) {
     val focusRequester = remember { FocusRequester() }
     LaunchedEffect(Unit) {
@@ -147,7 +144,7 @@ fun EditNicknameFields(
             ),
             trailingIcon = {
                 if (initial.isNotEmpty()) {
-                    IconButton(onClick = onClearInitial) {
+                    IconButton(onClick = { onInitialChange("") }) {
                         Icon(
                             imageVector = EvaIcons.Outline.CloseCircle,
                             contentDescription = null,
@@ -167,7 +164,7 @@ fun EditNicknameFields(
             singleLine = true,
             trailingIcon = {
                 if (nickname.isNotEmpty()) {
-                    IconButton(onClick = onClearNickname) {
+                    IconButton(onClick = { onNicknameChange("") }) {
                         Icon(
                             imageVector = EvaIcons.Outline.CloseCircle,
                             contentDescription = null,

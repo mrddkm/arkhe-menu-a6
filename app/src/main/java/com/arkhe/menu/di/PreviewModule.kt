@@ -10,6 +10,7 @@ import org.koin.dsl.module
 /**
  * Preview module - uses mock implementation without DataStore
  */
+@Suppress("DEPRECATION")
 val previewModule = module {
     single<ILanguageRepository> { MockLanguageRepository() }
     viewModel { LanguageViewModel(androidContext(), get()) }

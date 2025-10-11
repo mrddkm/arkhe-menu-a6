@@ -11,20 +11,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,20 +41,17 @@ import com.arkhe.menu.domain.model.User
 import com.arkhe.menu.presentation.navigation.NavigationRoute
 import com.arkhe.menu.presentation.screen.settings.account.components.DetailPersonalAccordions
 import com.arkhe.menu.presentation.ui.components.edit.EditBirthdayField
-import com.arkhe.menu.presentation.ui.components.edit.EditBottomSheetBase
 import com.arkhe.menu.presentation.ui.components.edit.EditGenderDropdown
 import com.arkhe.menu.presentation.ui.components.edit.EditNameField
 import com.arkhe.menu.presentation.ui.components.edit.EditNicknameFields
-import com.arkhe.menu.presentation.ui.components.settings.SettingsItem
+import com.arkhe.menu.presentation.ui.components.edit.EditableField
+import com.arkhe.menu.presentation.ui.components.edit.EditableInfoScreenBase
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.viewmodel.LanguageViewModel
 import com.arkhe.menu.utils.sampleUser
 import compose.icons.EvaIcons
-import compose.icons.evaicons.Fill
 import compose.icons.evaicons.Outline
-import compose.icons.evaicons.fill.Lock
 import compose.icons.evaicons.outline.Close
-import kotlinx.coroutines.delay
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.KoinApplicationPreview
@@ -108,24 +100,16 @@ fun PersonalInfoContent(
     onHandleBackNavigation: () -> Unit = { },
     langViewModel: LanguageViewModel = koinViewModel()
 ) {
-    var editingField by remember { mutableStateOf<String?>(null) }
-
+    var textLabelName by remember { mutableStateOf("Name") }
     var name by remember { mutableStateOf(user.name) }
+    var textLabelInitial by remember { mutableStateOf("Initial") }
     var initial by remember { mutableStateOf(user.initial) }
+    var textLabelNickname by remember { mutableStateOf("Nickname") }
     var nickname by remember { mutableStateOf(user.nickName) }
+    var textLabelGender by remember { mutableStateOf("Gender") }
     var gender by remember { mutableStateOf(user.gender) }
+    var textLabelBirthday by remember { mutableStateOf("Birthday") }
     var birthday by remember { mutableStateOf(user.birthday) }
-
-    val isNameChanged by remember { derivedStateOf { name != user.name } }
-    val isNicknameChanged by remember { derivedStateOf { initial != user.initial || nickname != user.nickName } }
-    val isGenderChanged by remember { derivedStateOf { gender != user.gender } }
-    val isBirthdayChanged by remember { derivedStateOf { birthday != user.birthday } }
-    val isNameValid by remember { derivedStateOf { name.isNotBlank() } }
-    val isNicknameValid by remember { derivedStateOf { initial.isNotBlank() && nickname.isNotBlank() } }
-    val isGenderValid by remember { derivedStateOf { gender.isNotBlank() } }
-    val isBirthdayValid by remember { derivedStateOf { birthday.isNotBlank() } }
-    var textLabelOne by remember { mutableStateOf("") }
-    var textLabelTwo by remember { mutableStateOf("") }
 
     Column(
         modifier = modifier.padding(16.dp)
@@ -179,7 +163,6 @@ fun PersonalInfoContent(
                 user = user
             )
         }
-
         /*--- List Editable Fields ---*/
         Surface(
             modifier = Modifier
@@ -190,148 +173,102 @@ fun PersonalInfoContent(
                 modifier = Modifier
                     .fillMaxWidth(),
             ) {
-                SettingsItem(
-                    label = "Name",
-                    value = name,
-                    labelInfo = "Use your legal name",
-                ) {
-                    editingField = "name"
-                    textLabelOne = "Name"
-                }
-                SettingsItem(
-                    label = "Initial/Nickname",
-                    value = "$initial - $nickname",
-                ) {
-                    editingField = "nickname"
-                    textLabelOne = "Initial"
-                    textLabelTwo = "Nickname"
-                }
-                SettingsItem(
-                    label = "Birthday",
-                    value = birthday,
-                ) {
-                    editingField = "birthday"
-                    textLabelOne = "Birthday"
-
-                }
-                SettingsItem(
-                    label = "Gender",
-                    value = gender,
-                    showDivider = false
-                ) {
-                    editingField = "gender"
-                    textLabelOne = "Gender"
-                }
-            }
-        }
-    }
-
-    /*--- Dynamic BottomSheet ---*/
-    val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true,
-        confirmValueChange = { newValue ->
-            newValue != SheetValue.Hidden
-        }
-    )
-    if (editingField != null) {
-        ModalBottomSheet(
-            onDismissRequest = { },
-            sheetState = sheetState,
-            dragHandle = {
-                Box(
-                    modifier = Modifier
-                        .height(22.dp)
-                        .width(22.dp)
-                        .padding(top = 12.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = EvaIcons.Fill.Lock,
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxSize(),
-                        tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                textLabelName = "Name"
+                EditableInfoScreenBase(
+                    title = "Changes to your $textLabelName will be reflected across your Account.",
+                    userData = user,
+                    onUserUpdate = onUserUpdate,
+                    fields = listOf(
+                        EditableField(
+                            label = textLabelName,
+                            valueLabel = name,
+                            getValue = { it.name },
+                            applyChange = { old, new -> old.copy(name = new) },
+                            isValid = { it.isNotEmpty() },
+                            editor = { value, onValueChange ->
+                                EditNameField(
+                                    label = textLabelName,
+                                    value = value,
+                                    onValueChange = onValueChange
+                                )
+                            }
+                        )
                     )
-                }
-            }
-        ) {
-            when (editingField) {
-                "name" -> EditBottomSheetBase(
-                    title = "Changes to your $textLabelOne will be reflected across your Account.",
-                    isChanged = isNameChanged,
-                    isValid = isNameValid,
-                    onCancel = { editingField = null },
-                    onSave = {
-                        delay(500)
-                        user.copy(name = name).also(onUserUpdate)
-                        true
-                    }
-                ) {
-                    EditNameField(
-                        value = name,
-                        label = textLabelOne,
-                        onValueChange = { name = it },
-                        onClear = { name = "" }
-                    )
-                }
+                )
 
-                "nickname" -> EditBottomSheetBase(
-                    title = "Changes to your $textLabelOne & $textLabelTwo will be reflected across your Account.",
-                    isChanged = isNicknameChanged,
-                    isValid = isNicknameValid,
-                    onCancel = { editingField = null },
-                    onSave = {
-                        delay(500)
-                        user.copy(initial = initial, nickName = nickname).also(onUserUpdate)
-                        true
-                    }
-                ) {
-                    EditNicknameFields(
-                        initial = initial,
-                        labelInitial = textLabelOne,
-                        nickname = nickname,
-                        labelNickname = textLabelTwo,
-                        onInitialChange = { initial = it },
-                        onNicknameChange = { nickname = it },
-                        onClearInitial = { initial = "" },
-                        onClearNickname = { nickname = "" }
+                textLabelInitial = "Initial"
+                textLabelNickname = "Nickname"
+                EditableInfoScreenBase(
+                    title = "Changes to your $textLabelInitial/$textLabelNickname will be reflected across your Account.",
+                    userData = user,
+                    onUserUpdate = onUserUpdate,
+                    fields = listOf(
+                        EditableField(
+                            label = "$textLabelInitial/$textLabelNickname",
+                            valueLabel = "$initial - $nickname",
+                            getValue = { it.initial; it.nickName },
+                            applyChange = { old, new -> old.copy(initial = new) },
+                            isValid = { it.isNotEmpty() },
+                            editor = { value, onValueChange ->
+                                EditNicknameFields(
+                                    initial = value,
+                                    labelInitial = textLabelInitial,
+                                    nickname = nickname,
+                                    labelNickname = textLabelNickname,
+                                    onInitialChange = onValueChange,
+                                    onNicknameChange = { nickname = it }
+                                )
+                            }
+                        )
                     )
-                }
+                )
 
-                "gender" -> EditBottomSheetBase(
-                    title = "Update your $textLabelOne to match your real information to complete your personal data.",
-                    isChanged = isGenderChanged,
-                    isValid = isGenderValid,
-                    onCancel = { editingField = null },
-                    onSave = {
-                        delay(500)
-                        user.copy(gender = gender).also(onUserUpdate)
-                        true
-                    }
-                ) {
-                    EditGenderDropdown(
-                        selected = gender,
-                        label = textLabelOne,
-                        onSelect = { gender = it }
+                textLabelBirthday = "Birthday"
+                EditableInfoScreenBase(
+                    title = "Update your birthdate ($textLabelBirthday) to match your ID card, you never know, someone might plan a surprise for you!",
+                    userData = user,
+                    onUserUpdate = onUserUpdate,
+                    fields = listOf(
+                        EditableField(
+                            label = textLabelBirthday,
+                            valueLabel = birthday,
+                            getValue = { it.birthday },
+                            applyChange = { old, new -> old.copy(birthday = new) },
+                            isValid = { it.isNotEmpty() },
+                            editor = { value, onValueChange ->
+                                EditBirthdayField(
+                                    selectedDate = value,
+                                    label = textLabelBirthday,
+                                    onDateChange = onValueChange
+                                )
+                            }
+                        )
                     )
-                }
+                )
 
-                "birthday" -> EditBottomSheetBase(
-                    title = "Update your birthdate ($textLabelOne) to match your ID card, you never know, someone might plan a surprise for you!",
-                    isChanged = isBirthdayChanged,
-                    isValid = isBirthdayValid,
-                    onCancel = { editingField = null },
-                    onSave = {
-                        delay(500)
-                        user.copy(birthday = birthday).also(onUserUpdate)
-                        true
-                    }
-                ) {
-                    EditBirthdayField(
-                        selectedDate = birthday,
-                        label = textLabelOne,
-                        onDateChange = { birthday = it }
+                textLabelGender = "Gender"
+                EditableInfoScreenBase(
+                    title = "Update your $textLabelGender to match your real information to complete your personal data.",
+                    userData = user,
+                    onUserUpdate = onUserUpdate,
+                    fields = listOf(
+                        EditableField(
+                            label = textLabelGender,
+                            valueLabel = gender,
+                            showDivider = false,
+                            getValue = { it.gender },
+                            applyChange = { old, new -> old.copy(gender = new) },
+                            isValid = { it.isNotEmpty() },
+                            editor = { value, onValueChange ->
+                                EditGenderDropdown(
+                                    selected = value,
+                                    label = textLabelGender,
+                                    onSelect = onValueChange
+                                )
+                            }
+                        )
                     )
-                }
+                )
             }
         }
     }
