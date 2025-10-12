@@ -46,4 +46,12 @@ class AuthPreferences(private val context: Context) {
     suspend fun isActivated(): Boolean = isActivatedFlow.first()
     suspend fun isSignedIn(): Boolean = isSignedInFlow.first()
     suspend fun getPinAttempts(): Int = pinAttemptsFlow.first()
+
+    suspend fun resetAuthState() {
+        context.dataStore.edit { prefs ->
+            prefs[Database.KEY_IS_ACTIVATED] = false
+            prefs[Database.KEY_IS_SIGNED_IN] = false
+            prefs[Database.KEY_PIN_ATTEMPTS] = 0
+        }
+    }
 }

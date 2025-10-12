@@ -57,6 +57,7 @@ import com.arkhe.menu.presentation.ui.components.ArkheTopBar
 import com.arkhe.menu.presentation.ui.components.LanguageLoadingOverlay
 import com.arkhe.menu.presentation.ui.components.LoadingIndicatorSpinner
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
+import com.arkhe.menu.presentation.viewmodel.AuthViewModel
 import com.arkhe.menu.presentation.viewmodel.LanguageViewModel
 import com.arkhe.menu.presentation.viewmodel.MainViewModel
 import com.arkhe.menu.presentation.viewmodel.ProductViewModel
@@ -73,8 +74,24 @@ import org.koin.compose.KoinApplicationPreview
 fun MainScreen(
     navController: NavHostController,
     mainViewModel: MainViewModel = koinViewModel(),
-    langViewModel: LanguageViewModel = koinViewModel()
+    langViewModel: LanguageViewModel = koinViewModel(),
+    authViewModel: AuthViewModel = koinViewModel()
 ) {
+    val isActivated by authViewModel.isActivatedFlow.collectAsState(initial = true)
+    val isSignedIn by authViewModel.isSignedInFlow.collectAsState(initial = true)
+
+    LaunchedEffect(isActivated, isSignedIn) {
+        if (!isActivated && !isSignedIn) {
+            navController.navigate(
+                NavigationRoute.ON_BOARDING
+            ) {
+                popUpTo(NavigationRoute.MAIN) {
+                    inclusive = true
+                }
+            }
+        }
+    }
+
     val uiState by mainViewModel.uiState.collectAsState()
     val scrollAlpha by mainViewModel.scrollAlpha.collectAsState()
 

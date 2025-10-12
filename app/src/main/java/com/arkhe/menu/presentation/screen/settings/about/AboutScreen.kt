@@ -1,5 +1,6 @@
 package com.arkhe.menu.presentation.screen.settings.about
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -19,19 +21,23 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.arkhe.menu.data.local.preferences.Lang
 import com.arkhe.menu.presentation.navigation.NavigationRoute
+import com.arkhe.menu.presentation.viewmodel.AuthViewModel
 import com.arkhe.menu.presentation.viewmodel.LanguageViewModel
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.Close
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -69,7 +75,8 @@ fun AboutScreen(
 fun AboutContent(
     modifier: Modifier = Modifier,
     onHandleBackNavigation: () -> Unit = { },
-    langViewModel: LanguageViewModel = koinViewModel()
+    langViewModel: LanguageViewModel = koinViewModel(),
+    authViewModel: AuthViewModel = koinViewModel()
 ) {
     Column(
         modifier = modifier.padding(16.dp)
@@ -129,6 +136,22 @@ fun AboutContent(
                 modifier = Modifier
                     .fillMaxWidth(),
             ) {
+                val scope = rememberCoroutineScope()
+                val context = LocalContext.current
+                Button(
+                    onClick = {
+                        scope.launch {
+                            authViewModel.resetAuthState()
+                            Toast.makeText(context, "Authentication reset", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 32.dp)
+                ) {
+                    Text("Reset Auth State")
+                }
 
             }
         }

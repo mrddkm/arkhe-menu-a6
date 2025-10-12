@@ -85,4 +85,12 @@ class AuthViewModel(private val repo: AuthRepository) : ViewModel() {
     fun incrementPinAttempts() = viewModelScope.launch { repo.incrementPinAttempts() }
     fun resetPinAttempts() = viewModelScope.launch { repo.resetPinAttempts() }
     suspend fun getPinAttempts(): Int = repo.getPinAttempts()
+
+    fun resetAuthState() {
+        viewModelScope.launch {
+            repo.resetAuthState()
+            _uiState.value =
+                AuthUiState.Success("Authentication state cleared", SuccessType.SIGNEDIN)
+        }
+    }
 }

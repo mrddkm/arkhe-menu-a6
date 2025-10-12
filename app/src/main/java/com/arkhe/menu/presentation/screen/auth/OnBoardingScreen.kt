@@ -380,7 +380,7 @@ private fun OnBoardingButton(
                         contentDescription = null,
                         modifier = Modifier
                             .padding(end = 8.dp)
-                            .size(28.dp)
+                            .size(24.dp)
                     )
                     Text(
                         text = "Activation",
@@ -420,7 +420,7 @@ private fun OnBoardingButton(
                         contentDescription = null,
                         modifier = Modifier
                             .padding(start = 8.dp)
-                            .size(28.dp)
+                            .size(24.dp)
                     )
                 }
             }
@@ -449,7 +449,7 @@ private fun OnBoardingButton(
                         contentDescription = null,
                         modifier = Modifier
                             .padding(end = 8.dp)
-                            .size(28.dp)
+                            .size(24.dp)
                     )
                     Text(
                         text = "Start Activity",

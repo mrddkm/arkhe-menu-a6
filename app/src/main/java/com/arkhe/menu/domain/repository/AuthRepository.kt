@@ -25,6 +25,8 @@ interface AuthRepository {
     suspend fun setSignedIn(value: Boolean)
     suspend fun isSignedIn(): Boolean
 
+    suspend fun resetAuthState()
+
     // ✅ Tambahan real-time flow
     val isActivatedFlow: Flow<Boolean>
     val isSignedInFlow: Flow<Boolean>

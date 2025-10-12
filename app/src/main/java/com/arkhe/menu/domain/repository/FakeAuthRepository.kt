@@ -59,4 +59,8 @@ class FakeAuthRepository(
     override suspend fun isActivated(): Boolean = authPrefs.isActivated()
     override suspend fun setSignedIn(value: Boolean) = authPrefs.setSignedIn(value)
     override suspend fun isSignedIn(): Boolean = authPrefs.isSignedIn()
+
+    override suspend fun resetAuthState() {
+        authPrefs.resetAuthState()
+    }
 }

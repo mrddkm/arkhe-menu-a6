@@ -122,4 +122,8 @@ class AuthRepositoryImpl(
     override suspend fun isActivated(): Boolean = authPreferences.isActivated()
     override suspend fun setSignedIn(value: Boolean) = authPreferences.setSignedIn(value)
     override suspend fun isSignedIn(): Boolean = authPreferences.isSignedIn()
+
+    override suspend fun resetAuthState() {
+        authPreferences.resetAuthState()
+    }
 }
