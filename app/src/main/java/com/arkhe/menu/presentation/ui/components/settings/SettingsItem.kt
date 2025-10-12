@@ -97,6 +97,8 @@ fun SettingsToggleItem(
     label: String? = null,
     value: String? = null,
     info: String? = null,
+    isActive: Boolean,
+    onToggle: (Boolean) -> Unit,
     showDivider: Boolean = true
 ) {
     Column(
@@ -136,7 +138,10 @@ fun SettingsToggleItem(
                     )
                 }
             }
-            CustomToggle()
+            CustomToggle(
+                isActive = isActive,
+                onToggle = onToggle
+            )
         }
         Spacer(modifier = Modifier.height(2.dp))
     }
@@ -157,7 +162,9 @@ fun AccountToggleItemPreview() {
         Column {
             SettingsToggleItem(
                 value = "Biometric",
-                showDivider = false
+                showDivider = false,
+                isActive = false,
+                onToggle = {}
             )
         }
     }

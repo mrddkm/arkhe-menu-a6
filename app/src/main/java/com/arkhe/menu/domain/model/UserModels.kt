@@ -76,6 +76,7 @@ data class User(
     val createdAt: String,
     val updatedAt: String,
     val lastActiveAt: String,
+    val isBiometricActive: Boolean,
     val localImagePath: String? = null
 )
 

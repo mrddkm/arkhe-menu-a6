@@ -70,6 +70,7 @@ val sampleUser = User(
     sessionExpiredAt = "2025-11-08T20=10=20",
     createdAt = "",
     updatedAt = "",
+    isBiometricActive = true,
     lastActiveAt = "2025-10-09T20=10=20",
 )
 

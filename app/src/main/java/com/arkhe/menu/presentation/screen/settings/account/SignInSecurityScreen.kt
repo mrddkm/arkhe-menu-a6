@@ -302,11 +302,22 @@ fun SignInSecurityContentExt(
                         )
                     )
                 )
-                SettingsToggleItem(
-                    value = "Biometric",
-                    showDivider = false
-                )
             }
+        }
+        Surface(
+            modifier = Modifier
+                .padding(start = 16.dp, top = 24.dp, bottom = 0.dp, end = 16.dp),
+            shape = MaterialTheme.shapes.medium
+        ) {
+            SettingsToggleItem(
+                value = "Biometric",
+                showDivider = false,
+                isActive = user.isBiometricActive,
+                onToggle = { newValue ->
+                    val updatedUser = user.copy(isBiometricActive = newValue)
+                    onUserUpdate(updatedUser)
+                }
+            )
         }
     }
 }

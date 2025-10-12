@@ -2,12 +2,12 @@
 
 package com.arkhe.menu.presentation.ui.components
 
+import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -36,9 +36,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -585,9 +583,11 @@ fun DistanceText(
 }
 
 @Composable
-fun CustomToggle() {
-    var isActive by remember { mutableStateOf(false) }
-
+fun CustomToggle(
+    isActive: Boolean,
+    onToggle: (Boolean) -> Unit
+) {
+    Log.d("CustomToggle", "isActive before: $isActive")
     val offsetX by animateDpAsState(
         targetValue = if (isActive) 30.dp else 0.dp,
         animationSpec = spring(
@@ -596,22 +596,14 @@ fun CustomToggle() {
         ),
         label = "offsetAnim"
     )
-
     val backgroundColor by animateColorAsState(
         targetValue = if (isActive) MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
         else Color.LightGray,
         label = "bgColorAnim"
     )
-
     val interactionSource = remember { MutableInteractionSource() }
-
     Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null
-            ) { isActive = !isActive }
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
@@ -619,6 +611,12 @@ fun CustomToggle() {
                 .height(26.dp)
                 .clip(RoundedCornerShape(50))
                 .background(backgroundColor)
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = null
+                ) {
+                    onToggle(!isActive)
+                }
                 .padding(horizontal = 4.dp),
             contentAlignment = Alignment.CenterStart
         ) {
@@ -632,15 +630,10 @@ fun CustomToggle() {
                     .shadow(4.dp, CircleShape)
                     .clip(CircleShape)
                     .background(Color.White)
-                    .clickable(
-                        interactionSource = interactionSource,
-                        indication = LocalIndication.current
-                    ) {
-                        isActive = !isActive
-                    }
                     .padding(1.dp)
             )
         }
+        Log.d("CustomToggle", "isActive after: $isActive")
     }
 }
 
@@ -648,7 +641,10 @@ fun CustomToggle() {
 @Composable
 fun CustomTogglePreview() {
     ArkheTheme {
-        CustomToggle()
+        CustomToggle(
+            isActive = true,
+            onToggle = {}
+        )
     }
 }
 
