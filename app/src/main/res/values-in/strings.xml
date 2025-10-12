@@ -1,6 +1,7 @@
 <resources>
     <!--Main-->
     <string name="app_name">ArkheMenu</string>
+    <string name="gaenta">© 2025 Gaenta</string>
     <string name="client_short_name">tripkeun</string>
     <string name="client_long_name">tripkeun Indonesia</string>
 

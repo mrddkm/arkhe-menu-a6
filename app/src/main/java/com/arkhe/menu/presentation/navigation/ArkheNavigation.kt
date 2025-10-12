@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.arkhe.menu.presentation.screen.MainScreen
+import com.arkhe.menu.presentation.screen.auth.OnboardingScreen
 import com.arkhe.menu.presentation.screen.docs.categories.screen.CategoryDetail
 import com.arkhe.menu.presentation.screen.docs.product.detail.ProductDetailScreen
 import com.arkhe.menu.presentation.screen.settings.about.AboutScreen
@@ -28,8 +29,13 @@ fun ArkheNavigation(
 ) {
     NavHost(
         navController = navController,
-        startDestination = NavigationRoute.MAIN
+        startDestination = NavigationRoute.ON_BOARDING
     ) {
+        /*OnBoarding*/
+        composable(NavigationRoute.ON_BOARDING) {
+            OnboardingScreen()
+        }
+
         /*Main*/
         composable(NavigationRoute.MAIN) {
             MainScreen(navController = navController)

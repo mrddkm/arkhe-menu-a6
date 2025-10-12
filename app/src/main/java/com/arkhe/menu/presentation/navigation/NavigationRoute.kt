@@ -1,6 +1,11 @@
 package com.arkhe.menu.presentation.navigation
 
 object NavigationRoute {
+    /*OnBoarding*/
+    const val ON_BOARDING = "on_boarding"
+
+    /*Auth*/
+
     /*Main*/
     const val MAIN = "main"
 
