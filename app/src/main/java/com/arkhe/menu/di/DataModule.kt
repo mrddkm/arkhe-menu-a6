@@ -135,8 +135,11 @@ val dataModule = module {
     single { SecurePinStorage(androidContext()) }
 
     /*Repositories*/
-//    single<AuthRepository> { AuthRepositoryImpl(androidContext(), get(), get(), get()) }
-    single<AuthRepository> { FakeAuthRepository(get(), get()) } // Use fake while backend not ready
+    /*
+        single<AuthRepository> { AuthRepositoryImpl(androidContext(), get(), get(), get()) }
+    */
+    /*Use fake while backend not ready*/
+    single<AuthRepository> { FakeAuthRepository(get(), get()) }
     single<ILanguageRepository> { LanguageRepository(get()) }
     single<ThemeRepository> { ThemeRepositoryImpl(get()) }
     single<ProfileRepository> { ProfileRepositoryImpl(get(), get(), get()) }

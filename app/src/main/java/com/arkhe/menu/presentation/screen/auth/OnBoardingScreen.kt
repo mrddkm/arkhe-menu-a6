@@ -1,6 +1,7 @@
 package com.arkhe.menu.presentation.screen.auth
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
@@ -56,6 +57,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.arkhe.menu.R
 import com.arkhe.menu.data.local.preferences.Lang
+import com.arkhe.menu.data.local.preferences.dataStore
 import com.arkhe.menu.di.appModule
 import com.arkhe.menu.di.dataModule
 import com.arkhe.menu.di.domainModule
@@ -68,9 +70,12 @@ import com.arkhe.menu.presentation.ui.theme.montserratFontFamily
 import com.arkhe.menu.presentation.viewmodel.AuthViewModel
 import com.arkhe.menu.presentation.viewmodel.LanguageViewModel
 import com.arkhe.menu.presentation.viewmodel.ThemeViewModel
+import com.arkhe.menu.utils.Constants
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.Activity
+import compose.icons.evaicons.outline.LogIn
+import compose.icons.evaicons.outline.Pantone
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.android.ext.koin.androidContext
@@ -91,16 +96,23 @@ fun OnboardingScreen(
     val currentThemeModel = previewThemeModel ?: themeFromVm
 
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-
-    /*---------- state of the datastore ----------*/
-    var isActivated by remember { mutableStateOf(false) }
-    var isSignedIn by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        isActivated = authViewModel.isActivated()
-        isSignedIn = authViewModel.isSignedIn()
+        context.dataStore.data.collect { prefs ->
+            val activated = prefs[Constants.Database.KEY_IS_ACTIVATED] ?: false
+            val signedIn = prefs[Constants.Database.KEY_IS_SIGNED_IN] ?: false
+            val pinAttempts = prefs[Constants.Database.KEY_PIN_ATTEMPTS] ?: 0
+
+            Log.d(
+                "DataStoreDebug",
+                "isActivated=$activated, isSignedIn=$signedIn, pinAttempts=$pinAttempts"
+            )
+        }
     }
+
+    /*---------- state of the datastore ----------*/
+    val isActivated by authViewModel.isActivatedFlow.collectAsState(initial = false)
+    val isSignedIn by authViewModel.isSignedInFlow.collectAsState(initial = false)
 
     /*---------- state for bottom sheet ----------*/
     var showActivationSheet by remember { mutableStateOf(false) }
@@ -205,13 +217,13 @@ fun OnboardingScreen(
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             TripkeunText(
-                isActivation = isActivated.not(),
+                isActivation = isActivated,
                 isSignedIn = isSignedIn,
                 currentThemeModel = currentThemeModel,
                 onActivationClick = {
                     showActivationSheet = true
                 },
-                onLoginClick = {
+                onSignedInClick = {
                     showSignedInSheet = true
                 },
                 onStartClick = {
@@ -247,7 +259,7 @@ fun OnboardingScreen(
 
     AuthUi(
         showActivation = showActivationSheet,
-        showLogin = showSignedInSheet,
+        showSignedIn = showSignedInSheet,
         showPin = showPinSheet,
         onDismissAll = {
             showActivationSheet = false
@@ -255,18 +267,11 @@ fun OnboardingScreen(
             showPinSheet = false
         },
         onActivated = {
-            scope.launch {
-                isActivated = authViewModel.isActivated()
-                Toast.makeText(context, "Activation Successful", Toast.LENGTH_SHORT).show()
-            }
             showActivationSheet = false
         },
         onSignedIn = {
-            scope.launch {
-                isSignedIn = authViewModel.isSignedIn()
-                Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
-            }
             showSignedInSheet = false
+            onNavigateToMain()
         },
         onUnlocked = {
             Toast.makeText(context, "PIN Verified", Toast.LENGTH_SHORT).show()
@@ -281,7 +286,7 @@ fun TripkeunText(
     isSignedIn: Boolean,
     currentThemeModel: ThemeModels,
     onActivationClick: () -> Unit,
-    onLoginClick: () -> Unit,
+    onSignedInClick: () -> Unit,
     onStartClick: () -> Unit
 ) {
     Box(
@@ -315,9 +320,9 @@ fun TripkeunText(
         }
         OnBoardingButton(
             isActivation = isActivation,
-            isLogin = isSignedIn,
+            isSignedIn = isSignedIn,
             onActivationClick = onActivationClick,
-            onLoginClick = onLoginClick,
+            onSignedInClick = onSignedInClick,
             onStartClick = onStartClick,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -367,9 +372,9 @@ private fun LightThemeBox() {
 @Composable
 private fun OnBoardingButton(
     isActivation: Boolean,
-    isLogin: Boolean,
+    isSignedIn: Boolean,
     onActivationClick: () -> Unit,
-    onLoginClick: () -> Unit,
+    onSignedInClick: () -> Unit,
     onStartClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -386,13 +391,24 @@ private fun OnBoardingButton(
                     contentColor = MaterialTheme.colorScheme.primary
                 ),
             ) {
-                Text("Activation")
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp)
+                ) {
+                    Icon(
+                        imageVector = EvaIcons.Outline.Pantone,
+                        contentDescription = null,
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+                    Text("Activation")
+                }
             }
         }
 
-        !isLogin -> {
+        !isSignedIn -> {
             Button(
-                onClick = onLoginClick,
+                onClick = onSignedInClick,
                 modifier = modifier
                     .padding(vertical = 16.dp)
                     .height(48.dp)
@@ -402,7 +418,18 @@ private fun OnBoardingButton(
                     contentColor = MaterialTheme.colorScheme.primary
                 ),
             ) {
-                Text("Login")
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp)
+                ) {
+                    Icon(
+                        imageVector = EvaIcons.Outline.LogIn,
+                        contentDescription = null,
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+                    Text("Sign-in")
+                }
             }
         }
 

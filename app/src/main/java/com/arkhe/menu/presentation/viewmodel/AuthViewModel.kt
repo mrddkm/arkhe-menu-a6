@@ -15,12 +15,15 @@ sealed interface AuthUiState {
     data class Error(val message: String) : AuthUiState
 }
 
-enum class SuccessType { ACTIVATION, LOGIN }
+enum class SuccessType { ACTIVATION, SIGNEDIN }
 
 class AuthViewModel(private val repo: AuthRepository) : ViewModel() {
 
     private val _uiState = MutableStateFlow<AuthUiState>(AuthUiState.Idle)
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
+
+    val isActivatedFlow = repo.isActivatedFlow
+    val isSignedInFlow = repo.isSignedInFlow
 
     fun requestActivation(userId: String, phone: String, email: String) {
         viewModelScope.launch {
@@ -62,9 +65,9 @@ class AuthViewModel(private val repo: AuthRepository) : ViewModel() {
             _uiState.value = res.fold(
                 onSuccess = {
                     repo.setSignedIn(true)
-                    AuthUiState.Success(it, SuccessType.LOGIN)
+                    AuthUiState.Success(it, SuccessType.SIGNEDIN)
                 },
-                onFailure = { AuthUiState.Error(it.message ?: "Login failed") }
+                onFailure = { AuthUiState.Error(it.message ?: "SignIn failed") }
             )
         }
     }
@@ -79,11 +82,11 @@ class AuthViewModel(private val repo: AuthRepository) : ViewModel() {
     }
 
     suspend fun unlockWithPin(pin: String): Boolean = repo.checkPin(pin)
-
     fun incrementPinAttempts() = viewModelScope.launch { repo.incrementPinAttempts() }
     fun resetPinAttempts() = viewModelScope.launch { repo.resetPinAttempts() }
     suspend fun getPinAttempts(): Int = repo.getPinAttempts()
 
+    // Deprecated soon (kept for compatibility)
     suspend fun isActivated() = repo.isActivated()
     suspend fun isSignedIn() = repo.isSignedIn()
 }

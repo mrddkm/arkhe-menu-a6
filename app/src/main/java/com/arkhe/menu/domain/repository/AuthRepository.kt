@@ -1,5 +1,7 @@
 package com.arkhe.menu.domain.repository
 
+import kotlinx.coroutines.flow.Flow
+
 /**
  * Contract for authentication-related operations.
  * Keeps domain layer independent from implementation.
@@ -22,4 +24,8 @@ interface AuthRepository {
     suspend fun isActivated(): Boolean
     suspend fun setSignedIn(value: Boolean)
     suspend fun isSignedIn(): Boolean
+
+    // ✅ Tambahan real-time flow
+    val isActivatedFlow: Flow<Boolean>
+    val isSignedInFlow: Flow<Boolean>
 }

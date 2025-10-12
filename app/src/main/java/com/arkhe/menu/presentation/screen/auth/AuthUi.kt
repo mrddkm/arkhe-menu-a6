@@ -25,7 +25,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun AuthUi(
     showActivation: Boolean,
-    showLogin: Boolean,
+    showSignedIn: Boolean,
     showPin: Boolean,
     onDismissAll: () -> Unit,
     onActivated: () -> Unit,
@@ -50,7 +50,7 @@ fun AuthUi(
 
                 when ((uiState as AuthUiState.Success).type) {
                     SuccessType.ACTIVATION -> onActivated()
-                    SuccessType.LOGIN -> onSignedIn()
+                    SuccessType.SIGNEDIN -> onSignedIn()
                 }
             }
 
@@ -72,7 +72,7 @@ fun AuthUi(
         )
     }
 
-    if (showLogin) {
+    if (showSignedIn) {
         SignInBottomSheet(
             onDismiss = onDismissAll,
             onSubmit = { userId, password ->

@@ -3,6 +3,7 @@ package com.arkhe.menu.domain.repository
 import com.arkhe.menu.data.local.preferences.AuthPreferences
 import com.arkhe.menu.data.local.security.SecurePinStorage
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 
 /**
  * For local UI testing before real backend ready.
@@ -11,6 +12,10 @@ class FakeAuthRepository(
     private val authPrefs: AuthPreferences,
     private val securePinStorage: SecurePinStorage
 ) : AuthRepository {
+
+    // ✅ Realtime reactive state (DataStore)
+    override val isActivatedFlow: Flow<Boolean> = authPrefs.isActivatedFlow
+    override val isSignedInFlow: Flow<Boolean> = authPrefs.isSignedInFlow
 
     override suspend fun requestActivation(
         userId: String,

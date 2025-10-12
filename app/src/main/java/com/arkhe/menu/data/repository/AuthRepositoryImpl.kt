@@ -11,6 +11,7 @@ import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.Serializable
 
 /**
@@ -28,6 +29,9 @@ class AuthRepositoryImpl(
 
     @Serializable
     private data class ApiResponse(val status: String, val message: String? = null)
+
+    override val isActivatedFlow: Flow<Boolean> = authPreferences.isActivatedFlow
+    override val isSignedInFlow: Flow<Boolean> = authPreferences.isSignedInFlow
 
     override suspend fun requestActivation(
         userId: String,
