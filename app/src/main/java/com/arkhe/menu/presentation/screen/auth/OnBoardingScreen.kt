@@ -30,6 +30,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -50,19 +51,33 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arkhe.menu.R
+import com.arkhe.menu.di.appModule
+import com.arkhe.menu.di.dataModule
+import com.arkhe.menu.di.domainModule
+import com.arkhe.menu.di.previewModule
 import com.arkhe.menu.domain.model.ThemeModels
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.ui.theme.montserratAlternatesFontFamily
 import com.arkhe.menu.presentation.ui.theme.montserratFontFamily
+import com.arkhe.menu.presentation.viewmodel.ThemeViewModel
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.Activity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.koin.android.ext.koin.androidContext
+import org.koin.compose.KoinApplicationPreview
+import org.koin.compose.viewmodel.koinViewModel
 
 @SuppressLint("ConfigurationScreenWidthHeight")
 @Composable
-fun OnboardingScreen() {
+fun OnboardingScreen(
+    themeViewModel: ThemeViewModel = koinViewModel(),
+    previewThemeModel: ThemeModels? = null
+) {
+    val themeFromVm by themeViewModel.currentTheme.collectAsState()
+    val currentThemeModel = previewThemeModel ?: themeFromVm
+
     /*temporary state*/
     val isActivation = true
     val isLogin = true
@@ -134,7 +149,7 @@ fun OnboardingScreen() {
                             colors = listOf(
                                 Color.Transparent,
                                 MaterialTheme.colorScheme.background.copy(alpha = 0.5f),
-                                MaterialTheme.colorScheme.background.copy(alpha = 0.9f)
+                                MaterialTheme.colorScheme.background.copy(alpha = 0.95f)
                             )
                         )
                     )
@@ -147,7 +162,7 @@ fun OnboardingScreen() {
             ) {
                 Text(
                     text = texts[currentIndex],
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
                     fontSize = 24.sp,
                     fontFamily = montserratFontFamily,
                     fontWeight = FontWeight.Bold,
@@ -167,7 +182,8 @@ fun OnboardingScreen() {
         ) {
             TripkeunText(
                 isActivation = isActivation,
-                isLogin = isLogin
+                isLogin = isLogin,
+                currentThemeModel = currentThemeModel
             )
             OnboardingFooter()
         }
@@ -177,10 +193,9 @@ fun OnboardingScreen() {
 @Composable
 fun TripkeunText(
     isActivation: Boolean,
-    isLogin: Boolean
+    isLogin: Boolean,
+    currentThemeModel: ThemeModels
 ) {
-    val isDarkTheme = isSystemInDarkTheme()
-
     Box(
         contentAlignment = Alignment.Center
     ) {
@@ -190,36 +205,23 @@ fun TripkeunText(
                 .height(110.dp)
                 .padding(top = 4.dp),
             shape = MaterialTheme.shapes.large,
+            color = Color.Transparent
         ) {
-            if (isDarkTheme) {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .background(Color(0xFFF7F5F2))
-                        .padding(top = 16.dp, bottom = 8.dp)
-                ) {
-                    Text(
-                        text = "tripkeun",
-                        fontSize = 32.sp,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = montserratAlternatesFontFamily,
-                        color = Color(0xFF183C2C)
-                    )
+            when (currentThemeModel) {
+                ThemeModels.DARK -> {
+                    DarkThemeBox()
                 }
-            } else {
-                Box(
-                    contentAlignment = Alignment.TopCenter,
-                    modifier = Modifier
-                        .background(Color(0xFF170C10))
-                        .padding(top = 16.dp, bottom = 8.dp)
-                ) {
-                    Text(
-                        text = "tripkeun",
-                        fontSize = 32.sp,
-                        fontWeight = FontWeight.Bold,
-                        fontFamily = montserratAlternatesFontFamily,
-                        color = Color(0xFFEA508C)
-                    )
+
+                ThemeModels.LIGHT -> {
+                    LightThemeBox()
+                }
+
+                ThemeModels.SYSTEM -> {
+                    if (isSystemInDarkTheme()) {
+                        DarkThemeBox()
+                    } else {
+                        LightThemeBox()
+                    }
                 }
             }
         }
@@ -229,6 +231,44 @@ fun TripkeunText(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .offset(y = (38).dp)
+        )
+    }
+}
+
+@Composable
+private fun DarkThemeBox() {
+    Box(
+        contentAlignment = Alignment.TopCenter,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF170C10))
+            .padding(top = 16.dp, bottom = 8.dp)
+    ) {
+        Text(
+            text = "tripkeun",
+            fontSize = 32.sp,
+            fontWeight = FontWeight.Bold,
+            fontFamily = montserratAlternatesFontFamily,
+            color = Color(0xFFEA508C)
+        )
+    }
+}
+
+@Composable
+private fun LightThemeBox() {
+    Box(
+        contentAlignment = Alignment.TopCenter,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFF7F5F2))
+            .padding(top = 16.dp, bottom = 8.dp)
+    ) {
+        Text(
+            text = "tripkeun",
+            fontSize = 32.sp,
+            fontWeight = FontWeight.Bold,
+            fontFamily = montserratAlternatesFontFamily,
+            color = Color(0xFF183C2C)
         )
     }
 }
@@ -303,7 +343,7 @@ private fun OnboardingFooter() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 6.dp, horizontal = 10.dp),
+            .padding(start = 12.dp, bottom = 24.dp, end = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
@@ -362,14 +402,28 @@ private fun OnboardingFooter() {
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
 fun OnboardingScreenPreview() {
-    ArkheTheme(
-        currentTheme = ThemeModels.DARK
+    val previewContext = androidx.compose.ui.platform.LocalContext.current
+    KoinApplicationPreview(
+        application = {
+            androidContext(previewContext)
+            modules(
+                dataModule,
+                domainModule,
+                appModule,
+                previewModule
+            )
+        }
     ) {
-        OnboardingScreen()
+        ArkheTheme(
+            currentTheme = ThemeModels.LIGHT
+        ) {
+            OnboardingScreen(
+                previewThemeModel = ThemeModels.LIGHT
+            )
+        }
     }
 }
 
