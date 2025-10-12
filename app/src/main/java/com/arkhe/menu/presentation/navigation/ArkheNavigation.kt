@@ -33,7 +33,9 @@ fun ArkheNavigation(
     ) {
         /*OnBoarding*/
         composable(NavigationRoute.ON_BOARDING) {
-            OnboardingScreen()
+            OnboardingScreen(
+                navController = navController
+            )
         }
 
         /*Main*/

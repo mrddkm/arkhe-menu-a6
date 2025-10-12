@@ -50,15 +50,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.arkhe.menu.R
+import com.arkhe.menu.data.local.preferences.Lang
 import com.arkhe.menu.di.appModule
 import com.arkhe.menu.di.dataModule
 import com.arkhe.menu.di.domainModule
 import com.arkhe.menu.di.previewModule
 import com.arkhe.menu.domain.model.ThemeModels
+import com.arkhe.menu.presentation.navigation.NavigationRoute
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.ui.theme.montserratAlternatesFontFamily
 import com.arkhe.menu.presentation.ui.theme.montserratFontFamily
+import com.arkhe.menu.presentation.viewmodel.LanguageViewModel
 import com.arkhe.menu.presentation.viewmodel.ThemeViewModel
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
@@ -72,6 +76,8 @@ import org.koin.compose.viewmodel.koinViewModel
 @SuppressLint("ConfigurationScreenWidthHeight")
 @Composable
 fun OnboardingScreen(
+    navController: NavHostController,
+    langViewModel: LanguageViewModel = koinViewModel(),
     themeViewModel: ThemeViewModel = koinViewModel(),
     previewThemeModel: ThemeModels? = null
 ) {
@@ -185,7 +191,30 @@ fun OnboardingScreen(
                 isLogin = isLogin,
                 currentThemeModel = currentThemeModel
             )
-            OnboardingFooter()
+            OnboardingFooter(
+                langViewModel = langViewModel,
+                onAboutClick = {
+                    navController.navigate(
+                        NavigationRoute.aboutDetail(
+                            source = NavigationRoute.MAIN
+                        )
+                    )
+                },
+                onPrivacyPolicyClick = {
+                    navController.navigate(
+                        NavigationRoute.privacyPolicyDetail(
+                            source = NavigationRoute.MAIN
+                        )
+                    )
+                },
+                onTermsOfServiceClick = {
+                    navController.navigate(
+                        NavigationRoute.termOfServiceDetail(
+                            source = NavigationRoute.MAIN
+                        )
+                    )
+                }
+            )
         }
     }
 }
@@ -339,7 +368,12 @@ private fun OnBoardingButton(
 }
 
 @Composable
-private fun OnboardingFooter() {
+private fun OnboardingFooter(
+    langViewModel: LanguageViewModel = koinViewModel(),
+    onAboutClick: () -> Unit = {},
+    onPrivacyPolicyClick: () -> Unit = {},
+    onTermsOfServiceClick: () -> Unit = {}
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -368,7 +402,7 @@ private fun OnboardingFooter() {
                     text = stringResource(id = R.string.gaenta),
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
                     fontSize = 10.sp,
-                    modifier = Modifier.clickable { /* TODO: Handle About click */ }
+                    modifier = Modifier.clickable { onAboutClick() }
                 )
             }
         }
@@ -380,10 +414,10 @@ private fun OnboardingFooter() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Privacy policy",
+                text = langViewModel.getLocalized(Lang.PRIVACY_POLICY),
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
                 fontSize = 10.sp,
-                modifier = Modifier.clickable { /* TODO: Handle Privacy Policy click */ }
+                modifier = Modifier.clickable { onPrivacyPolicyClick() }
             )
             Text(
                 text = "•",
@@ -393,10 +427,10 @@ private fun OnboardingFooter() {
                     .padding(start = 6.dp, end = 6.dp)
             )
             Text(
-                text = "Terms of service",
+                text = langViewModel.getLocalized(Lang.TERMS_OF_SERVICE),
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
                 fontSize = 10.sp,
-                modifier = Modifier.clickable { /* TODO: Handle Terms of Service click */ }
+                modifier = Modifier.clickable { onTermsOfServiceClick() }
             )
         }
     }
@@ -421,6 +455,7 @@ fun OnboardingScreenPreview() {
             currentTheme = ThemeModels.LIGHT
         ) {
             OnboardingScreen(
+                navController = NavHostController(previewContext),
                 previewThemeModel = ThemeModels.LIGHT
             )
         }

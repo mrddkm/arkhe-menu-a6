@@ -1,5 +1,3 @@
-@file:Suppress("SpellCheckingInspection")
-
 package com.arkhe.menu.presentation.screen.settings
 
 import androidx.compose.foundation.Image
@@ -42,8 +40,8 @@ import com.arkhe.menu.di.appModule
 import com.arkhe.menu.di.dataModule
 import com.arkhe.menu.di.domainModule
 import com.arkhe.menu.di.previewModule
-import com.arkhe.menu.presentation.ui.components.settings.SettingsBottomSheetItem
 import com.arkhe.menu.presentation.ui.components.HeaderTitleSecondary
+import com.arkhe.menu.presentation.ui.components.settings.SettingsBottomSheetItem
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
 import com.arkhe.menu.presentation.viewmodel.LanguageViewModel
