@@ -116,65 +116,77 @@ fun EditNameField(
 }
 
 @Composable
-fun EditNicknameFields(
+fun EditInitialFields(
     initial: String,
     labelInitial: String = "Initial",
+    onInitialChange: (String) -> Unit
+) {
+    val focusRequester = remember { FocusRequester() }
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
+    OutlinedTextField(
+        value = initial,
+        onValueChange = { onInitialChange(it.uppercase()) },
+        modifier = Modifier
+            .fillMaxWidth()
+            .focusRequester(focusRequester),
+        shape = MaterialTheme.shapes.medium,
+        label = { Text(labelInitial) },
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(
+            capitalization = KeyboardCapitalization.Characters,
+            imeAction = ImeAction.Done
+        ),
+        trailingIcon = {
+            if (initial.isNotEmpty()) {
+                IconButton(onClick = { onInitialChange("") }) {
+                    Icon(
+                        imageVector = EvaIcons.Outline.CloseCircle,
+                        contentDescription = null,
+                        tint = Color.Gray
+                    )
+                }
+            }
+        }
+    )
+}
+
+@Composable
+fun EditNicknameFields(
     nickname: String,
     labelNickname: String = "Nickname",
-    onInitialChange: (String) -> Unit,
     onNicknameChange: (String) -> Unit
 ) {
     val focusRequester = remember { FocusRequester() }
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
-    Column {
-        OutlinedTextField(
-            value = initial,
-            onValueChange = { onInitialChange(it.uppercase()) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .focusRequester(focusRequester),
-            shape = MaterialTheme.shapes.medium,
-            label = { Text(labelInitial) },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(
-                capitalization = KeyboardCapitalization.Characters,
-                imeAction = ImeAction.Done
-            ),
-            trailingIcon = {
-                if (initial.isNotEmpty()) {
-                    IconButton(onClick = { onInitialChange("") }) {
-                        Icon(
-                            imageVector = EvaIcons.Outline.CloseCircle,
-                            contentDescription = null,
-                            tint = Color.Gray
-                        )
-                    }
+    OutlinedTextField(
+        value = nickname,
+        onValueChange = { onNicknameChange(it.lowercase()) },
+        shape = MaterialTheme.shapes.medium,
+        label = { Text(labelNickname) },
+        modifier = Modifier
+            .fillMaxWidth()
+            .focusRequester(focusRequester),
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(
+            capitalization = KeyboardCapitalization.Characters,
+            imeAction = ImeAction.Done
+        ),
+        trailingIcon = {
+            if (nickname.isNotEmpty()) {
+                IconButton(onClick = { onNicknameChange("") }) {
+                    Icon(
+                        imageVector = EvaIcons.Outline.CloseCircle,
+                        contentDescription = null,
+                        tint = Color.Gray
+                    )
                 }
             }
-        )
-        Spacer(Modifier.height(12.dp))
-        OutlinedTextField(
-            value = nickname,
-            onValueChange = { onNicknameChange(it.lowercase()) },
-            shape = MaterialTheme.shapes.medium,
-            label = { Text(labelNickname) },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            trailingIcon = {
-                if (nickname.isNotEmpty()) {
-                    IconButton(onClick = { onNicknameChange("") }) {
-                        Icon(
-                            imageVector = EvaIcons.Outline.CloseCircle,
-                            contentDescription = null,
-                            tint = Color.Gray
-                        )
-                    }
-                }
-            }
-        )
-    }
+        }
+    )
 }
 
 @SuppressLint("DefaultLocale")

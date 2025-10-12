@@ -1,6 +1,7 @@
 package com.arkhe.menu.presentation.screen.settings.account
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +22,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -116,6 +122,13 @@ fun SignInSecurityContentExt(
     onHandleBackNavigation: () -> Unit = { },
     langViewModel: LanguageViewModel = koinViewModel()
 ) {
+    var userState by remember { mutableStateOf(user) }
+
+    LaunchedEffect(user) {
+        Log.d("SignInSecurity", "Props user changed: isBiometricActive = ${user.isBiometricActive}")
+        userState = user
+    }
+
     Column(
         modifier = modifier.padding(16.dp)
     ) {
@@ -177,14 +190,14 @@ fun SignInSecurityContentExt(
                 SettingsItem(
                     label = "UserID",
                     labelInfo = "Your primary account",
-                    value = user.userId,
+                    value = userState.userId,
                     showIcon = false,
                     onClick = {},
                 )
                 SettingsItem(
                     label = "NickName",
                     labelInfo = "You can edit in Personal Info",
-                    value = user.nickName,
+                    value = userState.nickName,
                     showIcon = false,
                     onClick = {},
                 )
@@ -195,7 +208,7 @@ fun SignInSecurityContentExt(
                     fields = listOf(
                         EditableField(
                             label = "Email",
-                            valueLabel = user.mail,
+                            valueLabel = userState.mail,
                             getValue = { it.mail },
                             applyChange = { old, new -> old.copy(mail = new) },
                             isValid = { it.isNotEmpty() },
@@ -216,7 +229,7 @@ fun SignInSecurityContentExt(
                     fields = listOf(
                         EditableField(
                             label = "Phone",
-                            valueLabel = user.phone,
+                            valueLabel = userState.phone,
                             getValue = { it.phone },
                             applyChange = { old, new -> old.copy(phone = new) },
                             isValid = { it.isNotEmpty() },
@@ -312,9 +325,10 @@ fun SignInSecurityContentExt(
             SettingsToggleItem(
                 value = "Biometric",
                 showDivider = false,
-                isActive = user.isBiometricActive,
+                isActive = userState.isBiometricActive,
                 onToggle = { newValue ->
-                    val updatedUser = user.copy(isBiometricActive = newValue)
+                    val updatedUser = userState.copy(isBiometricActive = newValue)
+                    userState = updatedUser
                     onUserUpdate(updatedUser)
                 }
             )

@@ -2,7 +2,6 @@
 
 package com.arkhe.menu.presentation.ui.components
 
-import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
@@ -587,7 +586,6 @@ fun CustomToggle(
     isActive: Boolean,
     onToggle: (Boolean) -> Unit
 ) {
-    Log.d("CustomToggle", "isActive before: $isActive")
     val offsetX by animateDpAsState(
         targetValue = if (isActive) 30.dp else 0.dp,
         animationSpec = spring(
@@ -633,7 +631,6 @@ fun CustomToggle(
                     .padding(1.dp)
             )
         }
-        Log.d("CustomToggle", "isActive after: $isActive")
     }
 }
 

@@ -42,6 +42,7 @@ import com.arkhe.menu.presentation.navigation.NavigationRoute
 import com.arkhe.menu.presentation.screen.settings.account.components.DetailPersonalAccordions
 import com.arkhe.menu.presentation.ui.components.edit.EditBirthdayField
 import com.arkhe.menu.presentation.ui.components.edit.EditGenderDropdown
+import com.arkhe.menu.presentation.ui.components.edit.EditInitialFields
 import com.arkhe.menu.presentation.ui.components.edit.EditNameField
 import com.arkhe.menu.presentation.ui.components.edit.EditNicknameFields
 import com.arkhe.menu.presentation.ui.components.edit.EditableField
@@ -173,7 +174,6 @@ fun PersonalInfoContent(
                 modifier = Modifier
                     .fillMaxWidth(),
             ) {
-                textLabelName = "Name"
                 EditableInfoScreenBase(
                     title = "Changes to your $textLabelName will be reflected across your Account.",
                     userData = user,
@@ -195,35 +195,48 @@ fun PersonalInfoContent(
                         )
                     )
                 )
-
-                textLabelInitial = "Initial"
-                textLabelNickname = "Nickname"
                 EditableInfoScreenBase(
-                    title = "Changes to your $textLabelInitial/$textLabelNickname will be reflected across your Account.",
+                    title = "Changes to your $textLabelInitial will be reflected across your Account.",
                     userData = user,
                     onUserUpdate = onUserUpdate,
                     fields = listOf(
                         EditableField(
-                            label = "$textLabelInitial/$textLabelNickname",
-                            valueLabel = "$initial - $nickname",
-                            getValue = { it.initial; it.nickName },
+                            label = textLabelInitial,
+                            valueLabel = initial,
+                            getValue = { it.initial },
                             applyChange = { old, new -> old.copy(initial = new) },
                             isValid = { it.isNotEmpty() },
                             editor = { value, onValueChange ->
-                                EditNicknameFields(
+                                EditInitialFields(
                                     initial = value,
                                     labelInitial = textLabelInitial,
-                                    nickname = nickname,
-                                    labelNickname = textLabelNickname,
-                                    onInitialChange = onValueChange,
-                                    onNicknameChange = { nickname = it }
+                                    onInitialChange = onValueChange
                                 )
                             }
                         )
                     )
                 )
-
-                textLabelBirthday = "Birthday"
+                EditableInfoScreenBase(
+                    title = "Changes to your $textLabelNickname will be reflected across your Account.",
+                    userData = user,
+                    onUserUpdate = onUserUpdate,
+                    fields = listOf(
+                        EditableField(
+                            label = textLabelNickname,
+                            valueLabel = nickname,
+                            getValue = { it.nickName },
+                            applyChange = { old, new -> old.copy(nickName = new) },
+                            isValid = { it.isNotEmpty() },
+                            editor = { value, onValueChange ->
+                                EditNicknameFields(
+                                    nickname = nickname,
+                                    labelNickname = textLabelNickname,
+                                    onNicknameChange = onValueChange
+                                )
+                            }
+                        )
+                    )
+                )
                 EditableInfoScreenBase(
                     title = "Update your birthdate ($textLabelBirthday) to match your ID card, you never know, someone might plan a surprise for you!",
                     userData = user,
@@ -245,8 +258,6 @@ fun PersonalInfoContent(
                         )
                     )
                 )
-
-                textLabelGender = "Gender"
                 EditableInfoScreenBase(
                     title = "Update your $textLabelGender to match your real information to complete your personal data.",
                     userData = user,
