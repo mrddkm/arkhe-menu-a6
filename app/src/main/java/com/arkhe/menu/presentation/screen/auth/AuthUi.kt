@@ -66,9 +66,8 @@ fun AuthUi(
     if (showActivation) {
         ActivationBottomSheet(
             onDismiss = onDismissAll,
-            onSubmit = { userId, phone, email ->
-                scope.launch { viewModel.requestActivation(userId, phone, email) }
-            }
+            onActivated = onActivated,
+            viewModel = viewModel
         )
     }
 

@@ -325,6 +325,15 @@ fun MainScreen(
                             mainViewModel.toggleProfileSettingsBottomSheet()
                         }
                     },
+                    onLockScreen = {
+                        navController.navigate(
+                            NavigationRoute.ON_BOARDING
+                        )
+                        coroutineScope.launch {
+                            sheetState.hide()
+                            mainViewModel.toggleProfileSettingsBottomSheet()
+                        }
+                    },
                     onPersonalInfoClick = {
                         navController.navigate(
                             NavigationRoute.personalInfoDetail(

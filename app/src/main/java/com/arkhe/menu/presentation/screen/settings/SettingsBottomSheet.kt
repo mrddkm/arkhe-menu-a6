@@ -51,7 +51,7 @@ import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.Close
 import compose.icons.evaicons.outline.Person
-import compose.icons.evaicons.outline.Settings
+import compose.icons.evaicons.outline.Power
 import compose.icons.evaicons.outline.Shield
 import compose.icons.evaicons.outline.Smartphone
 import org.koin.android.ext.koin.androidContext
@@ -64,6 +64,7 @@ fun SettingsBottomSheet(
     langViewModel: LanguageViewModel = koinViewModel(),
     mainViewModel: MainViewModel = koinViewModel(),
     onClose: () -> Unit = {},
+    onLockScreen: () -> Unit = {},
     onPersonalInfoClick: () -> Unit = {},
     onSignInSecurityClick: () -> Unit = {},
     onDevicesClick: () -> Unit = {},
@@ -108,19 +109,19 @@ fun SettingsBottomSheet(
             HeaderTitleSecondary(
                 title = langViewModel.getLocalized(Lang.PROFILE_SETTINGS),
             )
-            IconButton(onClick = {}) {
+            IconButton(onClick = { onLockScreen() }) {
                 Box(
                     modifier = Modifier
                         .size(24.dp)
                         .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)),
+                        .background(MaterialTheme.colorScheme.error.copy(alpha = 0.3f)),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = EvaIcons.Outline.Settings,
+                        imageVector = EvaIcons.Outline.Power,
                         contentDescription = null,
-                        modifier = Modifier.size(18.dp),
-                        tint = MaterialTheme.colorScheme.primary
+                        modifier = Modifier.size(20.dp),
+                        tint = MaterialTheme.colorScheme.error
                     )
                 }
             }

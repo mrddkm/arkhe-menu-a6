@@ -85,8 +85,4 @@ class AuthViewModel(private val repo: AuthRepository) : ViewModel() {
     fun incrementPinAttempts() = viewModelScope.launch { repo.incrementPinAttempts() }
     fun resetPinAttempts() = viewModelScope.launch { repo.resetPinAttempts() }
     suspend fun getPinAttempts(): Int = repo.getPinAttempts()
-
-    // Deprecated soon (kept for compatibility)
-    suspend fun isActivated() = repo.isActivated()
-    suspend fun isSignedIn() = repo.isSignedIn()
 }

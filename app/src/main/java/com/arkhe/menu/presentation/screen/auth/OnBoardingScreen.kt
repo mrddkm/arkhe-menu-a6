@@ -1,7 +1,6 @@
 package com.arkhe.menu.presentation.screen.auth
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
@@ -57,7 +56,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.arkhe.menu.R
 import com.arkhe.menu.data.local.preferences.Lang
-import com.arkhe.menu.data.local.preferences.dataStore
 import com.arkhe.menu.di.appModule
 import com.arkhe.menu.di.dataModule
 import com.arkhe.menu.di.domainModule
@@ -70,7 +68,6 @@ import com.arkhe.menu.presentation.ui.theme.montserratFontFamily
 import com.arkhe.menu.presentation.viewmodel.AuthViewModel
 import com.arkhe.menu.presentation.viewmodel.LanguageViewModel
 import com.arkhe.menu.presentation.viewmodel.ThemeViewModel
-import com.arkhe.menu.utils.Constants
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.Activity
@@ -96,19 +93,6 @@ fun OnboardingScreen(
     val currentThemeModel = previewThemeModel ?: themeFromVm
 
     val context = LocalContext.current
-
-    LaunchedEffect(Unit) {
-        context.dataStore.data.collect { prefs ->
-            val activated = prefs[Constants.Database.KEY_IS_ACTIVATED] ?: false
-            val signedIn = prefs[Constants.Database.KEY_IS_SIGNED_IN] ?: false
-            val pinAttempts = prefs[Constants.Database.KEY_PIN_ATTEMPTS] ?: 0
-
-            Log.d(
-                "DataStoreDebug",
-                "isActivated=$activated, isSignedIn=$signedIn, pinAttempts=$pinAttempts"
-            )
-        }
-    }
 
     /*---------- state of the datastore ----------*/
     val isActivated by authViewModel.isActivatedFlow.collectAsState(initial = false)
