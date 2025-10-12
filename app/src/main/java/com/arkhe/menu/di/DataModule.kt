@@ -3,9 +3,11 @@ package com.arkhe.menu.di
 import androidx.room.Room
 import com.arkhe.menu.data.local.LocalDataSource
 import com.arkhe.menu.data.local.database.AppDatabase
+import com.arkhe.menu.data.local.preferences.AuthPreferences
 import com.arkhe.menu.data.local.preferences.SessionManager
 import com.arkhe.menu.data.local.preferences.ThemeLocalDataSource
 import com.arkhe.menu.data.local.preferences.dataStore
+import com.arkhe.menu.data.local.security.SecurePinStorage
 import com.arkhe.menu.data.local.storage.ImageStorageManager
 import com.arkhe.menu.data.remote.RemoteDataSource
 import com.arkhe.menu.data.remote.api.TripkeunApiService
@@ -14,7 +16,9 @@ import com.arkhe.menu.data.repository.CategoryRepositoryImpl
 import com.arkhe.menu.data.repository.ProductRepositoryImpl
 import com.arkhe.menu.data.repository.ProfileRepositoryImpl
 import com.arkhe.menu.data.repository.ThemeRepositoryImpl
+import com.arkhe.menu.domain.repository.AuthRepository
 import com.arkhe.menu.domain.repository.CategoryRepository
+import com.arkhe.menu.domain.repository.FakeAuthRepository
 import com.arkhe.menu.domain.repository.ILanguageRepository
 import com.arkhe.menu.domain.repository.LanguageRepository
 import com.arkhe.menu.domain.repository.ProductRepository
@@ -127,8 +131,12 @@ val dataModule = module {
     single { LocalDataSource(get(), get(), get()) }
     single { ThemeLocalDataSource(get()) }
     single { ImageStorageManager(get()) }
+    single { AuthPreferences(androidContext()) }
+    single { SecurePinStorage(androidContext()) }
 
     /*Repositories*/
+//    single<AuthRepository> { AuthRepositoryImpl(androidContext(), get(), get(), get()) }
+    single<AuthRepository> { FakeAuthRepository(get(), get()) } // Use fake while backend not ready
     single<ILanguageRepository> { LanguageRepository(get()) }
     single<ThemeRepository> { ThemeRepositoryImpl(get()) }
     single<ProfileRepository> { ProfileRepositoryImpl(get(), get(), get()) }

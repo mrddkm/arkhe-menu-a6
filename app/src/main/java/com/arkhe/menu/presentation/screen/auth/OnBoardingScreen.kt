@@ -1,6 +1,7 @@
 package com.arkhe.menu.presentation.screen.auth
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -33,6 +34,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -43,6 +45,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -62,6 +65,7 @@ import com.arkhe.menu.presentation.navigation.NavigationRoute
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.ui.theme.montserratAlternatesFontFamily
 import com.arkhe.menu.presentation.ui.theme.montserratFontFamily
+import com.arkhe.menu.presentation.viewmodel.AuthViewModel
 import com.arkhe.menu.presentation.viewmodel.LanguageViewModel
 import com.arkhe.menu.presentation.viewmodel.ThemeViewModel
 import compose.icons.EvaIcons
@@ -77,16 +81,31 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun OnboardingScreen(
     navController: NavHostController,
+    onNavigateToMain: () -> Unit,
     langViewModel: LanguageViewModel = koinViewModel(),
     themeViewModel: ThemeViewModel = koinViewModel(),
+    authViewModel: AuthViewModel = koinViewModel(),
     previewThemeModel: ThemeModels? = null
 ) {
     val themeFromVm by themeViewModel.currentTheme.collectAsState()
     val currentThemeModel = previewThemeModel ?: themeFromVm
 
-    /*temporary state*/
-    val isActivation = true
-    val isLogin = true
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+
+    /*---------- state of the datastore ----------*/
+    var isActivated by remember { mutableStateOf(false) }
+    var isSignedIn by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        isActivated = authViewModel.isActivated()
+        isSignedIn = authViewModel.isSignedIn()
+    }
+
+    /*---------- state for bottom sheet ----------*/
+    var showActivationSheet by remember { mutableStateOf(false) }
+    var showSignedInSheet by remember { mutableStateOf(false) }
+    var showPinSheet by remember { mutableStateOf(false) }
 
     val images = listOf(
         R.drawable.image_1,
@@ -112,7 +131,6 @@ fun OnboardingScreen(
     }
 
     val backgroundColor = MaterialTheme.colorScheme.background
-
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
     /*Layout 1*/
@@ -187,9 +205,18 @@ fun OnboardingScreen(
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             TripkeunText(
-                isActivation = isActivation,
-                isLogin = isLogin,
-                currentThemeModel = currentThemeModel
+                isActivation = isActivated.not(),
+                isSignedIn = isSignedIn,
+                currentThemeModel = currentThemeModel,
+                onActivationClick = {
+                    showActivationSheet = true
+                },
+                onLoginClick = {
+                    showSignedInSheet = true
+                },
+                onStartClick = {
+                    showPinSheet = true
+                }
             )
             OnboardingFooter(
                 langViewModel = langViewModel,
@@ -217,13 +244,45 @@ fun OnboardingScreen(
             )
         }
     }
+
+    AuthUi(
+        showActivation = showActivationSheet,
+        showLogin = showSignedInSheet,
+        showPin = showPinSheet,
+        onDismissAll = {
+            showActivationSheet = false
+            showSignedInSheet = false
+            showPinSheet = false
+        },
+        onActivated = {
+            scope.launch {
+                isActivated = authViewModel.isActivated()
+                Toast.makeText(context, "Activation Successful", Toast.LENGTH_SHORT).show()
+            }
+            showActivationSheet = false
+        },
+        onSignedIn = {
+            scope.launch {
+                isSignedIn = authViewModel.isSignedIn()
+                Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
+            }
+            showSignedInSheet = false
+        },
+        onUnlocked = {
+            Toast.makeText(context, "PIN Verified", Toast.LENGTH_SHORT).show()
+            onNavigateToMain()
+        }
+    )
 }
 
 @Composable
 fun TripkeunText(
     isActivation: Boolean,
-    isLogin: Boolean,
-    currentThemeModel: ThemeModels
+    isSignedIn: Boolean,
+    currentThemeModel: ThemeModels,
+    onActivationClick: () -> Unit,
+    onLoginClick: () -> Unit,
+    onStartClick: () -> Unit
 ) {
     Box(
         contentAlignment = Alignment.Center
@@ -256,7 +315,10 @@ fun TripkeunText(
         }
         OnBoardingButton(
             isActivation = isActivation,
-            isLogin = isLogin,
+            isLogin = isSignedIn,
+            onActivationClick = onActivationClick,
+            onLoginClick = onLoginClick,
+            onStartClick = onStartClick,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .offset(y = (38).dp)
@@ -306,26 +368,31 @@ private fun LightThemeBox() {
 private fun OnBoardingButton(
     isActivation: Boolean,
     isLogin: Boolean,
+    onActivationClick: () -> Unit,
+    onLoginClick: () -> Unit,
+    onStartClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    if (!isActivation) {
-        Button(
-            onClick = { /* TODO: Handle Activation */ },
-            modifier = modifier
-                .padding(vertical = 16.dp)
-                .height(48.dp)
-                .width(200.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
-                contentColor = MaterialTheme.colorScheme.primary
-            ),
-        ) {
-            Text("Activation")
-        }
-    } else {
-        if (!isLogin) {
+    when {
+        !isActivation -> {
             Button(
-                onClick = { /* TODO: Handle Login */ },
+                onClick = onActivationClick,
+                modifier = modifier
+                    .padding(vertical = 16.dp)
+                    .height(48.dp)
+                    .width(200.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+                    contentColor = MaterialTheme.colorScheme.primary
+                ),
+            ) {
+                Text("Activation")
+            }
+        }
+
+        !isLogin -> {
+            Button(
+                onClick = onLoginClick,
                 modifier = modifier
                     .padding(vertical = 16.dp)
                     .height(48.dp)
@@ -337,9 +404,11 @@ private fun OnBoardingButton(
             ) {
                 Text("Login")
             }
-        } else {
+        }
+
+        else -> {
             Button(
-                onClick = { /* TODO: Handle Start Activity */ },
+                onClick = onStartClick,
                 modifier = modifier
                     .padding(vertical = 16.dp)
                     .height(48.dp)
@@ -439,7 +508,7 @@ private fun OnboardingFooter(
 @Preview(showBackground = true)
 @Composable
 fun OnboardingScreenPreview() {
-    val previewContext = androidx.compose.ui.platform.LocalContext.current
+    val previewContext = LocalContext.current
     KoinApplicationPreview(
         application = {
             androidContext(previewContext)
@@ -456,6 +525,7 @@ fun OnboardingScreenPreview() {
         ) {
             OnboardingScreen(
                 navController = NavHostController(previewContext),
+                onNavigateToMain = {},
                 previewThemeModel = ThemeModels.LIGHT
             )
         }

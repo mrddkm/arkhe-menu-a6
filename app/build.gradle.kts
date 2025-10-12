@@ -98,6 +98,7 @@ dependencies {
     implementation(libs.bundles.koin)
     implementation(libs.bundles.room)
     implementation(libs.bundles.ktor)
+    implementation(libs.bundles.security)
     implementation(libs.androidx.datastore.preferences)
 
     implementation(libs.bundles.icons)

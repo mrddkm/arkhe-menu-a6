@@ -34,7 +34,15 @@ fun ArkheNavigation(
         /*OnBoarding*/
         composable(NavigationRoute.ON_BOARDING) {
             OnboardingScreen(
-                navController = navController
+                navController = navController,
+                onNavigateToMain = {
+                    navController.navigate(NavigationRoute.MAIN) {
+                        popUpTo(NavigationRoute.ON_BOARDING) {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                    }
+                }
             )
         }
 

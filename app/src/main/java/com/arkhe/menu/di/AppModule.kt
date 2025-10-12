@@ -2,6 +2,7 @@
 
 package com.arkhe.menu.di
 
+import com.arkhe.menu.presentation.viewmodel.AuthViewModel
 import com.arkhe.menu.presentation.viewmodel.CategoryViewModel
 import com.arkhe.menu.presentation.viewmodel.LanguageViewModel
 import com.arkhe.menu.presentation.viewmodel.MainViewModel
@@ -16,6 +17,8 @@ import org.koin.dsl.module
 val appModule = module {
 
     single { ScrollStateManager() }
+
+    viewModel { AuthViewModel(get()) }
 
     viewModel { MainViewModel(get(), get()) }
 

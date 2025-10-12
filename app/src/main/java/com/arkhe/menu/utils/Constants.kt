@@ -2,6 +2,8 @@
 
 package com.arkhe.menu.utils
 
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 
 object Constants {
@@ -34,6 +36,9 @@ object Constants {
         const val DATASTORE_NAME = "app_preferences"
         val THEME_KEY = stringPreferencesKey("theme_mode")
         val LANGUAGE_CODE_KEY = stringPreferencesKey("language_code")
+        val KEY_IS_ACTIVATED = booleanPreferencesKey("is_activated")
+        val KEY_IS_SIGNED_IN = booleanPreferencesKey("is_signed_in")
+        val KEY_PIN_ATTEMPTS = intPreferencesKey("pin_attempts")
     }
 
     object CurrentLanguage {
