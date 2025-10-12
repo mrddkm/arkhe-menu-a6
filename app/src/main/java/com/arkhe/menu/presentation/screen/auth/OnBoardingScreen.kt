@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -56,10 +57,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.arkhe.menu.R
 import com.arkhe.menu.data.local.preferences.Lang
-import com.arkhe.menu.di.appModule
-import com.arkhe.menu.di.dataModule
-import com.arkhe.menu.di.domainModule
-import com.arkhe.menu.di.previewModule
 import com.arkhe.menu.domain.model.ThemeModels
 import com.arkhe.menu.presentation.navigation.NavigationRoute
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
@@ -71,12 +68,10 @@ import com.arkhe.menu.presentation.viewmodel.ThemeViewModel
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.Activity
+import compose.icons.evaicons.outline.Bulb
 import compose.icons.evaicons.outline.LogIn
-import compose.icons.evaicons.outline.Pantone
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.koin.android.ext.koin.androidContext
-import org.koin.compose.KoinApplicationPreview
 import org.koin.compose.viewmodel.koinViewModel
 
 @SuppressLint("ConfigurationScreenWidthHeight")
@@ -369,7 +364,7 @@ private fun OnBoardingButton(
                 modifier = modifier
                     .padding(vertical = 16.dp)
                     .height(48.dp)
-                    .width(200.dp),
+                    .width(230.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
                     contentColor = MaterialTheme.colorScheme.primary
@@ -378,14 +373,21 @@ private fun OnBoardingButton(
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp)
+                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
                 ) {
                     Icon(
-                        imageVector = EvaIcons.Outline.Pantone,
+                        imageVector = EvaIcons.Outline.Bulb,
                         contentDescription = null,
-                        modifier = Modifier.padding(end = 8.dp)
+                        modifier = Modifier
+                            .padding(end = 8.dp)
+                            .size(28.dp)
                     )
-                    Text("Activation")
+                    Text(
+                        text = "Activation",
+                        fontFamily = montserratFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 24.sp
+                    )
                 }
             }
         }
@@ -396,7 +398,7 @@ private fun OnBoardingButton(
                 modifier = modifier
                     .padding(vertical = 16.dp)
                     .height(48.dp)
-                    .width(200.dp),
+                    .width(230.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
                     contentColor = MaterialTheme.colorScheme.primary
@@ -405,14 +407,21 @@ private fun OnBoardingButton(
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp)
+                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
                 ) {
+                    Text(
+                        text = "Sign-in",
+                        fontFamily = montserratFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 24.sp
+                    )
                     Icon(
                         imageVector = EvaIcons.Outline.LogIn,
                         contentDescription = null,
-                        modifier = Modifier.padding(end = 8.dp)
+                        modifier = Modifier
+                            .padding(start = 8.dp)
+                            .size(28.dp)
                     )
-                    Text("Sign-in")
                 }
             }
         }
@@ -423,7 +432,7 @@ private fun OnBoardingButton(
                 modifier = modifier
                     .padding(vertical = 16.dp)
                     .height(48.dp)
-                    .width(200.dp),
+                    .width(270.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
                     contentColor = MaterialTheme.colorScheme.primary
@@ -433,14 +442,21 @@ private fun OnBoardingButton(
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp)
+                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
                 ) {
                     Icon(
                         imageVector = EvaIcons.Outline.Activity,
-                        contentDescription = "Start Activity",
-                        modifier = Modifier.padding(end = 8.dp)
+                        contentDescription = null,
+                        modifier = Modifier
+                            .padding(end = 8.dp)
+                            .size(28.dp)
                     )
-                    Text("Start Activity")
+                    Text(
+                        text = "Start Activity",
+                        fontFamily = montserratFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 24.sp
+                    )
                 }
             }
         }
@@ -516,7 +532,7 @@ private fun OnboardingFooter(
     }
 }
 
-@Preview(showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
 fun OnboardingScreenPreview() {
     val previewContext = LocalContext.current
@@ -541,15 +557,37 @@ fun OnboardingScreenPreview() {
             )
         }
     }
-}
+}*/
 
-/*
+//@Preview(showBackground = true)
+//@Composable
+//fun TripkeunTextPreview() {
+//    ArkheTheme(
+//        currentTheme = ThemeModels.DARK
+//    ) {
+//        TripkeunText(
+//            isActivation = false,
+//            isSignedIn = false,
+//            currentThemeModel = ThemeModels.DARK,
+//            onActivationClick = {},
+//            onSignedInClick = {},
+//            onStartClick = {}
+//        )
+//    }
+//}
+
 @Preview(showBackground = true)
 @Composable
-fun TripkeunTextPreview() {
+fun OnBoardingButtonPreview() {
     ArkheTheme(
         currentTheme = ThemeModels.DARK
     ) {
-        TripkeunText()
+        OnBoardingButton(
+            isActivation = false,
+            isSignedIn = false,
+            onActivationClick = {},
+            onSignedInClick = {},
+            onStartClick = {}
+        )
     }
-}*/
+}
