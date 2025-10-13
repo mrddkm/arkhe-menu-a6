@@ -257,7 +257,7 @@ fun rememberActivationState(): ActivationState {
     var code by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
-    var pin by remember { mutableStateOf("") }
+    var pin by remember { mutableStateOf("1234") }
     var confirmPin by remember { mutableStateOf("") }
 
     return ActivationState(

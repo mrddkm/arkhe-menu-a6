@@ -64,7 +64,6 @@ import com.arkhe.menu.utils.Constants.TextPlaceHolder.PLACE_HOLDER_PHONE
 import com.arkhe.menu.utils.Constants.TextPlaceHolder.PLACE_HOLDER_USER_ID
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
-import compose.icons.evaicons.outline.Archive
 import compose.icons.evaicons.outline.ArrowIosBack
 import compose.icons.evaicons.outline.ArrowIosForward
 import compose.icons.evaicons.outline.CheckmarkCircle
@@ -642,35 +641,97 @@ fun ActivationContentStepFour(
                 .padding(vertical = 12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
-                repeat(maxLength) { index ->
-                    val filled = index < state.pin.length
-                    val scale by animateFloatAsState(
-                        targetValue = if (filled) 1.2f else 1f,
-                        animationSpec = spring(
-                            dampingRatio = 0.4f,
-                            stiffness = Spring.StiffnessMedium
-                        ),
-                        label = "pinDotScale"
-                    )
+            if (state.pin.length < maxLength) {
+                Text(
+                    text = "Create PIN",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color.DarkGray
+                )
+                Spacer(Modifier.height(10.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
+                    repeat(maxLength) { index ->
+                        val filled = index < state.pin.length
+                        val scale by animateFloatAsState(
+                            targetValue = if (filled) 1.2f else 1f,
+                            animationSpec = spring(
+                                dampingRatio = 0.4f,
+                                stiffness = Spring.StiffnessMedium
+                            ),
+                            label = "pinDotScale"
+                        )
 
-                    Box(
-                        modifier = Modifier
-                            .size(18.dp)
-                            .graphicsLayer {
-                                scaleX = scale
-                                scaleY = scale
-                            }
-                            .background(
-                                if (filled) MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
-                                else Color.LightGray,
-                                shape = CircleShape
-                            )
+                        Box(
+                            modifier = Modifier
+                                .size(18.dp)
+                                .graphicsLayer {
+                                    scaleX = scale
+                                    scaleY = scale
+                                }
+                                .background(
+                                    if (filled) MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
+                                    else Color.LightGray,
+                                    shape = CircleShape
+                                )
+                        )
+                    }
+                }
+            } else {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        imageVector = EvaIcons.Outline.CheckmarkCircle,
+                        contentDescription = null,
+                        modifier = Modifier.size(12.dp)
+                    )
+                    Spacer(Modifier.width(4.dp))
+                    Text(
+                        text = "Create PIN",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color.DarkGray
                     )
                 }
             }
 
-            Spacer(Modifier.height(28.dp))
+            if (state.pin.length == maxLength) {
+                Spacer(Modifier.height(20.dp))
+                Text(
+                    text = "Confirm PIN",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color.DarkGray
+                )
+                Spacer(Modifier.height(10.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
+                    repeat(maxLength) { index ->
+                        val filled = index < state.confirmPin.length
+                        val scale by animateFloatAsState(
+                            targetValue = if (filled) 1.2f else 1f,
+                            animationSpec = spring(
+                                dampingRatio = 0.4f,
+                                stiffness = Spring.StiffnessMedium
+                            ),
+                            label = "pinDotScale"
+                        )
+
+                        Box(
+                            modifier = Modifier
+                                .size(18.dp)
+                                .graphicsLayer {
+                                    scaleX = scale
+                                    scaleY = scale
+                                }
+                                .background(
+                                    if (filled) MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
+                                    else Color.LightGray,
+                                    shape = CircleShape
+                                )
+                        )
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(36.dp))
             AnimatedNumericKeypad(
                 onDigit = { digit ->
                     if (state.pin.length < maxLength) state.onPinChange(state.pin + digit)
@@ -701,7 +762,7 @@ fun ActivationContentStepFour(
             Spacer(Modifier.width(24.dp))
             Button(
                 onClick = onFinish,
-                enabled = state.pin.length == 4 && state.confirmPin.length == 4,
+                enabled = state.pin.length == maxLength && state.confirmPin.length == maxLength,
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
