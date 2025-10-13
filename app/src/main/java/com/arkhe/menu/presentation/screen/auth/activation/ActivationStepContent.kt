@@ -2,16 +2,22 @@ package com.arkhe.menu.presentation.screen.auth.activation
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -41,6 +47,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -48,6 +55,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.arkhe.menu.presentation.ui.components.edit.AnimatedNumericKeypad
 import com.arkhe.menu.presentation.ui.components.edit.PasswordRequirementsChecklist
 import com.arkhe.menu.presentation.ui.components.edit.validatePassword
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
@@ -56,8 +64,10 @@ import com.arkhe.menu.utils.Constants.TextPlaceHolder.PLACE_HOLDER_PHONE
 import com.arkhe.menu.utils.Constants.TextPlaceHolder.PLACE_HOLDER_USER_ID
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
+import compose.icons.evaicons.outline.Archive
 import compose.icons.evaicons.outline.ArrowIosBack
 import compose.icons.evaicons.outline.ArrowIosForward
+import compose.icons.evaicons.outline.CheckmarkCircle
 import compose.icons.evaicons.outline.CloseCircle
 import kotlinx.coroutines.delay
 
@@ -578,7 +588,7 @@ fun ActivationContentStepThree(
     }
 }
 
-@Composable
+/*@Composable
 fun ActivationContentStepFour(
     state: ActivationState,
     onFinish: () -> Unit
@@ -607,6 +617,108 @@ fun ActivationContentStepFour(
     ) {
         Text("Finish")
     }
+}*/
+
+@Composable
+fun ActivationContentStepFour(
+    state: ActivationState,
+    onFinish: () -> Unit,
+    onBack: () -> Unit
+) {
+    val maxLength = 4
+
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Text("4 / 4", style = MaterialTheme.typography.titleMedium)
+        Spacer(Modifier.height(4.dp))
+        Text("4-digit PIN", style = MaterialTheme.typography.titleMedium)
+        Spacer(Modifier.height(8.dp))
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
+                repeat(maxLength) { index ->
+                    val filled = index < state.pin.length
+                    val scale by animateFloatAsState(
+                        targetValue = if (filled) 1.2f else 1f,
+                        animationSpec = spring(
+                            dampingRatio = 0.4f,
+                            stiffness = Spring.StiffnessMedium
+                        ),
+                        label = "pinDotScale"
+                    )
+
+                    Box(
+                        modifier = Modifier
+                            .size(18.dp)
+                            .graphicsLayer {
+                                scaleX = scale
+                                scaleY = scale
+                            }
+                            .background(
+                                if (filled) MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
+                                else Color.LightGray,
+                                shape = CircleShape
+                            )
+                    )
+                }
+            }
+
+            Spacer(Modifier.height(28.dp))
+            AnimatedNumericKeypad(
+                onDigit = { digit ->
+                    if (state.pin.length < maxLength) state.onPinChange(state.pin + digit)
+                },
+                onDelete = {
+                    if (state.pin.isNotEmpty()) state.onPinChange(state.pin.dropLast(1))
+                }
+            )
+        }
+        Spacer(Modifier.height(8.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            TextButton(onClick = onBack) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        imageVector = EvaIcons.Outline.ArrowIosBack,
+                        contentDescription = null
+                    )
+                    Spacer(Modifier.width(4.dp))
+                    Text("Back")
+                }
+            }
+            Spacer(Modifier.width(24.dp))
+            Button(
+                onClick = onFinish,
+                enabled = state.pin.length == 4 && state.confirmPin.length == 4,
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        imageVector = EvaIcons.Outline.CheckmarkCircle,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(Modifier.width(4.dp))
+                    Text("Finish")
+                }
+            }
+        }
+
+    }
 }
 
 /*@Preview(showBackground = true)
@@ -632,6 +744,7 @@ fun ActivationStepTwoPreview() {
     }
 }*/
 
+/*
 @Preview(showBackground = true)
 @Composable
 fun ActivationStepThreePreview() {
@@ -639,6 +752,18 @@ fun ActivationStepThreePreview() {
         ActivationContentStepThree(
             state = rememberActivationState(),
             onContinue = {},
+            onBack = {}
+        )
+    }
+}*/
+
+@Preview(showBackground = true)
+@Composable
+fun ActivationStepFourPreview() {
+    ArkheTheme {
+        ActivationContentStepFour(
+            state = rememberActivationState(),
+            onFinish = {},
             onBack = {}
         )
     }

@@ -40,11 +40,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -661,9 +661,9 @@ fun AnimatedPinField(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = label, style = MaterialTheme.typography.titleMedium)
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(16.dp))
 
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
             repeat(maxLength) { index ->
                 val filled = index < value.length
                 val scale by animateFloatAsState(
@@ -683,15 +683,15 @@ fun AnimatedPinField(
                             scaleY = scale
                         }
                         .background(
-                            if (filled) MaterialTheme.colorScheme.primary
-                            else MaterialTheme.colorScheme.surfaceVariant,
+                            if (filled) MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
+                            else Color.LightGray,
                             shape = CircleShape
                         )
                 )
             }
         }
 
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(28.dp))
         AnimatedNumericKeypad(
             onDigit = { digit ->
                 if (value.length < maxLength) onValueChange(value + digit)
@@ -715,9 +715,9 @@ fun AnimatedNumericKeypad(
         listOf("", "0", "⌫")
     )
 
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
         keys.forEach { row ->
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(28.dp)) {
                 row.forEach { key ->
                     when (key) {
                         "" -> Spacer(Modifier.size(64.dp))
@@ -743,7 +743,7 @@ fun AnimatedKeyButton(
         label = "keyPressScale"
     )
 
-    OutlinedButton(
+    TextButton(
         onClick = onClick,
         modifier = Modifier
             .size(64.dp)
@@ -751,22 +751,33 @@ fun AnimatedKeyButton(
                 scaleX = scale
                 scaleY = scale
             },
+        colors = ButtonDefaults.outlinedButtonColors(
+            containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
+        ),
         interactionSource = interactionSource,
         contentPadding = PaddingValues(0.dp)
     ) {
         Text(
             text,
             style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onSurface,
+            color = MaterialTheme.colorScheme.primary,
             fontFamily = sourceCodeProFontFamily
         )
     }
 }
 
-@Preview(showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
 fun AnimatedNumericKeypadPreview() {
     ArkheTheme {
         AnimatedNumericKeypad(onDigit = {}, onDelete = {})
+    }
+}*/
+
+@Preview(showBackground = true)
+@Composable
+fun AnimatedPinFieldPreview() {
+    ArkheTheme {
+        AnimatedPinField(label = "Enter PIN", value = "12", onValueChange = {})
     }
 }
