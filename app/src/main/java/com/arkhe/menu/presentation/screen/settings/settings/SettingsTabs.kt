@@ -1,4 +1,4 @@
-package com.arkhe.menu.presentation.screen.settings
+package com.arkhe.menu.presentation.screen.settings.settings
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

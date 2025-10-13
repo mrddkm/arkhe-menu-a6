@@ -50,7 +50,7 @@ import com.arkhe.menu.presentation.screen.docs.customer.CustomerScreen
 import com.arkhe.menu.presentation.screen.docs.organization.OrganizationScreen
 import com.arkhe.menu.presentation.screen.docs.product.ProductsScreen
 import com.arkhe.menu.presentation.screen.docs.profile.ProfileScreen
-import com.arkhe.menu.presentation.screen.settings.SettingsBottomSheet
+import com.arkhe.menu.presentation.screen.settings.settings.SettingsBottomSheet
 import com.arkhe.menu.presentation.ui.animation.ScreenTransitions
 import com.arkhe.menu.presentation.ui.components.ArkheBottomBar
 import com.arkhe.menu.presentation.ui.components.ArkheTopBar

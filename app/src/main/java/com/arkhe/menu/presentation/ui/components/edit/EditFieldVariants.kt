@@ -67,7 +67,12 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.arkhe.menu.presentation.ui.theme.ArkheTheme
+import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
+import com.arkhe.menu.utils.Constants.TextPlaceHolder.PLACE_HOLDER_MAIL
+import com.arkhe.menu.utils.Constants.TextPlaceHolder.PLACE_HOLDER_PHONE
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.ArrowIosDownward
@@ -83,11 +88,7 @@ fun EditNameField(
     onValueChange: (String) -> Unit
 ) {
     val focusRequester = remember { FocusRequester() }
-
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-    }
-
+    LaunchedEffect(Unit) { focusRequester.requestFocus() }
     OutlinedTextField(
         value = value,
         onValueChange = { onValueChange(it.uppercase()) },
@@ -122,9 +123,7 @@ fun EditInitialFields(
     onInitialChange: (String) -> Unit
 ) {
     val focusRequester = remember { FocusRequester() }
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-    }
+    LaunchedEffect(Unit) { focusRequester.requestFocus() }
     OutlinedTextField(
         value = initial,
         onValueChange = { onInitialChange(it.uppercase()) },
@@ -159,9 +158,7 @@ fun EditNicknameFields(
     onNicknameChange: (String) -> Unit
 ) {
     val focusRequester = remember { FocusRequester() }
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-    }
+    LaunchedEffect(Unit) { focusRequester.requestFocus() }
     OutlinedTextField(
         value = nickname,
         onValueChange = { onNicknameChange(it.lowercase()) },
@@ -197,14 +194,9 @@ fun EditBirthdayField(
     onDateChange: (String) -> Unit
 ) {
     val focusRequester = remember { FocusRequester() }
-
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-    }
-
+    LaunchedEffect(Unit) { focusRequester.requestFocus() }
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
-
     try {
         val parts = selectedDate.split("-")
         if (parts.size == 3) {
@@ -215,7 +207,6 @@ fun EditBirthdayField(
         }
     } catch (_: Exception) {
     }
-
     val datePicker = DatePickerDialog(
         context,
         { _, year, month, dayOfMonth ->
@@ -257,11 +248,7 @@ fun EditGenderDropdown(
 ) {
     val focusRequester = remember { FocusRequester() }
     var showPicker by remember { mutableStateOf(false) }
-
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-    }
-
+    LaunchedEffect(Unit) { focusRequester.requestFocus() }
     OutlinedTextField(
         value = selected,
         onValueChange = {},
@@ -281,10 +268,8 @@ fun EditGenderDropdown(
             }
         }
     )
-
     if (showPicker) {
         val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-
         ModalBottomSheet(
             onDismissRequest = { showPicker = false },
             sheetState = sheetState
@@ -384,7 +369,7 @@ fun EditEmailField(
         label = { Text(label) },
         placeholder = {
             Text(
-                text = "your@email.com",
+                text = PLACE_HOLDER_MAIL,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
             )
         },
@@ -425,7 +410,7 @@ fun EditPhoneField(
         label = { Text(label) },
         placeholder = {
             Text(
-                text = "6280000000000",
+                text = PLACE_HOLDER_PHONE,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
             )
         },
@@ -772,7 +757,16 @@ fun AnimatedKeyButton(
         Text(
             text,
             style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
+            fontFamily = sourceCodeProFontFamily
         )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun AnimatedNumericKeypadPreview() {
+    ArkheTheme {
+        AnimatedNumericKeypad(onDigit = {}, onDelete = {})
     }
 }

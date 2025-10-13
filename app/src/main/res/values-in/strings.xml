@@ -9,6 +9,9 @@
     <string name="profile">Profil</string>
     <string name="settings">Pengaturan</string>
 
+    <!--Auth-->
+    <string name="activation">Aktivasi</string>
+
     <!--Settings Bottom Sheet-->
     <string name="personal_info">Info pribadi</string>
     <string name="personal_info_desc">Nama, telepon &amp; profil</string>

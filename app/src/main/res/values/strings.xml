@@ -9,6 +9,9 @@
     <string name="profile">Profile</string>
     <string name="settings">Settings</string>
 
+    <!--Auth-->
+    <string name="activation">Activation</string>
+
     <!--Settings Bottom Sheet-->
     <string name="personal_info">Personal info</string>
     <string name="personal_info_desc">Name, phone &amp; profile</string>

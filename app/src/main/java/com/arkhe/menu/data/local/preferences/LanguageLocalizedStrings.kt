@@ -91,6 +91,12 @@ object LanguageLocalizedStrings {
                 R.string.please_wait,
                 languageCode
             ),
+            /*Auth*/
+            Lang.ACTIVATION to LanguageManager.getLocalizedString(
+                appContext,
+                R.string.activation,
+                languageCode
+            ),
         )
     }
 }
@@ -112,4 +118,6 @@ object Lang {
     const val TERMS_OF_SERVICE = "terms_of_service"
     const val CHANGING_LANGUAGE = "changing_language"
     const val PLEASE_WAIT = "please_wait"
+    /*Auth*/
+    const val ACTIVATION = "activation"
 }

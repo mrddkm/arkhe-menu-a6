@@ -67,7 +67,7 @@ fun AuthUi(
         ActivationBottomSheet(
             onDismiss = onDismissAll,
             onActivated = onActivated,
-            viewModel = viewModel
+            authViewModel = viewModel
         )
     }
 

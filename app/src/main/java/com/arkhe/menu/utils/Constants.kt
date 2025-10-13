@@ -32,6 +32,7 @@ object Constants {
         const val PROFILE_TABLE = "profiles"
         const val CATEGORIES_TABLE = "categories"
         const val PRODUCT_TABLE = "products"
+
         /*preferences data store*/
         const val DATASTORE_NAME = "app_preferences"
         val THEME_KEY = stringPreferencesKey("theme_mode")
@@ -52,6 +53,12 @@ object Constants {
         const val STATISTICS_READY = "Ready"
         const val STATISTICS_RESEARCH = "Research"
         const val STATISTICS_INITIATION = "Initiation"
+    }
+
+    object TextPlaceHolder {
+        const val PLACE_HOLDER_MAIL = "your@email.com"
+        const val PLACE_HOLDER_PHONE = "628000000000"
+        const val PLACE_HOLDER_USER_ID = "000000"
     }
 
     object Simulation {
