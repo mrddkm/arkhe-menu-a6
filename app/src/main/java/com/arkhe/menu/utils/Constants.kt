@@ -61,6 +61,19 @@ object Constants {
         const val PLACE_HOLDER_USER_ID = "000000"
     }
 
+    object MaxMinLength {
+        const val MAX_LENGTH_EMAIL = 50
+        const val MIN_LENGTH_EMAIL = 7
+        const val MAX_LENGTH_PHONE = 15
+        const val MIN_LENGTH_PHONE = 11
+        const val MAX_LENGTH_USER_ID = 50
+        const val MIN_LENGTH_USER_ID = 3
+        const val MAX_LENGTH_ACTIVATION_CODE = 4
+        const val MAX_LENGTH_PASSWORD = 20
+        const val MIN_LENGTH_PASSWORD = 8
+        const val MAX_LENGTH_PIN = 4
+    }
+
     object Simulation {
         const val TOKEN = "WWUmyoU9yWjVUsn8"
     }

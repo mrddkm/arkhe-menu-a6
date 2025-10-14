@@ -74,8 +74,8 @@ fun AuthUi(
     if (showSignedIn) {
         SignInBottomSheet(
             onDismiss = onDismissAll,
-            onSubmit = { userId, password ->
-                scope.launch { viewModel.signIn(userId, password) }
+            onSignedIn = { userId, password ->
+                scope.launch { viewModel.signedIn(userId, password) }
             }
         )
     }

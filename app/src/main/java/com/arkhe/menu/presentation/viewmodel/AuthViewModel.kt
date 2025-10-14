@@ -58,7 +58,7 @@ class AuthViewModel(private val repo: AuthRepository) : ViewModel() {
         }
     }
 
-    fun signIn(userId: String, password: String) {
+    fun signedIn(userId: String, password: String) {
         viewModelScope.launch {
             _uiState.value = AuthUiState.Loading
             val res = repo.signIn(userId, password)

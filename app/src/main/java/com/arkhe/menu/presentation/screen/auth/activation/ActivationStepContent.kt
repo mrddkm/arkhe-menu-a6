@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
@@ -587,37 +586,6 @@ fun ActivationContentStepThree(
     }
 }
 
-/*@Composable
-fun ActivationContentStepFour(
-    state: ActivationState,
-    onFinish: () -> Unit
-) {
-    Text("Create 4-digit PIN", style = MaterialTheme.typography.titleMedium)
-    Spacer(Modifier.height(16.dp))
-    OutlinedTextField(
-        value = state.pin,
-        onValueChange = { if (it.length <= 4) state.onPinChange },
-        label = { Text("New PIN") },
-        singleLine = true,
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-    )
-    OutlinedTextField(
-        value = state.confirmPin,
-        onValueChange = { if (it.length <= 4) state.onConfirmPinChange },
-        label = { Text("Confirm PIN") },
-        singleLine = true,
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-    )
-    Spacer(Modifier.height(24.dp))
-    Button(
-        onClick = onFinish,
-        enabled = state.pin.length == 4 && state.confirmPin.length == 4,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Text("Finish")
-    }
-}*/
-
 @Composable
 fun ActivationContentStepFour(
     state: ActivationState,
@@ -625,6 +593,14 @@ fun ActivationContentStepFour(
     onBack: () -> Unit
 ) {
     val maxLength = 4
+    val labelCreatePIN = "Create PIN"
+    val labelConfirmPIN = "Confirm PIN"
+
+    val creatingPin = state.pin.length < maxLength
+    val confirmingPin = state.pin.length == maxLength
+
+    val pinMatch = state.pin == state.confirmPin && state.confirmPin.length == maxLength
+    val pinMismatch = state.confirmPin.length == maxLength && state.pin != state.confirmPin
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -635,31 +611,22 @@ fun ActivationContentStepFour(
         Spacer(Modifier.height(4.dp))
         Text("4-digit PIN", style = MaterialTheme.typography.titleMedium)
         Spacer(Modifier.height(8.dp))
+
+        /*CREATE PIN SECTION*/
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            if (state.pin.length < maxLength) {
-                Text(
-                    text = "Create PIN",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = Color.DarkGray
-                )
-                Spacer(Modifier.height(10.dp))
+            if (creatingPin) {
+                Text(labelCreatePIN, style = MaterialTheme.typography.labelSmall, color = Color.DarkGray)
                 Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
                     repeat(maxLength) { index ->
                         val filled = index < state.pin.length
                         val scale by animateFloatAsState(
                             targetValue = if (filled) 1.2f else 1f,
-                            animationSpec = spring(
-                                dampingRatio = 0.4f,
-                                stiffness = Spring.StiffnessMedium
-                            ),
+                            animationSpec = spring(dampingRatio = 0.4f, stiffness = Spring.StiffnessMedium),
                             label = "pinDotScale"
                         )
-
                         Box(
                             modifier = Modifier
                                 .size(18.dp)
@@ -683,78 +650,99 @@ fun ActivationContentStepFour(
                     Icon(
                         imageVector = EvaIcons.Outline.CheckmarkCircle,
                         contentDescription = null,
-                        modifier = Modifier.size(12.dp)
+                        modifier = Modifier.size(12.dp),
+                        tint = Color.Green.copy(alpha = 0.8f)
                     )
                     Spacer(Modifier.width(4.dp))
+                    Text(labelCreatePIN, style = MaterialTheme.typography.labelSmall, color = Color.DarkGray)
+                }
+            }
+        }
+
+        /*CONFIRM PIN SECTION*/
+        if (confirmingPin) {
+            Spacer(Modifier.height(8.dp))
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                if (!pinMatch) {
+                    Text(labelConfirmPIN, style = MaterialTheme.typography.labelSmall, color = Color.DarkGray)
+                    Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
+                        repeat(maxLength) { index ->
+                            val filled = index < state.confirmPin.length
+                            val scale by animateFloatAsState(
+                                targetValue = if (filled) 1.2f else 1f,
+                                animationSpec = spring(dampingRatio = 0.4f, stiffness = Spring.StiffnessMedium),
+                                label = "confirmPinDotScale"
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .size(18.dp)
+                                    .graphicsLayer {
+                                        scaleX = scale
+                                        scaleY = scale
+                                    }
+                                    .background(
+                                        if (filled) MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
+                                        else Color.LightGray,
+                                        shape = CircleShape
+                                    )
+                            )
+                        }
+                    }
+                } else {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = EvaIcons.Outline.CheckmarkCircle,
+                            contentDescription = null,
+                            modifier = Modifier.size(12.dp),
+                            tint = Color.Green.copy(alpha = 0.8f)
+                        )
+                        Spacer(Modifier.width(4.dp))
+                        Text(labelConfirmPIN, style = MaterialTheme.typography.labelSmall, color = Color.DarkGray)
+                    }
+                }
+
+                if (pinMismatch) {
                     Text(
-                        text = "Create PIN",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = Color.DarkGray
+                        text = "PIN not match",
+                        color = MaterialTheme.colorScheme.error.copy(alpha = 0.7f),
+                        style = MaterialTheme.typography.labelSmall.copy()
                     )
                 }
             }
+        }
 
-            if (state.pin.length == maxLength) {
-                Spacer(Modifier.height(20.dp))
-                Text(
-                    text = "Confirm PIN",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = Color.DarkGray
-                )
-                Spacer(Modifier.height(10.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
-                    repeat(maxLength) { index ->
-                        val filled = index < state.confirmPin.length
-                        val scale by animateFloatAsState(
-                            targetValue = if (filled) 1.2f else 1f,
-                            animationSpec = spring(
-                                dampingRatio = 0.4f,
-                                stiffness = Spring.StiffnessMedium
-                            ),
-                            label = "pinDotScale"
-                        )
-
-                        Box(
-                            modifier = Modifier
-                                .size(18.dp)
-                                .graphicsLayer {
-                                    scaleX = scale
-                                    scaleY = scale
-                                }
-                                .background(
-                                    if (filled) MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
-                                    else Color.LightGray,
-                                    shape = CircleShape
-                                )
-                        )
-                    }
+        Spacer(Modifier.height(16.dp))
+        AnimatedNumericKeypad(
+            onDigit = { digit ->
+                if (state.pin.length < maxLength) {
+                    state.onPinChange(state.pin + digit)
+                } else if (state.confirmPin.length < maxLength) {
+                    state.onConfirmPinChange(state.confirmPin + digit)
+                }
+            },
+            onDelete = {
+                if (state.confirmPin.isNotEmpty()) {
+                    state.onConfirmPinChange(state.confirmPin.dropLast(1))
+                } else if (state.pin.isNotEmpty()) {
+                    state.onPinChange(state.pin.dropLast(1))
                 }
             }
+        )
 
-            Spacer(Modifier.height(36.dp))
-            AnimatedNumericKeypad(
-                onDigit = { digit ->
-                    if (state.pin.length < maxLength) state.onPinChange(state.pin + digit)
-                },
-                onDelete = {
-                    if (state.pin.isNotEmpty()) state.onPinChange(state.pin.dropLast(1))
-                }
-            )
-        }
         Spacer(Modifier.height(8.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
             TextButton(onClick = onBack) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        imageVector = EvaIcons.Outline.ArrowIosBack,
-                        contentDescription = null
-                    )
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
+                    Icon(imageVector = EvaIcons.Outline.ArrowIosBack, contentDescription = null)
                     Spacer(Modifier.width(4.dp))
                     Text("Back")
                 }
@@ -762,7 +750,7 @@ fun ActivationContentStepFour(
             Spacer(Modifier.width(24.dp))
             Button(
                 onClick = onFinish,
-                enabled = state.pin.length == maxLength && state.confirmPin.length == maxLength,
+                enabled = pinMatch,
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -778,7 +766,6 @@ fun ActivationContentStepFour(
                 }
             }
         }
-
     }
 }
 

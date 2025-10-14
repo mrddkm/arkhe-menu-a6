@@ -234,13 +234,6 @@ fun ActivationBottomSheet(
                     }
                 )
             }
-
-//            Spacer(Modifier.height(8.dp))
-//            if (state.step > 1) {
-//                TextButton(onClick = { state.onStepChange(state.step - 1) }) {
-//                    Text("Back")
-//                }
-//            }
         }
     }
 }
@@ -257,7 +250,7 @@ fun rememberActivationState(): ActivationState {
     var code by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
-    var pin by remember { mutableStateOf("1234") }
+    var pin by remember { mutableStateOf("") }
     var confirmPin by remember { mutableStateOf("") }
 
     return ActivationState(
