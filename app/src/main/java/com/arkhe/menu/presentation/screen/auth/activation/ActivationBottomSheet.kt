@@ -1,7 +1,6 @@
 package com.arkhe.menu.presentation.screen.auth.activation
 
 import android.content.Context
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -59,7 +58,7 @@ fun ActivationBottomSheet(
     onDismiss: () -> Unit,
     onActivated: () -> Unit,
     authViewModel: AuthViewModel = koinViewModel(),
-    langViewModel: LanguageViewModel = koinViewModel(),
+    langViewModel: LanguageViewModel = koinViewModel()
 ) {
     val state = rememberActivationState()
     val uiState by authViewModel.uiState.collectAsState()
@@ -156,13 +155,7 @@ fun ActivationBottomSheet(
                         }
                     }
 
-                    is AuthUiState.Error -> {
-                        Toast.makeText(
-                            state.context,
-                            (uiState as AuthUiState.Error).message,
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                    is AuthUiState.Error -> {}
 
                     else -> Unit
                 }
@@ -215,9 +208,6 @@ fun ActivationBottomSheet(
                             if (state.pin == state.confirmPin && state.pin.length == 4) {
                                 authViewModel.savePin(state.pin)
                                 onActivated()
-                            } else {
-                                Toast.makeText(state.context, "PIN mismatch", Toast.LENGTH_SHORT)
-                                    .show()
                             }
                         }
                     },

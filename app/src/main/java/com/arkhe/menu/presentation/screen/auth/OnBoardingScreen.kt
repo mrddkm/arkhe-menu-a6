@@ -1,7 +1,6 @@
 package com.arkhe.menu.presentation.screen.auth
 
 import android.annotation.SuppressLint
-import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -253,7 +252,6 @@ fun OnboardingScreen(
             onNavigateToMain()
         },
         onUnlocked = {
-            Toast.makeText(context, "PIN Verified", Toast.LENGTH_SHORT).show()
             onNavigateToMain()
         }
     )

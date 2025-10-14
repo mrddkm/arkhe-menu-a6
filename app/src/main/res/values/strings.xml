@@ -11,6 +11,7 @@
 
     <!--Auth-->
     <string name="activation">Activation</string>
+    <string name="sign_in">Sign-in</string>
 
     <!--Settings Bottom Sheet-->
     <string name="personal_info">Personal info</string>

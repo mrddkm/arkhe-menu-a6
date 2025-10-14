@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
@@ -61,7 +62,7 @@ import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.utils.Constants.MaxMinLength.MAX_LENGTH_PIN
 import com.arkhe.menu.utils.Constants.TextPlaceHolder.PLACE_HOLDER_MAIL
 import com.arkhe.menu.utils.Constants.TextPlaceHolder.PLACE_HOLDER_PHONE
-import com.arkhe.menu.utils.Constants.TextPlaceHolder.PLACE_HOLDER_USER_ID
+import com.arkhe.menu.utils.Constants.TextPlaceHolder.PLACE_HOLDER_PRIMARY_USER_ID
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.ArrowIosBack
@@ -84,8 +85,7 @@ fun ActivationContentStepOne(
         focusUserId.requestFocus()
     }
     Column(
-        Modifier
-            .fillMaxWidth(),
+        Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -97,7 +97,7 @@ fun ActivationContentStepOne(
             label = { Text("Tripkeun ID") },
             placeholder = {
                 Text(
-                    text = PLACE_HOLDER_USER_ID,
+                    text = PLACE_HOLDER_PRIMARY_USER_ID,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                 )
             },
@@ -479,7 +479,10 @@ fun ActivationContentStepThree(
 
             // Strength Bar & Checklist (visible while checklist NOT yet all passed)
             AnimatedVisibility(visible = state.password.isNotEmpty() && !allChecklistPassed) {
-                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Column(
+                    modifier = Modifier.fillMaxWidth(0.8f),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
                     val animatedProgress by animateFloatAsState(
                         targetValue = newStrength.score / 5f,
                         animationSpec = tween(400),
@@ -491,6 +494,7 @@ fun ActivationContentStepThree(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(6.dp)
+                            .padding(start = 16.dp, end = 16.dp)
                             .clip(RoundedCornerShape(3.dp)),
                         color = newStrength.color,
                         trackColor = MaterialTheme.colorScheme.surfaceVariant,
@@ -500,7 +504,8 @@ fun ActivationContentStepThree(
                     Text(
                         text = "Strength: ${newStrength.label}",
                         color = newStrength.color,
-                        style = MaterialTheme.typography.labelMedium
+                        style = MaterialTheme.typography.labelMedium,
+                        modifier = Modifier.padding(start = 16.dp, end = 16.dp)
                     )
 
                     PasswordRequirementsChecklist(password = state.password)
@@ -511,7 +516,10 @@ fun ActivationContentStepThree(
             // 🟡 Step 2: CONFIRM PASSWORD (only appear when checklist OK)
             // ---------------------------
             AnimatedVisibility(visible = allChecklistPassed) {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Column(
+                    modifier = Modifier.fillMaxWidth(0.8f),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
                     Spacer(Modifier.height(12.dp))
                     OutlinedTextField(
                         value = state.confirmPassword,
@@ -519,7 +527,7 @@ fun ActivationContentStepThree(
                         shape = MaterialTheme.shapes.medium,
                         label = { Text("Confirm Password") },
                         modifier = Modifier
-                            .fillMaxWidth(0.8f)
+                            .fillMaxWidth()
                             .focusRequester(focusConfirm),
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(
@@ -564,7 +572,9 @@ fun ActivationContentStepThree(
         ) {
             TextButton(
                 onClick = onBack,
-                modifier = Modifier.width(130.dp).height(40.dp)
+                modifier = Modifier
+                    .width(130.dp)
+                    .height(40.dp)
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -583,7 +593,9 @@ fun ActivationContentStepThree(
             Button(
                 onClick = onContinue,
                 enabled = passwordsMatch,
-                modifier = Modifier.width(130.dp).height(40.dp)
+                modifier = Modifier
+                    .width(130.dp)
+                    .height(40.dp)
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -784,7 +796,9 @@ fun ActivationContentStepFour(
         ) {
             TextButton(
                 onClick = onBack,
-                modifier = Modifier.width(130.dp).height(40.dp)
+                modifier = Modifier
+                    .width(130.dp)
+                    .height(40.dp)
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -803,7 +817,9 @@ fun ActivationContentStepFour(
             Button(
                 onClick = onFinish,
                 enabled = pinMatch,
-                modifier = Modifier.width(130.dp).height(40.dp)
+                modifier = Modifier
+                    .width(130.dp)
+                    .height(40.dp)
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -823,7 +839,7 @@ fun ActivationContentStepFour(
     }
 }
 
-@Preview(showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
 fun ActivationStepOnePreview() {
     ArkheTheme {
@@ -833,9 +849,9 @@ fun ActivationStepOnePreview() {
             onNext = {}
         )
     }
-}
+}*/
 
-@Preview(showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
 fun ActivationStepTwoPreview() {
     ArkheTheme {
@@ -845,7 +861,7 @@ fun ActivationStepTwoPreview() {
             onBack = {}
         )
     }
-}
+}*/
 
 @Preview(showBackground = true)
 @Composable
@@ -859,7 +875,7 @@ fun ActivationStepThreePreview() {
     }
 }
 
-@Preview(showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
 fun ActivationStepFourPreview() {
     ArkheTheme {
@@ -869,4 +885,4 @@ fun ActivationStepFourPreview() {
             onBack = {}
         )
     }
-}
+}*/

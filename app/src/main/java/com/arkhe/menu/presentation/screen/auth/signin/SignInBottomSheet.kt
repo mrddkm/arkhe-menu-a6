@@ -1,5 +1,6 @@
 package com.arkhe.menu.presentation.screen.auth.signin
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -36,6 +38,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
@@ -47,22 +50,28 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.arkhe.menu.data.local.preferences.Lang
+import com.arkhe.menu.presentation.ui.components.HeaderTitleSecondary
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
+import com.arkhe.menu.presentation.viewmodel.LanguageViewModel
 import com.arkhe.menu.utils.Constants.MaxMinLength.MIN_LENGTH_PASSWORD
 import com.arkhe.menu.utils.Constants.MaxMinLength.MIN_LENGTH_USER_ID
-import com.arkhe.menu.utils.Constants.TextPlaceHolder.PLACE_HOLDER_USER_ID
+import com.arkhe.menu.utils.Constants.TextPlaceHolder.PLACE_HOLDER_OTHER_USER_ID
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Fill
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.fill.Lock
+import compose.icons.evaicons.outline.Close
 import compose.icons.evaicons.outline.CloseCircle
 import compose.icons.evaicons.outline.LogIn
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignInBottomSheet(
     onDismiss: () -> Unit,
-    onSignedIn: (String, String) -> Unit
+    onSignedIn: (String, String) -> Unit,
+    langViewModel: LanguageViewModel = koinViewModel()
 ) {
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
@@ -90,6 +99,38 @@ fun SignInBottomSheet(
             }
         }
     ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 0.dp, start = 16.dp, end = 16.dp, bottom = 4.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = { onDismiss() }) {
+                    Box(
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = EvaIcons.Outline.Close,
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+                HeaderTitleSecondary(
+                    title = langViewModel.getLocalized(Lang.SIGN_IN),
+                )
+                Spacer(Modifier.width(48.dp))
+            }
+        }
         SignInContent(
             onDismiss = onDismiss, onSignedIn = onSignedIn
         )
@@ -128,16 +169,16 @@ fun SignInContent(
         Spacer(Modifier.height(4.dp))
         OutlinedTextField(
             value = state.userId,
-            onValueChange = { if (it.length <= 6) state.onUserIdChange(it) },
+            onValueChange = { state.onUserIdChange(it) },
             label = { Text("Tripkeun ID") },
             placeholder = {
                 Text(
-                    text = PLACE_HOLDER_USER_ID,
+                    text = PLACE_HOLDER_OTHER_USER_ID,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                 )
             },
             keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number,
+                keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Done
             ),
             keyboardActions = KeyboardActions(

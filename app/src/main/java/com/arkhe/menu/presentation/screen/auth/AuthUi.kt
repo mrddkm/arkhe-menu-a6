@@ -1,13 +1,11 @@
 package com.arkhe.menu.presentation.screen.auth
 
-import android.widget.Toast
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.platform.LocalContext
 import com.arkhe.menu.presentation.screen.auth.activation.ActivationBottomSheet
 import com.arkhe.menu.presentation.screen.auth.lockscreen.PinLockBottomSheet
 import com.arkhe.menu.presentation.screen.auth.signin.SignInBottomSheet
@@ -34,30 +32,19 @@ fun AuthUi(
 ) {
     val viewModel: AuthViewModel = koinViewModel()
     val uiState by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(uiState) {
         when (uiState) {
             is AuthUiState.Success -> {
-                Toast.makeText(
-                    context,
-                    (uiState as AuthUiState.Success).message,
-                    Toast.LENGTH_SHORT
-                ).show()
-
                 onDismissAll()
-
                 when ((uiState as AuthUiState.Success).type) {
                     SuccessType.ACTIVATION -> onActivated()
                     SuccessType.SIGNEDIN -> onSignedIn()
                 }
             }
 
-            is AuthUiState.Error -> {
-                Toast.makeText(context, (uiState as AuthUiState.Error).message, Toast.LENGTH_SHORT)
-                    .show()
-            }
+            is AuthUiState.Error -> {}
 
             else -> Unit
         }
@@ -87,23 +74,14 @@ fun AuthUi(
                 scope.launch {
                     val ok = viewModel.unlockWithPin(pin)
                     if (ok) {
-                        Toast.makeText(context, "PIN correct", Toast.LENGTH_SHORT).show()
                         viewModel.resetPinAttempts()
                         onUnlocked()
                     } else {
                         viewModel.incrementPinAttempts()
                         val attempt = viewModel.getPinAttempts()
                         if (attempt >= 3) {
-                            Toast.makeText(
-                                context,
-                                "Too many attempts. Try again later.",
-                                Toast.LENGTH_LONG
-                            ).show()
                             viewModel.resetPinAttempts()
                             onDismissAll()
-                        } else {
-                            Toast.makeText(context, "Wrong PIN ($attempt/3)", Toast.LENGTH_SHORT)
-                                .show()
                         }
                     }
                 }

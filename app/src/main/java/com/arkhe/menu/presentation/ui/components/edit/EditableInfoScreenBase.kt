@@ -1,6 +1,5 @@
 package com.arkhe.menu.presentation.ui.components.edit
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -60,7 +59,7 @@ import kotlinx.coroutines.launch
  * Tugasnya:
  * - Render daftar field editable (list)
  * - Tampilkan bottom sheet edit per field
- * - Menangani validasi, save, loading, toast, dan state yang efisien
+ * - Menangani validasi, save, loading, dan state yang efisien
  */
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -227,9 +226,6 @@ fun <T> EditableInfoScreenBase(
                                 delay(500) /*API simulation*/
                                 val newUser = field.applyChange(userData, value)
                                 onUserUpdate(newUser)
-                                Toast
-                                    .makeText(context, "Saved successfully", Toast.LENGTH_SHORT)
-                                    .show()
                                 isLoading = false
                                 editingField = null
                             }

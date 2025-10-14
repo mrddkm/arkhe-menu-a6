@@ -612,8 +612,7 @@ fun PasswordRequirementsChecklist(password: String) {
     ) {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 6.dp),
+                .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(3.dp)
         ) {
             requirements.forEach { (fulfilled, text) ->
@@ -629,15 +628,18 @@ fun PasswordRequirementsChecklist(password: String) {
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.graphicsLayer {
-                        scaleX = scale
-                        scaleY = scale
-                    }
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 6.dp, start = 16.dp, end = 16.dp)
+                        .graphicsLayer {
+                            scaleX = scale
+                            scaleY = scale
+                        }
                 ) {
                     val icon = if (fulfilled) "✅" else "❌"
                     Text(
                         text = "$icon  $text",
-                        color = color,
+                        color = color.copy(alpha = 0.7f),
                         style = MaterialTheme.typography.bodySmall
                     )
                 }

@@ -97,6 +97,11 @@ object LanguageLocalizedStrings {
                 R.string.activation,
                 languageCode
             ),
+            Lang.SIGN_IN to LanguageManager.getLocalizedString(
+                appContext,
+                R.string.sign_in,
+                languageCode
+            )
         )
     }
 }
@@ -120,4 +125,5 @@ object Lang {
     const val PLEASE_WAIT = "please_wait"
     /*Auth*/
     const val ACTIVATION = "activation"
+    const val SIGN_IN = "sign_in"
 }

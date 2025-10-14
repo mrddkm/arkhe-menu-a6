@@ -10,7 +10,8 @@
     <string name="settings">Pengaturan</string>
 
     <!--Auth-->
-    <string name="activation">Aktivasi</string>
+    <string name="activation">Activation</string>
+    <string name="sign_in">Sign-in</string>
 
     <!--Settings Bottom Sheet-->
     <string name="personal_info">Info pribadi</string>
