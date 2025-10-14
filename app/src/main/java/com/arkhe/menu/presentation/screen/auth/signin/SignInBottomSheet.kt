@@ -1,9 +1,11 @@
 package com.arkhe.menu.presentation.screen.auth.signin
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,8 +23,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -48,7 +52,9 @@ import com.arkhe.menu.utils.Constants.MaxMinLength.MIN_LENGTH_PASSWORD
 import com.arkhe.menu.utils.Constants.MaxMinLength.MIN_LENGTH_USER_ID
 import com.arkhe.menu.utils.Constants.TextPlaceHolder.PLACE_HOLDER_USER_ID
 import compose.icons.EvaIcons
+import compose.icons.evaicons.Fill
 import compose.icons.evaicons.Outline
+import compose.icons.evaicons.fill.Lock
 import compose.icons.evaicons.outline.CloseCircle
 import compose.icons.evaicons.outline.LogIn
 
@@ -58,7 +64,32 @@ fun SignInBottomSheet(
     onDismiss: () -> Unit,
     onSignedIn: (String, String) -> Unit
 ) {
-    ModalBottomSheet(onDismissRequest = onDismiss) {
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true,
+        confirmValueChange = { newValue ->
+            newValue != SheetValue.Hidden
+        }
+    )
+    ModalBottomSheet(
+        onDismissRequest = { },
+        sheetState = sheetState,
+        dragHandle = {
+            Box(
+                modifier = Modifier
+                    .height(20.dp)
+                    .width(20.dp)
+                    .padding(top = 8.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = EvaIcons.Fill.Lock,
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(),
+                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                )
+            }
+        }
+    ) {
         SignInContent(
             onDismiss = onDismiss, onSignedIn = onSignedIn
         )
@@ -75,6 +106,7 @@ fun SignInContent(
     val focusPassword = remember { FocusRequester() }
     var passwordVisible by remember { mutableStateOf(true) }
     val keyboardController = LocalSoftwareKeyboardController.current
+
     LaunchedEffect(Unit) {
         focusUserId.requestFocus()
     }
@@ -131,7 +163,7 @@ fun SignInContent(
                     if (focusState.isFocused) keyboardController?.show()
                 },
         )
-        if (state.userId.length >= MIN_LENGTH_USER_ID){
+        if (state.userId.length >= MIN_LENGTH_USER_ID) {
             OutlinedTextField(
                 value = state.password,
                 onValueChange = state.onPasswordChange,

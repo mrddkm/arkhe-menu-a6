@@ -9,7 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import com.arkhe.menu.presentation.screen.auth.activation.ActivationBottomSheet
-import com.arkhe.menu.presentation.screen.auth.lockscreen.PinPadBottomSheet
+import com.arkhe.menu.presentation.screen.auth.lockscreen.PinLockBottomSheet
 import com.arkhe.menu.presentation.screen.auth.signin.SignInBottomSheet
 import com.arkhe.menu.presentation.viewmodel.AuthUiState
 import com.arkhe.menu.presentation.viewmodel.AuthViewModel
@@ -81,7 +81,7 @@ fun AuthUi(
     }
 
     if (showPin) {
-        PinPadBottomSheet(
+        PinLockBottomSheet(
             onDismiss = onDismissAll,
             onPinEntered = { pin ->
                 scope.launch {

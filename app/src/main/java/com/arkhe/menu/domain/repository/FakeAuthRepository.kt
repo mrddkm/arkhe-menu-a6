@@ -13,7 +13,6 @@ class FakeAuthRepository(
     private val securePinStorage: SecurePinStorage
 ) : AuthRepository {
 
-    // ✅ Realtime reactive state (DataStore)
     override val isActivatedFlow: Flow<Boolean> = authPrefs.isActivatedFlow
     override val isSignedInFlow: Flow<Boolean> = authPrefs.isSignedInFlow
 
@@ -41,7 +40,7 @@ class FakeAuthRepository(
 
     override suspend fun signIn(userId: String, password: String): Result<String> {
         delay(700)
-        return if (userId == "230504" && password == "Test@123") Result.success("Login success")
+        return if (userId == "230504" && password == "Qwer@123") Result.success("Login success")
         else Result.failure(Exception("Invalid credentials"))
     }
 

@@ -58,6 +58,7 @@ import com.arkhe.menu.presentation.ui.components.edit.AnimatedNumericKeypad
 import com.arkhe.menu.presentation.ui.components.edit.PasswordRequirementsChecklist
 import com.arkhe.menu.presentation.ui.components.edit.validatePassword
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
+import com.arkhe.menu.utils.Constants.MaxMinLength.MAX_LENGTH_PIN
 import com.arkhe.menu.utils.Constants.TextPlaceHolder.PLACE_HOLDER_MAIL
 import com.arkhe.menu.utils.Constants.TextPlaceHolder.PLACE_HOLDER_PHONE
 import com.arkhe.menu.utils.Constants.TextPlaceHolder.PLACE_HOLDER_USER_ID
@@ -592,15 +593,14 @@ fun ActivationContentStepFour(
     onFinish: () -> Unit,
     onBack: () -> Unit
 ) {
-    val maxLength = 4
     val labelCreatePIN = "Create PIN"
     val labelConfirmPIN = "Confirm PIN"
 
-    val creatingPin = state.pin.length < maxLength
-    val confirmingPin = state.pin.length == maxLength
+    val creatingPin = state.pin.length < MAX_LENGTH_PIN
+    val confirmingPin = state.pin.length == MAX_LENGTH_PIN
 
-    val pinMatch = state.pin == state.confirmPin && state.confirmPin.length == maxLength
-    val pinMismatch = state.confirmPin.length == maxLength && state.pin != state.confirmPin
+    val pinMatch = state.pin == state.confirmPin && state.confirmPin.length == MAX_LENGTH_PIN
+    val pinMismatch = state.confirmPin.length == MAX_LENGTH_PIN && state.pin != state.confirmPin
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -620,7 +620,7 @@ fun ActivationContentStepFour(
             if (creatingPin) {
                 Text(labelCreatePIN, style = MaterialTheme.typography.labelSmall, color = Color.DarkGray)
                 Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
-                    repeat(maxLength) { index ->
+                    repeat(MAX_LENGTH_PIN) { index ->
                         val filled = index < state.pin.length
                         val scale by animateFloatAsState(
                             targetValue = if (filled) 1.2f else 1f,
@@ -669,7 +669,7 @@ fun ActivationContentStepFour(
                 if (!pinMatch) {
                     Text(labelConfirmPIN, style = MaterialTheme.typography.labelSmall, color = Color.DarkGray)
                     Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
-                        repeat(maxLength) { index ->
+                        repeat(MAX_LENGTH_PIN) { index ->
                             val filled = index < state.confirmPin.length
                             val scale by animateFloatAsState(
                                 targetValue = if (filled) 1.2f else 1f,
@@ -720,9 +720,9 @@ fun ActivationContentStepFour(
         Spacer(Modifier.height(16.dp))
         AnimatedNumericKeypad(
             onDigit = { digit ->
-                if (state.pin.length < maxLength) {
+                if (state.pin.length < MAX_LENGTH_PIN) {
                     state.onPinChange(state.pin + digit)
-                } else if (state.confirmPin.length < maxLength) {
+                } else if (state.confirmPin.length < MAX_LENGTH_PIN) {
                     state.onConfirmPinChange(state.confirmPin + digit)
                 }
             },

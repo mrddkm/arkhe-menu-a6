@@ -69,7 +69,6 @@ fun ActivationBottomSheet(
             newValue != SheetValue.Hidden
         }
     )
-
     ModalBottomSheet(
         onDismissRequest = { },
         sheetState = sheetState,
