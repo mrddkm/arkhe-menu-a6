@@ -170,6 +170,7 @@ fun ActivationBottomSheet(
             when (state.step) {
                 1 -> ActivationContentStepOne(
                     state = state,
+                    onDismiss = { onDismiss() },
                     onNext = {
                         state.scope.launch {
                             authViewModel.requestActivation(
@@ -199,15 +200,7 @@ fun ActivationBottomSheet(
                     state = state,
                     onContinue = {
                         state.scope.launch {
-                            if (state.password == state.confirmPassword) {
-                                authViewModel.createPassword(state.password)
-                            } else {
-                                Toast.makeText(
-                                    state.context,
-                                    "Password mismatch",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
+                            authViewModel.createPassword(state.password)
                         }
                     },
                     onBack = {

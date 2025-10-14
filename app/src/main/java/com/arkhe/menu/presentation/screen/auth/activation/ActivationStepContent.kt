@@ -73,6 +73,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun ActivationContentStepOne(
     state: ActivationState,
+    onDismiss: () -> Unit,
     onNext: () -> Unit
 ) {
     val focusUserId = remember { FocusRequester() }
@@ -89,7 +90,7 @@ fun ActivationContentStepOne(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text("1 / 4", style = MaterialTheme.typography.titleMedium)
-        Spacer(Modifier.height(4.dp))
+        Text("Please fill your information", style = MaterialTheme.typography.titleSmall)
         OutlinedTextField(
             value = state.userId,
             onValueChange = { if (it.length <= 6) state.onUserIdChange(it) },
@@ -201,18 +202,28 @@ fun ActivationContentStepOne(
         Spacer(Modifier.height(8.dp))
         Row(
             modifier = Modifier.fillMaxWidth(0.8f),
-            horizontalArrangement = Arrangement.End
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
+            TextButton(
+                onClick = onDismiss,
+                modifier = Modifier
+                    .width(130.dp)
+                    .height(40.dp)
+            ) {
+                Text("Cancel")
+            }
             Button(
                 onClick = onNext,
                 enabled = state.userId.isNotBlank() && state.phone.isNotBlank() && state.email.isNotBlank(),
+                modifier = Modifier
+                    .width(130.dp)
+                    .height(40.dp)
             ) {
                 Row(
-                    modifier = Modifier
-                        .width(65.dp)
-                        .height(25.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
                 ) {
                     Text("Next")
                     Spacer(Modifier.width(4.dp))
@@ -256,10 +267,7 @@ fun ActivationContentStepTwo(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text("2 / 4", style = MaterialTheme.typography.titleMedium)
-        Spacer(Modifier.height(4.dp))
-        Text("Enter Activation Code", style = MaterialTheme.typography.titleMedium)
-        Spacer(Modifier.height(8.dp))
-
+        Text("Enter Activation Code", style = MaterialTheme.typography.titleSmall)
         Row(
             modifier = Modifier.fillMaxWidth(0.8f),
             horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
@@ -353,25 +361,34 @@ fun ActivationContentStepTwo(
         Spacer(Modifier.height(8.dp))
         Row(
             modifier = Modifier.fillMaxWidth(0.8f),
-            horizontalArrangement = Arrangement.End
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            TextButton(onClick = onBack) {
+            TextButton(
+                onClick = onBack,
+                modifier = Modifier
+                    .width(130.dp)
+                    .height(40.dp)
+            ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Icon(
                         imageVector = EvaIcons.Outline.ArrowIosBack,
-                        contentDescription = null
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(18.dp)
                     )
                     Spacer(Modifier.width(4.dp))
                     Text("Back")
                 }
             }
-            Spacer(Modifier.width(16.dp))
             Button(
                 onClick = onVerify,
-                enabled = code.length == 4
+                enabled = code.length == 4,
+                modifier = Modifier
+                    .width(130.dp)
+                    .height(40.dp)
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -381,7 +398,9 @@ fun ActivationContentStepTwo(
                     Spacer(Modifier.width(4.dp))
                     Icon(
                         imageVector = EvaIcons.Outline.ArrowIosForward,
-                        contentDescription = null
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(18.dp)
                     )
                 }
             }
@@ -427,9 +446,7 @@ fun ActivationContentStepThree(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text("3 / 4", style = MaterialTheme.typography.titleMedium)
-        Spacer(Modifier.height(4.dp))
-        Text("Create Password", style = MaterialTheme.typography.titleMedium)
-        Spacer(Modifier.height(8.dp))
+        Text("Create Password", style = MaterialTheme.typography.titleSmall)
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             // ---------------------------
             // 🟢 Step 1: NEW PASSWORD
@@ -543,25 +560,30 @@ fun ActivationContentStepThree(
         Spacer(Modifier.height(8.dp))
         Row(
             modifier = Modifier.fillMaxWidth(0.8f),
-            horizontalArrangement = Arrangement.End
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            TextButton(onClick = onBack) {
+            TextButton(
+                onClick = onBack,
+                modifier = Modifier.width(130.dp).height(40.dp)
+            ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Icon(
                         imageVector = EvaIcons.Outline.ArrowIosBack,
-                        contentDescription = null
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(18.dp)
                     )
                     Spacer(Modifier.width(4.dp))
                     Text("Back")
                 }
             }
-            Spacer(Modifier.width(16.dp))
             Button(
                 onClick = onContinue,
-                enabled = passwordsMatch
+                enabled = passwordsMatch,
+                modifier = Modifier.width(130.dp).height(40.dp)
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -571,7 +593,9 @@ fun ActivationContentStepThree(
                     Spacer(Modifier.width(4.dp))
                     Icon(
                         imageVector = EvaIcons.Outline.ArrowIosForward,
-                        contentDescription = null
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(18.dp)
                     )
                 }
             }
@@ -608,23 +632,27 @@ fun ActivationContentStepFour(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text("4 / 4", style = MaterialTheme.typography.titleMedium)
-        Spacer(Modifier.height(4.dp))
-        Text("4-digit PIN", style = MaterialTheme.typography.titleMedium)
-        Spacer(Modifier.height(8.dp))
-
+        Text("4-digit PIN", style = MaterialTheme.typography.titleSmall)
         /*CREATE PIN SECTION*/
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             if (creatingPin) {
-                Text(labelCreatePIN, style = MaterialTheme.typography.labelSmall, color = Color.DarkGray)
+                Text(
+                    labelCreatePIN,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color.DarkGray
+                )
                 Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
                     repeat(MAX_LENGTH_PIN) { index ->
                         val filled = index < state.pin.length
                         val scale by animateFloatAsState(
                             targetValue = if (filled) 1.2f else 1f,
-                            animationSpec = spring(dampingRatio = 0.4f, stiffness = Spring.StiffnessMedium),
+                            animationSpec = spring(
+                                dampingRatio = 0.4f,
+                                stiffness = Spring.StiffnessMedium
+                            ),
                             label = "pinDotScale"
                         )
                         Box(
@@ -654,7 +682,11 @@ fun ActivationContentStepFour(
                         tint = Color.Green.copy(alpha = 0.8f)
                     )
                     Spacer(Modifier.width(4.dp))
-                    Text(labelCreatePIN, style = MaterialTheme.typography.labelSmall, color = Color.DarkGray)
+                    Text(
+                        labelCreatePIN,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color.DarkGray
+                    )
                 }
             }
         }
@@ -667,13 +699,20 @@ fun ActivationContentStepFour(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 if (!pinMatch) {
-                    Text(labelConfirmPIN, style = MaterialTheme.typography.labelSmall, color = Color.DarkGray)
+                    Text(
+                        labelConfirmPIN,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color.DarkGray
+                    )
                     Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
                         repeat(MAX_LENGTH_PIN) { index ->
                             val filled = index < state.confirmPin.length
                             val scale by animateFloatAsState(
                                 targetValue = if (filled) 1.2f else 1f,
-                                animationSpec = spring(dampingRatio = 0.4f, stiffness = Spring.StiffnessMedium),
+                                animationSpec = spring(
+                                    dampingRatio = 0.4f,
+                                    stiffness = Spring.StiffnessMedium
+                                ),
                                 label = "confirmPinDotScale"
                             )
                             Box(
@@ -703,7 +742,11 @@ fun ActivationContentStepFour(
                             tint = Color.Green.copy(alpha = 0.8f)
                         )
                         Spacer(Modifier.width(4.dp))
-                        Text(labelConfirmPIN, style = MaterialTheme.typography.labelSmall, color = Color.DarkGray)
+                        Text(
+                            labelConfirmPIN,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Color.DarkGray
+                        )
                     }
                 }
 
@@ -734,23 +777,33 @@ fun ActivationContentStepFour(
                 }
             }
         )
-
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(16.dp))
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
+            modifier = Modifier.fillMaxWidth(0.8f),
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            TextButton(onClick = onBack) {
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
-                    Icon(imageVector = EvaIcons.Outline.ArrowIosBack, contentDescription = null)
+            TextButton(
+                onClick = onBack,
+                modifier = Modifier.width(130.dp).height(40.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        imageVector = EvaIcons.Outline.ArrowIosBack,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(18.dp)
+                    )
                     Spacer(Modifier.width(4.dp))
                     Text("Back")
                 }
             }
-            Spacer(Modifier.width(24.dp))
             Button(
                 onClick = onFinish,
                 enabled = pinMatch,
+                modifier = Modifier.width(130.dp).height(40.dp)
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -759,7 +812,8 @@ fun ActivationContentStepFour(
                     Icon(
                         imageVector = EvaIcons.Outline.CheckmarkCircle,
                         contentDescription = null,
-                        modifier = Modifier.size(16.dp)
+                        modifier = Modifier
+                            .size(18.dp)
                     )
                     Spacer(Modifier.width(4.dp))
                     Text("Finish")
@@ -769,18 +823,19 @@ fun ActivationContentStepFour(
     }
 }
 
-/*@Preview(showBackground = true)
+@Preview(showBackground = true)
 @Composable
 fun ActivationStepOnePreview() {
     ArkheTheme {
         ActivationContentStepOne(
             state = rememberActivationState(),
+            onDismiss = {},
             onNext = {}
         )
     }
-}*/
+}
 
-/*@Preview(showBackground = true)
+@Preview(showBackground = true)
 @Composable
 fun ActivationStepTwoPreview() {
     ArkheTheme {
@@ -790,9 +845,8 @@ fun ActivationStepTwoPreview() {
             onBack = {}
         )
     }
-}*/
+}
 
-/*
 @Preview(showBackground = true)
 @Composable
 fun ActivationStepThreePreview() {
@@ -803,7 +857,7 @@ fun ActivationStepThreePreview() {
             onBack = {}
         )
     }
-}*/
+}
 
 @Preview(showBackground = true)
 @Composable

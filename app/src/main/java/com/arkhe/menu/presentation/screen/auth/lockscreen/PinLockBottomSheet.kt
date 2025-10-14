@@ -49,8 +49,7 @@ import compose.icons.EvaIcons
 import compose.icons.evaicons.Fill
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.fill.Lock
-import compose.icons.evaicons.outline.ArrowIosBack
-import compose.icons.evaicons.outline.CheckmarkCircle
+import compose.icons.evaicons.outline.Smartphone
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -206,7 +205,10 @@ fun PinLockContent(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    Text("Cancel")
+                    Text(
+                        text = "Forgot PIN ?..",
+                        fontSize = MaterialTheme.typography.labelSmall.fontSize,
+                    )
                 }
             }
             Spacer(Modifier.width(24.dp))
@@ -219,7 +221,7 @@ fun PinLockContent(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Icon(
-                        imageVector = EvaIcons.Outline.CheckmarkCircle,
+                        imageVector = EvaIcons.Outline.Smartphone,
                         contentDescription = null,
                         modifier = Modifier.size(16.dp)
                     )
