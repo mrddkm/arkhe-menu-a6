@@ -44,15 +44,21 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.arkhe.menu.data.local.preferences.Lang
-import com.arkhe.menu.presentation.ui.components.HeaderTitleSecondary
+import com.arkhe.menu.di.appModule
+import com.arkhe.menu.di.dataModule
+import com.arkhe.menu.di.domainModule
+import com.arkhe.menu.di.previewModule
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
+import com.arkhe.menu.presentation.ui.theme.montserratFontFamily
 import com.arkhe.menu.presentation.viewmodel.LanguageViewModel
 import com.arkhe.menu.utils.Constants.MaxMinLength.MIN_LENGTH_PASSWORD
 import com.arkhe.menu.utils.Constants.MaxMinLength.MIN_LENGTH_USER_ID
@@ -64,14 +70,15 @@ import compose.icons.evaicons.fill.Lock
 import compose.icons.evaicons.outline.Close
 import compose.icons.evaicons.outline.CloseCircle
 import compose.icons.evaicons.outline.LogIn
+import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.KoinApplicationPreview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignInBottomSheet(
     onDismiss: () -> Unit,
-    onSignedIn: (String, String) -> Unit,
-    langViewModel: LanguageViewModel = koinViewModel()
+    onSignedIn: (String, String) -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
@@ -106,7 +113,7 @@ fun SignInBottomSheet(
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = { onDismiss() }) {
@@ -125,14 +132,10 @@ fun SignInBottomSheet(
                         )
                     }
                 }
-                HeaderTitleSecondary(
-                    title = langViewModel.getLocalized(Lang.SIGN_IN),
-                )
-                Spacer(Modifier.width(48.dp))
             }
         }
         SignInContent(
-            onDismiss = onDismiss, onSignedIn = onSignedIn
+            onSignedIn = onSignedIn
         )
     }
 }
@@ -140,7 +143,7 @@ fun SignInBottomSheet(
 @Composable
 fun SignInContent(
     state: SignInState = rememberSignInState(),
-    onDismiss: () -> Unit,
+    langViewModel: LanguageViewModel = koinViewModel(),
     onSignedIn: (String, String) -> Unit
 ) {
     val focusUserId = remember { FocusRequester() }
@@ -165,15 +168,21 @@ fun SignInContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text("Sign In", style = MaterialTheme.typography.titleMedium)
+        Text(
+            text = langViewModel.getLocalized(Lang.SIGN_IN),
+            fontFamily = montserratFontFamily,
+            fontWeight = FontWeight.Bold,
+            fontSize = 24.sp
+        )
         Spacer(Modifier.height(4.dp))
         OutlinedTextField(
             value = state.userId,
             onValueChange = { state.onUserIdChange(it) },
-            label = { Text("Tripkeun ID") },
+            label = { Text("Account") },
             placeholder = {
                 Text(
                     text = PLACE_HOLDER_OTHER_USER_ID,
+                    fontSize = 13.sp,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                 )
             },
@@ -233,24 +242,31 @@ fun SignInContent(
         }
         Spacer(Modifier.height(8.dp))
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
+            modifier = Modifier.fillMaxWidth(0.8f),
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            TextButton(onClick = onDismiss) {
+            TextButton(
+                onClick = {},
+                modifier = Modifier
+                    .width(130.dp)
+                    .height(40.dp)
+            ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Text(
                         text = "Forgot Password ?..",
-                        fontSize = MaterialTheme.typography.labelSmall.fontSize,
+                        fontSize = 10.sp,
                     )
                 }
             }
-            Spacer(Modifier.width(24.dp))
             Button(
-                onClick = { onSignedIn(state.userId, state.password) },
+                onClick = { onSignedIn(state.userId.trim(), state.password) },
                 enabled = isValid,
+                modifier = Modifier
+                    .width(130.dp)
+                    .height(40.dp)
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -261,7 +277,7 @@ fun SignInContent(
                     Icon(
                         imageVector = EvaIcons.Outline.LogIn,
                         contentDescription = null,
-                        modifier = Modifier.size(16.dp)
+                        modifier = Modifier.size(18.dp)
                     )
                 }
             }
@@ -274,14 +290,15 @@ fun rememberSignInState(): SignInState {
     var userId by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    return remember {
-        SignInState(
-            userId = userId,
-            onUserIdChange = { userId = it },
-            password = password,
-            onPasswordChange = { password = it }
-        )
-    }
+    return SignInState(
+        userId = userId,
+        onUserIdChange = { newValue ->
+            userId = newValue.trimStart()
+        },
+        password = password,
+        onPasswordChange = { password = it }
+    )
+
 }
 
 data class SignInState(
@@ -295,10 +312,22 @@ data class SignInState(
 @Preview(showBackground = true)
 @Composable
 fun SignInBottomSheetPreview() {
-    ArkheTheme {
-        SignInContent(
-            onDismiss = {},
-            onSignedIn = { _, _ -> }
-        )
+    val previewContext = androidx.compose.ui.platform.LocalContext.current
+    KoinApplicationPreview(
+        application = {
+            androidContext(previewContext)
+            modules(
+                dataModule,
+                domainModule,
+                appModule,
+                previewModule
+            )
+        }
+    ) {
+        ArkheTheme {
+            SignInContent(
+                onSignedIn = { _, _ -> }
+            )
+        }
     }
 }

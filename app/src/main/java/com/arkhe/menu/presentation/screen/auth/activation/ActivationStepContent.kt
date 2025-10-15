@@ -103,7 +103,7 @@ fun ActivationContentStepOne(
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Done
+                imeAction = ImeAction.Next
             ),
             keyboardActions = KeyboardActions(
                 onNext = { focusPhone.requestFocus() }
@@ -140,7 +140,7 @@ fun ActivationContentStepOne(
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Done
+                imeAction = ImeAction.Next
             ),
             keyboardActions = KeyboardActions(
                 onNext = { focusEmail.requestFocus() }
@@ -462,7 +462,10 @@ fun ActivationContentStepThree(
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Done
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = { focusConfirm.requestFocus() }
                 ),
                 visualTransformation = if (newVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
@@ -807,8 +810,7 @@ fun ActivationContentStepFour(
                     Icon(
                         imageVector = EvaIcons.Outline.ArrowIosBack,
                         contentDescription = null,
-                        modifier = Modifier
-                            .size(18.dp)
+                        modifier = Modifier.size(18.dp)
                     )
                     Spacer(Modifier.width(4.dp))
                     Text("Back")

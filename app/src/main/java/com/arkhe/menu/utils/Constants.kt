@@ -59,7 +59,7 @@ object Constants {
         const val PLACE_HOLDER_MAIL = "your@email.com"
         const val PLACE_HOLDER_PHONE = "628000000000"
         const val PLACE_HOLDER_PRIMARY_USER_ID = "000000"
-        const val PLACE_HOLDER_OTHER_USER_ID = "Your ID"
+        const val PLACE_HOLDER_OTHER_USER_ID = "t-ID, email, nickname or phone"
     }
 
     object MaxMinLength {

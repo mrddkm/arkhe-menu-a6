@@ -16,15 +16,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SheetValue
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -38,18 +35,28 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.unit.sp
+import com.arkhe.menu.data.local.preferences.Lang
+import com.arkhe.menu.di.appModule
+import com.arkhe.menu.di.dataModule
+import com.arkhe.menu.di.domainModule
+import com.arkhe.menu.di.previewModule
 import com.arkhe.menu.presentation.ui.components.edit.AnimatedNumericKeypad
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
+import com.arkhe.menu.presentation.ui.theme.montserratFontFamily
+import com.arkhe.menu.presentation.viewmodel.LanguageViewModel
 import com.arkhe.menu.utils.Constants.MaxMinLength.MAX_LENGTH_PIN
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Fill
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.fill.Lock
 import compose.icons.evaicons.outline.Smartphone
+import org.koin.android.ext.koin.androidContext
+import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.KoinApplicationPreview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -84,58 +91,17 @@ fun PinLockBottomSheet(
         }
     ) {
         PinLockContent(
-            onPinEntered = onPinEntered,
-            onDismiss = onDismiss
+            onPinEntered = onPinEntered
         )
-    }
-
-
-    var pin by remember { mutableStateOf("") }
-    val isValid = pin.length == 4
-
-    Dialog(onDismissRequest = onDismiss) {
-        Surface(
-            shape = MaterialTheme.shapes.medium,
-            tonalElevation = 6.dp,
-            modifier = Modifier.fillMaxWidth(0.9f)
-        ) {
-            Column(
-                Modifier.padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text("Enter PIN", style = MaterialTheme.typography.titleMedium)
-                Spacer(Modifier.height(16.dp))
-                OutlinedTextField(
-                    value = pin,
-                    onValueChange = {
-                        if (it.length <= 4 && it.all(Char::isDigit)) pin = it
-                    },
-                    label = { Text("4-digit PIN") },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword)
-                )
-                Spacer(Modifier.height(16.dp))
-                Button(
-                    onClick = { onPinEntered(pin) },
-                    enabled = isValid,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Unlock")
-                }
-                Spacer(Modifier.height(8.dp))
-                TextButton(onClick = onDismiss) { Text("Cancel") }
-            }
-        }
     }
 }
 
 @Composable
 fun PinLockContent(
     state: PinLockState = rememberPinLockState(),
-    onPinEntered: (String) -> Unit,
-    onDismiss: () -> Unit,
+    langViewModel: LanguageViewModel = koinViewModel(),
+    onPinEntered: (String) -> Unit
 ) {
-    val labelPinLock = "Unlock Screen"
     val labelPinEntered = "4-digit PIN"
     val confirmingPin by remember(state.pin) {
         derivedStateOf { state.pin.length == MAX_LENGTH_PIN }
@@ -146,9 +112,13 @@ fun PinLockContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text(text = labelPinLock, style = MaterialTheme.typography.titleMedium)
-        Spacer(Modifier.height(8.dp))
-
+        Text(
+            text = langViewModel.getLocalized(Lang.PIN_LOCK),
+            fontFamily = montserratFontFamily,
+            fontWeight = FontWeight.Bold,
+            fontSize = 24.sp
+        )
+        Spacer(Modifier.height(4.dp))
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -194,27 +164,33 @@ fun PinLockContent(
                 state.onPinChange(state.pin.dropLast(1))
             }
         )
-
         Spacer(Modifier.height(8.dp))
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
+            modifier = Modifier.fillMaxWidth(0.8f),
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            TextButton(onClick = onDismiss) {
+            TextButton(
+                onClick = {},
+                modifier = Modifier
+                    .width(130.dp)
+                    .height(40.dp)
+            ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Text(
                         text = "Forgot PIN ?..",
-                        fontSize = MaterialTheme.typography.labelSmall.fontSize,
+                        fontSize = 10.sp,
                     )
                 }
             }
-            Spacer(Modifier.width(24.dp))
             Button(
                 onClick = { onPinEntered(state.pin) },
                 enabled = confirmingPin,
+                modifier = Modifier
+                    .width(130.dp)
+                    .height(40.dp)
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -223,7 +199,7 @@ fun PinLockContent(
                     Icon(
                         imageVector = EvaIcons.Outline.Smartphone,
                         contentDescription = null,
-                        modifier = Modifier.size(16.dp)
+                        modifier = Modifier.size(18.dp)
                     )
                     Spacer(Modifier.width(4.dp))
                     Text("Unlock")
@@ -237,12 +213,10 @@ fun PinLockContent(
 fun rememberPinLockState(): PinLockState {
     var pin by remember { mutableStateOf("") }
 
-    return remember {
-        PinLockState(
-            pin = pin,
-            onPinChange = { pin = it }
-        )
-    }
+    return PinLockState(
+        pin = pin,
+        onPinChange = { pin = it }
+    )
 }
 
 data class PinLockState(
@@ -253,10 +227,22 @@ data class PinLockState(
 @Preview(showBackground = true)
 @Composable
 fun PinLockBottomSheetPreview() {
-    ArkheTheme {
-        PinLockContent(
-            onPinEntered = { },
-            onDismiss = { }
-        )
+    val previewContext = androidx.compose.ui.platform.LocalContext.current
+    KoinApplicationPreview(
+        application = {
+            androidContext(previewContext)
+            modules(
+                dataModule,
+                domainModule,
+                appModule,
+                previewModule
+            )
+        }
+    ) {
+        ArkheTheme {
+            PinLockContent(
+                onPinEntered = { }
+            )
+        }
     }
 }

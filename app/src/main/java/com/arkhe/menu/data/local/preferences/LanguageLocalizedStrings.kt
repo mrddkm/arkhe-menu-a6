@@ -101,7 +101,12 @@ object LanguageLocalizedStrings {
                 appContext,
                 R.string.sign_in,
                 languageCode
-            )
+            ),
+            Lang.PIN_LOCK to LanguageManager.getLocalizedString(
+                appContext,
+                R.string.pin_lock,
+                languageCode
+            ),
         )
     }
 }
@@ -126,4 +131,5 @@ object Lang {
     /*Auth*/
     const val ACTIVATION = "activation"
     const val SIGN_IN = "sign_in"
+    const val PIN_LOCK = "pin_lock"
 }
