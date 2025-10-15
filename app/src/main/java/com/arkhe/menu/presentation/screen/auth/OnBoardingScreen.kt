@@ -79,11 +79,9 @@ fun OnboardingScreen(
     onNavigateToMain: () -> Unit,
     langViewModel: LanguageViewModel = koinViewModel(),
     themeViewModel: ThemeViewModel = koinViewModel(),
-    authViewModel: AuthViewModel = koinViewModel(),
-    previewThemeModel: ThemeModels? = null
+    authViewModel: AuthViewModel = koinViewModel()
 ) {
-    val themeFromVm by themeViewModel.currentTheme.collectAsState()
-    val currentThemeModel = previewThemeModel ?: themeFromVm
+    val currentThemeModel by themeViewModel.currentTheme.collectAsState(initial = ThemeModels.SYSTEM)
 
     /*---------- state of the datastore ----------*/
     val isActivated by authViewModel.isActivatedFlow.collectAsState(initial = false)
@@ -263,6 +261,12 @@ fun TripkeunText(
     onSignedInClick: () -> Unit,
     onStartClick: () -> Unit
 ) {
+    val isDark = when (currentThemeModel) {
+        ThemeModels.DARK -> true
+        ThemeModels.LIGHT -> false
+        ThemeModels.SYSTEM -> isSystemInDarkTheme()
+    }
+
     Box(
         contentAlignment = Alignment.Center
     ) {
@@ -274,23 +278,7 @@ fun TripkeunText(
             shape = MaterialTheme.shapes.large,
             color = Color.Transparent
         ) {
-            when (currentThemeModel) {
-                ThemeModels.DARK -> {
-                    DarkThemeBox()
-                }
-
-                ThemeModels.LIGHT -> {
-                    LightThemeBox()
-                }
-
-                ThemeModels.SYSTEM -> {
-                    if (isSystemInDarkTheme()) {
-                        DarkThemeBox()
-                    } else {
-                        LightThemeBox()
-                    }
-                }
-            }
+            if (isDark) DarkThemeBox() else LightThemeBox()
         }
         OnBoardingButton(
             isActivation = isActivation,
