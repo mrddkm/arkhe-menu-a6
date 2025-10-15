@@ -33,7 +33,7 @@ import compose.icons.evaicons.outline.Image
 @Composable
 fun SettingsBottomSheetItem(
     label: String = "",
-    labelInfo: String = "",
+    labelInfo: String? = null,
     icon: ImageVector? = null,
     painter: Painter? = null,
     showDivider: Boolean = true,
@@ -80,7 +80,9 @@ fun SettingsBottomSheetItem(
                 }
             }
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -92,13 +94,15 @@ fun SettingsBottomSheetItem(
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.onSurface
                     )
-                    Text(
-                        text = labelInfo,
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            fontWeight = FontWeight.Normal
-                        ),
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                    )
+                    labelInfo?.let {
+                        Text(
+                            text = it,
+                            style = MaterialTheme.typography.labelSmall.copy(
+                                fontWeight = FontWeight.Normal
+                            ),
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        )
+                    }
                 }
                 Icon(
                     imageVector = EvaIcons.Outline.ArrowIosForward,

@@ -17,6 +17,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ExitToApp
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -51,7 +52,6 @@ import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.Close
 import compose.icons.evaicons.outline.Person
-import compose.icons.evaicons.outline.Power
 import compose.icons.evaicons.outline.Shield
 import compose.icons.evaicons.outline.Smartphone
 import org.koin.android.ext.koin.androidContext
@@ -118,7 +118,7 @@ fun SettingsBottomSheet(
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = EvaIcons.Outline.Power,
+                        imageVector = Icons.AutoMirrored.Outlined.ExitToApp,
                         contentDescription = null,
                         modifier = Modifier.size(20.dp),
                         tint = MaterialTheme.colorScheme.error
@@ -222,7 +222,6 @@ fun SettingsBottomSheet(
             Column {
                 SettingsBottomSheetItem(
                     label = langViewModel.getLocalized(Lang.ABOUT),
-                    labelInfo = langViewModel.getLocalized(Lang.ABOUT_DESC),
                     painter = painterResource(R.drawable.ic_ae),
                     onClick = { onAboutClick() },
                     showDivider = false

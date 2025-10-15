@@ -519,10 +519,10 @@ fun ActivationContentStepThree(
                     )
 
                     Text(
-                        text = "Strength: ${newStrength.label}",
+                        text = newStrength.label,
                         color = newStrength.color,
                         style = MaterialTheme.typography.labelMedium,
-                        modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+                        textAlign = TextAlign.Center
                     )
 
                     PasswordRequirementsChecklist(password = state.password)

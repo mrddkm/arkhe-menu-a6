@@ -36,7 +36,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -78,7 +77,6 @@ fun <T> EditableInfoScreenBase(
             newValue != SheetValue.Hidden
         }
     )
-    val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
     Column(
@@ -312,7 +310,7 @@ private fun EditableFieldRow(
                         style = MaterialTheme.typography.labelLarge.copy(
                             fontWeight = FontWeight.Normal
                         ),
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+                        color = Color.Gray
                     )
                 }
                 if (valueLabel != null) {
@@ -334,7 +332,7 @@ private fun EditableFieldRow(
                     Text(
                         text = it,
                         style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        color = Color.Gray
                     )
                 }
             }

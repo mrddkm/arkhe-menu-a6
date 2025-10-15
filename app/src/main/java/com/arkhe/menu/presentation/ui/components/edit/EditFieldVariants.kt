@@ -636,9 +636,14 @@ fun PasswordRequirementsChecklist(password: String) {
                             scaleY = scale
                         }
                 ) {
-                    val icon = if (fulfilled) "✅" else "❌"
+                    val iconFulfilled = Text(
+                        text = "•",
+                        fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+                        color = if (fulfilled) Color.Green.copy(alpha = 0.7f) else Color.Red.copy(alpha = 0.7f)
+                    )
+
                     Text(
-                        text = "$icon  $text",
+                        text = "$iconFulfilled  $text",
                         color = color.copy(alpha = 0.7f),
                         style = MaterialTheme.typography.bodySmall
                     )

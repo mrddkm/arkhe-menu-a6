@@ -157,6 +157,7 @@ fun PersonalInfoContent(
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.Normal,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                modifier = Modifier.fillMaxWidth(0.8f)
             )
             Spacer(Modifier.height(16.dp))
             DetailPersonalAccordions(
