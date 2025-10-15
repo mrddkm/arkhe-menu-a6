@@ -53,12 +53,14 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.presentation.ui.components.edit.AnimatedNumericKeypad
 import com.arkhe.menu.presentation.ui.components.edit.PasswordRequirementsChecklist
 import com.arkhe.menu.presentation.ui.components.edit.validatePassword
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
+import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
 import com.arkhe.menu.utils.Constants.MaxMinLength.MAX_LENGTH_PIN
 import com.arkhe.menu.utils.Constants.TextPlaceHolder.PLACE_HOLDER_MAIL
 import com.arkhe.menu.utils.Constants.TextPlaceHolder.PLACE_HOLDER_PHONE
@@ -284,7 +286,10 @@ fun ActivationContentStepTwo(
                 modifier = Modifier
                     .size(56.dp)
                     .focusRequester(focus1),
-                textStyle = MaterialTheme.typography.titleLarge,
+                textStyle = MaterialTheme.typography.titleLarge.copy(
+                    textAlign = TextAlign.Center,
+                    fontFamily = sourceCodeProFontFamily
+                ),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
@@ -306,7 +311,10 @@ fun ActivationContentStepTwo(
                 modifier = Modifier
                     .size(56.dp)
                     .focusRequester(focus2),
-                textStyle = MaterialTheme.typography.titleLarge,
+                textStyle = MaterialTheme.typography.titleLarge.copy(
+                    textAlign = TextAlign.Center,
+                    fontFamily = sourceCodeProFontFamily
+                ),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
@@ -328,7 +336,10 @@ fun ActivationContentStepTwo(
                 modifier = Modifier
                     .size(56.dp)
                     .focusRequester(focus3),
-                textStyle = MaterialTheme.typography.titleLarge,
+                textStyle = MaterialTheme.typography.titleLarge.copy(
+                    textAlign = TextAlign.Center,
+                    fontFamily = sourceCodeProFontFamily
+                ),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
@@ -350,7 +361,10 @@ fun ActivationContentStepTwo(
                 modifier = Modifier
                     .size(56.dp)
                     .focusRequester(focus4),
-                textStyle = MaterialTheme.typography.titleLarge,
+                textStyle = MaterialTheme.typography.titleLarge.copy(
+                    textAlign = TextAlign.Center,
+                    fontFamily = sourceCodeProFontFamily
+                ),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
