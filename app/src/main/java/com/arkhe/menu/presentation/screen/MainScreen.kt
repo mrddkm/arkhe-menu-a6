@@ -5,13 +5,16 @@ package com.arkhe.menu.presentation.screen
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -120,7 +123,8 @@ fun MainScreen(
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
     ) {
         AnimatedContent(
             targetState = uiState.currentScreen,
@@ -180,8 +184,8 @@ fun MainScreen(
                 }
             },
             modifier = Modifier
-                .fillMaxSize()
-                .systemBarsPadding(),
+//                .systemBarsPadding()
+                .fillMaxSize(),
             label = "screen_transition"
         ) { currentScreen ->
             when (currentScreen) {
@@ -255,6 +259,7 @@ fun MainScreen(
                 .statusBarsPadding()
                 .align(Alignment.TopCenter)
                 .padding(horizontal = 16.dp, vertical = 6.dp)
+                .windowInsetsPadding(WindowInsets.statusBars)
                 .onGloballyPositioned { coords ->
                     topBarHeightPx = coords.size.height
                 }
@@ -282,6 +287,7 @@ fun MainScreen(
                     .navigationBarsPadding()
                     .padding(horizontal = 8.dp, vertical = 6.dp)
                     .align(Alignment.BottomCenter)
+                    .windowInsetsPadding(WindowInsets.navigationBars)
                     .onGloballyPositioned { coords ->
                         bottomBarHeightPx = coords.size.height
                     }
