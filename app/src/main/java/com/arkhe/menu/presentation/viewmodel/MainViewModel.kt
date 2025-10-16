@@ -11,6 +11,7 @@ import com.arkhe.menu.utils.ScrollStateManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class MainViewModel(
@@ -144,13 +145,13 @@ class MainViewModel(
     fun onLanguageChangeStarted() {
         _uiState.value = _uiState.value.copy(
             showProfileSettingsBottomSheet = false,
-            isLanguageChanging = true
+            isLoadingOverlay = true
         )
     }
 
     fun onLanguageChangeCompleted() {
         _uiState.value = _uiState.value.copy(
-            isLanguageChanging = false
+            isLoadingOverlay = false
         )
         navigateBackToMain()
     }
@@ -167,6 +168,14 @@ class MainViewModel(
     fun updateScrollAlpha(alpha: Float) {
         _scrollAlpha.value = alpha.coerceIn(0.4f, 1f)
     }
+
+    fun showLoadingOverlay() {
+        _uiState.update { it.copy(isLoadingOverlay = true) }
+    }
+
+    fun hideLoadingOverlay() {
+        _uiState.update { it.copy(isLoadingOverlay = false) }
+    }
 }
 
 data class MainUiState(
@@ -178,7 +187,7 @@ data class MainUiState(
     val currentContentType: String = "",
     val currentScreen: String = NavigationRoute.MAIN,
     val isLoading: Boolean = false,
-    val isLanguageChanging: Boolean = false,
+    val isLoadingOverlay: Boolean = false,
     val error: String? = null,
     val scrollAlpha: Float = 1f
 )

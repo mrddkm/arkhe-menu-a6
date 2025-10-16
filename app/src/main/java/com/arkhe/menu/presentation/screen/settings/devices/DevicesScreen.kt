@@ -56,11 +56,14 @@ import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.ui.theme.montserratFontFamily
 import com.arkhe.menu.presentation.viewmodel.AuthViewModel
 import com.arkhe.menu.presentation.viewmodel.LanguageViewModel
+import com.arkhe.menu.presentation.viewmodel.MainViewModel
 import com.arkhe.menu.utils.samplePinData
 import com.arkhe.menu.utils.sampleUser
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.Close
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.compose.koinViewModel
@@ -114,7 +117,8 @@ fun DevicesContent(
     pinData: PinData,
     onPinUpdate: (PinData) -> Unit,
     langViewModel: LanguageViewModel = koinViewModel(),
-    authViewModel: AuthViewModel = koinViewModel()
+    authViewModel: AuthViewModel = koinViewModel(),
+    mainViewModel: MainViewModel = koinViewModel()
 ) {
     var userState by remember { mutableStateOf(user) }
 
@@ -232,7 +236,12 @@ fun DevicesContent(
             Button(
                 onClick = {
                     scope.launch {
-                        authViewModel.deactivatedAuthState()
+                        mainViewModel.showLoadingOverlay()
+                        coroutineScope {
+                            launch { authViewModel.deactivatedAuthState() }
+                            launch { delay(800L) }
+                        }
+                        mainViewModel.hideLoadingOverlay()
                     }
                 },
                 colors = ButtonDefaults.buttonColors(

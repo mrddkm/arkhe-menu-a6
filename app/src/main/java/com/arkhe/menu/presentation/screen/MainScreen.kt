@@ -41,7 +41,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.arkhe.menu.data.local.preferences.Lang
 import com.arkhe.menu.di.appModule
 import com.arkhe.menu.di.dataModule
 import com.arkhe.menu.di.domainModule
@@ -56,7 +55,6 @@ import com.arkhe.menu.presentation.screen.settings.settings.SettingsBottomSheet
 import com.arkhe.menu.presentation.ui.animation.ScreenTransitions
 import com.arkhe.menu.presentation.ui.components.ArkheBottomBar
 import com.arkhe.menu.presentation.ui.components.ArkheTopBar
-import com.arkhe.menu.presentation.ui.components.LoadingOverlay
 import com.arkhe.menu.presentation.ui.components.LoadingIndicatorSpinner
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.viewmodel.AuthViewModel
@@ -66,6 +64,7 @@ import com.arkhe.menu.presentation.viewmodel.ProductViewModel
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Fill
 import compose.icons.evaicons.fill.Lock
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.compose.koinViewModel
@@ -353,12 +352,20 @@ fun MainScreen(
                         }
                     },
                     onLockScreenClick = {
-                        navController.navigate(
-                            NavigationRoute.ON_BOARDING
-                        )
                         coroutineScope.launch {
                             sheetState.hide()
                             mainViewModel.toggleProfileSettingsBottomSheet()
+                            mainViewModel.showLoadingOverlay()
+                            delay(800L)
+                            navController.navigate(
+                                NavigationRoute.ON_BOARDING
+                            ) {
+                                popUpTo(navController.graph.startDestinationId) {
+                                    inclusive = true
+                                }
+                                launchSingleTop = true
+                            }
+                            mainViewModel.hideLoadingOverlay()
                         }
                     },
                     onPersonalInfoClick = {
@@ -422,14 +429,6 @@ fun MainScreen(
                 mainViewModel.setError(null)
             }
         }
-
-        /*Loading Overlay - appear above all content*/
-        LoadingOverlay(
-            isVisible = uiState.isLanguageChanging,
-            isDefaultIcon = false,
-            changingLanguageText = langViewModel.getLocalized(Lang.CHANGING_LANGUAGE),
-            pleaseWaitText = langViewModel.getLocalized(Lang.PLEASE_WAIT)
-        )
     }
 }
 
