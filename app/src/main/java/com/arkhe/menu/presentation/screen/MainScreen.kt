@@ -9,10 +9,8 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -256,10 +254,9 @@ fun MainScreen(
         /*--- Floating TopBar ---*/
         Box(
             modifier = Modifier
-                .statusBarsPadding()
                 .align(Alignment.TopCenter)
-                .padding(horizontal = 16.dp, vertical = 6.dp)
                 .windowInsetsPadding(WindowInsets.statusBars)
+                .padding(horizontal = 16.dp, vertical = 6.dp)
                 .onGloballyPositioned { coords ->
                     topBarHeightPx = coords.size.height
                 }
@@ -284,10 +281,9 @@ fun MainScreen(
         if (uiState.showBottomBar) {
             Box(
                 modifier = Modifier
-                    .navigationBarsPadding()
-                    .padding(horizontal = 8.dp, vertical = 6.dp)
                     .align(Alignment.BottomCenter)
                     .windowInsetsPadding(WindowInsets.navigationBars)
+                    .padding(horizontal = 8.dp, vertical = 6.dp)
                     .onGloballyPositioned { coords ->
                         bottomBarHeightPx = coords.size.height
                     }
