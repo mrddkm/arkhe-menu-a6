@@ -56,7 +56,7 @@ import com.arkhe.menu.presentation.screen.settings.settings.SettingsBottomSheet
 import com.arkhe.menu.presentation.ui.animation.ScreenTransitions
 import com.arkhe.menu.presentation.ui.components.ArkheBottomBar
 import com.arkhe.menu.presentation.ui.components.ArkheTopBar
-import com.arkhe.menu.presentation.ui.components.LanguageLoadingOverlay
+import com.arkhe.menu.presentation.ui.components.LoadingOverlay
 import com.arkhe.menu.presentation.ui.components.LoadingIndicatorSpinner
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.viewmodel.AuthViewModel
@@ -352,7 +352,7 @@ fun MainScreen(
                             mainViewModel.toggleProfileSettingsBottomSheet()
                         }
                     },
-                    onLockScreen = {
+                    onLockScreenClick = {
                         navController.navigate(
                             NavigationRoute.ON_BOARDING
                         )
@@ -423,9 +423,10 @@ fun MainScreen(
             }
         }
 
-        /*Language Loading Overlay - appear above all content*/
-        LanguageLoadingOverlay(
+        /*Loading Overlay - appear above all content*/
+        LoadingOverlay(
             isVisible = uiState.isLanguageChanging,
+            isDefaultIcon = false,
             changingLanguageText = langViewModel.getLocalized(Lang.CHANGING_LANGUAGE),
             pleaseWaitText = langViewModel.getLocalized(Lang.PLEASE_WAIT)
         )

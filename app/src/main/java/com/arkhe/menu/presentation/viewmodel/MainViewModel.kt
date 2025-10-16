@@ -152,7 +152,6 @@ class MainViewModel(
         _uiState.value = _uiState.value.copy(
             isLanguageChanging = false
         )
-        // Kembali ke halaman awal
         navigateBackToMain()
     }
 

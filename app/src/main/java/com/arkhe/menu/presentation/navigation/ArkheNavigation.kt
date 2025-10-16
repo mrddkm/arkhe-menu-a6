@@ -1,6 +1,7 @@
 package com.arkhe.menu.presentation.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -17,10 +18,12 @@ import com.arkhe.menu.presentation.screen.settings.account.SignInSecurityScreen
 import com.arkhe.menu.presentation.screen.settings.devices.DevicesScreen
 import com.arkhe.menu.presentation.screen.settings.privacy.PrivacyScreen
 import com.arkhe.menu.presentation.screen.settings.terms.TermsScreen
+import com.arkhe.menu.presentation.viewmodel.AuthViewModel
 import com.arkhe.menu.presentation.viewmodel.ProductViewModel
 import com.arkhe.menu.utils.samplePasswordData
 import com.arkhe.menu.utils.samplePinData
 import com.arkhe.menu.utils.sampleUser
+import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -157,7 +160,10 @@ fun ArkheNavigation(
                 }
             )
         ) { backStackEntry ->
+            val authViewModel: AuthViewModel = koinViewModel()
+            val scope = rememberCoroutineScope()
             SignInSecurityScreen(
+                navController = navController,
                 onBackClick = {
                     val popSuccess = navController.popBackStack()
                     if (!popSuccess) {
@@ -169,13 +175,18 @@ fun ArkheNavigation(
                         }
                     }
                 },
-                navController = navController,
+                onSignedOutScreenClick = {
+                    navController.navigate(
+                        NavigationRoute.ON_BOARDING
+                    )
+                    scope.launch {
+                        authViewModel.signedOutAuthState()
+                    }
+                },
                 user = sampleUser,
                 passwordData = samplePasswordData,
-                pinData = samplePinData,
                 onUserUpdate = {},
-                onPasswordUpdate = {},
-                onPinUpdate = {}
+                onPasswordUpdate = {}
             )
         }
 
@@ -201,7 +212,11 @@ fun ArkheNavigation(
                         }
                     }
                 },
-                navController = navController
+                navController = navController,
+                user = sampleUser,
+                onUserUpdate = {},
+                pinData = samplePinData,
+                onPinUpdate = {}
             )
         }
 

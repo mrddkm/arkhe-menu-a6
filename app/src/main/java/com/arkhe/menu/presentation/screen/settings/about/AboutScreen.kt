@@ -138,7 +138,7 @@ fun AboutContent(
                 Button(
                     onClick = {
                         scope.launch {
-                            authViewModel.resetAuthState()
+                            authViewModel.deactivatedAuthState()
                         }
                     },
                     modifier = Modifier

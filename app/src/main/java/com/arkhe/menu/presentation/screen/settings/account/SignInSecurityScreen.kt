@@ -1,7 +1,6 @@
 package com.arkhe.menu.presentation.screen.settings.account
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,8 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.LockReset
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -30,7 +27,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,44 +44,38 @@ import com.arkhe.menu.di.dataModule
 import com.arkhe.menu.di.domainModule
 import com.arkhe.menu.di.previewModule
 import com.arkhe.menu.domain.model.PasswordData
-import com.arkhe.menu.domain.model.PinData
 import com.arkhe.menu.domain.model.ThemeModels
 import com.arkhe.menu.domain.model.User
 import com.arkhe.menu.presentation.navigation.NavigationRoute
-import com.arkhe.menu.presentation.ui.components.edit.AnimatedPinField
 import com.arkhe.menu.presentation.ui.components.edit.EditEmailField
 import com.arkhe.menu.presentation.ui.components.edit.EditPhoneField
 import com.arkhe.menu.presentation.ui.components.edit.EditableField
 import com.arkhe.menu.presentation.ui.components.edit.EditableInfoScreenBase
 import com.arkhe.menu.presentation.ui.components.edit.validatePassword
 import com.arkhe.menu.presentation.ui.components.settings.SettingsItem
-import com.arkhe.menu.presentation.ui.components.settings.SettingsToggleItem
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.ui.theme.montserratFontFamily
-import com.arkhe.menu.presentation.viewmodel.AuthViewModel
 import com.arkhe.menu.presentation.viewmodel.LanguageViewModel
 import com.arkhe.menu.utils.samplePasswordData
-import com.arkhe.menu.utils.samplePinData
 import com.arkhe.menu.utils.sampleUser
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.Close
 import compose.icons.evaicons.outline.Info
-import kotlinx.coroutines.launch
+import compose.icons.evaicons.outline.LogOut
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.KoinApplicationPreview
 
 @Composable
 fun SignInSecurityScreen(
-    onBackClick: () -> Unit,
     navController: NavController? = null,
+    onBackClick: () -> Unit = {},
+    onSignedOutScreenClick: () -> Unit = {},
     user: User,
     passwordData: PasswordData,
-    pinData: PinData,
     onUserUpdate: (User) -> Unit,
     onPasswordUpdate: (PasswordData) -> Unit,
-    onPinUpdate: (PinData) -> Unit
 ) {
     val handleBackNavigation: () -> Unit = {
         navController?.let { nav ->
@@ -109,12 +99,11 @@ fun SignInSecurityScreen(
                 .fillMaxSize()
                 .padding(paddingValues),
             onHandleBackNavigation = handleBackNavigation,
+            onSignedOutScreenClick = onSignedOutScreenClick,
             user = user,
             passwordData = passwordData,
-            pinData = pinData,
             onUserUpdate = onUserUpdate,
             onPasswordUpdate = onPasswordUpdate,
-            onPinUpdate = onPinUpdate
         )
     }
 }
@@ -123,20 +112,17 @@ fun SignInSecurityScreen(
 @Composable
 fun SignInSecurityContentExt(
     modifier: Modifier = Modifier,
+    onHandleBackNavigation: () -> Unit = {},
+    onSignedOutScreenClick: () -> Unit = {},
     user: User,
     passwordData: PasswordData,
-    pinData: PinData,
     onUserUpdate: (User) -> Unit,
     onPasswordUpdate: (PasswordData) -> Unit,
-    onPinUpdate: (PinData) -> Unit,
-    onHandleBackNavigation: () -> Unit = { },
-    langViewModel: LanguageViewModel = koinViewModel(),
-    authViewModel: AuthViewModel = koinViewModel()
+    langViewModel: LanguageViewModel = koinViewModel()
 ) {
     var userState by remember { mutableStateOf(user) }
 
     LaunchedEffect(user) {
-        Log.d("SignInSecurity", "Props user changed: isBiometricActive = ${user.isBiometricActive}")
         userState = user
     }
 
@@ -306,44 +292,7 @@ fun SignInSecurityContentExt(
                         )
                     )
                 )
-                EditableInfoScreenBase(
-                    title = "Change PIN",
-                    userData = pinData,
-                    onUserUpdate = onPinUpdate,
-                    fields = listOf(
-                        EditableField(
-                            valueLabel = "PIN Lock",
-                            info = "Last changed Jan 10, 2025",
-                            getValue = { it.newPin },
-                            applyChange = { old, new -> old.copy(newPin = new) },
-                            isValid = { it.length == 4 },
-                            editor = { value, onValueChange ->
-                                AnimatedPinField(
-                                    label = "Enter New PIN",
-                                    value = value,
-                                    onValueChange = onValueChange
-                                )
-                            }
-                        )
-                    )
-                )
             }
-        }
-        Surface(
-            modifier = Modifier
-                .padding(start = 16.dp, top = 24.dp, bottom = 0.dp, end = 16.dp),
-            shape = MaterialTheme.shapes.medium
-        ) {
-            SettingsToggleItem(
-                value = "Biometric",
-                showDivider = false,
-                isActive = userState.isBiometricActive,
-                onToggle = { newValue ->
-                    val updatedUser = userState.copy(isBiometricActive = newValue)
-                    userState = updatedUser
-                    onUserUpdate(updatedUser)
-                }
-            )
         }
         Box(
             modifier = Modifier
@@ -351,14 +300,8 @@ fun SignInSecurityContentExt(
                 .padding(start = 16.dp, top = 24.dp, bottom = 0.dp, end = 16.dp),
             contentAlignment = Alignment.Center
         ) {
-            val scope = rememberCoroutineScope()
-
             Button(
-                onClick = {
-                    scope.launch {
-                        authViewModel.resetAuthState()
-                    }
-                },
+                onClick = onSignedOutScreenClick,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
                     contentColor = MaterialTheme.colorScheme.primary
@@ -370,7 +313,7 @@ fun SignInSecurityContentExt(
                     modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Outlined.LockReset,
+                        imageVector = EvaIcons.Outline.LogOut,
                         contentDescription = null,
                         modifier = Modifier
                             .padding(end = 8.dp)
@@ -378,7 +321,7 @@ fun SignInSecurityContentExt(
                         tint = MaterialTheme.colorScheme.error.copy(alpha = 0.6f)
                     )
                     Text(
-                        text = "Deactivation",
+                        text = "Sign-out",
                         fontFamily = montserratFontFamily,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 18.sp,
@@ -392,7 +335,7 @@ fun SignInSecurityContentExt(
 
 @Preview(showBackground = true)
 @Composable
-fun SignInSecurityScreenExtPreview() {
+fun SignInSecurityScreenPreview() {
     val previewContext = LocalContext.current
     KoinApplicationPreview(
         application = {
@@ -410,13 +353,12 @@ fun SignInSecurityScreenExtPreview() {
         ) {
             SignInSecurityScreen(
                 onBackClick = {},
+                onSignedOutScreenClick = {},
                 navController = null,
                 user = sampleUser,
                 passwordData = samplePasswordData,
-                pinData = samplePinData,
                 onUserUpdate = {},
-                onPasswordUpdate = {},
-                onPinUpdate = {}
+                onPasswordUpdate = {}
             )
         }
     }

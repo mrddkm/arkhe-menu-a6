@@ -64,7 +64,7 @@ fun SettingsBottomSheet(
     langViewModel: LanguageViewModel = koinViewModel(),
     mainViewModel: MainViewModel = koinViewModel(),
     onClose: () -> Unit = {},
-    onLockScreen: () -> Unit = {},
+    onLockScreenClick: () -> Unit = {},
     onPersonalInfoClick: () -> Unit = {},
     onSignInSecurityClick: () -> Unit = {},
     onDevicesClick: () -> Unit = {},
@@ -109,21 +109,13 @@ fun SettingsBottomSheet(
             HeaderTitleSecondary(
                 title = langViewModel.getLocalized(Lang.PROFILE_SETTINGS),
             )
-            IconButton(onClick = { onLockScreen() }) {
-                Box(
-                    modifier = Modifier
-                        .size(24.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.error.copy(alpha = 0.3f)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Outlined.ExitToApp,
-                        contentDescription = null,
-                        modifier = Modifier.size(20.dp),
-                        tint = MaterialTheme.colorScheme.error
-                    )
-                }
+            IconButton(onClick = { onLockScreenClick() }) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Outlined.ExitToApp,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                    tint = MaterialTheme.colorScheme.error
+                )
             }
         }
     }

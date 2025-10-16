@@ -34,9 +34,10 @@ import androidx.compose.ui.unit.dp
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 
 @Composable
-fun LanguageLoadingOverlay(
+fun LoadingOverlay(
     isVisible: Boolean,
-    changingLanguageText: String = "Changing language...",
+    isDefaultIcon: Boolean = true,
+    changingLanguageText: String = "Loading...",
     pleaseWaitText: String = "Please wait",
     @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
 ) {
@@ -54,7 +55,7 @@ fun LanguageLoadingOverlay(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                val infiniteTransition = rememberInfiniteTransition(label = "language_loading")
+                val infiniteTransition = rememberInfiniteTransition(label = "loading_overlay")
 
                 val rotation by infiniteTransition.animateFloat(
                     initialValue = 0f,
@@ -76,18 +77,22 @@ fun LanguageLoadingOverlay(
                     label = "scale"
                 )
 
-                Icon(
-                    imageVector = Icons.Outlined.Translate,
-                    contentDescription = "Changing language",
-                    modifier = Modifier
-                        .size(64.dp)
-                        .rotate(rotation)
-                        .scale(scale),
-                    tint = MaterialTheme.colorScheme.primary
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
+                if (isDefaultIcon) {
+                    LoadingGraySpinner(
+                        modifier = Modifier.size(64.dp)
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Outlined.Translate,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(64.dp)
+                            .rotate(rotation)
+                            .scale(scale),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+                Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = changingLanguageText,
                     style = MaterialTheme.typography.titleMedium.copy(
@@ -95,9 +100,7 @@ fun LanguageLoadingOverlay(
                     ),
                     color = MaterialTheme.colorScheme.onSurface
                 )
-
                 Spacer(modifier = Modifier.height(8.dp))
-
                 Text(
                     text = pleaseWaitText,
                     style = MaterialTheme.typography.bodyMedium,
@@ -112,6 +115,9 @@ fun LanguageLoadingOverlay(
 @Composable
 fun LanguageLoadingOverlayPreview() {
     ArkheTheme {
-        LanguageLoadingOverlay(isVisible = true)
+        LoadingOverlay(
+            isVisible = true,
+            isDefaultIcon = true
+        )
     }
 }
