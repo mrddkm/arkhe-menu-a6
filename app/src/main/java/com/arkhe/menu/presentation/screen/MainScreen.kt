@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -182,14 +183,15 @@ fun MainScreen(
                 }
             },
             modifier = Modifier
-//                .systemBarsPadding()
                 .fillMaxSize(),
             label = "screen_transition"
         ) { currentScreen ->
             when (currentScreen) {
                 NavigationRoute.PROFILE -> {
                     ProfileScreen(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .windowInsetsPadding(WindowInsets.statusBars.union(WindowInsets.navigationBars)),
                         topBarHeight = topBarHeight
                     )
                 }
@@ -209,7 +211,9 @@ fun MainScreen(
                 NavigationRoute.CATEGORIES -> {
                     CategoriesScreen(
                         navController = navController,
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .windowInsetsPadding(WindowInsets.statusBars.union(WindowInsets.navigationBars)),
                         onNavigateToDetail = {
                             navController.navigate(NavigationRoute.categoryDetail())
                         },
@@ -220,7 +224,9 @@ fun MainScreen(
                 NavigationRoute.PRODUCTS -> {
                     ProductsScreen(
                         navController = navController,
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .windowInsetsPadding(WindowInsets.statusBars.union(WindowInsets.navigationBars)),
                         productViewModel = productViewModel,
                         topBarHeight = topBarHeight
                     )
@@ -228,7 +234,9 @@ fun MainScreen(
 
                 else -> {
                     MainContent(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .windowInsetsPadding(WindowInsets.statusBars.union(WindowInsets.navigationBars)),
                         selectedBottomNavItem = uiState.selectedBottomNavItem,
                         userRole = uiState.userRole,
                         navController = navController,

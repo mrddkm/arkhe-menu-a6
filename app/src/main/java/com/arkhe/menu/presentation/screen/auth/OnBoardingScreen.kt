@@ -58,7 +58,6 @@ import com.arkhe.menu.data.local.preferences.Lang
 import com.arkhe.menu.domain.model.ThemeModels
 import com.arkhe.menu.presentation.navigation.NavigationRoute
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
-import com.arkhe.menu.presentation.ui.theme.autoInsets
 import com.arkhe.menu.presentation.ui.theme.montserratAlternatesFontFamily
 import com.arkhe.menu.presentation.ui.theme.montserratFontFamily
 import com.arkhe.menu.presentation.viewmodel.AuthViewModel
@@ -124,7 +123,6 @@ fun OnboardingScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(backgroundColor)
-            .autoInsets(hasBars = false)
     ) {
         Box(
             modifier = Modifier
@@ -187,7 +185,7 @@ fun OnboardingScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .background(backgroundColor)
-                .padding(start = 8.dp, top = 16.dp, end = 8.dp, bottom = 2.dp),
+                .padding(start = 8.dp, top = 16.dp, end = 8.dp, bottom = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
