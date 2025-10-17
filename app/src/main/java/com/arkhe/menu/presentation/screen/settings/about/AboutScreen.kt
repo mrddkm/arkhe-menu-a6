@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -20,7 +19,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,12 +26,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.data.local.preferences.Lang
-import com.arkhe.menu.presentation.viewmodel.AuthViewModel
 import com.arkhe.menu.presentation.viewmodel.LanguageViewModel
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.Close
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -54,8 +50,7 @@ fun AboutScreen(
 fun AboutContent(
     modifier: Modifier = Modifier,
     onHandleBackNavigation: () -> Unit = { },
-    langViewModel: LanguageViewModel = koinViewModel(),
-    authViewModel: AuthViewModel = koinViewModel()
+    langViewModel: LanguageViewModel = koinViewModel()
 ) {
     Column(
         modifier = modifier.padding(16.dp)
@@ -111,25 +106,7 @@ fun AboutContent(
                 .padding(start = 16.dp, top = 0.dp, bottom = 0.dp, end = 16.dp),
             shape = MaterialTheme.shapes.medium
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth(),
-            ) {
-                val scope = rememberCoroutineScope()
-                Button(
-                    onClick = {
-                        scope.launch {
-                            authViewModel.deactivatedAuthState()
-                        }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 32.dp)
-                ) {
-                    Text("Reset Auth State")
-                }
-
-            }
+            WizardBottomSheetExample()
         }
     }
 }

@@ -388,8 +388,7 @@ fun ArkheNavigation(
         /*Loading Overlay - appear above all content*/
         LoadingOverlay(
             isVisible = uiState.isLoadingOverlay,
-            isDefaultIcon = false,
-            changingLanguageText = langViewModel.getLocalized(Lang.CHANGING_LANGUAGE),
+            isDefaultIcon = true,
             pleaseWaitText = langViewModel.getLocalized(Lang.PLEASE_WAIT)
         )
 

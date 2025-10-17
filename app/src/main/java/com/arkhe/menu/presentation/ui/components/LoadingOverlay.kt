@@ -37,7 +37,7 @@ import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 fun LoadingOverlay(
     isVisible: Boolean,
     isDefaultIcon: Boolean = true,
-    changingLanguageText: String = "Loading...",
+    changingLanguageText: String? = null,
     pleaseWaitText: String = "Please wait",
     @SuppressLint("ModifierParameter") modifier: Modifier = Modifier
 ) {
@@ -93,13 +93,15 @@ fun LoadingOverlay(
                     )
                 }
                 Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = changingLanguageText,
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.Medium
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface
-                )
+                changingLanguageText?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Medium
+                        ),
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = pleaseWaitText,
