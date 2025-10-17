@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,7 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,7 +55,6 @@ import compose.icons.evaicons.Fill
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.fill.Lock
 import compose.icons.evaicons.outline.Close
-import compose.icons.evaicons.outline.Smartphone
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.KoinApplicationPreview
@@ -134,8 +132,14 @@ fun PinLockContent(
     onPinEntered: (String) -> Unit
 ) {
     val labelPinEntered = "4-digit PIN"
-    val confirmingPin by remember(state.pin) {
-        derivedStateOf { state.pin.length == MAX_LENGTH_PIN }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(state.pin) {
+        if (state.pin.length == MAX_LENGTH_PIN) {
+            onPinEntered(state.pin)
+            state.onPinChange("")
+            errorMessage = "Incorrect PIN, try again"
+        }
     }
 
     Column(
@@ -149,6 +153,15 @@ fun PinLockContent(
             fontWeight = FontWeight.Bold,
             fontSize = 24.sp
         )
+        Spacer(Modifier.height(4.dp))
+        if (errorMessage != null) {
+            Text(
+                text = errorMessage ?: "",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.labelSmall,
+                modifier = Modifier.padding(top = 8.dp)
+            )
+        }
         Spacer(Modifier.height(4.dp))
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -198,7 +211,7 @@ fun PinLockContent(
         Spacer(Modifier.height(8.dp))
         Row(
             modifier = Modifier.fillMaxWidth(0.8f),
-            horizontalArrangement = Arrangement.SpaceEvenly
+            horizontalArrangement = Arrangement.Center
         ) {
             TextButton(
                 onClick = {},
@@ -214,26 +227,6 @@ fun PinLockContent(
                         text = "Forgot PIN ?..",
                         fontSize = 10.sp,
                     )
-                }
-            }
-            Button(
-                onClick = { onPinEntered(state.pin) },
-                enabled = confirmingPin,
-                modifier = Modifier
-                    .width(130.dp)
-                    .height(40.dp)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        imageVector = EvaIcons.Outline.Smartphone,
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Spacer(Modifier.width(4.dp))
-                    Text("Unlock")
                 }
             }
         }
