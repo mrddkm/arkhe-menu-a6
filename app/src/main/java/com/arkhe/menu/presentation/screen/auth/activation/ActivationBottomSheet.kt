@@ -1,6 +1,9 @@
 package com.arkhe.menu.presentation.screen.auth.activation
 
 import android.content.Context
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,9 +22,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.SheetValue
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,7 +40,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.arkhe.menu.data.local.preferences.Lang
 import com.arkhe.menu.presentation.ui.components.HeaderTitleSecondary
 import com.arkhe.menu.presentation.viewmodel.AuthUiState
@@ -47,6 +53,7 @@ import compose.icons.EvaIcons
 import compose.icons.evaicons.Fill
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.fill.Lock
+import compose.icons.evaicons.outline.CheckmarkCircle2
 import compose.icons.evaicons.outline.Close
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -62,14 +69,13 @@ fun ActivationBottomSheet(
 ) {
     val state = rememberActivationState()
     val uiState by authViewModel.uiState.collectAsState()
+
     val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true,
-        confirmValueChange = { newValue ->
-            newValue != SheetValue.Hidden
-        }
+        skipPartiallyExpanded = true
     )
+
     ModalBottomSheet(
-        onDismissRequest = { },
+        onDismissRequest = onDismiss,
         sheetState = sheetState,
         dragHandle = {
             Box(
@@ -119,7 +125,9 @@ fun ActivationBottomSheet(
                 )
                 Spacer(Modifier.width(48.dp))
             }
+            ActivationProgressIndicator(currentStep = state.step)
         }
+
         Column(
             Modifier
                 .fillMaxWidth()
@@ -134,20 +142,22 @@ fun ActivationBottomSheet(
                         when (success.type) {
                             SuccessType.ACTIVATION -> {
                                 when {
-                                    success.message.contains(
-                                        "Activation",
-                                        true
-                                    ) -> state.onStepChange(2)
+                                    success.message.contains("Activation", true) -> {
+                                        state.onStepChange(2)
+                                    }
 
-                                    success.message.contains(
-                                        "Code verified",
-                                        true
-                                    ) -> state.onStepChange(3)
+                                    success.message.contains("Code verified", true) -> {
+                                        state.onStepChange(3)
+                                    }
 
-                                    success.message.contains(
-                                        "Password",
-                                        true
-                                    ) -> state.onStepChange(4)
+                                    success.message.contains("Password", true) -> {
+                                        state.onStepChange(4)
+                                    }
+
+                                    success.message.contains("PIN saved", true) -> {
+                                        onActivated()
+                                        onDismiss()
+                                    }
                                 }
                             }
 
@@ -160,10 +170,11 @@ fun ActivationBottomSheet(
                     else -> Unit
                 }
             }
+
             when (state.step) {
                 1 -> ActivationContentStepOne(
                     state = state,
-                    onDismiss = { onDismiss() },
+                    onDismiss = onDismiss,
                     onNext = {
                         state.scope.launch {
                             authViewModel.requestActivation(
@@ -207,7 +218,6 @@ fun ActivationBottomSheet(
                         state.scope.launch {
                             if (state.pin == state.confirmPin && state.pin.length == 4) {
                                 authViewModel.savePin(state.pin)
-                                onActivated()
                             }
                         }
                     },
@@ -276,3 +286,138 @@ data class ActivationState(
     val scope: CoroutineScope,
     val context: Context
 )
+
+@Composable
+private fun ActivationProgressIndicator(currentStep: Int) {
+    val totalSteps = 4
+    val progress by animateFloatAsState(
+        targetValue = currentStep / totalSteps.toFloat(),
+        animationSpec = tween(durationMillis = 400),
+        label = "progressAnimation"
+    )
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 12.dp, bottom = 8.dp)
+    ) {
+        // Progress Bar
+        LinearProgressIndicator(
+            progress = { progress },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(6.dp)
+                .clip(MaterialTheme.shapes.small),
+            color = MaterialTheme.colorScheme.primary,
+            trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Step Indicators dengan label
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Top
+        ) {
+            repeat(totalSteps) { index ->
+                val stepNumber = index + 1
+                val isCompleted = stepNumber < currentStep
+                val isCurrent = stepNumber == currentStep
+
+                StepIndicatorItem(
+                    stepNumber = stepNumber,
+                    label = getStepLabel(stepNumber),
+                    isCompleted = isCompleted,
+                    isCurrent = isCurrent
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun StepIndicatorItem(
+    stepNumber: Int,
+    label: String,
+    isCompleted: Boolean,
+    isCurrent: Boolean
+) {
+    val backgroundColor by animateColorAsState(
+        targetValue = when {
+            isCompleted -> MaterialTheme.colorScheme.primary
+            isCurrent -> MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
+            else -> MaterialTheme.colorScheme.surfaceVariant
+        },
+        animationSpec = tween(300),
+        label = "bgColor"
+    )
+
+    val textColor by animateColorAsState(
+        targetValue = when {
+            isCompleted || isCurrent -> MaterialTheme.colorScheme.onPrimary
+            else -> MaterialTheme.colorScheme.onSurfaceVariant
+        },
+        animationSpec = tween(300),
+        label = "textColor"
+    )
+
+    val labelColor by animateColorAsState(
+        targetValue = when {
+            isCurrent -> MaterialTheme.colorScheme.primary
+            isCompleted -> MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
+            else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+        },
+        animationSpec = tween(300),
+        label = "labelColor"
+    )
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        modifier = Modifier.width(70.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(32.dp)
+                .clip(CircleShape)
+                .background(backgroundColor),
+            contentAlignment = Alignment.Center
+        ) {
+            if (isCompleted) {
+                Icon(
+                    imageVector = EvaIcons.Outline.CheckmarkCircle2,
+                    contentDescription = null,
+                    tint = textColor,
+                    modifier = Modifier.size(18.dp)
+                )
+            } else {
+                Text(
+                    text = stepNumber.toString(),
+                    color = textColor,
+                    fontSize = 14.sp,
+                    fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Normal
+                )
+            }
+        }
+
+        Text(
+            text = label,
+            color = labelColor,
+            fontSize = 10.sp,
+            fontWeight = if (isCurrent) FontWeight.SemiBold else FontWeight.Normal,
+            maxLines = 2,
+            lineHeight = 12.sp
+        )
+    }
+}
+
+private fun getStepLabel(step: Int): String {
+    return when (step) {
+        1 -> "Info"
+        2 -> "Code"
+        3 -> "Password"
+        4 -> "PIN"
+        else -> ""
+    }
+}

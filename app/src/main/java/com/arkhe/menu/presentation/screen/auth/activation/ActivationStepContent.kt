@@ -91,7 +91,6 @@ fun ActivationContentStepOne(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text("1 / 4", style = MaterialTheme.typography.titleMedium)
         Text("Please fill your information", style = MaterialTheme.typography.titleSmall)
         OutlinedTextField(
             value = state.userId,
@@ -268,7 +267,6 @@ fun ActivationContentStepTwo(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text("2 / 4", style = MaterialTheme.typography.titleMedium)
         Text("Enter Activation Code", style = MaterialTheme.typography.titleSmall)
         Row(
             modifier = Modifier.fillMaxWidth(0.8f),
@@ -459,7 +457,6 @@ fun ActivationContentStepThree(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text("3 / 4", style = MaterialTheme.typography.titleMedium)
         Text("Create Password", style = MaterialTheme.typography.titleSmall)
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             // ---------------------------
@@ -660,7 +657,6 @@ fun ActivationContentStepFour(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text("4 / 4", style = MaterialTheme.typography.titleMedium)
         Text("4-digit PIN", style = MaterialTheme.typography.titleSmall)
         /*CREATE PIN SECTION*/
         Column(

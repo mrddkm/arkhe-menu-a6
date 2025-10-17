@@ -35,17 +35,27 @@ fun AuthUi(
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(uiState) {
+        println("AuthUi: uiState = $uiState")
         when (uiState) {
             is AuthUiState.Success -> {
-                onDismissAll()
-                when ((uiState as AuthUiState.Success).type) {
-                    SuccessType.ACTIVATION -> onActivated()
-                    SuccessType.SIGNEDIN -> onSignedIn()
+                val success = uiState as AuthUiState.Success
+                println("AuthUi: Success type = ${success.type}, message = ${success.message}")
+                when (success.type) {
+                    SuccessType.ACTIVATION -> {
+                        if (success.message.contains("PIN saved", true)) {
+                            println("AuthUi: Dismissing and activating")
+                            onDismissAll()
+                            onActivated()
+                        }
+                    }
+                    SuccessType.SIGNEDIN -> {
+                        println("AuthUi: Dismissing and signing in")
+                        onDismissAll()
+                        onSignedIn()
+                    }
                 }
             }
-
             is AuthUiState.Error -> {}
-
             else -> Unit
         }
     }
