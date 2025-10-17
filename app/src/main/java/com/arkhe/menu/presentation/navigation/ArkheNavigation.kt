@@ -226,15 +226,18 @@ fun ArkheNavigation(
                 )
             ) { backStackEntry ->
                 SignInSecurityScreen(
-                    navController = navController,
                     onBackClick = {
-                        val popSuccess = navController.popBackStack()
-                        if (!popSuccess) {
-                            navController.navigate(NavigationRoute.MAIN) {
-                                popUpTo(NavigationRoute.MAIN) {
-                                    inclusive = true
+                        scope.launch {
+                            mainViewModel.showProfileSettingsBottomSheet()
+                            delay(50L)
+                            val popSuccess = navController.popBackStack()
+                            if (!popSuccess) {
+                                navController.navigate(NavigationRoute.MAIN) {
+                                    popUpTo(NavigationRoute.MAIN) {
+                                        inclusive = true
+                                    }
+                                    launchSingleTop = true
                                 }
-                                launchSingleTop = true
                             }
                         }
                     },
@@ -273,17 +276,20 @@ fun ArkheNavigation(
             ) { backStackEntry ->
                 DevicesScreen(
                     onBackClick = {
-                        val popSuccess = navController.popBackStack()
-                        if (!popSuccess) {
-                            navController.navigate(NavigationRoute.MAIN) {
-                                popUpTo(NavigationRoute.MAIN) {
-                                    inclusive = true
+                        scope.launch {
+                            mainViewModel.showProfileSettingsBottomSheet()
+                            delay(50L)
+                            val popSuccess = navController.popBackStack()
+                            if (!popSuccess) {
+                                navController.navigate(NavigationRoute.MAIN) {
+                                    popUpTo(NavigationRoute.MAIN) {
+                                        inclusive = true
+                                    }
+                                    launchSingleTop = true
                                 }
-                                launchSingleTop = true
                             }
                         }
                     },
-                    navController = navController,
                     user = sampleUser,
                     onUserUpdate = {},
                     pinData = samplePinData,
@@ -303,17 +309,20 @@ fun ArkheNavigation(
             ) { backStackEntry ->
                 AboutScreen(
                     onBackClick = {
-                        val popSuccess = navController.popBackStack()
-                        if (!popSuccess) {
-                            navController.navigate(NavigationRoute.MAIN) {
-                                popUpTo(NavigationRoute.MAIN) {
-                                    inclusive = true
+                        scope.launch {
+                            mainViewModel.showProfileSettingsBottomSheet()
+                            delay(50L)
+                            val popSuccess = navController.popBackStack()
+                            if (!popSuccess) {
+                                navController.navigate(NavigationRoute.MAIN) {
+                                    popUpTo(NavigationRoute.MAIN) {
+                                        inclusive = true
+                                    }
+                                    launchSingleTop = true
                                 }
-                                launchSingleTop = true
                             }
                         }
-                    },
-                    navController = navController
+                    }
                 )
             }
 
@@ -329,17 +338,20 @@ fun ArkheNavigation(
             ) { backStackEntry ->
                 PrivacyScreen(
                     onBackClick = {
-                        val popSuccess = navController.popBackStack()
-                        if (!popSuccess) {
-                            navController.navigate(NavigationRoute.MAIN) {
-                                popUpTo(NavigationRoute.MAIN) {
-                                    inclusive = true
+                        scope.launch {
+                            mainViewModel.showProfileSettingsBottomSheet()
+                            delay(50L)
+                            val popSuccess = navController.popBackStack()
+                            if (!popSuccess) {
+                                navController.navigate(NavigationRoute.MAIN) {
+                                    popUpTo(NavigationRoute.MAIN) {
+                                        inclusive = true
+                                    }
+                                    launchSingleTop = true
                                 }
-                                launchSingleTop = true
                             }
                         }
-                    },
-                    navController = navController
+                    }
                 )
             }
 
@@ -355,17 +367,20 @@ fun ArkheNavigation(
             ) { backStackEntry ->
                 TermsScreen(
                     onBackClick = {
-                        val popSuccess = navController.popBackStack()
-                        if (!popSuccess) {
-                            navController.navigate(NavigationRoute.MAIN) {
-                                popUpTo(NavigationRoute.MAIN) {
-                                    inclusive = true
+                        scope.launch {
+                            mainViewModel.showProfileSettingsBottomSheet()
+                            delay(50L)
+                            val popSuccess = navController.popBackStack()
+                            if (!popSuccess) {
+                                navController.navigate(NavigationRoute.MAIN) {
+                                    popUpTo(NavigationRoute.MAIN) {
+                                        inclusive = true
+                                    }
+                                    launchSingleTop = true
                                 }
-                                launchSingleTop = true
                             }
                         }
-                    },
-                    navController = navController
+                    }
                 )
             }
         }
@@ -436,39 +451,49 @@ fun ArkheNavigation(
                         }
                     },
                     onSignInSecurityClick = {
-                        navController.navigate(
-                            NavigationRoute.signInSecurityDetail(
-                                source = NavigationRoute.MAIN
+                        scope.launch {
+                            sheetState.hide()
+                            mainViewModel.toggleProfileSettingsBottomSheet()
+                            navController.navigate(
+                                NavigationRoute.signInSecurityDetail(source = NavigationRoute.MAIN)
                             )
-                        )
+                        }
                     },
                     onDevicesClick = {
-                        navController.navigate(
-                            NavigationRoute.devicesDetail(
-                                source = NavigationRoute.MAIN
+                        scope.launch {
+                            sheetState.hide()
+                            mainViewModel.toggleProfileSettingsBottomSheet()
+                            navController.navigate(
+                                NavigationRoute.devicesDetail(source = NavigationRoute.MAIN)
                             )
-                        )
+                        }
                     },
                     onAboutClick = {
-                        navController.navigate(
-                            NavigationRoute.aboutDetail(
-                                source = NavigationRoute.MAIN
+                        scope.launch {
+                            sheetState.hide()
+                            mainViewModel.toggleProfileSettingsBottomSheet()
+                            navController.navigate(
+                                NavigationRoute.aboutDetail(source = NavigationRoute.MAIN)
                             )
-                        )
+                        }
                     },
                     onPrivacyPolicyClick = {
-                        navController.navigate(
-                            NavigationRoute.privacyPolicyDetail(
-                                source = NavigationRoute.MAIN
+                        scope.launch {
+                            sheetState.hide()
+                            mainViewModel.toggleProfileSettingsBottomSheet()
+                            navController.navigate(
+                                NavigationRoute.privacyPolicyDetail(source = NavigationRoute.MAIN)
                             )
-                        )
+                        }
                     },
                     onTermsOfServiceClick = {
-                        navController.navigate(
-                            NavigationRoute.termOfServiceDetail(
-                                source = NavigationRoute.MAIN
+                        scope.launch {
+                            sheetState.hide()
+                            mainViewModel.toggleProfileSettingsBottomSheet()
+                            navController.navigate(
+                                NavigationRoute.termOfServiceDetail(source = NavigationRoute.MAIN)
                             )
-                        )
+                        }
                     }
                 )
             }

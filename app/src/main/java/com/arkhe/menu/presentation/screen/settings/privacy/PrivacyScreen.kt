@@ -55,27 +55,9 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PrivacyScreen(
-    onBackClick: () -> Unit,
-    navController: NavController? = null
+    onBackClick: () -> Unit
 ) {
-    val handleBackNavigation: () -> Unit = {
-        navController?.let { nav ->
-            val popSuccess = nav.popBackStack()
-            if (!popSuccess) {
-                nav.navigate(NavigationRoute.MAIN) {
-                    popUpTo(NavigationRoute.MAIN) {
-                        inclusive = true
-                    }
-                    launchSingleTop = true
-                }
-            }
-        } ?: run {
-            onBackClick()
-        }
-    }
-
     val context = LocalContext.current
-
     var showEnglish by remember { mutableStateOf(true) }
     var markdownText by remember { mutableStateOf("") }
 
@@ -88,7 +70,7 @@ fun PrivacyScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues),
-            onHandleBackNavigation = handleBackNavigation,
+            onHandleBackNavigation = onBackClick,
             showEnglish = showEnglish,
             onLanguageToggle = { showEnglish = !showEnglish },
             markdownText = markdownText,

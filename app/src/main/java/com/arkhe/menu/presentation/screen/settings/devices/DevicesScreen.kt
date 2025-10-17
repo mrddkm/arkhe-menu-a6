@@ -38,7 +38,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.arkhe.menu.data.local.preferences.Lang
 import com.arkhe.menu.di.appModule
 import com.arkhe.menu.di.dataModule
@@ -47,7 +46,6 @@ import com.arkhe.menu.di.previewModule
 import com.arkhe.menu.domain.model.PinData
 import com.arkhe.menu.domain.model.ThemeModels
 import com.arkhe.menu.domain.model.User
-import com.arkhe.menu.presentation.navigation.NavigationRoute
 import com.arkhe.menu.presentation.ui.components.edit.AnimatedPinField
 import com.arkhe.menu.presentation.ui.components.edit.EditableField
 import com.arkhe.menu.presentation.ui.components.edit.EditableInfoScreenBase
@@ -72,34 +70,17 @@ import org.koin.compose.KoinApplicationPreview
 @Composable
 fun DevicesScreen(
     onBackClick: () -> Unit,
-    navController: NavController? = null,
     user: User,
     onUserUpdate: (User) -> Unit,
     pinData: PinData,
     onPinUpdate: (PinData) -> Unit
 ) {
-    val handleBackNavigation: () -> Unit = {
-        navController?.let { nav ->
-            val popSuccess = nav.popBackStack()
-            if (!popSuccess) {
-                nav.navigate(NavigationRoute.MAIN) {
-                    popUpTo(NavigationRoute.MAIN) {
-                        inclusive = true
-                    }
-                    launchSingleTop = true
-                }
-            }
-        } ?: run {
-            onBackClick()
-        }
-    }
-
     Scaffold { paddingValues ->
         DevicesContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues),
-            onHandleBackNavigation = handleBackNavigation,
+            onHandleBackNavigation = onBackClick,
             user = user,
             onUserUpdate = onUserUpdate,
             pinData = pinData,
@@ -295,7 +276,6 @@ fun DevicesScreenPreview() {
         ) {
             DevicesScreen(
                 onBackClick = {},
-                navController = null,
                 user = sampleUser,
                 onUserUpdate = {},
                 pinData = samplePinData,

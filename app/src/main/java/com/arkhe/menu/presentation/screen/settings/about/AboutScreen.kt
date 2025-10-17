@@ -27,9 +27,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.arkhe.menu.data.local.preferences.Lang
-import com.arkhe.menu.presentation.navigation.NavigationRoute
 import com.arkhe.menu.presentation.viewmodel.AuthViewModel
 import com.arkhe.menu.presentation.viewmodel.LanguageViewModel
 import compose.icons.EvaIcons
@@ -40,31 +38,14 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun AboutScreen(
-    onBackClick: () -> Unit,
-    navController: NavController? = null
+    onBackClick: () -> Unit
 ) {
-    val handleBackNavigation: () -> Unit = {
-        navController?.let { nav ->
-            val popSuccess = nav.popBackStack()
-            if (!popSuccess) {
-                nav.navigate(NavigationRoute.MAIN) {
-                    popUpTo(NavigationRoute.MAIN) {
-                        inclusive = true
-                    }
-                    launchSingleTop = true
-                }
-            }
-        } ?: run {
-            onBackClick()
-        }
-    }
-
     Scaffold { paddingValues ->
         AboutContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues),
-            onHandleBackNavigation = handleBackNavigation
+            onHandleBackNavigation = onBackClick
         )
     }
 }

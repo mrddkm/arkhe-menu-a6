@@ -36,9 +36,7 @@ import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.arkhe.menu.R
-import com.arkhe.menu.presentation.navigation.NavigationRoute
 import com.arkhe.menu.presentation.screen.settings.privacy.getStringForLocale
 import com.arkhe.menu.presentation.ui.components.LanguageIconEn
 import com.arkhe.menu.presentation.ui.components.LanguageIconId
@@ -54,27 +52,9 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TermsScreen(
-    onBackClick: () -> Unit,
-    navController: NavController? = null
+    onBackClick: () -> Unit
 ) {
-    val handleBackNavigation: () -> Unit = {
-        navController?.let { nav ->
-            val popSuccess = nav.popBackStack()
-            if (!popSuccess) {
-                nav.navigate(NavigationRoute.MAIN) {
-                    popUpTo(NavigationRoute.MAIN) {
-                        inclusive = true
-                    }
-                    launchSingleTop = true
-                }
-            }
-        } ?: run {
-            onBackClick()
-        }
-    }
-
     val context = LocalContext.current
-
     var showEnglish by remember { mutableStateOf(true) }
     var markdownText by remember { mutableStateOf("") }
 
@@ -87,7 +67,7 @@ fun TermsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues),
-            onHandleBackNavigation = handleBackNavigation,
+            onHandleBackNavigation = onBackClick,
             showEnglish = showEnglish,
             onLanguageToggle = { showEnglish = !showEnglish },
             markdownText = markdownText,

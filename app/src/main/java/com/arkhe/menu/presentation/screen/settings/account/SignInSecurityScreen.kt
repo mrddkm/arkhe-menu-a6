@@ -37,7 +37,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.arkhe.menu.data.local.preferences.Lang
 import com.arkhe.menu.di.appModule
 import com.arkhe.menu.di.dataModule
@@ -46,7 +45,6 @@ import com.arkhe.menu.di.previewModule
 import com.arkhe.menu.domain.model.PasswordData
 import com.arkhe.menu.domain.model.ThemeModels
 import com.arkhe.menu.domain.model.User
-import com.arkhe.menu.presentation.navigation.NavigationRoute
 import com.arkhe.menu.presentation.ui.components.edit.EditEmailField
 import com.arkhe.menu.presentation.ui.components.edit.EditPhoneField
 import com.arkhe.menu.presentation.ui.components.edit.EditableField
@@ -69,7 +67,6 @@ import org.koin.compose.KoinApplicationPreview
 
 @Composable
 fun SignInSecurityScreen(
-    navController: NavController? = null,
     onBackClick: () -> Unit = {},
     onSignedOutScreenClick: () -> Unit = {},
     user: User,
@@ -77,28 +74,12 @@ fun SignInSecurityScreen(
     onUserUpdate: (User) -> Unit,
     onPasswordUpdate: (PasswordData) -> Unit,
 ) {
-    val handleBackNavigation: () -> Unit = {
-        navController?.let { nav ->
-            val popSuccess = nav.popBackStack()
-            if (!popSuccess) {
-                nav.navigate(NavigationRoute.MAIN) {
-                    popUpTo(NavigationRoute.MAIN) {
-                        inclusive = true
-                    }
-                    launchSingleTop = true
-                }
-            }
-        } ?: run {
-            onBackClick()
-        }
-    }
-
     Scaffold { paddingValues ->
         SignInSecurityContentExt(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues),
-            onHandleBackNavigation = handleBackNavigation,
+            onHandleBackNavigation = onBackClick,
             onSignedOutScreenClick = onSignedOutScreenClick,
             user = user,
             passwordData = passwordData,
@@ -354,7 +335,6 @@ fun SignInSecurityScreenPreview() {
             SignInSecurityScreen(
                 onBackClick = {},
                 onSignedOutScreenClick = {},
-                navController = null,
                 user = sampleUser,
                 passwordData = samplePasswordData,
                 onUserUpdate = {},
