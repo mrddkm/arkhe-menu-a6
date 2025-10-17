@@ -290,6 +290,22 @@ fun ArkheNavigation(
                             }
                         }
                     },
+                    onDeactivationClick = {
+                        scope.launch {
+                            mainViewModel.showLoadingOverlay()
+                            coroutineScope {
+                                launch { authViewModel.deactivatedAuthState() }
+                                launch { delay(1000L) }
+                            }
+                            mainViewModel.hideLoadingOverlay()
+                            navController.navigate(NavigationRoute.ON_BOARDING) {
+                                popUpTo(navController.graph.startDestinationId) {
+                                    inclusive = true
+                                }
+                                launchSingleTop = true
+                            }
+                        }
+                    },
                     user = sampleUser,
                     onUserUpdate = {},
                     pinData = samplePinData,
@@ -429,7 +445,7 @@ fun ArkheNavigation(
                             sheetState.hide()
                             mainViewModel.toggleProfileSettingsBottomSheet()
                             coroutineScope {
-                                delay(3000)
+                                delay(500L)
                             }
                             mainViewModel.hideLoadingOverlay()
                             navController.navigate(route = NavigationRoute.ON_BOARDING) {

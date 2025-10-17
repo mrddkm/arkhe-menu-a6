@@ -70,6 +70,7 @@ import org.koin.compose.KoinApplicationPreview
 @Composable
 fun DevicesScreen(
     onBackClick: () -> Unit,
+    onDeactivationClick: () -> Unit = {},
     user: User,
     onUserUpdate: (User) -> Unit,
     pinData: PinData,
@@ -81,6 +82,7 @@ fun DevicesScreen(
                 .fillMaxSize()
                 .padding(paddingValues),
             onHandleBackNavigation = onBackClick,
+            onDeactivationClick = onDeactivationClick,
             user = user,
             onUserUpdate = onUserUpdate,
             pinData = pinData,
@@ -93,6 +95,7 @@ fun DevicesScreen(
 fun DevicesContent(
     modifier: Modifier = Modifier,
     onHandleBackNavigation: () -> Unit = { },
+    onDeactivationClick: () -> Unit = {},
     user: User,
     onUserUpdate: (User) -> Unit,
     pinData: PinData,
@@ -215,16 +218,7 @@ fun DevicesContent(
             val scope = rememberCoroutineScope()
 
             Button(
-                onClick = {
-                    scope.launch {
-                        mainViewModel.showLoadingOverlay()
-                        coroutineScope {
-                            launch { authViewModel.deactivatedAuthState() }
-                            launch { delay(800L) }
-                        }
-                        mainViewModel.hideLoadingOverlay()
-                    }
-                },
+                onClick = onDeactivationClick,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
                     contentColor = MaterialTheme.colorScheme.primary
