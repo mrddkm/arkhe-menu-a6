@@ -82,11 +82,18 @@ fun ArkheNavigation(
                 OnboardingScreen(
                     navController = navController,
                     onNavigateToMain = {
-                        navController.navigate(NavigationRoute.MAIN) {
-                            popUpTo(NavigationRoute.ON_BOARDING) {
-                                inclusive = true
+                        scope.launch {
+                            mainViewModel.showLoadingOverlay()
+                            coroutineScope {
+                                launch { delay(1000L) }
                             }
-                            launchSingleTop = true
+                            mainViewModel.hideLoadingOverlay()
+                            navController.navigate(NavigationRoute.MAIN) {
+                                popUpTo(NavigationRoute.ON_BOARDING) {
+                                    inclusive = true
+                                }
+                                launchSingleTop = true
+                            }
                         }
                     }
                 )

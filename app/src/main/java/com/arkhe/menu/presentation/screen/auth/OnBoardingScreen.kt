@@ -199,7 +199,7 @@ fun OnboardingScreen(
                 onSignedInClick = {
                     showSignedInSheet = true
                 },
-                onStartClick = {
+                onPinUnlockClick = {
                     showPinSheet = true
                 }
             )
@@ -259,7 +259,7 @@ fun TripkeunText(
     currentThemeModel: ThemeModels,
     onActivationClick: () -> Unit,
     onSignedInClick: () -> Unit,
-    onStartClick: () -> Unit
+    onPinUnlockClick: () -> Unit
 ) {
     val isDark = when (currentThemeModel) {
         ThemeModels.DARK -> true
@@ -285,7 +285,7 @@ fun TripkeunText(
             isSignedIn = isSignedIn,
             onActivationClick = onActivationClick,
             onSignedInClick = onSignedInClick,
-            onStartClick = onStartClick,
+            onStartClick = onPinUnlockClick,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .offset(y = (38).dp)
