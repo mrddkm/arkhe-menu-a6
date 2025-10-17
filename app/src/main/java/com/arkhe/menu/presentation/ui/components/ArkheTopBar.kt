@@ -44,7 +44,7 @@ fun ArkheTopBar(
     isInMainContent: Boolean,
     currentContentType: String,
     onBackClick: () -> Unit,
-    onUserIconClick: () -> Unit
+    onProfileSettingsClick: () -> Unit
 ) {
     val offset = scrollBehavior.state.contentOffset
     val isScrolled = remember(offset) { offset < -20f }
@@ -109,7 +109,7 @@ fun ArkheTopBar(
             },
             actions = {
                 if (!isInMainContent) {
-                    IconButton(onClick = onUserIconClick) {
+                    IconButton(onClick = onProfileSettingsClick) {
                         Icon(
                             imageVector = Icons.Rounded.AccountCircle,
                             contentDescription = null,
@@ -153,7 +153,7 @@ fun TripkeunTopBarPreview() {
             isInMainContent = true,
             currentContentType = stringResource(R.string.docs),
             onBackClick = {},
-            onUserIconClick = {}
+            onProfileSettingsClick = {}
         )
     }
 }

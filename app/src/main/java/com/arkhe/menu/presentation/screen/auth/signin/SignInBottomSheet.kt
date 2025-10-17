@@ -287,8 +287,8 @@ fun SignInContent(
 
 @Composable
 fun rememberSignInState(): SignInState {
-    var userId by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    var userId by remember { mutableStateOf("230504") }
+    var password by remember { mutableStateOf("Qwer@123") }
 
     return SignInState(
         userId = userId,

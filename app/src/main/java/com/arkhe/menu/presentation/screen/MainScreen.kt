@@ -12,16 +12,11 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.union
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -29,7 +24,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,21 +45,13 @@ import com.arkhe.menu.presentation.screen.docs.customer.CustomerScreen
 import com.arkhe.menu.presentation.screen.docs.organization.OrganizationScreen
 import com.arkhe.menu.presentation.screen.docs.product.ProductsScreen
 import com.arkhe.menu.presentation.screen.docs.profile.ProfileScreen
-import com.arkhe.menu.presentation.screen.settings.settings.SettingsBottomSheet
 import com.arkhe.menu.presentation.ui.animation.ScreenTransitions
 import com.arkhe.menu.presentation.ui.components.ArkheBottomBar
 import com.arkhe.menu.presentation.ui.components.ArkheTopBar
-import com.arkhe.menu.presentation.ui.components.LoadingIndicatorSpinner
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.viewmodel.AuthViewModel
-import com.arkhe.menu.presentation.viewmodel.LanguageViewModel
 import com.arkhe.menu.presentation.viewmodel.MainViewModel
 import com.arkhe.menu.presentation.viewmodel.ProductViewModel
-import compose.icons.EvaIcons
-import compose.icons.evaicons.Fill
-import compose.icons.evaicons.fill.Lock
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.KoinApplicationPreview
@@ -74,8 +60,8 @@ import org.koin.compose.KoinApplicationPreview
 @Composable
 fun MainScreen(
     navController: NavHostController,
+    onProfileSettingsClick: () -> Unit = {},
     mainViewModel: MainViewModel = koinViewModel(),
-    langViewModel: LanguageViewModel = koinViewModel(),
     authViewModel: AuthViewModel = koinViewModel()
 ) {
     val isActivated by authViewModel.isActivatedFlow.collectAsState(initial = true)
@@ -279,7 +265,7 @@ fun MainScreen(
                     isInMainContent = uiState.isInMainContent,
                     currentContentType = uiState.currentContentType,
                     onBackClick = { mainViewModel.navigateBackToMain() },
-                    onUserIconClick = { mainViewModel.toggleProfileSettingsBottomSheet() }
+                    onProfileSettingsClick = onProfileSettingsClick
                 )
             }
         }
@@ -312,118 +298,6 @@ fun MainScreen(
             }
         }
 
-        /*--- Setting & Profile BottomSheet ---*/
-        if (uiState.showProfileSettingsBottomSheet) {
-            val coroutineScope = rememberCoroutineScope()
-            val sheetState = rememberModalBottomSheetState(
-                skipPartiallyExpanded = true,
-                confirmValueChange = { newValue ->
-                    newValue != SheetValue.Hidden
-                }
-            )
-
-            ModalBottomSheet(
-                onDismissRequest = { },
-                sheetState = sheetState,
-                dragHandle = {
-                    Box(
-                        modifier = Modifier
-                            .height(20.dp)
-                            .width(20.dp)
-                            .padding(top = 8.dp)
-                            .align(Alignment.Center)
-                    ) {
-                        Icon(
-                            imageVector = EvaIcons.Fill.Lock,
-                            contentDescription = null,
-                            modifier = Modifier.fillMaxSize(),
-                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-                        )
-                    }
-                }
-            ) {
-                SettingsBottomSheet(
-                    langViewModel = langViewModel,
-                    mainViewModel = mainViewModel,
-                    onClose = {
-                        coroutineScope.launch {
-                            sheetState.hide()
-                            mainViewModel.toggleProfileSettingsBottomSheet()
-                        }
-                    },
-                    onLockScreenClick = {
-                        coroutineScope.launch {
-                            sheetState.hide()
-                            mainViewModel.toggleProfileSettingsBottomSheet()
-                            mainViewModel.showLoadingOverlay()
-                            delay(800L)
-                            navController.navigate(
-                                NavigationRoute.ON_BOARDING
-                            ) {
-                                popUpTo(navController.graph.startDestinationId) {
-                                    inclusive = true
-                                }
-                                launchSingleTop = true
-                            }
-                            mainViewModel.hideLoadingOverlay()
-                        }
-                    },
-                    onPersonalInfoClick = {
-                        navController.navigate(
-                            NavigationRoute.personalInfoDetail(
-                                source = NavigationRoute.MAIN
-                            )
-                        )
-                    },
-                    onSignInSecurityClick = {
-                        navController.navigate(
-                            NavigationRoute.signInSecurityDetail(
-                                source = NavigationRoute.MAIN
-                            )
-                        )
-                    },
-                    onDevicesClick = {
-                        navController.navigate(
-                            NavigationRoute.devicesDetail(
-                                source = NavigationRoute.MAIN
-                            )
-                        )
-                    },
-                    onAboutClick = {
-                        navController.navigate(
-                            NavigationRoute.aboutDetail(
-                                source = NavigationRoute.MAIN
-                            )
-                        )
-                    },
-                    onPrivacyPolicyClick = {
-                        navController.navigate(
-                            NavigationRoute.privacyPolicyDetail(
-                                source = NavigationRoute.MAIN
-                            )
-                        )
-                    },
-                    onTermsOfServiceClick = {
-                        navController.navigate(
-                            NavigationRoute.termOfServiceDetail(
-                                source = NavigationRoute.MAIN
-                            )
-                        )
-                    }
-                )
-            }
-        }
-
-        /*--- Loading overlay ---*/
-        if (uiState.isLoading) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                LoadingIndicatorSpinner()
-            }
-        }
-
         uiState.error?.let { error ->
             LaunchedEffect(error) {
                 mainViewModel.setError(null)
@@ -448,7 +322,10 @@ fun MainScreenPreview() {
         }
     ) {
         ArkheTheme {
-            MainScreen(navController = rememberNavController())
+            MainScreen(
+                navController = rememberNavController(),
+                onProfileSettingsClick = {}
+            )
         }
     }
 }

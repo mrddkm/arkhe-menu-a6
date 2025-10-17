@@ -2,11 +2,22 @@ package com.arkhe.menu.presentation.navigation
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetValue
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -23,6 +34,7 @@ import com.arkhe.menu.presentation.screen.settings.account.PersonalInfoScreen
 import com.arkhe.menu.presentation.screen.settings.account.SignInSecurityScreen
 import com.arkhe.menu.presentation.screen.settings.devices.DevicesScreen
 import com.arkhe.menu.presentation.screen.settings.privacy.PrivacyScreen
+import com.arkhe.menu.presentation.screen.settings.settings.SettingsBottomSheet
 import com.arkhe.menu.presentation.screen.settings.terms.TermsScreen
 import com.arkhe.menu.presentation.ui.components.LoadingOverlay
 import com.arkhe.menu.presentation.viewmodel.AuthViewModel
@@ -32,11 +44,15 @@ import com.arkhe.menu.presentation.viewmodel.ProductViewModel
 import com.arkhe.menu.utils.samplePasswordData
 import com.arkhe.menu.utils.samplePinData
 import com.arkhe.menu.utils.sampleUser
+import compose.icons.EvaIcons
+import compose.icons.evaicons.Fill
+import compose.icons.evaicons.fill.Lock
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ArkheNavigation(
     navController: NavHostController = rememberNavController()
@@ -44,6 +60,16 @@ fun ArkheNavigation(
     val mainViewModel: MainViewModel = koinViewModel()
     val uiState by mainViewModel.uiState.collectAsState()
     val langViewModel: LanguageViewModel = koinViewModel()
+    val authViewModel: AuthViewModel = koinViewModel()
+    val scope = rememberCoroutineScope()
+
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true,
+        confirmValueChange = { newValue ->
+            newValue != SheetValue.Hidden
+        }
+    )
+
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -68,24 +94,39 @@ fun ArkheNavigation(
 
             /*Main*/
             composable(NavigationRoute.MAIN) {
-                MainScreen(navController = navController)
+                MainScreen(
+                    navController = navController,
+                    onProfileSettingsClick = { mainViewModel.toggleProfileSettingsBottomSheet() }
+                )
             }
 
             /*Docs*/
             composable(NavigationRoute.PROFILE) {
-                MainScreen(navController = navController)
+                MainScreen(
+                    navController = navController,
+                    onProfileSettingsClick = { mainViewModel.toggleProfileSettingsBottomSheet() }
+                )
             }
 
             composable(NavigationRoute.ORGANIZATION) {
-                MainScreen(navController = navController)
+                MainScreen(
+                    navController = navController,
+                    onProfileSettingsClick = { mainViewModel.toggleProfileSettingsBottomSheet() }
+                )
             }
 
             composable(NavigationRoute.CUSTOMER) {
-                MainScreen(navController = navController)
+                MainScreen(
+                    navController = navController,
+                    onProfileSettingsClick = { mainViewModel.toggleProfileSettingsBottomSheet() }
+                )
             }
 
             composable(NavigationRoute.CATEGORIES) {
-                MainScreen(navController = navController)
+                MainScreen(
+                    navController = navController,
+                    onProfileSettingsClick = { mainViewModel.toggleProfileSettingsBottomSheet() }
+                )
             }
 
             composable(NavigationRoute.CATEGORY_DETAIL) {
@@ -97,7 +138,10 @@ fun ArkheNavigation(
             }
 
             composable(NavigationRoute.PRODUCTS) {
-                MainScreen(navController = navController)
+                MainScreen(
+                    navController = navController,
+                    onProfileSettingsClick = { mainViewModel.toggleProfileSettingsBottomSheet() }
+                )
             }
 
             composable(
@@ -152,17 +196,20 @@ fun ArkheNavigation(
             ) { backStackEntry ->
                 PersonalInfoScreen(
                     onBackClick = {
-                        val popSuccess = navController.popBackStack()
-                        if (!popSuccess) {
-                            navController.navigate(NavigationRoute.MAIN) {
-                                popUpTo(NavigationRoute.MAIN) {
-                                    inclusive = true
+                        scope.launch {
+                            mainViewModel.showProfileSettingsBottomSheet()
+                            delay(50L)
+                            val popSuccess = navController.popBackStack()
+                            if (!popSuccess) {
+                                navController.navigate(NavigationRoute.MAIN) {
+                                    popUpTo(NavigationRoute.MAIN) {
+                                        inclusive = true
+                                    }
+                                    launchSingleTop = true
                                 }
-                                launchSingleTop = true
                             }
                         }
                     },
-                    navController = navController,
                     user = sampleUser,
                     onUserUpdate = {}
                 )
@@ -178,8 +225,6 @@ fun ArkheNavigation(
                     }
                 )
             ) { backStackEntry ->
-                val authViewModel: AuthViewModel = koinViewModel()
-                val scope = rememberCoroutineScope()
                 SignInSecurityScreen(
                     navController = navController,
                     onBackClick = {
@@ -198,7 +243,7 @@ fun ArkheNavigation(
                             mainViewModel.showLoadingOverlay()
                             coroutineScope {
                                 launch { authViewModel.signedOutAuthState() }
-                                launch { delay(800L) }
+                                launch { delay(1000L) }
                             }
                             mainViewModel.hideLoadingOverlay()
                             navController.navigate(NavigationRoute.ON_BOARDING) {
@@ -332,5 +377,101 @@ fun ArkheNavigation(
             changingLanguageText = langViewModel.getLocalized(Lang.CHANGING_LANGUAGE),
             pleaseWaitText = langViewModel.getLocalized(Lang.PLEASE_WAIT)
         )
+
+        /*--- Setting & Profile BottomSheet ---*/
+        if (uiState.showProfileSettingsBottomSheet) {
+            ModalBottomSheet(
+                onDismissRequest = { },
+                sheetState = sheetState,
+                dragHandle = {
+                    Box(
+                        modifier = Modifier
+                            .height(20.dp)
+                            .width(20.dp)
+                            .padding(top = 8.dp)
+                            .align(Alignment.Center)
+                    ) {
+                        Icon(
+                            imageVector = EvaIcons.Fill.Lock,
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize(),
+                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                        )
+                    }
+                }
+            ) {
+                SettingsBottomSheet(
+                    langViewModel = langViewModel,
+                    mainViewModel = mainViewModel,
+                    onClose = {
+                        scope.launch {
+                            sheetState.hide()
+                            mainViewModel.toggleProfileSettingsBottomSheet()
+                        }
+                    },
+                    onLockScreenClick = {
+                        scope.launch {
+                            mainViewModel.showLoadingOverlay()
+                            sheetState.hide()
+                            mainViewModel.toggleProfileSettingsBottomSheet()
+                            coroutineScope {
+                                delay(3000)
+                            }
+                            mainViewModel.hideLoadingOverlay()
+                            navController.navigate(route = NavigationRoute.ON_BOARDING) {
+                                popUpTo(navController.graph.startDestinationId) {
+                                    inclusive = true
+                                }
+                                launchSingleTop = true
+                            }
+                        }
+                    },
+                    onPersonalInfoClick = {
+                        scope.launch {
+                            sheetState.hide()
+                            mainViewModel.toggleProfileSettingsBottomSheet()
+                            navController.navigate(
+                                route = NavigationRoute.personalInfoDetail(source = NavigationRoute.MAIN)
+                            )
+                        }
+                    },
+                    onSignInSecurityClick = {
+                        navController.navigate(
+                            NavigationRoute.signInSecurityDetail(
+                                source = NavigationRoute.MAIN
+                            )
+                        )
+                    },
+                    onDevicesClick = {
+                        navController.navigate(
+                            NavigationRoute.devicesDetail(
+                                source = NavigationRoute.MAIN
+                            )
+                        )
+                    },
+                    onAboutClick = {
+                        navController.navigate(
+                            NavigationRoute.aboutDetail(
+                                source = NavigationRoute.MAIN
+                            )
+                        )
+                    },
+                    onPrivacyPolicyClick = {
+                        navController.navigate(
+                            NavigationRoute.privacyPolicyDetail(
+                                source = NavigationRoute.MAIN
+                            )
+                        )
+                    },
+                    onTermsOfServiceClick = {
+                        navController.navigate(
+                            NavigationRoute.termOfServiceDetail(
+                                source = NavigationRoute.MAIN
+                            )
+                        )
+                    }
+                )
+            }
+        }
     }
 }

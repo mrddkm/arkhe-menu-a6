@@ -142,6 +142,10 @@ class MainViewModel(
         )
     }
 
+    fun showProfileSettingsBottomSheet() {
+        _uiState.update { it.copy(showProfileSettingsBottomSheet = true) }
+    }
+
     fun onLanguageChangeStarted() {
         _uiState.value = _uiState.value.copy(
             showProfileSettingsBottomSheet = false,

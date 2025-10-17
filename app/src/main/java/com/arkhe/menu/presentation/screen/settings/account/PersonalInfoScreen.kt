@@ -31,14 +31,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.arkhe.menu.data.local.preferences.Lang
 import com.arkhe.menu.di.appModule
 import com.arkhe.menu.di.dataModule
 import com.arkhe.menu.di.domainModule
 import com.arkhe.menu.di.previewModule
 import com.arkhe.menu.domain.model.User
-import com.arkhe.menu.presentation.navigation.NavigationRoute
 import com.arkhe.menu.presentation.screen.settings.account.components.DetailPersonalAccordions
 import com.arkhe.menu.presentation.ui.components.edit.EditBirthdayField
 import com.arkhe.menu.presentation.ui.components.edit.EditGenderDropdown
@@ -60,32 +58,15 @@ import org.koin.compose.KoinApplicationPreview
 @Composable
 fun PersonalInfoScreen(
     onBackClick: () -> Unit,
-    navController: NavController? = null,
     user: User,
     onUserUpdate: (User) -> Unit
 ) {
-    val handleBackNavigation: () -> Unit = {
-        navController?.let { nav ->
-            val popSuccess = nav.popBackStack()
-            if (!popSuccess) {
-                nav.navigate(NavigationRoute.MAIN) {
-                    popUpTo(NavigationRoute.MAIN) {
-                        inclusive = true
-                    }
-                    launchSingleTop = true
-                }
-            }
-        } ?: run {
-            onBackClick()
-        }
-    }
-
     Scaffold { paddingValues ->
         PersonalInfoContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues),
-            onHandleBackNavigation = handleBackNavigation,
+            onHandleBackNavigation = onBackClick,
             user = user,
             onUserUpdate = onUserUpdate
         )
