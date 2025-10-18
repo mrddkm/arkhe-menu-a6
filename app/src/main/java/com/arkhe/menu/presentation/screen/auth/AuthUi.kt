@@ -86,6 +86,7 @@ fun AuthUi(
                     if (ok) {
                         viewModel.resetPinAttempts()
                         onUnlocked()
+                        onDismissAll()
                     } else {
                         viewModel.incrementPinAttempts()
                         val attempt = viewModel.getPinAttempts()

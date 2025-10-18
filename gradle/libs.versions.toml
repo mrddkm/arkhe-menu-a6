@@ -35,6 +35,7 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "composeNavigation" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "core-splashscreen" }
+androidx-compose-animation = { group = "androidx.compose.animation", name = "animation" }
 
 koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
 koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koin" }
@@ -79,7 +80,8 @@ compose = [
     "androidx-ui-tooling-preview",
     "androidx-material3",
     "compose-coil",
-    "markdown-compose"
+    "markdown-compose",
+    "androidx-navigation-compose",
 ]
 
 security = [

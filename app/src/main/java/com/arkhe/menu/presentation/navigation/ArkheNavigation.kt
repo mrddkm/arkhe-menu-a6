@@ -1,5 +1,10 @@
 package com.arkhe.menu.presentation.navigation
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -75,7 +80,31 @@ fun ArkheNavigation(
     ) {
         NavHost(
             navController = navController,
-            startDestination = NavigationRoute.ON_BOARDING
+            startDestination = NavigationRoute.ON_BOARDING,
+            enterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { it / 3 },
+                    animationSpec = tween(300)
+                ) + fadeIn(animationSpec = tween(300))
+            },
+            exitTransition = {
+                slideOutHorizontally(
+                    targetOffsetX = { -it / 3 },
+                    animationSpec = tween(300)
+                ) + fadeOut(animationSpec = tween(300))
+            },
+            popEnterTransition = {
+                slideInHorizontally(
+                    initialOffsetX = { -it / 3 },
+                    animationSpec = tween(300)
+                ) + fadeIn(animationSpec = tween(300))
+            },
+            popExitTransition = {
+                slideOutHorizontally(
+                    targetOffsetX = { it / 3 },
+                    animationSpec = tween(300)
+                ) + fadeOut(animationSpec = tween(300))
+            }
         ) {
             /*OnBoarding*/
             composable(NavigationRoute.ON_BOARDING) {

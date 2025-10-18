@@ -132,13 +132,10 @@ fun PinLockContent(
     onPinEntered: (String) -> Unit
 ) {
     val labelPinEntered = "4-digit PIN"
-    var errorMessage by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(state.pin) {
         if (state.pin.length == MAX_LENGTH_PIN) {
             onPinEntered(state.pin)
-            state.onPinChange("")
-            errorMessage = "Incorrect PIN, try again"
         }
     }
 
@@ -153,15 +150,6 @@ fun PinLockContent(
             fontWeight = FontWeight.Bold,
             fontSize = 24.sp
         )
-        Spacer(Modifier.height(4.dp))
-        if (errorMessage != null) {
-            Text(
-                text = errorMessage ?: "",
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.labelSmall,
-                modifier = Modifier.padding(top = 8.dp)
-            )
-        }
         Spacer(Modifier.height(4.dp))
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
