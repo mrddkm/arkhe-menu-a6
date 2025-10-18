@@ -27,7 +27,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,17 +51,12 @@ import com.arkhe.menu.presentation.ui.components.edit.EditableInfoScreenBase
 import com.arkhe.menu.presentation.ui.components.settings.SettingsToggleItem
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.ui.theme.montserratFontFamily
-import com.arkhe.menu.presentation.viewmodel.AuthViewModel
 import com.arkhe.menu.presentation.viewmodel.LanguageViewModel
-import com.arkhe.menu.presentation.viewmodel.MainViewModel
 import com.arkhe.menu.utils.samplePinData
 import com.arkhe.menu.utils.sampleUser
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.Close
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.KoinApplicationPreview
@@ -100,9 +94,7 @@ fun DevicesContent(
     onUserUpdate: (User) -> Unit,
     pinData: PinData,
     onPinUpdate: (PinData) -> Unit,
-    langViewModel: LanguageViewModel = koinViewModel(),
-    authViewModel: AuthViewModel = koinViewModel(),
-    mainViewModel: MainViewModel = koinViewModel()
+    langViewModel: LanguageViewModel = koinViewModel()
 ) {
     var userState by remember { mutableStateOf(user) }
 
@@ -215,8 +207,6 @@ fun DevicesContent(
                 .padding(start = 16.dp, top = 24.dp, bottom = 0.dp, end = 16.dp),
             contentAlignment = Alignment.Center
         ) {
-            val scope = rememberCoroutineScope()
-
             Button(
                 onClick = onDeactivationClick,
                 colors = ButtonDefaults.buttonColors(

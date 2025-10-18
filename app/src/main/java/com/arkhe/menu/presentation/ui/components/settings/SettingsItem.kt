@@ -1,13 +1,19 @@
 package com.arkhe.menu.presentation.ui.components.settings
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -16,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -155,7 +162,57 @@ fun SettingsToggleItem(
     } else Spacer(modifier = Modifier.height(4.dp))
 }
 
+@Composable
+fun SettingsPhotoProfileItem(
+    label: String,
+) {
+    Column(
+        modifier = Modifier
+            .padding(start = 20.dp, top = 12.dp, bottom = 12.dp, end = 20.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.labelSmall.copy(
+                    fontWeight = FontWeight.Normal
+                ),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+                modifier = Modifier.weight(0.75f)
+            )
+            Box(
+                modifier = Modifier
+                    .weight(0.25f)
+                    .size(50.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    imageVector = Icons.Rounded.AccountCircle,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
+                )
+            }
+        }
+    }
+}
+
 @Preview(showBackground = true)
+@Composable
+fun SettingsPhotoProfileItemPreview() {
+    ArkheTheme {
+        SettingsPhotoProfileItem(
+            label = "A picture helps people recognize you and when you’re signed in."
+        )
+    }
+}
+
+/*@Preview(showBackground = true)
 @Composable
 fun AccountToggleItemPreview() {
     ArkheTheme {
@@ -168,8 +225,9 @@ fun AccountToggleItemPreview() {
             )
         }
     }
-}
+}*/
 
+/*
 @Preview(showBackground = true)
 @Composable
 fun AccountEditItemPreview() {
@@ -189,4 +247,4 @@ fun AccountEditItemPreview() {
             )
         }
     }
-}
+}*/

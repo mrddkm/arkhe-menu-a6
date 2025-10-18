@@ -46,6 +46,7 @@ import com.arkhe.menu.presentation.ui.components.edit.EditNameField
 import com.arkhe.menu.presentation.ui.components.edit.EditNicknameFields
 import com.arkhe.menu.presentation.ui.components.edit.EditableField
 import com.arkhe.menu.presentation.ui.components.edit.EditableInfoScreenBase
+import com.arkhe.menu.presentation.ui.components.settings.SettingsPhotoProfileItem
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.viewmodel.LanguageViewModel
 import com.arkhe.menu.utils.sampleUser
@@ -144,8 +145,18 @@ fun PersonalInfoContent(
             )
             Spacer(Modifier.height(16.dp))
             DetailPersonalAccordions(
-                title = "tripkeun",
+                title = "Organization",
                 user = user
+            )
+        }
+        /*--- Photo Profile Editable Fields ---*/
+        Surface(
+            modifier = Modifier
+                .padding(start = 16.dp, top = 0.dp, bottom = 24.dp, end = 16.dp),
+            shape = MaterialTheme.shapes.medium
+        ) {
+            SettingsPhotoProfileItem(
+                label = "A picture helps people recognize you and when you’re signed in."
             )
         }
         /*--- List Editable Fields ---*/
