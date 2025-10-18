@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.data.local.preferences.Lang
@@ -136,6 +137,7 @@ fun PersonalInfoContent(
             Text(
                 text = "Info about you and your preferences",
                 style = MaterialTheme.typography.labelMedium,
+                textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Normal,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                 modifier = Modifier.fillMaxWidth(0.8f)

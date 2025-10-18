@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Abc
@@ -67,6 +68,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
@@ -93,7 +95,7 @@ fun EditNameField(
         value = value,
         onValueChange = { onValueChange(it.uppercase()) },
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxWidth(0.8f)
             .focusRequester(focusRequester),
         shape = MaterialTheme.shapes.medium,
         label = { Text(label) },
@@ -128,7 +130,7 @@ fun EditInitialFields(
         value = initial,
         onValueChange = { onInitialChange(it.uppercase()) },
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxWidth(0.6f)
             .focusRequester(focusRequester),
         shape = MaterialTheme.shapes.medium,
         label = { Text(labelInitial) },
@@ -165,7 +167,7 @@ fun EditNicknameFields(
         shape = MaterialTheme.shapes.medium,
         label = { Text(labelNickname) },
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxWidth(0.6f)
             .focusRequester(focusRequester),
         singleLine = true,
         keyboardOptions = KeyboardOptions(
@@ -223,7 +225,7 @@ fun EditBirthdayField(
         onValueChange = {},
         shape = MaterialTheme.shapes.medium,
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxWidth(0.6f)
             .focusRequester(focusRequester),
         readOnly = true,
         label = { Text(label) },
@@ -254,7 +256,7 @@ fun EditGenderDropdown(
         onValueChange = {},
         shape = MaterialTheme.shapes.medium,
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxWidth(0.6f)
             .focusRequester(focusRequester),
         readOnly = true,
         label = { Text(label) },
@@ -363,7 +365,7 @@ fun EditEmailField(
         onValueChange = onValueChange,
         shape = MaterialTheme.shapes.medium,
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxWidth(0.8f)
             .focusRequester(focusRequester),
         singleLine = true,
         label = { Text(label) },
@@ -404,7 +406,7 @@ fun EditPhoneField(
         onValueChange = { onValueChange(it.filter { c -> c.isDigit() }) },
         shape = MaterialTheme.shapes.medium,
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxWidth(0.8f)
             .focusRequester(focusRequester),
         singleLine = true,
         label = { Text(label) },
@@ -465,11 +467,13 @@ fun EditPasswordFieldWithStrength(
         }
     }
 
-    // Request focus to New on first composition
     LaunchedEffect(Unit) { focusNew.requestFocus() }
 
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         // ---------------------------
         // 🟢 Step 1: NEW PASSWORD
         // ---------------------------
@@ -479,12 +483,15 @@ fun EditPasswordFieldWithStrength(
             shape = MaterialTheme.shapes.medium,
             label = { Text(labelNewPassword) },
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxWidth(0.8f)
                 .focusRequester(focusNew),
             singleLine = true,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Done
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(
+                onNext = { focusConfirm.requestFocus() }
             ),
             visualTransformation = if (newVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
@@ -499,9 +506,12 @@ fun EditPasswordFieldWithStrength(
             }
         )
 
-        // Strength Bar & Checklist (visible while checklist NOT yet all passed)
+        /*Strength Bar & Checklist (visible while checklist NOT yet all passed)*/
         AnimatedVisibility(visible = valueNewPassword.isNotEmpty() && !allChecklistPassed) {
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            Column(
+                modifier = Modifier.fillMaxWidth(0.8f),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
                 val animatedProgress by animateFloatAsState(
                     targetValue = newStrength.score / 5f,
                     animationSpec = tween(400),
@@ -513,17 +523,25 @@ fun EditPasswordFieldWithStrength(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(6.dp)
+                        .padding(start = 16.dp, end = 16.dp)
                         .clip(RoundedCornerShape(3.dp)),
                     color = newStrength.color,
                     trackColor = MaterialTheme.colorScheme.surfaceVariant,
                     strokeCap = ProgressIndicatorDefaults.LinearStrokeCap,
                 )
 
-                Text(
-                    text = "Strength: ${newStrength.label}",
-                    color = newStrength.color,
-                    style = MaterialTheme.typography.labelMedium
-                )
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+
+                ) {
+                    Text(
+                        text = newStrength.label,
+                        color = newStrength.color,
+                        style = MaterialTheme.typography.labelMedium,
+                        textAlign = TextAlign.Center
+                    )
+                }
 
                 PasswordRequirementsChecklist(password = valueNewPassword)
             }
@@ -533,7 +551,10 @@ fun EditPasswordFieldWithStrength(
         // 🟡 Step 2: CONFIRM PASSWORD (only appear when checklist OK)
         // ---------------------------
         AnimatedVisibility(visible = allChecklistPassed) {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(
+                modifier = Modifier.fillMaxWidth(0.8f),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 Spacer(Modifier.height(12.dp))
                 OutlinedTextField(
                     value = valueConfirmPassword,
@@ -611,13 +632,11 @@ fun PasswordRequirementsChecklist(password: String) {
         exit = fadeOut() + slideOutVertically(targetOffsetY = { it / 2 })
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(3.dp)
+            modifier = Modifier.fillMaxWidth()
         ) {
             requirements.forEach { (fulfilled, text) ->
                 val color by animateColorAsState(
-                    if (fulfilled) Color(0xFF00C853) else Color.Gray,
+                    if (fulfilled) Color.Gray else Color.Gray.copy(alpha = 0.7f),
                     label = "requirementColor"
                 )
                 val scale by animateFloatAsState(
@@ -630,21 +649,24 @@ fun PasswordRequirementsChecklist(password: String) {
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 6.dp, start = 16.dp, end = 16.dp)
+                        .padding(top = 2.dp, start = 16.dp, end = 16.dp)
                         .graphicsLayer {
                             scaleX = scale
                             scaleY = scale
                         }
                 ) {
-                    val iconFulfilled = Text(
-                        text = "•",
-                        fontSize = MaterialTheme.typography.bodyLarge.fontSize,
-                        color = if (fulfilled) Color.Green.copy(alpha = 0.7f) else Color.Red.copy(alpha = 0.7f)
-                    )
-
                     Text(
-                        text = "$iconFulfilled  $text",
-                        color = color.copy(alpha = 0.7f),
+                        text = "•",
+                        fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                        color = if (fulfilled)
+                            Color.Green.copy(alpha = 0.7f)
+                        else
+                            Color.Gray,
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+                    Text(
+                        text = text,
+                        color = color,
                         style = MaterialTheme.typography.bodySmall
                     )
                 }
@@ -781,10 +803,33 @@ fun AnimatedNumericKeypadPreview() {
     }
 }*/
 
-@Preview(showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
 fun AnimatedPinFieldPreview() {
     ArkheTheme {
         AnimatedPinField(label = "Enter PIN", value = "12", onValueChange = {})
+    }
+}*/
+
+/*@Preview(showBackground = true)
+@Composable
+fun PasswordRequirementsChecklistPreview() {
+    ArkheTheme {
+        PasswordRequirementsChecklist(
+            password = "Qwe"
+        )
+    }
+}*/
+
+@Preview(showBackground = true)
+@Composable
+fun EditPasswordFieldWithStrengthPreview() {
+    ArkheTheme {
+        EditPasswordFieldWithStrength(
+            valueNewPassword = "Qwer",
+            valueConfirmPassword = "",
+            onNewPasswordChange = {},
+            onConfirmPasswordChange = {}
+        )
     }
 }

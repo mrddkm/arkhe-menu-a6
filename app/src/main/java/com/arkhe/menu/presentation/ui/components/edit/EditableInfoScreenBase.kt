@@ -172,14 +172,16 @@ fun <T> EditableInfoScreenBase(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 0.dp, bottom = 16.dp, start = 16.dp, end = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Text(
                     text = title,
-                    textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.labelMedium,
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Normal,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(0.7f)
                 )
 
                 /*Field editor UI*/
@@ -198,23 +200,21 @@ fun <T> EditableInfoScreenBase(
 
                 /*Action buttons*/
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
+                    modifier = Modifier
+                        .fillMaxWidth(0.8f)
+                        .padding(bottom = 24.dp),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     TextButton(
                         onClick = { editingField = null },
                         enabled = !isLoading,
-                        shape = MaterialTheme.shapes.medium
+                        shape = MaterialTheme.shapes.medium,
+                        modifier = Modifier
+                            .width(130.dp)
+                            .height(40.dp)
                     ) {
-                        Row(
-                            modifier = Modifier
-                                .width(65.dp)
-                                .height(25.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            Text("Cancel")
-                        }
+                        Text("Cancel")
                     }
                     Spacer(Modifier.width(8.dp))
                     Button(
@@ -228,31 +228,33 @@ fun <T> EditableInfoScreenBase(
                                 editingField = null
                             }
                         },
-                        enabled = isChanged && isValid && combinedIsValid && !isLoading
+                        enabled = isChanged && isValid && combinedIsValid && !isLoading,
+                        modifier = Modifier
+                            .width(130.dp)
+                            .height(40.dp)
                     ) {
                         if (isLoading)
                             Row(
-                                modifier = Modifier
-                                    .width(65.dp)
-                                    .height(25.dp),
                                 verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.Center
+                                horizontalArrangement = Arrangement.Center,
+                                modifier = Modifier
+                                    .fillMaxWidth()
                             ) {
                                 LoadingGraySpinner(modifier = Modifier.fillMaxSize())
                             }
                         else
                             Row(
-                                modifier = Modifier
-                                    .width(65.dp)
-                                    .height(25.dp),
                                 verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                horizontalArrangement = Arrangement.Center,
+                                modifier = Modifier
+                                    .fillMaxWidth()
                             ) {
                                 Icon(
                                     modifier = Modifier.size(18.dp),
                                     imageVector = EvaIcons.Outline.Save,
                                     contentDescription = null
                                 )
+                                Spacer(Modifier.width(4.dp))
                                 Text("Save")
                             }
                     }

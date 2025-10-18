@@ -491,7 +491,7 @@ fun ActivationContentStepThree(
                 }
             )
 
-            // Strength Bar & Checklist (visible while checklist NOT yet all passed)
+            /*Strength Bar & Checklist (visible while checklist NOT yet all passed)*/
             AnimatedVisibility(visible = state.password.isNotEmpty() && !allChecklistPassed) {
                 Column(
                     modifier = Modifier.fillMaxWidth(0.8f),
@@ -515,12 +515,18 @@ fun ActivationContentStepThree(
                         strokeCap = ProgressIndicatorDefaults.LinearStrokeCap,
                     )
 
-                    Text(
-                        text = newStrength.label,
-                        color = newStrength.color,
-                        style = MaterialTheme.typography.labelMedium,
-                        textAlign = TextAlign.Center
-                    )
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+
+                    ) {
+                        Text(
+                            text = newStrength.label,
+                            color = newStrength.color,
+                            style = MaterialTheme.typography.labelMedium,
+                            textAlign = TextAlign.Center
+                        )
+                    }
 
                     PasswordRequirementsChecklist(password = state.password)
                 }
