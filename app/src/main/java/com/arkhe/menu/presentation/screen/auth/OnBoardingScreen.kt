@@ -208,21 +208,21 @@ fun OnboardingScreen(
                 onAboutClick = {
                     navController.navigate(
                         NavigationRoute.aboutDetail(
-                            source = NavigationRoute.MAIN
+                            source = NavigationRoute.ON_BOARDING
                         )
                     )
                 },
                 onPrivacyPolicyClick = {
                     navController.navigate(
                         NavigationRoute.privacyPolicyDetail(
-                            source = NavigationRoute.MAIN
+                            source = NavigationRoute.ON_BOARDING
                         )
                     )
                 },
                 onTermsOfServiceClick = {
                     navController.navigate(
                         NavigationRoute.termOfServiceDetail(
-                            source = NavigationRoute.MAIN
+                            source = NavigationRoute.ON_BOARDING
                         )
                     )
                 }

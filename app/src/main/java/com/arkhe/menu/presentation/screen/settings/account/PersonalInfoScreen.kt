@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -149,132 +151,138 @@ fun PersonalInfoContent(
                 user = user
             )
         }
-        /*--- Photo Profile Editable Fields ---*/
-        Surface(
+        Column(
             modifier = Modifier
-                .padding(start = 16.dp, top = 0.dp, bottom = 24.dp, end = 16.dp),
-            shape = MaterialTheme.shapes.medium
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
         ) {
-            SettingsPhotoProfileItem(
-                label = "A picture helps people recognize you and when you’re signed in."
-            )
-        }
-        /*--- List Editable Fields ---*/
-        Surface(
-            modifier = Modifier
-                .padding(start = 16.dp, top = 0.dp, bottom = 0.dp, end = 16.dp),
-            shape = MaterialTheme.shapes.medium
-        ) {
-            Column(
+            /*--- Photo Profile Editable Fields ---*/
+            Surface(
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .padding(start = 16.dp, top = 0.dp, bottom = 16.dp, end = 16.dp),
+                shape = MaterialTheme.shapes.medium
             ) {
-                EditableInfoScreenBase(
-                    title = "Changes to your $textLabelName will be reflected across your Account.",
-                    userData = user,
-                    onUserUpdate = onUserUpdate,
-                    fields = listOf(
-                        EditableField(
-                            label = textLabelName,
-                            valueLabel = name,
-                            getValue = { it.name },
-                            applyChange = { old, new -> old.copy(name = new) },
-                            isValid = { it.isNotEmpty() },
-                            editor = { value, onValueChange ->
-                                EditNameField(
-                                    label = textLabelName,
-                                    value = value,
-                                    onValueChange = onValueChange
-                                )
-                            }
+                SettingsPhotoProfileItem(
+                    label = "A picture helps people recognize you and when you’re signed in."
+                )
+            }
+            /*--- List Editable Fields ---*/
+            Surface(
+                modifier = Modifier
+                    .padding(start = 16.dp, top = 0.dp, bottom = 0.dp, end = 16.dp),
+                shape = MaterialTheme.shapes.medium
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                ) {
+                    EditableInfoScreenBase(
+                        title = "Changes to your $textLabelName will be reflected across your Account.",
+                        userData = user,
+                        onUserUpdate = onUserUpdate,
+                        fields = listOf(
+                            EditableField(
+                                label = textLabelName,
+                                valueLabel = name,
+                                getValue = { it.name },
+                                applyChange = { old, new -> old.copy(name = new) },
+                                isValid = { it.isNotEmpty() },
+                                editor = { value, onValueChange ->
+                                    EditNameField(
+                                        label = textLabelName,
+                                        value = value,
+                                        onValueChange = onValueChange
+                                    )
+                                }
+                            )
                         )
                     )
-                )
-                EditableInfoScreenBase(
-                    title = "Changes to your $textLabelInitial will be reflected across your Account.",
-                    userData = user,
-                    onUserUpdate = onUserUpdate,
-                    fields = listOf(
-                        EditableField(
-                            label = textLabelInitial,
-                            valueLabel = initial,
-                            getValue = { it.initial },
-                            applyChange = { old, new -> old.copy(initial = new) },
-                            isValid = { it.isNotEmpty() },
-                            editor = { value, onValueChange ->
-                                EditInitialFields(
-                                    initial = value,
-                                    labelInitial = textLabelInitial,
-                                    onInitialChange = onValueChange
-                                )
-                            }
+                    EditableInfoScreenBase(
+                        title = "Changes to your $textLabelInitial will be reflected across your Account.",
+                        userData = user,
+                        onUserUpdate = onUserUpdate,
+                        fields = listOf(
+                            EditableField(
+                                label = textLabelInitial,
+                                valueLabel = initial,
+                                getValue = { it.initial },
+                                applyChange = { old, new -> old.copy(initial = new) },
+                                isValid = { it.isNotEmpty() },
+                                editor = { value, onValueChange ->
+                                    EditInitialFields(
+                                        initial = value,
+                                        labelInitial = textLabelInitial,
+                                        onInitialChange = onValueChange
+                                    )
+                                }
+                            )
                         )
                     )
-                )
-                EditableInfoScreenBase(
-                    title = "Changes to your $textLabelNickname will be reflected across your Account.",
-                    userData = user,
-                    onUserUpdate = onUserUpdate,
-                    fields = listOf(
-                        EditableField(
-                            label = textLabelNickname,
-                            valueLabel = nickname,
-                            getValue = { it.nickName },
-                            applyChange = { old, new -> old.copy(nickName = new) },
-                            isValid = { it.isNotEmpty() },
-                            editor = { value, onValueChange ->
-                                EditNicknameFields(
-                                    nickname = nickname,
-                                    labelNickname = textLabelNickname,
-                                    onNicknameChange = onValueChange
-                                )
-                            }
+                    EditableInfoScreenBase(
+                        title = "Changes to your $textLabelNickname will be reflected across your Account.",
+                        userData = user,
+                        onUserUpdate = onUserUpdate,
+                        fields = listOf(
+                            EditableField(
+                                label = textLabelNickname,
+                                valueLabel = nickname,
+                                getValue = { it.nickName },
+                                applyChange = { old, new -> old.copy(nickName = new) },
+                                isValid = { it.isNotEmpty() },
+                                editor = { value, onValueChange ->
+                                    EditNicknameFields(
+                                        nickname = nickname,
+                                        labelNickname = textLabelNickname,
+                                        onNicknameChange = onValueChange
+                                    )
+                                }
+                            )
                         )
                     )
-                )
-                EditableInfoScreenBase(
-                    title = "Update your birthdate ($textLabelBirthday) to match your ID card, you never know, someone might plan a surprise for you!",
-                    userData = user,
-                    onUserUpdate = onUserUpdate,
-                    fields = listOf(
-                        EditableField(
-                            label = textLabelBirthday,
-                            valueLabel = birthday,
-                            getValue = { it.birthday },
-                            applyChange = { old, new -> old.copy(birthday = new) },
-                            isValid = { it.isNotEmpty() },
-                            editor = { value, onValueChange ->
-                                EditBirthdayField(
-                                    selectedDate = value,
-                                    label = textLabelBirthday,
-                                    onDateChange = onValueChange
-                                )
-                            }
+                    EditableInfoScreenBase(
+                        title = "Update your birthdate ($textLabelBirthday) to match your ID card, you never know, someone might plan a surprise for you!",
+                        userData = user,
+                        onUserUpdate = onUserUpdate,
+                        fields = listOf(
+                            EditableField(
+                                label = textLabelBirthday,
+                                valueLabel = birthday,
+                                getValue = { it.birthday },
+                                applyChange = { old, new -> old.copy(birthday = new) },
+                                isValid = { it.isNotEmpty() },
+                                editor = { value, onValueChange ->
+                                    EditBirthdayField(
+                                        selectedDate = value,
+                                        label = textLabelBirthday,
+                                        onDateChange = onValueChange
+                                    )
+                                }
+                            )
                         )
                     )
-                )
-                EditableInfoScreenBase(
-                    title = "Update your $textLabelGender to match your real information to complete your personal data.",
-                    userData = user,
-                    onUserUpdate = onUserUpdate,
-                    fields = listOf(
-                        EditableField(
-                            label = textLabelGender,
-                            valueLabel = gender,
-                            showDivider = false,
-                            getValue = { it.gender },
-                            applyChange = { old, new -> old.copy(gender = new) },
-                            isValid = { it.isNotEmpty() },
-                            editor = { value, onValueChange ->
-                                EditGenderDropdown(
-                                    selected = value,
-                                    label = textLabelGender,
-                                    onSelect = onValueChange
-                                )
-                            }
+                    EditableInfoScreenBase(
+                        title = "Update your $textLabelGender to match your real information to complete your personal data.",
+                        userData = user,
+                        onUserUpdate = onUserUpdate,
+                        fields = listOf(
+                            EditableField(
+                                label = textLabelGender,
+                                valueLabel = gender,
+                                showDivider = false,
+                                getValue = { it.gender },
+                                applyChange = { old, new -> old.copy(gender = new) },
+                                isValid = { it.isNotEmpty() },
+                                editor = { value, onValueChange ->
+                                    EditGenderDropdown(
+                                        selected = value,
+                                        label = textLabelGender,
+                                        onSelect = onValueChange
+                                    )
+                                }
+                            )
                         )
                     )
-                )
+                }
             }
         }
     }

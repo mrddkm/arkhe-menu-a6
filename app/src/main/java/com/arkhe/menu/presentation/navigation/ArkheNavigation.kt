@@ -350,7 +350,7 @@ fun ArkheNavigation(
             }
 
             composable(
-                route = NavigationRoute.ABOUT_DETAIL,
+                route = "${NavigationRoute.ABOUT_DETAIL}/{source}",
                 arguments = listOf(
                     navArgument("source") {
                         type = NavType.StringType
@@ -359,27 +359,36 @@ fun ArkheNavigation(
                     }
                 )
             ) { backStackEntry ->
+                val source = backStackEntry.arguments?.getString("source") ?: "unknown"
                 AboutScreen(
                     onBackClick = {
-                        scope.launch {
-                            mainViewModel.showProfileSettingsBottomSheet()
-                            delay(50L)
-                            val popSuccess = navController.popBackStack()
-                            if (!popSuccess) {
-                                navController.navigate(NavigationRoute.MAIN) {
-                                    popUpTo(NavigationRoute.MAIN) {
-                                        inclusive = true
+                        when (source) {
+                            NavigationRoute.MAIN -> {
+                                scope.launch {
+                                    mainViewModel.showProfileSettingsBottomSheet()
+                                    delay(50L)
+                                    val popSuccess = navController.popBackStack()
+                                    if (!popSuccess) {
+                                        navController.navigate(NavigationRoute.MAIN) {
+                                            popUpTo(NavigationRoute.MAIN) {
+                                                inclusive = true
+                                            }
+                                            launchSingleTop = true
+                                        }
                                     }
-                                    launchSingleTop = true
                                 }
                             }
+
+                            NavigationRoute.ON_BOARDING -> navController.popBackStack()
+
+                            else -> navController.popBackStack()
                         }
                     }
                 )
             }
 
             composable(
-                route = NavigationRoute.PRIVACY_POLICY_DETAIL,
+                route = "${NavigationRoute.PRIVACY_POLICY_DETAIL}/{source}",
                 arguments = listOf(
                     navArgument("source") {
                         type = NavType.StringType
@@ -388,27 +397,36 @@ fun ArkheNavigation(
                     }
                 )
             ) { backStackEntry ->
+                val source = backStackEntry.arguments?.getString("source") ?: "unknown"
                 PrivacyScreen(
                     onBackClick = {
-                        scope.launch {
-                            mainViewModel.showProfileSettingsBottomSheet()
-                            delay(50L)
-                            val popSuccess = navController.popBackStack()
-                            if (!popSuccess) {
-                                navController.navigate(NavigationRoute.MAIN) {
-                                    popUpTo(NavigationRoute.MAIN) {
-                                        inclusive = true
+                        when (source) {
+                            NavigationRoute.MAIN -> {
+                                scope.launch {
+                                    mainViewModel.showProfileSettingsBottomSheet()
+                                    delay(50L)
+                                    val popSuccess = navController.popBackStack()
+                                    if (!popSuccess) {
+                                        navController.navigate(NavigationRoute.MAIN) {
+                                            popUpTo(NavigationRoute.MAIN) {
+                                                inclusive = true
+                                            }
+                                            launchSingleTop = true
+                                        }
                                     }
-                                    launchSingleTop = true
                                 }
                             }
+
+                            NavigationRoute.ON_BOARDING -> navController.popBackStack()
+
+                            else -> navController.popBackStack()
                         }
                     }
                 )
             }
 
             composable(
-                route = NavigationRoute.TERMS_OF_SERVICE_DETAIL,
+                route = "${NavigationRoute.TERMS_OF_SERVICE_DETAIL}/{source}",
                 arguments = listOf(
                     navArgument("source") {
                         type = NavType.StringType
@@ -417,20 +435,29 @@ fun ArkheNavigation(
                     }
                 )
             ) { backStackEntry ->
+                val source = backStackEntry.arguments?.getString("source") ?: "unknown"
                 TermsScreen(
                     onBackClick = {
-                        scope.launch {
-                            mainViewModel.showProfileSettingsBottomSheet()
-                            delay(50L)
-                            val popSuccess = navController.popBackStack()
-                            if (!popSuccess) {
-                                navController.navigate(NavigationRoute.MAIN) {
-                                    popUpTo(NavigationRoute.MAIN) {
-                                        inclusive = true
+                        when (source) {
+                            NavigationRoute.MAIN -> {
+                                scope.launch {
+                                    mainViewModel.showProfileSettingsBottomSheet()
+                                    delay(50L)
+                                    val popSuccess = navController.popBackStack()
+                                    if (!popSuccess) {
+                                        navController.navigate(NavigationRoute.MAIN) {
+                                            popUpTo(NavigationRoute.MAIN) {
+                                                inclusive = true
+                                            }
+                                            launchSingleTop = true
+                                        }
                                     }
-                                    launchSingleTop = true
                                 }
                             }
+
+                            NavigationRoute.ON_BOARDING -> navController.popBackStack()
+
+                            else -> navController.popBackStack()
                         }
                     }
                 )

@@ -21,9 +21,9 @@ object NavigationRoute {
     const val PERSONAL_INFO_DETAIL = "personal_info_detail/{source}"
     const val SIGN_IN_SECURITY_DETAIL = "sign_in_security_detail/{source}"
     const val DEVICES_DETAIL = "devices_detail/{source}"
-    const val ABOUT_DETAIL = "about_detail/{source}"
-    const val PRIVACY_POLICY_DETAIL = "privacy_policy_detail/{source}"
-    const val TERMS_OF_SERVICE_DETAIL = "term_of_service_detail/{source}"
+    const val ABOUT_DETAIL = "about_detail"
+    const val PRIVACY_POLICY_DETAIL = "privacy_policy_detail"
+    const val TERMS_OF_SERVICE_DETAIL = "term_of_service_detail"
 
     /*Tripkeun*/
 
@@ -45,11 +45,11 @@ object NavigationRoute {
         "devices_detail/$source"
 
     fun aboutDetail(source: String): String =
-        "about_detail/$source"
+        "$ABOUT_DETAIL/$source"
 
     fun privacyPolicyDetail(source: String): String =
-        "privacy_policy_detail/$source"
+        "$PRIVACY_POLICY_DETAIL/$source"
 
     fun termOfServiceDetail(source: String): String =
-        "term_of_service_detail/$source"
+        "$TERMS_OF_SERVICE_DETAIL/$source"
 }
