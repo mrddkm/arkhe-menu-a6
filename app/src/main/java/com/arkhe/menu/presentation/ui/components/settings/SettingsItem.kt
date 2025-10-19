@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
@@ -39,6 +40,7 @@ import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.Edit2
+import compose.icons.evaicons.outline.Refresh
 
 @Composable
 fun SettingsItem(
@@ -306,9 +308,24 @@ fun PhotoProfileBottomSheet(
                 onRemovePhoto()
                 onDismiss()
             },
-            modifier = Modifier.fillMaxWidth(0.85f)
+            modifier = Modifier
+                .width(180.dp)
+                .height(40.dp)
         ) {
-            Text("Remove Photo")
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Icon(
+                    modifier = Modifier.size(18.dp),
+                    imageVector = EvaIcons.Outline.Refresh,
+                    contentDescription = null
+                )
+                Spacer(Modifier.width(6.dp))
+                Text("Remove Photo")
+            }
         }
     }
 }
@@ -350,7 +367,7 @@ fun PhotoProfile(
 }
 
 
-@Preview(showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
 fun SettingsPhotoProfileItemPreview() {
     ArkheTheme {
@@ -360,9 +377,9 @@ fun SettingsPhotoProfileItemPreview() {
             onChangePhotoClick = {}
         )
     }
-}
+}*/
 
-/*@Preview(showBackground = true)
+@Preview(showBackground = true)
 @Composable
 fun PhotoProfileBottomSheetPreview() {
     ArkheTheme {
@@ -373,7 +390,7 @@ fun PhotoProfileBottomSheetPreview() {
             onRemovePhoto = {}
         )
     }
-}*/
+}
 
 /*@Preview(showBackground = true)
 @Composable
