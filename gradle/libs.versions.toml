@@ -17,6 +17,7 @@ junitVersion = "1.3.0"
 espressoCore = "3.7.0"
 composeIcons = "1.1.1"
 coil = "2.7.0"
+imageCropper = "4.6.0"
 lottie-compose = "6.6.10"
 core-splashscreen = "1.0.1"
 markdown = "0.37.0"
@@ -60,8 +61,9 @@ androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-co
 androidx-material-icons = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "materialIcons" }
 compose-simple-icons = { group = "br.com.devsrsouza.compose.icons", name = "simple-icons", version.ref = "composeIcons" }
 compose-eva-icons = { group = "br.com.devsrsouza.compose.icons", name = "eva-icons", version.ref = "composeIcons" }
+compose-lottie = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottie-compose" }
 compose-coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
-lottie-compose = { group = "com.airbnb.android", name = "lottie-compose", version.ref = "lottie-compose" }
+image-cropper = { group = "com.vanniktech", name = "android-image-cropper", version.ref = "imageCropper" }
 
 markdown-compose = { group = "com.mikepenz", name = "multiplatform-markdown-renderer-m3", version.ref = "markdown" }
 androidx-security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "androidxSecurity" }
@@ -80,6 +82,7 @@ compose = [
     "androidx-ui-tooling-preview",
     "androidx-material3",
     "compose-coil",
+    "image-cropper",
     "markdown-compose",
     "androidx-navigation-compose",
 ]
@@ -114,7 +117,7 @@ icons = [
 ]
 
 animation = [
-    "lottie-compose"
+    "compose-lottie"
 ]
 
 testing-unit = [

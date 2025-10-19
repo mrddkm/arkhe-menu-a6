@@ -1,5 +1,12 @@
+@file:Suppress("DEPRECATION")
+
 package com.arkhe.menu.presentation.screen.settings.account
 
+import android.graphics.Bitmap
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,13 +25,16 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,6 +45,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.data.local.preferences.Lang
+import com.arkhe.menu.data.local.preferences.ProfilePicturePrefs
 import com.arkhe.menu.di.appModule
 import com.arkhe.menu.di.dataModule
 import com.arkhe.menu.di.domainModule
@@ -48,13 +59,19 @@ import com.arkhe.menu.presentation.ui.components.edit.EditNameField
 import com.arkhe.menu.presentation.ui.components.edit.EditNicknameFields
 import com.arkhe.menu.presentation.ui.components.edit.EditableField
 import com.arkhe.menu.presentation.ui.components.edit.EditableInfoScreenBase
+import com.arkhe.menu.presentation.ui.components.settings.PhotoProfileBottomSheet
 import com.arkhe.menu.presentation.ui.components.settings.SettingsPhotoProfileItem
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.viewmodel.LanguageViewModel
 import com.arkhe.menu.utils.sampleUser
+import com.canhub.cropper.CropImageContract
+import com.canhub.cropper.CropImageContractOptions
+import com.canhub.cropper.CropImageOptions
+import com.canhub.cropper.CropImageView
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.Close
+import kotlinx.coroutines.launch
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.KoinApplicationPreview
@@ -96,6 +113,75 @@ fun PersonalInfoContent(
     var gender by remember { mutableStateOf(user.gender) }
     var textLabelBirthday by remember { mutableStateOf("Birthday") }
     var birthday by remember { mutableStateOf(user.birthday) }
+
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
+    val profilePicturePrefs = remember(context) { ProfilePicturePrefs(context) }
+    val savedUri by profilePicturePrefs.getProfilePicture().collectAsState(initial = null)
+    var profileImageUri by remember(savedUri) { mutableStateOf(savedUri) }
+
+    var showProfilePictureBottomSheet by remember { mutableStateOf(false) }
+
+    val cropLauncher = rememberLauncherForActivityResult(CropImageContract()) { result ->
+        if (result.isSuccessful) {
+            val croppedUri = result.uriContent
+            croppedUri?.let {
+                profileImageUri = it.toString()
+                coroutineScope.launch {
+                    profilePicturePrefs.saveProfilePicture(it.toString())
+                }
+            }
+        } else {
+            result.error?.let {
+                Toast.makeText(context, "Crop failed: ${it.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    val pickImageLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        uri?.let {
+            val cropOptions = CropImageContractOptions(
+                uri = it,
+                cropImageOptions = CropImageOptions(
+                    aspectRatioX = 1,
+                    aspectRatioY = 1,
+                    fixAspectRatio = true,
+                    cropShape = CropImageView.CropShape.OVAL,
+                    guidelines = CropImageView.Guidelines.ON,
+                    outputRequestWidth = 512,
+                    outputRequestHeight = 512,
+                    outputCompressFormat = Bitmap.CompressFormat.JPEG,
+                    outputCompressQuality = 90,
+                )
+            )
+            cropLauncher.launch(cropOptions)
+        }
+    }
+
+    if (showProfilePictureBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { showProfilePictureBottomSheet = false }
+        ) {
+            PhotoProfileBottomSheet(
+                imageUri = profileImageUri,
+                onDismiss = { showProfilePictureBottomSheet = false },
+                onChooseFromGallery = {
+                    pickImageLauncher.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                    )
+                },
+                onRemovePhoto = {
+                    profileImageUri = null
+                    coroutineScope.launch {
+                        profilePicturePrefs.saveProfilePicture(null)
+                    }
+                }
+            )
+        }
+    }
 
     Column(
         modifier = modifier.padding(16.dp)
@@ -163,7 +249,9 @@ fun PersonalInfoContent(
                 shape = MaterialTheme.shapes.medium
             ) {
                 SettingsPhotoProfileItem(
-                    label = "A picture helps people recognize you and when you’re signed in."
+                    label = "A picture helps people recognize you and when you’re signed in.",
+                    imageUri = profileImageUri,
+                    onChangePhotoClick = { showProfilePictureBottomSheet = true }
                 )
             }
             /*--- List Editable Fields ---*/

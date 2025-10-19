@@ -40,6 +40,7 @@ object Constants {
         val KEY_IS_ACTIVATED = booleanPreferencesKey("is_activated")
         val KEY_IS_SIGNED_IN = booleanPreferencesKey("is_signed_in")
         val KEY_PIN_ATTEMPTS = intPreferencesKey("pin_attempts")
+        val KEY_PROFILE_PICTURE = stringPreferencesKey("profile_picture_uri")
     }
 
     object CurrentLanguage {

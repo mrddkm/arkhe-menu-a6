@@ -1,6 +1,5 @@
 package com.arkhe.menu.presentation.screen.settings.settings
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -8,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,7 +16,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ExitToApp
-import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -26,10 +23,14 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -37,11 +38,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.R
 import com.arkhe.menu.data.local.preferences.Lang
+import com.arkhe.menu.data.local.preferences.ProfilePicturePrefs
 import com.arkhe.menu.di.appModule
 import com.arkhe.menu.di.dataModule
 import com.arkhe.menu.di.domainModule
 import com.arkhe.menu.di.previewModule
 import com.arkhe.menu.presentation.ui.components.HeaderTitleSecondary
+import com.arkhe.menu.presentation.ui.components.settings.PhotoProfile
 import com.arkhe.menu.presentation.ui.components.settings.SettingsBottomSheetItem
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
@@ -79,6 +82,11 @@ fun SettingsBottomSheet(
         )
         onDispose { }
     }
+
+    val context = LocalContext.current
+    val profilePicturePrefs = remember(context) { ProfilePicturePrefs(context) }
+    val savedUri by profilePicturePrefs.getProfilePicture().collectAsState(initial = null)
+    var profileImageUri by remember(savedUri) { mutableStateOf(savedUri) }
 
     Column(
         modifier = Modifier
@@ -130,19 +138,22 @@ fun SettingsBottomSheet(
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Box(
-                modifier = Modifier
-                    .size(64.dp)
-                    .clip(CircleShape),
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    imageVector = Icons.Rounded.AccountCircle,
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxSize(),
-                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
-                )
-            }
+            PhotoProfile(
+                imageUri = profileImageUri
+            )
+            /*            Box(
+                            modifier = Modifier
+                                .size(64.dp)
+                                .clip(CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Image(
+                                imageVector = Icons.Rounded.AccountCircle,
+                                contentDescription = null,
+                                modifier = Modifier.fillMaxSize(),
+                                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
+                            )
+                        }*/
             Column(
                 modifier = Modifier
                     .fillMaxWidth(),

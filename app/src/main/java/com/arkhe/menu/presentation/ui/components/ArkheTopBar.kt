@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -21,17 +19,23 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arkhe.menu.R
+import com.arkhe.menu.data.local.preferences.ProfilePicturePrefs
+import com.arkhe.menu.presentation.ui.components.settings.PhotoProfile
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
@@ -69,6 +73,11 @@ fun ArkheTopBar(
         animationSpec = tween(durationMillis = 400),
         label = "topbar_blur"
     )
+
+    val context = LocalContext.current
+    val profilePicturePrefs = remember(context) { ProfilePicturePrefs(context) }
+    val savedUri by profilePicturePrefs.getProfilePicture().collectAsState(initial = null)
+    var profileImageUri by remember(savedUri) { mutableStateOf(savedUri) }
 
     Box(
         modifier = Modifier
@@ -110,12 +119,15 @@ fun ArkheTopBar(
             actions = {
                 if (!isInMainContent) {
                     IconButton(onClick = onProfileSettingsClick) {
-                        Icon(
-                            imageVector = Icons.Rounded.AccountCircle,
-                            contentDescription = null,
-                            modifier = Modifier.fillMaxSize(),
-                            tint = MaterialTheme.colorScheme.primary
+                        PhotoProfile(
+                            imageUri = profileImageUri
                         )
+                        /*                        Icon(
+                                                    imageVector = Icons.Rounded.AccountCircle,
+                                                    contentDescription = null,
+                                                    modifier = Modifier.fillMaxSize(),
+                                                    tint = MaterialTheme.colorScheme.primary
+                                                )*/
                     }
                     Text(
                         text = "•",
