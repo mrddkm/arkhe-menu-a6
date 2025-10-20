@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -308,6 +309,10 @@ fun PhotoProfileBottomSheet(
                 onRemovePhoto()
                 onDismiss()
             },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+                contentColor = MaterialTheme.colorScheme.primary
+            ),
             modifier = Modifier
                 .width(180.dp)
                 .height(40.dp)
@@ -321,10 +326,14 @@ fun PhotoProfileBottomSheet(
                 Icon(
                     modifier = Modifier.size(18.dp),
                     imageVector = EvaIcons.Outline.Refresh,
-                    contentDescription = null
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.error.copy(alpha = 0.6f)
                 )
                 Spacer(Modifier.width(6.dp))
-                Text("Remove Photo")
+                Text(
+                    text = "Remove Photo",
+                    color = MaterialTheme.colorScheme.error.copy(alpha = 0.6f)
+                )
             }
         }
     }
