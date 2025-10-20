@@ -1,4 +1,4 @@
-package com.arkhe.menu.presentation.screen.auth
+package com.arkhe.menu.presentation.screen.auth.onboarding
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -6,6 +6,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import com.arkhe.menu.domain.model.ThemeModels
 import com.arkhe.menu.presentation.screen.auth.activation.ActivationBottomSheet
 import com.arkhe.menu.presentation.screen.auth.lockscreen.PinLockBottomSheet
 import com.arkhe.menu.presentation.screen.auth.signin.SignInBottomSheet
@@ -16,15 +17,17 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 /**
- * AUTH UI – Reusable BottomSheet for Activation, Login, and PIN Entry
+ * OnBoarding UI – Reusable BottomSheet for Activation, Login, PIN and Settings Entry
  * Compatible with OnBoardingScreen.kt
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AuthUi(
+fun OnBoardingUI(
     showActivation: Boolean,
     showSignedIn: Boolean,
     showPin: Boolean,
+    showSettings: Boolean,
+    currentThemeModel: ThemeModels,
     onDismissAll: () -> Unit,
     onActivated: () -> Unit,
     onSignedIn: () -> Unit,
@@ -35,7 +38,6 @@ fun AuthUi(
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(uiState) {
-        println("AuthUi: uiState = $uiState")
         when (uiState) {
             is AuthUiState.Success -> {
                 val success = uiState as AuthUiState.Success
@@ -43,18 +45,18 @@ fun AuthUi(
                 when (success.type) {
                     SuccessType.ACTIVATION -> {
                         if (success.message.contains("PIN saved", true)) {
-                            println("AuthUi: Dismissing and activating")
                             onDismissAll()
                             onActivated()
                         }
                     }
+
                     SuccessType.SIGNEDIN -> {
-                        println("AuthUi: Dismissing and signing in")
                         onDismissAll()
                         onSignedIn()
                     }
                 }
             }
+
             is AuthUiState.Error -> {}
             else -> Unit
         }
@@ -97,6 +99,13 @@ fun AuthUi(
                     }
                 }
             }
+        )
+    }
+
+    if (showSettings) {
+        OnBoardingSettingsBottomSheet(
+            onDismiss = onDismissAll,
+            currentThemeModel = currentThemeModel
         )
     }
 }

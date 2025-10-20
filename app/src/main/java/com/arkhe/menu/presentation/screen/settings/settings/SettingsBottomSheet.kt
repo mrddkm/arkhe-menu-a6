@@ -141,19 +141,7 @@ fun SettingsBottomSheet(
             PhotoProfile(
                 imageUri = profileImageUri
             )
-            /*            Box(
-                            modifier = Modifier
-                                .size(64.dp)
-                                .clip(CircleShape),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Image(
-                                imageVector = Icons.Rounded.AccountCircle,
-                                contentDescription = null,
-                                modifier = Modifier.fillMaxSize(),
-                                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
-                            )
-                        }*/
+            Spacer(modifier = Modifier.height(8.dp))
             Column(
                 modifier = Modifier
                     .fillMaxWidth(),

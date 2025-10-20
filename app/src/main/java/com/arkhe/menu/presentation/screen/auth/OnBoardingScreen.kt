@@ -29,6 +29,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -57,6 +58,7 @@ import com.arkhe.menu.R
 import com.arkhe.menu.data.local.preferences.Lang
 import com.arkhe.menu.domain.model.ThemeModels
 import com.arkhe.menu.presentation.navigation.NavigationRoute
+import com.arkhe.menu.presentation.screen.auth.onboarding.OnBoardingUI
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.ui.theme.montserratAlternatesFontFamily
 import com.arkhe.menu.presentation.ui.theme.montserratFontFamily
@@ -91,6 +93,7 @@ fun OnboardingScreen(
     var showActivationSheet by remember { mutableStateOf(false) }
     var showSignedInSheet by remember { mutableStateOf(false) }
     var showPinSheet by remember { mutableStateOf(false) }
+    var showSettings by remember { mutableStateOf(false) }
 
     val images = listOf(
         R.drawable.image_1,
@@ -201,6 +204,9 @@ fun OnboardingScreen(
                 },
                 onPinUnlockClick = {
                     showPinSheet = true
+                },
+                onBoardingSettingsClick = {
+                    showSettings = true
                 }
             )
             OnboardingFooter(
@@ -230,14 +236,17 @@ fun OnboardingScreen(
         }
     }
 
-    AuthUi(
+    OnBoardingUI(
         showActivation = showActivationSheet,
         showSignedIn = showSignedInSheet,
         showPin = showPinSheet,
+        showSettings = showSettings,
+        currentThemeModel = currentThemeModel,
         onDismissAll = {
             showActivationSheet = false
             showSignedInSheet = false
             showPinSheet = false
+            showSettings = false
         },
         onActivated = {
             showActivationSheet = false
@@ -259,7 +268,8 @@ fun TripkeunText(
     currentThemeModel: ThemeModels,
     onActivationClick: () -> Unit,
     onSignedInClick: () -> Unit,
-    onPinUnlockClick: () -> Unit
+    onPinUnlockClick: () -> Unit,
+    onBoardingSettingsClick: () -> Unit
 ) {
     val isDark = when (currentThemeModel) {
         ThemeModels.DARK -> true
@@ -278,7 +288,14 @@ fun TripkeunText(
             shape = MaterialTheme.shapes.large,
             color = Color.Transparent
         ) {
-            if (isDark) DarkThemeBox() else LightThemeBox()
+            if (isDark)
+                DarkThemeBox(
+                    onBoardingSettingsClick = onBoardingSettingsClick
+                )
+            else
+                LightThemeBox(
+                    onBoardingSettingsClick = onBoardingSettingsClick
+                )
         }
         OnBoardingButton(
             isActivation = isActivation,
@@ -294,7 +311,9 @@ fun TripkeunText(
 }
 
 @Composable
-private fun DarkThemeBox() {
+fun DarkThemeBox(
+    onBoardingSettingsClick: () -> Unit = {}
+) {
     Box(
         contentAlignment = Alignment.TopCenter,
         modifier = Modifier
@@ -302,18 +321,24 @@ private fun DarkThemeBox() {
             .background(Color(0xFF170C10))
             .padding(top = 16.dp, bottom = 8.dp)
     ) {
-        Text(
-            text = "tripkeun",
-            fontSize = 32.sp,
-            fontWeight = FontWeight.Bold,
-            fontFamily = montserratAlternatesFontFamily,
-            color = Color(0xFFEA508C)
-        )
+        TextButton(
+            onClick = onBoardingSettingsClick
+        ) {
+            Text(
+                text = "tripkeun",
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = montserratAlternatesFontFamily,
+                color = Color(0xFFEA508C)
+            )
+        }
     }
 }
 
 @Composable
-private fun LightThemeBox() {
+fun LightThemeBox(
+    onBoardingSettingsClick: () -> Unit = {}
+) {
     Box(
         contentAlignment = Alignment.TopCenter,
         modifier = Modifier
@@ -321,13 +346,17 @@ private fun LightThemeBox() {
             .background(Color(0xFFF7F5F2))
             .padding(top = 16.dp, bottom = 8.dp)
     ) {
-        Text(
-            text = "tripkeun",
-            fontSize = 32.sp,
-            fontWeight = FontWeight.Bold,
-            fontFamily = montserratAlternatesFontFamily,
-            color = Color(0xFF183C2C)
-        )
+        TextButton(
+            onClick = onBoardingSettingsClick
+        ) {
+            Text(
+                text = "tripkeun",
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = montserratAlternatesFontFamily,
+                color = Color(0xFF183C2C)
+            )
+        }
     }
 }
 
