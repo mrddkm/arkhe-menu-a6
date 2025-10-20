@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -46,6 +47,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -56,9 +58,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.arkhe.menu.R
 import com.arkhe.menu.data.local.preferences.Lang
+import com.arkhe.menu.data.local.preferences.ProfilePicturePrefs
 import com.arkhe.menu.domain.model.ThemeModels
 import com.arkhe.menu.presentation.navigation.NavigationRoute
 import com.arkhe.menu.presentation.screen.auth.onboarding.OnBoardingUI
+import com.arkhe.menu.presentation.ui.components.settings.PhotoProfile
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.ui.theme.montserratAlternatesFontFamily
 import com.arkhe.menu.presentation.ui.theme.montserratFontFamily
@@ -67,7 +71,6 @@ import com.arkhe.menu.presentation.viewmodel.LanguageViewModel
 import com.arkhe.menu.presentation.viewmodel.ThemeViewModel
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
-import compose.icons.evaicons.outline.Activity
 import compose.icons.evaicons.outline.Bulb
 import compose.icons.evaicons.outline.LogIn
 import kotlinx.coroutines.delay
@@ -369,6 +372,11 @@ private fun OnBoardingButton(
     onStartClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+    val profilePicturePrefs = remember(context) { ProfilePicturePrefs(context) }
+    val savedUri by profilePicturePrefs.getProfilePicture().collectAsState(initial = null)
+    var profileImageUri by remember(savedUri) { mutableStateOf(savedUri) }
+
     when {
         !isActivation -> {
             Button(
@@ -456,13 +464,12 @@ private fun OnBoardingButton(
                     horizontalArrangement = Arrangement.Center,
                     modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
                 ) {
-                    Icon(
-                        imageVector = EvaIcons.Outline.Activity,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .padding(end = 8.dp)
-                            .size(24.dp)
+                    PhotoProfile(
+                        imageUri = profileImageUri,
+                        isDefault = false,
+                        size = 24.dp
                     )
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = "Start Activity",
                         fontFamily = montserratFontFamily,
@@ -595,8 +602,8 @@ fun OnBoardingButtonPreview() {
         currentTheme = ThemeModels.DARK
     ) {
         OnBoardingButton(
-            isActivation = false,
-            isSignedIn = false,
+            isActivation = true,
+            isSignedIn = true,
             onActivationClick = {},
             onSignedInClick = {},
             onStartClick = {}

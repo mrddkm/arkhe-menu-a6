@@ -122,12 +122,6 @@ fun ArkheTopBar(
                         PhotoProfile(
                             imageUri = profileImageUri
                         )
-                        /*                        Icon(
-                                                    imageVector = Icons.Rounded.AccountCircle,
-                                                    contentDescription = null,
-                                                    modifier = Modifier.fillMaxSize(),
-                                                    tint = MaterialTheme.colorScheme.primary
-                                                )*/
                     }
                     Text(
                         text = "•",

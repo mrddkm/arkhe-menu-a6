@@ -33,6 +33,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.arkhe.menu.R
@@ -40,6 +41,7 @@ import com.arkhe.menu.presentation.ui.components.CustomToggle
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
+import compose.icons.evaicons.outline.Activity
 import compose.icons.evaicons.outline.Edit2
 import compose.icons.evaicons.outline.Refresh
 
@@ -341,11 +343,13 @@ fun PhotoProfileBottomSheet(
 
 @Composable
 fun PhotoProfile(
-    imageUri: String?
+    imageUri: String?,
+    isDefault: Boolean = true,
+    size: Dp = 64.dp
 ) {
     Box(
         modifier = Modifier
-            .size(64.dp)
+            .size(size)
             .clip(CircleShape),
         contentAlignment = Alignment.Center
     ) {
@@ -356,19 +360,33 @@ fun PhotoProfile(
         )
 
         if (imageUri.isNullOrEmpty()) {
-            Image(
-                imageVector = Icons.Rounded.AccountCircle,
-                contentDescription = "Default photo",
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop,
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
-                alpha = 0.9f
-            )
+            if (isDefault) {
+                Image(
+                    imageVector = Icons.Rounded.AccountCircle,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentScale = ContentScale.Crop,
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
+                    alpha = 0.9f
+                )
+            } else {
+                Image(
+                    imageVector = EvaIcons.Outline.Activity,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(24.dp),
+                    contentScale = ContentScale.Crop,
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
+                    alpha = 0.9f
+                )
+            }
         } else {
             Image(
                 painter = painter,
-                contentDescription = "Profile photo",
-                modifier = Modifier.fillMaxSize(),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxSize(),
                 contentScale = ContentScale.Crop
             )
         }
