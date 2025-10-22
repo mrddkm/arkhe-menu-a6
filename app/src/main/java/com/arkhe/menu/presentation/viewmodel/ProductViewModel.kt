@@ -65,7 +65,6 @@ class ProductViewModel(
                         }
                     }
             } catch (e: Exception) {
-                Log.e(TAG, "❌ Error in init: ${e.message}", e)
                 _productsState.value = SafeApiResult.Error(e)
             }
         }
@@ -98,13 +97,11 @@ class ProductViewModel(
                     }
 
                     is SafeApiResult.Error -> {
-                        Log.e(TAG, "❌ Error loading categories: ${result.exception.message}")
                         _productsState.value = result
                         handleTokenError(result.exception, forceRefresh)
                     }
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "❌ Exception in loadCategories: ${e.message}", e)
                 _productsState.value = SafeApiResult.Error(e)
             }
         }
@@ -149,10 +146,6 @@ class ProductViewModel(
                         }
 
                         is SafeApiResult.Error -> {
-                            Log.e(
-                                TAG,
-                                "❌ Error getting categories: ${productsResult.exception.message}"
-                            )
                             _productsState.value = productsResult
                         }
 
@@ -165,11 +158,6 @@ class ProductViewModel(
                     }
                     isInitialized = true
                 } catch (e: Exception) {
-                    Log.e(
-                        TAG,
-                        "❌ Exception in ensureDataLoaded: ${e.message}",
-                        e
-                    )
                     _productsState.value = SafeApiResult.Error(e)
                 }
             }

@@ -16,10 +16,10 @@ class FakeAuthRepository(
     override val isActivatedFlow: Flow<Boolean> = authPrefs.isActivatedFlow
     override val isSignedInFlow: Flow<Boolean> = authPrefs.isSignedInFlow
 
-    override suspend fun requestActivation(
+    override suspend fun verification(
         userId: String,
         phone: String,
-        email: String
+        mail: String
     ): Result<String> {
         delay(600)
         return if (userId.isNotBlank()) Result.success("Activation request OK (dummy)")

@@ -1,5 +1,6 @@
-package com.arkhe.menu.data.remote.api
+package com.arkhe.menu.data.repository
 
+import com.arkhe.menu.data.remote.api.ArkheApiService
 import com.arkhe.menu.data.remote.dto.CategoryInfoDto
 import com.arkhe.menu.data.remote.dto.CategoryRequestDto
 import com.arkhe.menu.data.remote.dto.CategoryResponseDto
@@ -9,6 +10,7 @@ import com.arkhe.menu.data.remote.dto.ProductRequestDto
 import com.arkhe.menu.data.remote.dto.ProductResponseDto
 import com.arkhe.menu.data.remote.dto.ProfileRequestDto
 import com.arkhe.menu.data.remote.dto.ProfileResponseDto
+import com.arkhe.menu.data.remote.dto.VerificationResponseDto
 import com.arkhe.menu.utils.Constants
 import io.ktor.client.HttpClient
 import io.ktor.client.request.forms.submitForm
@@ -22,28 +24,22 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.parametersOf
 import kotlinx.serialization.json.Json
 
-interface TripkeunApiService {
-    suspend fun getProfiles(sessionToken: String): ProfileResponseDto
-    suspend fun getCategories(sessionToken: String): CategoryResponseDto
-    suspend fun getProducts(
-        sessionToken: String,
-        productCategoryId: String = "ALL"
-    ): ProductResponseDto
-}
-
-class TripkeunApiServiceImpl(
+class ArkheApiServiceImpl(
     private val httpClient: HttpClient
-) : TripkeunApiService {
-    /*
-    companion object {
-        private const val TAG = "TripkeunApiService"
-    }
-    */
+) : ArkheApiService {
 
     private val json = Json {
         ignoreUnknownKeys = true
         isLenient = true
         coerceInputValues = true
+    }
+
+    override suspend fun verification(
+        userId: String,
+        phone: String,
+        mail: String
+    ): VerificationResponseDto {
+        TODO("Not yet implemented")
     }
 
     override suspend fun getProfiles(sessionToken: String): ProfileResponseDto {
@@ -56,15 +52,8 @@ class TripkeunApiServiceImpl(
                 parameter(Constants.PARAMETER_KEY, Constants.PARAMETER_VALUE_PROFILES)
                 setBody(requestJson)
             }
-            /*------LOG REQUEST DETAILS
-            asLogSendingRequest(TAG, requestJson, Constants, response)
-            * */
 
             val responseText = response.bodyAsText()
-
-            /*------LOG RESPONSE DETAILS
-            asLogDetailsResponse(TAG, response, responseText)
-            * */
 
             /*Handle different status codes*/
             when (response.status) {

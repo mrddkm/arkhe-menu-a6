@@ -1,9 +1,12 @@
 package com.arkhe.menu.data.repository
 
-import android.content.Context
 import com.arkhe.menu.data.local.preferences.AuthPreferences
 import com.arkhe.menu.data.local.security.SecurePinStorage
+import com.arkhe.menu.data.remote.RemoteDataSource
+import com.arkhe.menu.data.remote.api.SafeApiResult
+import com.arkhe.menu.domain.model.auth.Verification
 import com.arkhe.menu.domain.repository.AuthRepository
+import com.arkhe.menu.utils.Constants.URL_BASE
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.post
@@ -19,13 +22,11 @@ import kotlinx.serialization.Serializable
  * Designed to connect to Google Apps Script (GAS) via OkHttp engine.
  */
 class AuthRepositoryImpl(
-    private val context: Context,
+    private val remoteDataSource: RemoteDataSource,
     private val client: HttpClient,
     private val authPreferences: AuthPreferences,
     private val securePinStorage: SecurePinStorage
 ) : AuthRepository {
-
-    private val cURL = "https://your-gas-script-url/exec"
 
     @Serializable
     private data class ApiResponse(val status: String, val message: String? = null)
@@ -33,34 +34,36 @@ class AuthRepositoryImpl(
     override val isActivatedFlow: Flow<Boolean> = authPreferences.isActivatedFlow
     override val isSignedInFlow: Flow<Boolean> = authPreferences.isSignedInFlow
 
-    override suspend fun requestActivation(
+    override suspend fun verification(
         userId: String,
         phone: String,
-        email: String
-    ): Result<String> {
-        return try {
-            val response: HttpResponse = client.post(cURL) {
-                contentType(ContentType.Application.Json)
-                setBody(
-                    mapOf(
-                        "action" to "activation",
-                        "userId" to userId,
-                        "phone" to phone,
-                        "email" to email
-                    )
-                )
-            }
-            val body: ApiResponse = response.body()
-            if (body.status == "ok") Result.success(body.message ?: "Activation OK")
-            else Result.failure(Exception(body.message ?: "Activation failed"))
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+        mail: String
+    ): SafeApiResult<Verification> {
+        /*TODO*/
+
+        /*        return try {
+                    val response: HttpResponse = client.post(URL_BASE) {
+                        contentType(ContentType.Application.Json)
+                        setBody(
+                            mapOf(
+                                "action" to "activation",
+                                "userId" to userId,
+                                "phone" to phone,
+                                "email" to mail
+                            )
+                        )
+                    }
+                    val body: ApiResponse = response.body()
+                    if (body.status == "ok") Result.success(body.message ?: "Activation OK")
+                    else Result.failure(Exception(body.message ?: "Activation failed"))
+                } catch (e: Exception) {
+                    Result.failure(e)
+                }*/
     }
 
     override suspend fun verifyActivationCode(code: String): Result<String> {
         return try {
-            val response: HttpResponse = client.post(cURL) {
+            val response: HttpResponse = client.post(URL_BASE) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("action" to "verifyCode", "code" to code))
             }
@@ -74,7 +77,7 @@ class AuthRepositoryImpl(
 
     override suspend fun createPassword(password: String): Result<String> {
         return try {
-            val response: HttpResponse = client.post(cURL) {
+            val response: HttpResponse = client.post(URL_BASE) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("action" to "createPassword", "password" to password))
             }
@@ -88,7 +91,7 @@ class AuthRepositoryImpl(
 
     override suspend fun signIn(userId: String, password: String): Result<String> {
         return try {
-            val response: HttpResponse = client.post(cURL) {
+            val response: HttpResponse = client.post(URL_BASE) {
                 contentType(ContentType.Application.Json)
                 setBody(mapOf("action" to "signIn", "userId" to userId, "password" to password))
             }

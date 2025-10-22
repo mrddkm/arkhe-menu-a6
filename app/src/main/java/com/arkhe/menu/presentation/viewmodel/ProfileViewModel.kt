@@ -17,11 +17,7 @@ class ProfileViewModel(
     private val profileUseCases: ProfileUseCases,
     private val sessionManager: SessionManager
 ) : ViewModel() {
-    /*
-        companion object {
-            private const val TAG = "ProfileViewModel"
-        }
-    */
+
     private val _profilesState =
         MutableStateFlow<SafeApiResult<List<Profile>>>(SafeApiResult.Loading)
     val profilesState: StateFlow<SafeApiResult<List<Profile>>> = _profilesState.asStateFlow()
@@ -30,10 +26,14 @@ class ProfileViewModel(
 
     init {
         viewModelScope.launch {
-            profileUseCases.getProfiles(sessionManager.getTokenForApiCall())
-                .collectLatest { profilesResult ->
-                    _profilesState.value = profilesResult
-                }
+            try {
+                profileUseCases.getProfiles(sessionManager.getTokenForApiCall())
+                    .collectLatest { profilesResult ->
+                        _profilesState.value = profilesResult
+                    }
+            } catch (e: Exception) {
+                _profilesState.value = SafeApiResult.Error(e)
+            }
         }
     }
 

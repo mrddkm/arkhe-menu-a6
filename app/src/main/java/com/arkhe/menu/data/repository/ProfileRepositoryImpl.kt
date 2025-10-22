@@ -30,17 +30,14 @@ class ProfileRepositoryImpl(
         sessionToken: String,
         forceRefresh: Boolean
     ): Flow<SafeApiResult<List<Profile>>> = flow {
-        Log.d(TAG, "getProfiles called - forceRefresh: $forceRefresh, token: $sessionToken")
         emit(SafeApiResult.Loading)
 
         var cachedEmitted = false
         if (!forceRefresh) {
             try {
-                Log.d(TAG, "Attempting to load cached data...")
                 localDataSource.getAllProfiles()
                     .take(1)
                     .collect { entities ->
-                        Log.d(TAG, "Found ${entities.size} cached profiles")
                         if (entities.isNotEmpty()) {
                             emit(SafeApiResult.Success(entities.toDomainList()))
                             cachedEmitted = true
@@ -52,7 +49,6 @@ class ProfileRepositoryImpl(
         }
 
         if (forceRefresh || !cachedEmitted) {
-            Log.d(TAG, "Calling syncProfiles for remote data...")
             val result = syncProfiles(sessionToken)
             emit(result)
         }
@@ -60,18 +56,14 @@ class ProfileRepositoryImpl(
 
     override suspend fun getProfile(nameShort: String): Profile? {
         return try {
-            Log.d(TAG, "Getting profile for nameShort: $nameShort")
             val profile = localDataSource.getProfile(nameShort)?.toDomain()
-            Log.d(TAG, "Found profile: ${profile?.nameLong}")
             profile
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to get profile: ${e.message}", e)
             null
         }
     }
 
     override suspend fun refreshProfiles(sessionToken: String): SafeApiResult<List<Profile>> {
-        Log.d(TAG, "refreshProfiles called with token: $sessionToken")
         return syncProfiles(sessionToken)
     }
 

@@ -177,7 +177,7 @@ fun ActivationBottomSheet(
                     onDismiss = onDismiss,
                     onNext = {
                         state.scope.launch {
-                            authViewModel.requestActivation(
+                            authViewModel.requestVerification(
                                 state.userId,
                                 state.phone,
                                 state.email

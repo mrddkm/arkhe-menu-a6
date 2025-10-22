@@ -1,5 +1,7 @@
 package com.arkhe.menu.di
 
+import com.arkhe.menu.domain.usecase.auth.ActivationUseCases
+import com.arkhe.menu.domain.usecase.auth.VerificationUseCase
 import com.arkhe.menu.domain.usecase.category.CategoryUseCases
 import com.arkhe.menu.domain.usecase.category.GetCategoriesUseCase
 import com.arkhe.menu.domain.usecase.category.GetCategoryUseCase
@@ -34,6 +36,16 @@ val domainModule = module {
         )
     }
 
+    /*Auth - Activation*/
+    single { VerificationUseCase(get()) }
+
+    single {
+        ActivationUseCases(
+            verification = get()
+        )
+    }
+
+    /*Profiles*/
     single { GetProfilesUseCase(get()) }
     single { GetProfileUseCase(get()) }
     single { RefreshProfilesUseCase(get()) }
@@ -48,6 +60,7 @@ val domainModule = module {
         )
     }
 
+    /*Categories*/
     single { GetCategoriesUseCase(get()) }
     single { GetCategoryUseCase(get()) }
     single { RefreshCategoriesUseCase(get()) }
@@ -60,6 +73,7 @@ val domainModule = module {
         )
     }
 
+    /*Product*/
     single { GetProductsUseCase(get()) }
     single { GetProductUseCase(get()) }
     single { GetProductsByCategoryUseCase(get()) }

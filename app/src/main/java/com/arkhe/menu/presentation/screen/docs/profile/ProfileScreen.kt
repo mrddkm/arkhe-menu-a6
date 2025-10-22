@@ -1,5 +1,3 @@
-@file:Suppress("SpellCheckingInspection")
-
 package com.arkhe.menu.presentation.screen.docs.profile
 
 import androidx.compose.foundation.layout.Arrangement

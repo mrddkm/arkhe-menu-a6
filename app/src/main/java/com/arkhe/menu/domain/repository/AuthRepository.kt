@@ -1,13 +1,16 @@
 package com.arkhe.menu.domain.repository
 
+import com.arkhe.menu.data.remote.api.SafeApiResult
+import com.arkhe.menu.domain.model.auth.Verification
 import kotlinx.coroutines.flow.Flow
 
-/**
- * Contract for authentication-related operations.
- * Keeps domain layer independent from implementation.
- */
 interface AuthRepository {
-    suspend fun requestActivation(userId: String, phone: String, email: String): Result<String>
+    suspend fun verification(
+        userId: String,
+        phone: String,
+        mail: String
+    ): SafeApiResult<Verification>
+
     suspend fun verifyActivationCode(code: String): Result<String>
     suspend fun createPassword(password: String): Result<String>
     suspend fun signIn(userId: String, password: String): Result<String>

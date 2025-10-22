@@ -2,10 +2,14 @@ package com.arkhe.menu.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.arkhe.menu.data.remote.api.SafeApiResult
+import com.arkhe.menu.domain.model.auth.Verification
 import com.arkhe.menu.domain.repository.AuthRepository
+import com.arkhe.menu.domain.usecase.auth.ActivationUseCases
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 sealed interface AuthUiState {
@@ -17,7 +21,10 @@ sealed interface AuthUiState {
 
 enum class SuccessType { ACTIVATION, SIGNEDIN }
 
-class AuthViewModel(private val repo: AuthRepository) : ViewModel() {
+class AuthViewModel(
+    private val activationUseCases: ActivationUseCases,
+    private val repo: AuthRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow<AuthUiState>(AuthUiState.Idle)
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
@@ -25,14 +32,20 @@ class AuthViewModel(private val repo: AuthRepository) : ViewModel() {
     val isActivatedFlow = repo.isActivatedFlow
     val isSignedInFlow = repo.isSignedInFlow
 
-    fun requestActivation(userId: String, phone: String, email: String) {
+    private val _verificationState =
+        MutableStateFlow<SafeApiResult<Verification>>(SafeApiResult.Loading)
+    val verificationState: StateFlow<SafeApiResult<Verification>> = _verificationState.asStateFlow()
+
+    fun requestVerification(userId: String, phone: String, email: String) {
         viewModelScope.launch {
-            _uiState.value = AuthUiState.Loading
-            val res = repo.requestActivation(userId, phone, email)
-            _uiState.value = res.fold(
-                onSuccess = { AuthUiState.Success(it, SuccessType.ACTIVATION) },
-                onFailure = { AuthUiState.Error(it.message ?: "Activation failed") }
-            )
+            try {
+                activationUseCases.verification(userId, phone, email)
+                    .collectLatest { verificationResult ->
+                        _verificationState.value = verificationResult
+                    }
+            } catch (e: Exception) {
+                _verificationState.value = SafeApiResult.Error(e)
+            }
         }
     }
 
