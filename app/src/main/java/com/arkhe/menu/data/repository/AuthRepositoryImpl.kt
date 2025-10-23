@@ -50,7 +50,11 @@ class AuthRepositoryImpl(
         ) {
             is SafeApiResult.Success -> {
                 if (remoteResult.data.status == SUCCESS && remoteResult.data.data != null) {
-                    SafeApiResult.Success(remoteResult.data.toDomain())
+                    try {
+                        SafeApiResult.Success(remoteResult.data.toDomain())
+                    } catch (_: Exception) {
+                        SafeApiResult.Failure(Exception(remoteResult.data.message))
+                    }
                 } else {
                     SafeApiResult.Failure(Exception(remoteResult.data.message))
                 }

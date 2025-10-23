@@ -18,6 +18,6 @@ data class VerificationResponseDto(
 
 @Serializable
 data class VerificationDataDto(
-    val userId: String,
-    val name: String,
+    val userId: String = "",
+    val name: String = "",
 )

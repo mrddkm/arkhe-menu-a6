@@ -108,9 +108,8 @@ dependencies {
 
     ksp(libs.androidx.room.compiler)
 
-    testImplementation(libs.bundles.testing.unit)
-
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    testImplementation(libs.bundles.testing.unit)
     androidTestImplementation(libs.bundles.testing.android)
 }

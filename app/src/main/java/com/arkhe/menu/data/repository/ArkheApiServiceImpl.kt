@@ -1,5 +1,6 @@
 package com.arkhe.menu.data.repository
 
+import android.util.Log
 import com.arkhe.menu.data.remote.api.ArkheApiService
 import com.arkhe.menu.data.remote.dto.CategoryInfoDto
 import com.arkhe.menu.data.remote.dto.CategoryRequestDto
@@ -54,6 +55,7 @@ class ArkheApiServiceImpl(
             }
 
             val responseText = response.bodyAsText()
+            Log.d("ApiService", "Raw Verification Response: $responseText")
 
             when (response.status) {
                 HttpStatusCode.OK -> {
@@ -63,6 +65,7 @@ class ArkheApiServiceImpl(
                         try {
                             json.decodeFromString<VerificationResponseDto>(responseText)
                         } catch (parseException: Exception) {
+                            Log.e("ApiService", "JSON Parse Failed", parseException)
                             VerificationResponseDto(
                                 status = "parse_error",
                                 message = "JSON parsing failed: ${parseException.message}",
