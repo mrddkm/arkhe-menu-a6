@@ -65,7 +65,7 @@ class ProductViewModel(
                         }
                     }
             } catch (e: Exception) {
-                _productsState.value = SafeApiResult.Error(e)
+                _productsState.value = SafeApiResult.Failure(e)
             }
         }
     }
@@ -96,13 +96,13 @@ class ProductViewModel(
                         loadProductGroups()
                     }
 
-                    is SafeApiResult.Error -> {
+                    is SafeApiResult.Failure -> {
                         _productsState.value = result
                         handleTokenError(result.exception, forceRefresh)
                     }
                 }
             } catch (e: Exception) {
-                _productsState.value = SafeApiResult.Error(e)
+                _productsState.value = SafeApiResult.Failure(e)
             }
         }
     }
@@ -145,7 +145,7 @@ class ProductViewModel(
                             }
                         }
 
-                        is SafeApiResult.Error -> {
+                        is SafeApiResult.Failure -> {
                             _productsState.value = productsResult
                         }
 
@@ -158,12 +158,12 @@ class ProductViewModel(
                     }
                     isInitialized = true
                 } catch (e: Exception) {
-                    _productsState.value = SafeApiResult.Error(e)
+                    _productsState.value = SafeApiResult.Failure(e)
                 }
             }
         } else {
             when (_productsState.value) {
-                is SafeApiResult.Error -> {
+                is SafeApiResult.Failure -> {
                     loadProducts(_currentProductCategoryId.value, forceRefresh = false)
                 }
 

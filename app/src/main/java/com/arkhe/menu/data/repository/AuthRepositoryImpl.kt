@@ -2,10 +2,12 @@ package com.arkhe.menu.data.repository
 
 import com.arkhe.menu.data.local.preferences.AuthPreferences
 import com.arkhe.menu.data.local.security.SecurePinStorage
+import com.arkhe.menu.data.mapper.toDomain
 import com.arkhe.menu.data.remote.RemoteDataSource
 import com.arkhe.menu.data.remote.api.SafeApiResult
 import com.arkhe.menu.domain.model.auth.Verification
 import com.arkhe.menu.domain.repository.AuthRepository
+import com.arkhe.menu.utils.Constants.ResponseStatus.SUCCESS
 import com.arkhe.menu.utils.Constants.URL_BASE
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -39,26 +41,29 @@ class AuthRepositoryImpl(
         phone: String,
         mail: String
     ): SafeApiResult<Verification> {
-        /*TODO*/
+        return when (
+            val remoteResult = remoteDataSource.verification(
+                userId = userId,
+                phone = phone,
+                mail = mail
+            )
+        ) {
+            is SafeApiResult.Success -> {
+                if (remoteResult.data.status == SUCCESS && remoteResult.data.data != null) {
+                    SafeApiResult.Success(remoteResult.data.toDomain())
+                } else {
+                    SafeApiResult.Failure(Exception(remoteResult.data.message))
+                }
+            }
 
-        /*        return try {
-                    val response: HttpResponse = client.post(URL_BASE) {
-                        contentType(ContentType.Application.Json)
-                        setBody(
-                            mapOf(
-                                "action" to "activation",
-                                "userId" to userId,
-                                "phone" to phone,
-                                "email" to mail
-                            )
-                        )
-                    }
-                    val body: ApiResponse = response.body()
-                    if (body.status == "ok") Result.success(body.message ?: "Activation OK")
-                    else Result.failure(Exception(body.message ?: "Activation failed"))
-                } catch (e: Exception) {
-                    Result.failure(e)
-                }*/
+            is SafeApiResult.Failure -> {
+                SafeApiResult.Failure(remoteResult.exception)
+            }
+
+            is SafeApiResult.Loading -> {
+                SafeApiResult.Loading
+            }
+        }
     }
 
     override suspend fun verifyActivationCode(code: String): Result<String> {

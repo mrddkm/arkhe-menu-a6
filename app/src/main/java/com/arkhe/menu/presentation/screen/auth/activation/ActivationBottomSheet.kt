@@ -180,7 +180,7 @@ fun ActivationBottomSheet(
                             authViewModel.requestVerification(
                                 state.userId,
                                 state.phone,
-                                state.email
+                                state.mail
                             )
                         }
                     }
@@ -249,7 +249,7 @@ fun rememberActivationState(): ActivationState {
         step = step, onStepChange = { step = it },
         userId = userId, onUserIdChange = { userId = it },
         phone = phone, onPhoneChange = { phone = it },
-        email = email, onEmailChange = { email = it },
+        mail = email, onEmailChange = { email = it },
         code = code, onCodeChange = { code = it },
         password = password, onPasswordChange = { password = it },
         confirmPassword = confirmPassword, onConfirmPasswordChange = { confirmPassword = it },
@@ -267,7 +267,7 @@ data class ActivationState(
     val onUserIdChange: (String) -> Unit,
     val phone: String,
     val onPhoneChange: (String) -> Unit,
-    val email: String,
+    val mail: String,
     val onEmailChange: (String) -> Unit,
 
     val code: String,

@@ -85,15 +85,15 @@ class ProfileRepositoryImpl(
                         localDataSource.insertProfiles(entities)
                         SafeApiResult.Success(entities.toDomainList())
                     } catch (e: Exception) {
-                        SafeApiResult.Error(e)
+                        SafeApiResult.Failure(e)
                     }
                 } else {
-                    SafeApiResult.Error(Exception("No data returned from API"))
+                    SafeApiResult.Failure(Exception("No data returned from API"))
                 }
             }
 
-            is SafeApiResult.Error -> SafeApiResult.Error(remoteResult.exception)
-            SafeApiResult.Loading -> SafeApiResult.Error(Exception("Unexpected loading state"))
+            is SafeApiResult.Failure -> SafeApiResult.Failure(remoteResult.exception)
+            SafeApiResult.Loading -> SafeApiResult.Failure(Exception("Unexpected loading state"))
         }
     }
 }

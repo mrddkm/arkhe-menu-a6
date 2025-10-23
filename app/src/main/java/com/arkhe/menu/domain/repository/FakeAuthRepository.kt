@@ -1,13 +1,9 @@
 package com.arkhe.menu.domain.repository
 
-import com.arkhe.menu.data.local.preferences.AuthPreferences
-import com.arkhe.menu.data.local.security.SecurePinStorage
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-
 /**
  * For local UI testing before real backend ready.
  */
+/*
 class FakeAuthRepository(
     private val authPrefs: AuthPreferences,
     private val securePinStorage: SecurePinStorage
@@ -67,3 +63,4 @@ class FakeAuthRepository(
         authPrefs.signedOutAuthState()
     }
 }
+*/

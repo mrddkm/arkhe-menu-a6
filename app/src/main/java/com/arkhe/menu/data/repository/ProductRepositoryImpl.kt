@@ -37,31 +37,21 @@ class ProductRepositoryImpl(
         productCategoryId: String,
         forceRefresh: Boolean
     ): Flow<SafeApiResult<List<Product>>> = flow {
-        Log.d(
-            TAG,
-            "getProducts called - categoryId: $productCategoryId, forceRefresh: $forceRefresh"
-        )
         emit(SafeApiResult.Loading)
-
         val hasLocalData = try {
             localDataSource.hasProducts()
         } catch (e: Exception) {
-            Log.w(TAG, "Failed to check local products data: ${e.message}")
             false
         }
 
-        Log.d(TAG, "Has local products data: $hasLocalData")
-
         if (!forceRefresh && hasLocalData) {
             try {
-                Log.d(TAG, "Loading cached products...")
                 localDataSource.getAllProducts()
                     .take(1)
                     .collect { entities ->
-                        Log.d(TAG, "Found ${entities.size} cached products")
                         if (entities.isNotEmpty()) {
                             emit(SafeApiResult.Success(entities.toDomainList()))
-                            // Download images in background for products that don't have local images
+                            /*Download images in background for products that don't have local images*/
                             supervisorScope {
                                 launch {
                                     downloadMissingImages(entities)
@@ -75,25 +65,13 @@ class ProductRepositoryImpl(
         }
 
         if (forceRefresh || !hasLocalData) {
-            Log.d(
-                TAG,
-                "Fetching products from remote API... (forceRefresh: $forceRefresh, hasLocalData: $hasLocalData)"
-            )
             when (val remoteResult =
                 remoteDataSource.getProducts(sessionToken, productCategoryId)) {
                 is SafeApiResult.Success -> {
-                    Log.d(TAG, "Remote API success - status: ${remoteResult.data.status}")
-                    Log.d(TAG, "Products count: ${remoteResult.data.data.size}")
-
                     when {
                         remoteResult.data.status == "success" && remoteResult.data.data.isNotEmpty() -> {
-                            Log.d(TAG, "Processing successful response with products data")
                             try {
                                 val entities = remoteResult.data.toEntityList()
-                                Log.d(
-                                    TAG,
-                                    "Saving ${entities.size} product entities to local database"
-                                )
                                 if (productCategoryId == "ALL") {
                                     localDataSource.deleteAllProducts()
                                 }
@@ -101,51 +79,38 @@ class ProductRepositoryImpl(
 
                                 emit(SafeApiResult.Success(remoteResult.data.toDomainList()))
 
-                                // Download images in background
+                                /*Download images in background*/
                                 supervisorScope {
                                     launch {
                                         downloadAndUpdateImages(entities)
                                     }
                                 }
                             } catch (e: Exception) {
-                                Log.e(
-                                    TAG,
-                                    "Failed to save products to local database: ${e.message}",
-                                    e
-                                )
                                 emit(SafeApiResult.Success(remoteResult.data.toDomainList()))
                             }
                         }
 
                         remoteResult.data.status == "debug" -> {
-                            Log.w(TAG, "API returned debug response: ${remoteResult.data.message}")
-                            emit(SafeApiResult.Error(Exception("Debug: ${remoteResult.data.message}")))
+                            emit(SafeApiResult.Failure(Exception("Debug: ${remoteResult.data.message}")))
                         }
 
                         remoteResult.data.data.isEmpty() -> {
-                            Log.w(TAG, "API returned empty products array")
-                            emit(SafeApiResult.Error(Exception("API returned empty products array")))
+                            emit(SafeApiResult.Failure(Exception("API returned empty products array")))
                         }
 
                         else -> {
-                            Log.w(
-                                TAG,
-                                "API returned unsuccessful status: ${remoteResult.data.status}"
-                            )
-                            emit(SafeApiResult.Error(Exception("API error - Status: ${remoteResult.data.status}, Message: ${remoteResult.data.message}")))
+                            emit(SafeApiResult.Failure(Exception("API error - Status: ${remoteResult.data.status}, Message: ${remoteResult.data.message}")))
                         }
                     }
                 }
 
-                is SafeApiResult.Error -> {
-                    Log.e(TAG, "Remote API error: ${remoteResult.exception.message}")
-
+                is SafeApiResult.Failure -> {
                     val errorMessage = if (remoteResult.exception is NetworkException) {
                         NetworkErrorHandler.getErrorMessage(remoteResult.exception)
                     } else {
                         remoteResult.exception.message ?: "Unknown error occurred"
                     }
-                    emit(SafeApiResult.Error(Exception(errorMessage)))
+                    emit(SafeApiResult.Failure(Exception(errorMessage)))
                 }
 
                 SafeApiResult.Loading -> {
@@ -160,27 +125,20 @@ class ProductRepositoryImpl(
      */
     private suspend fun downloadMissingImages(entities: List<com.arkhe.menu.data.local.entity.ProductEntity>) {
         try {
-            Log.d(TAG, "Checking for missing images...")
             entities.forEach { entity ->
                 if (entity.localImagePath.isNullOrEmpty() && entity.logo.isNotEmpty()) {
                     val fileName = "product_${entity.productCode}_logo"
                     val existingPath = imageStorageManager.getLocalImagePath(fileName)
 
                     if (existingPath == null) {
-                        Log.d(TAG, "Downloading missing image for product: ${entity.productCode}")
                         val localPath =
                             imageStorageManager.downloadAndSaveImage(entity.logo, fileName)
                         if (localPath != null) {
                             localDataSource.updateImagePath(entity.productCode, localPath)
-                            Log.d(TAG, "Updated image path for ${entity.productCode}: $localPath")
                         }
                     } else {
-                        // Update database with existing path
+                        /*Update database with existing path*/
                         localDataSource.updateImagePath(entity.productCode, existingPath)
-                        Log.d(
-                            TAG,
-                            "Updated database with existing image path for ${entity.productCode}: $existingPath"
-                        )
                     }
                 }
             }
@@ -194,17 +152,12 @@ class ProductRepositoryImpl(
      */
     private suspend fun downloadAndUpdateImages(entities: List<com.arkhe.menu.data.local.entity.ProductEntity>) {
         try {
-            Log.d(TAG, "Downloading images for new products...")
             entities.forEach { entity ->
                 if (entity.logo.isNotEmpty()) {
                     val fileName = "product_${entity.productCode}_logo"
                     val localPath = imageStorageManager.downloadAndSaveImage(entity.logo, fileName)
                     if (localPath != null) {
                         localDataSource.updateImagePath(entity.productCode, localPath)
-                        Log.d(
-                            TAG,
-                            "Downloaded and saved image for ${entity.productCode}: $localPath"
-                        )
                     }
                 }
             }
@@ -251,7 +204,6 @@ class ProductRepositoryImpl(
                 ProductByGroup(seriesName, products.sortedBy { it.productCode })
             }.sortedBy { it.seriesName }
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to get product groups: ${e.message}", e)
             emptyList()
         }
     }
@@ -260,10 +212,6 @@ class ProductRepositoryImpl(
         sessionToken: String,
         productCategoryId: String
     ): SafeApiResult<List<Product>> {
-        Log.d(
-            TAG,
-            "refreshProducts called with token: $sessionToken, categoryId: $productCategoryId"
-        )
         return syncProducts(sessionToken, productCategoryId)
     }
 
@@ -297,16 +245,15 @@ class ProductRepositoryImpl(
 
                         SafeApiResult.Success(entities.toDomainList())
                     } catch (e: Exception) {
-                        Log.e(TAG, "Failed to save refreshed products data: ${e.message}", e)
-                        SafeApiResult.Error(e)
+                        SafeApiResult.Failure(e)
                     }
                 } else {
-                    SafeApiResult.Error(Exception("No data returned from API"))
+                    SafeApiResult.Failure(Exception("No data returned from API"))
                 }
             }
 
-            is SafeApiResult.Error -> SafeApiResult.Error(remoteResult.exception)
-            SafeApiResult.Loading -> SafeApiResult.Error(Exception("Unexpected loading state"))
+            is SafeApiResult.Failure -> SafeApiResult.Failure(remoteResult.exception)
+            SafeApiResult.Loading -> SafeApiResult.Failure(Exception("Unexpected loading state"))
         }
     }
 }

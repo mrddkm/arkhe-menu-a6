@@ -10,6 +10,7 @@ import com.arkhe.menu.data.remote.dto.ProductRequestDto
 import com.arkhe.menu.data.remote.dto.ProductResponseDto
 import com.arkhe.menu.data.remote.dto.ProfileRequestDto
 import com.arkhe.menu.data.remote.dto.ProfileResponseDto
+import com.arkhe.menu.data.remote.dto.VerificationRequestDto
 import com.arkhe.menu.data.remote.dto.VerificationResponseDto
 import com.arkhe.menu.utils.Constants
 import io.ktor.client.HttpClient
@@ -39,7 +40,59 @@ class ArkheApiServiceImpl(
         phone: String,
         mail: String
     ): VerificationResponseDto {
-        TODO("Not yet implemented")
+        return try {
+            val requestDto = VerificationRequestDto(
+                userId = userId,
+                phone = phone,
+                mail = mail
+            )
+            val requestJson = json.encodeToString(VerificationRequestDto.serializer(), requestDto)
+            val response: HttpResponse = httpClient.post {
+                url(Constants.URL_BASE)
+                parameter(Constants.PARAMETER_KEY, Constants.PARAMETER_VALUE_VERIFICATION)
+                setBody(requestJson)
+            }
+
+            val responseText = response.bodyAsText()
+
+            when (response.status) {
+                HttpStatusCode.OK -> {
+                    if (responseText.trim().startsWith("{") || responseText.trim()
+                            .startsWith("[")
+                    ) {
+                        try {
+                            json.decodeFromString<VerificationResponseDto>(responseText)
+                        } catch (parseException: Exception) {
+                            VerificationResponseDto(
+                                status = "parse_error",
+                                message = "JSON parsing failed: ${parseException.message}",
+                                data = null
+                            )
+                        }
+                    } else {
+                        VerificationResponseDto(
+                            status = "invalid_response",
+                            message = "Server returned non-JSON response: $responseText",
+                            data = null,
+                        )
+                    }
+                }
+
+                else -> {
+                    VerificationResponseDto(
+                        status = "unexpected_status",
+                        message = "Status ${response.status}: $responseText",
+                        data = null
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            VerificationResponseDto(
+                status = "network_error",
+                message = "Network error: ${e.message}",
+                data = null
+            )
+        }
     }
 
     override suspend fun getProfiles(sessionToken: String): ProfileResponseDto {
@@ -337,15 +390,12 @@ class ArkheApiServiceImpl(
                 productCategoryId = productCategoryId
             )
             val requestJson = json.encodeToString(requestDto)
-
             val response: HttpResponse = httpClient.post {
                 url(Constants.URL_BASE)
                 parameter(Constants.PARAMETER_KEY, Constants.PARAMETER_VALUE_PRODUCTS)
                 setBody(requestJson)
             }
-
             val responseText = response.bodyAsText()
-
             when (response.status) {
                 HttpStatusCode.OK -> {
                     if (responseText.trim().startsWith("{") || responseText.trim()

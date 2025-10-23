@@ -1,7 +1,6 @@
 package com.arkhe.menu.utils
 
 import android.annotation.SuppressLint
-import android.util.Log
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date

@@ -134,7 +134,7 @@ fun ProductsScreen(
                 )
             }
 
-            is SafeApiResult.Error -> {
+            is SafeApiResult.Failure -> {
                 if (!lastSuccess.value.isNullOrEmpty()) {
                     Text(
                         text = "Failed sync, displaying old data",
@@ -159,7 +159,7 @@ fun ProductsScreen(
                                 textAlign = TextAlign.Center
                             )
 
-                            (productsState as SafeApiResult.Error).exception.message?.let {
+                            (productsState as SafeApiResult.Failure).exception.message?.let {
                                 Text(
                                     text = it,
                                     style = MaterialTheme.typography.bodyMedium,

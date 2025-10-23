@@ -32,7 +32,7 @@ class ProfileViewModel(
                         _profilesState.value = profilesResult
                     }
             } catch (e: Exception) {
-                _profilesState.value = SafeApiResult.Error(e)
+                _profilesState.value = SafeApiResult.Failure(e)
             }
         }
     }
@@ -57,13 +57,13 @@ class ProfileViewModel(
                         _profilesState.value = result
                     }
 
-                    is SafeApiResult.Error -> {
+                    is SafeApiResult.Failure -> {
                         _profilesState.value = result
                         handleTokenError(result.exception, forceRefresh)
                     }
                 }
             } catch (e: Exception) {
-                _profilesState.value = SafeApiResult.Error(e)
+                _profilesState.value = SafeApiResult.Failure(e)
             }
         }
     }
@@ -98,7 +98,7 @@ class ProfileViewModel(
                         }
                     }
 
-                    is SafeApiResult.Error -> {
+                    is SafeApiResult.Failure -> {
                         _profilesState.value = profilesResult
                     }
 
@@ -112,7 +112,7 @@ class ProfileViewModel(
             }
         } else {
             when (_profilesState.value) {
-                is SafeApiResult.Error -> {
+                is SafeApiResult.Failure -> {
                     loadProfiles(forceRefresh = false)
                 }
 

@@ -18,7 +18,7 @@ val appModule = module {
 
     single { ScrollStateManager() }
 
-    viewModel { AuthViewModel(get()) }
+    viewModel { AuthViewModel(get(), get()) }
 
     viewModel { MainViewModel(get(), get()) }
 

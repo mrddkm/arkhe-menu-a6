@@ -9,7 +9,6 @@ import com.arkhe.menu.domain.usecase.auth.ActivationUseCases
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 sealed interface AuthUiState {
@@ -36,16 +35,13 @@ class AuthViewModel(
         MutableStateFlow<SafeApiResult<Verification>>(SafeApiResult.Loading)
     val verificationState: StateFlow<SafeApiResult<Verification>> = _verificationState.asStateFlow()
 
-    fun requestVerification(userId: String, phone: String, email: String) {
+    fun requestVerification(userId: String, phone: String, mail: String) {
         viewModelScope.launch {
-            try {
-                activationUseCases.verification(userId, phone, email)
-                    .collectLatest { verificationResult ->
-                        _verificationState.value = verificationResult
-                    }
-            } catch (e: Exception) {
-                _verificationState.value = SafeApiResult.Error(e)
-            }
+            _verificationState.value = SafeApiResult.Loading
+
+            val verificationResult = activationUseCases.verification(userId, phone, mail)
+
+            _verificationState.value = verificationResult
         }
     }
 

@@ -167,7 +167,7 @@ fun ActivationContentStepOne(
                 },
         )
         OutlinedTextField(
-            value = state.email,
+            value = state.mail,
             onValueChange = state.onEmailChange,
             label = { Text("Email") },
             placeholder = {
@@ -181,7 +181,7 @@ fun ActivationContentStepOne(
                 imeAction = ImeAction.Done
             ),
             trailingIcon = {
-                if (state.email.isNotEmpty()) {
+                if (state.mail.isNotEmpty()) {
                     IconButton(onClick = { state.onEmailChange("") }) {
                         Icon(
                             imageVector = EvaIcons.Outline.CloseCircle,
@@ -215,7 +215,7 @@ fun ActivationContentStepOne(
             }
             Button(
                 onClick = onNext,
-                enabled = state.userId.isNotBlank() && state.phone.isNotBlank() && state.email.isNotBlank(),
+                enabled = state.userId.isNotBlank() && state.phone.isNotBlank() && state.mail.isNotBlank(),
                 modifier = Modifier
                     .width(130.dp)
                     .height(40.dp)

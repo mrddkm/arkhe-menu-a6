@@ -1,5 +1,3 @@
-@file:Suppress("SpellCheckingInspection")
-
 package com.arkhe.menu.utils
 
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -13,6 +11,9 @@ object Constants {
     const val PARAMETER_KEY = "action"
     const val HTTP_HEADER_USER_AGENT = "arkhe/dvl/1.0.0"
 
+    /*Action Params - Auth*/
+    const val PARAMETER_VALUE_VERIFICATION = "verification"
+
     /*Action Params*/
     const val PARAMETER_VALUE_PROFILES = "profiles"
     const val PARAMETER_VALUE_CATEGORY = "productcategory"
@@ -24,6 +25,10 @@ object Constants {
 
     const val MAX_RECEIPT_ITEMS = 50
     const val MIN_CUSTOMER_NAME_LENGTH = 2
+
+    object ResponseStatus {
+        const val SUCCESS = "success"
+    }
 
     object Database {
         /*room*/

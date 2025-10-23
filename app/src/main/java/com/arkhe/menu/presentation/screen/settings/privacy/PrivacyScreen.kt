@@ -38,9 +38,7 @@ import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.arkhe.menu.R
-import com.arkhe.menu.presentation.navigation.NavigationRoute
 import com.arkhe.menu.presentation.ui.components.LanguageIconEn
 import com.arkhe.menu.presentation.ui.components.LanguageIconId
 import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
