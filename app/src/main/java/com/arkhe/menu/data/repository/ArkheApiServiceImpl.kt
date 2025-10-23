@@ -1,6 +1,5 @@
 package com.arkhe.menu.data.repository
 
-import android.util.Log
 import com.arkhe.menu.data.remote.api.ArkheApiService
 import com.arkhe.menu.data.remote.dto.CategoryInfoDto
 import com.arkhe.menu.data.remote.dto.CategoryRequestDto
@@ -11,7 +10,6 @@ import com.arkhe.menu.data.remote.dto.ProductRequestDto
 import com.arkhe.menu.data.remote.dto.ProductResponseDto
 import com.arkhe.menu.data.remote.dto.ProfileRequestDto
 import com.arkhe.menu.data.remote.dto.ProfileResponseDto
-import com.arkhe.menu.data.remote.dto.VerificationRequestDto
 import com.arkhe.menu.data.remote.dto.VerificationResponseDto
 import com.arkhe.menu.utils.Constants
 import io.ktor.client.HttpClient
@@ -27,7 +25,8 @@ import io.ktor.http.parametersOf
 import kotlinx.serialization.json.Json
 
 class ArkheApiServiceImpl(
-    private val httpClient: HttpClient
+    private val httpClient: HttpClient,
+    private val verificationService: VerificationService
 ) : ArkheApiService {
 
     private val json = Json {
@@ -41,6 +40,14 @@ class ArkheApiServiceImpl(
         phone: String,
         mail: String
     ): VerificationResponseDto {
+        return verificationService.verification(userId, phone, mail)
+    }
+
+/*    override suspend fun verification(
+        userId: String,
+        phone: String,
+        mail: String
+    ): VerificationResponseDto {
         return try {
             val requestDto = VerificationRequestDto(
                 userId = userId,
@@ -49,8 +56,8 @@ class ArkheApiServiceImpl(
             )
             val requestJson = json.encodeToString(VerificationRequestDto.serializer(), requestDto)
             val response: HttpResponse = httpClient.post {
-                url(Constants.URL_BASE)
-                parameter(Constants.PARAMETER_KEY, Constants.PARAMETER_VALUE_VERIFICATION)
+                url(URL_BASE)
+                parameter(PARAMETER_KEY, PARAMETER_VALUE_ACTIVATION_FLOW)
                 setBody(requestJson)
             }
 
@@ -96,7 +103,7 @@ class ArkheApiServiceImpl(
                 data = null
             )
         }
-    }
+    }*/
 
     override suspend fun getProfiles(sessionToken: String): ProfileResponseDto {
         return try {

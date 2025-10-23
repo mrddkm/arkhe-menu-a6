@@ -12,7 +12,7 @@ object Constants {
     const val HTTP_HEADER_USER_AGENT = "arkhe/dvl/1.0.0"
 
     /*Action Params - Auth*/
-    const val PARAMETER_VALUE_VERIFICATION = "verification"
+    const val PARAMETER_VALUE_ACTIVATION_FLOW = "activation_flow"
 
     /*Action Params*/
     const val PARAMETER_VALUE_PROFILES = "profiles"
@@ -25,6 +25,13 @@ object Constants {
 
     const val MAX_RECEIPT_ITEMS = 50
     const val MIN_CUSTOMER_NAME_LENGTH = 2
+
+    object ActivationFlow {
+        const val ACT_VERIFICATION_STEP = "verification"
+        const val ACT_ACTIVATION_CODE_STEP = "activation_code"
+        const val ACT_CREATE_PASSWORD_STEP = "create_password"
+        const val ACT_ACTIVATION_STEP = "activation"
+    }
 
     object ResponseStatus {
         const val SUCCESS = "success"

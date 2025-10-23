@@ -17,6 +17,8 @@ import com.arkhe.menu.data.repository.CategoryRepositoryImpl
 import com.arkhe.menu.data.repository.ProductRepositoryImpl
 import com.arkhe.menu.data.repository.ProfileRepositoryImpl
 import com.arkhe.menu.data.repository.ThemeRepositoryImpl
+import com.arkhe.menu.data.repository.VerificationService
+import com.arkhe.menu.data.repository.VerificationServiceImpl
 import com.arkhe.menu.domain.repository.AuthRepository
 import com.arkhe.menu.domain.repository.CategoryRepository
 import com.arkhe.menu.domain.repository.ILanguageRepository
@@ -124,7 +126,13 @@ val dataModule = module {
     single { get<AppDatabase>().productDao() }
 
     /*API Services*/
-    single<ArkheApiService> { ArkheApiServiceImpl(get()) }
+    single<VerificationService> { VerificationServiceImpl(get()) }
+    single<ArkheApiService> {
+        ArkheApiServiceImpl(
+            httpClient = get(),
+            verificationService = get()
+        )
+    }
 
     /*Data Sources*/
     single { RemoteDataSource(get()) }
