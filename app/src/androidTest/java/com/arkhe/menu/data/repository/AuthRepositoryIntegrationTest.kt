@@ -110,16 +110,16 @@ class AuthRepositoryIntegrationTest : KoinTest {
             println("NEGATIVE TEST - Received: $result")
 
             // Ekspektasi: Harus Failure
-            assertTrue("Result should be Failure, but was $result", result is SafeResourceResult.Failed)
+            assertTrue("Result should be Failure, but was $result", result is SafeResourceResult.Failure)
 
-            val failedResult = result as SafeResourceResult.Failed
-            assertNotNull("Failure message should not be null", failedResult.message)
+            val failureResult = result as SafeResourceResult.Failure
+            assertNotNull("Failure message should not be null", failureResult.message)
             assertTrue(
                 "Failure message should contain 'User ID not found'",
-                failedResult.message?.contains("User ID not found", ignoreCase = true) == true
+                failureResult.message?.contains("User ID not found", ignoreCase = true) == true
             )
 
-            println("NEGATIVE TEST - PASSED with message: ${failedResult.message}")
+            println("NEGATIVE TEST - PASSED with message: ${failureResult.message}")
             awaitComplete()
         }
     }

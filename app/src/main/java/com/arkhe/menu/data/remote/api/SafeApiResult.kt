@@ -6,6 +6,6 @@ package com.arkhe.menu.data.remote.api
  */
 sealed class SafeApiResult<out T> {
     data class Success<out T>(val data: T) : SafeApiResult<T>()
-    data class Failed(val exception: Throwable) : SafeApiResult<Nothing>()
+    data class Failure(val exception: Throwable) : SafeApiResult<Nothing>()
     data object Loading : SafeApiResult<Nothing>()
 }

@@ -80,7 +80,7 @@ fun ProfileScreen(
                 )
             }
 
-            is SafeApiResult.Failed -> {
+            is SafeApiResult.Failure -> {
                 if (!lastSuccess.value.isNullOrEmpty()) {
                     ProfileContent(
                         profile = lastSuccess.value!!.first(),
@@ -114,7 +114,7 @@ fun ProfileScreen(
                                 textAlign = TextAlign.Center
                             )
 
-                            (profileState as SafeApiResult.Failed).exception.message?.let {
+                            (profileState as SafeApiResult.Failure).exception.message?.let {
                                 Text(
                                     text = it,
                                     style = MaterialTheme.typography.bodyMedium,

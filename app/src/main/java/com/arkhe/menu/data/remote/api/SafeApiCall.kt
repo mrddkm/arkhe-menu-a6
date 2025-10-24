@@ -12,7 +12,7 @@ suspend inline fun <T> safeApiCall(
             SafeApiResult.Success(result)
         } catch (exception: Exception) {
             val networkException = NetworkErrorHandler.handleException(exception)
-            SafeApiResult.Failed(networkException)
+            SafeApiResult.Failure(networkException)
         }
     }
 }

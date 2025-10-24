@@ -91,26 +91,26 @@ class ProductRepositoryImpl(
                         }
 
                         remoteResult.data.status == "debug" -> {
-                            emit(SafeApiResult.Failed(Exception("Debug: ${remoteResult.data.message}")))
+                            emit(SafeApiResult.Failure(Exception("Debug: ${remoteResult.data.message}")))
                         }
 
                         remoteResult.data.data.isEmpty() -> {
-                            emit(SafeApiResult.Failed(Exception("API returned empty products array")))
+                            emit(SafeApiResult.Failure(Exception("API returned empty products array")))
                         }
 
                         else -> {
-                            emit(SafeApiResult.Failed(Exception("API error - Status: ${remoteResult.data.status}, Message: ${remoteResult.data.message}")))
+                            emit(SafeApiResult.Failure(Exception("API error - Status: ${remoteResult.data.status}, Message: ${remoteResult.data.message}")))
                         }
                     }
                 }
 
-                is SafeApiResult.Failed -> {
+                is SafeApiResult.Failure -> {
                     val errorMessage = if (remoteResult.exception is NetworkException) {
                         NetworkErrorHandler.getErrorMessage(remoteResult.exception)
                     } else {
                         remoteResult.exception.message ?: "Unknown error occurred"
                     }
-                    emit(SafeApiResult.Failed(Exception(errorMessage)))
+                    emit(SafeApiResult.Failure(Exception(errorMessage)))
                 }
 
                 SafeApiResult.Loading -> {
@@ -245,15 +245,15 @@ class ProductRepositoryImpl(
 
                         SafeApiResult.Success(entities.toDomainList())
                     } catch (e: Exception) {
-                        SafeApiResult.Failed(e)
+                        SafeApiResult.Failure(e)
                     }
                 } else {
-                    SafeApiResult.Failed(Exception("No data returned from API"))
+                    SafeApiResult.Failure(Exception("No data returned from API"))
                 }
             }
 
-            is SafeApiResult.Failed -> SafeApiResult.Failed(remoteResult.exception)
-            SafeApiResult.Loading -> SafeApiResult.Failed(Exception("Unexpected loading state"))
+            is SafeApiResult.Failure -> SafeApiResult.Failure(remoteResult.exception)
+            SafeApiResult.Loading -> SafeApiResult.Failure(Exception("Unexpected loading state"))
         }
     }
 }

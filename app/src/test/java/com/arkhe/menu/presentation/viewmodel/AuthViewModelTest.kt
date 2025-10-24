@@ -132,10 +132,10 @@ class AuthViewModelTest {
             // ARRANGE
             val errorMessage = "User ID not found"
 
-            val failedResult = flow {
+            val failureResult = flow {
                 emit(SafeResourceResult.Loading())
                 delay(1)
-                emit(SafeResourceResult.Failed<ActivationResponse>(errorMessage))
+                emit(SafeResourceResult.Failure<ActivationResponse>(errorMessage))
             }
 
             every {
@@ -161,7 +161,7 @@ class AuthViewModelTest {
                     any(),
                     any()
                 )
-            } returns failedResult
+            } returns failureResult
 
             // ACT & ASSERT
             viewModel.uiState.test {
@@ -227,14 +227,14 @@ class AuthViewModelTest {
     fun `signIn - when use case returns Failure - updates state to Failed`() = runTest {
         // ARRANGE (Biarkan seperti ini, sudah benar)
         val errorMessage = "Invalid credentials"
-        val failedFlow = flow {
+        val failureFlow = flow {
             emit(SafeResourceResult.Loading())
             delay(1)
-            emit(SafeResourceResult.Failed<SignInResponse>(errorMessage))
+            emit(SafeResourceResult.Failure<SignInResponse>(errorMessage))
         }
         every {
             signInUseCase.invoke(fakeSessionActivation, fakeUserId, fakePassword)
-        } returns failedFlow
+        } returns failureFlow
 
         // ACT & ASSERT (PERBAIKI DI SINI)
         viewModel.uiState.test {

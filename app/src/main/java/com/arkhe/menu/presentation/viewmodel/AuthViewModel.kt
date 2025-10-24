@@ -15,7 +15,7 @@ sealed interface AuthUiState {
     object Idle : AuthUiState
     object Loading : AuthUiState
     data class Success(val message: String, val type: SuccessType) : AuthUiState
-    data class Failed(val message: String) : AuthUiState
+    data class Failed(val message: String, val errorSource: String? = null) : AuthUiState
 }
 
 enum class SuccessType { ACTIVATION, SIGNEDIN }
@@ -74,7 +74,7 @@ class AuthViewModel(
                         )
                     }
 
-                    is SafeResourceResult.Failed -> {
+                    is SafeResourceResult.Failure -> {
                         _uiState.value =
                             AuthUiState.Failed(result.message ?: "An unknown error occurred")
                     }
@@ -102,7 +102,7 @@ class AuthViewModel(
                             )
                         }
 
-                        is SafeResourceResult.Failed -> {
+                        is SafeResourceResult.Failure -> {
                             _uiState.value = AuthUiState.Failed(result.message ?: "Sign-in failed")
                         }
 
@@ -112,6 +112,15 @@ class AuthViewModel(
                     }
                 }
         }
+    }
+
+    /**
+     * Mereset UI state kembali ke Idle.
+     * Panggil fungsi ini setelah pesan error ditampilkan di UI
+     * agar tidak muncul terus-menerus.
+     */
+    fun resetUiState() {
+        _uiState.value = AuthUiState.Idle
     }
 
     /*DELETE IF STABLE*/

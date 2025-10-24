@@ -28,6 +28,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -79,7 +80,10 @@ fun ActivationBottomSheet(
     val uiState by authViewModel.uiState.collectAsState()
 
     val sheetState = rememberModalBottomSheetState(
-        skipPartiallyExpanded = true
+        skipPartiallyExpanded = true,
+        confirmValueChange = { newValue ->
+            newValue != SheetValue.Hidden
+        }
     )
 
     LaunchedEffect(uiState) {
@@ -87,7 +91,7 @@ fun ActivationBottomSheet(
             is AuthUiState.Success -> {
                 // viewModel.resetUiState() // Opsional: buat fungsi ini di ViewModel
                 when {
-                    currentState.message.contains("verified successfully", ignoreCase = true) -> {
+                    currentState.message.contains("Verified successfully", ignoreCase = true) -> {
                         state.onStepChange(2) // Pindah ke Step 2 (Kode Aktivasi)
                     }
 
@@ -299,12 +303,12 @@ fun rememberActivationState(): ActivationState {
     val scope = rememberCoroutineScope()
 
     var step by remember { mutableIntStateOf(1) }
-    var userId by remember { mutableStateOf("") }
-    var phone by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
+    var userId by remember { mutableStateOf("230504") }
+    var phone by remember { mutableStateOf("6285659988939") }
+    var email by remember { mutableStateOf("didik.muttaqien@gmail.com") }
     var code by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("Qwer@12") }
+    var confirmPassword by remember { mutableStateOf("Qwer@1") }
     var pin by remember { mutableStateOf("") }
     var confirmPin by remember { mutableStateOf("") }
 
@@ -364,7 +368,6 @@ private fun ActivationProgressIndicator(currentStep: Int) {
             .fillMaxWidth()
             .padding(top = 12.dp, bottom = 8.dp)
     ) {
-        // Progress Bar
         LinearProgressIndicator(
             progress = { progress },
             modifier = Modifier
@@ -377,7 +380,6 @@ private fun ActivationProgressIndicator(currentStep: Int) {
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Step Indicators dengan label
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -477,11 +479,11 @@ private fun StepIndicatorItem(
 
 private fun getStepLabel(step: Int): String {
     return when (step) {
-        1 -> "Info"
+        1 -> "Verification"
         2 -> "Code"
         3 -> "Password"
         4 -> "PIN"
-        else -> ""
+        else -> "Other"
     }
 }
 
