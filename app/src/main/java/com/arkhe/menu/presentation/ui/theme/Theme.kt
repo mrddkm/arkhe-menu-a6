@@ -11,6 +11,7 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
@@ -22,13 +23,10 @@ import com.arkhe.menu.domain.model.ThemeModels
 private val lightScheme = lightColorScheme(
     primary = BlueLight,
     onPrimary = Color.White,
-
     background = BackgroundLight,
     onBackground = TextPrimaryLight,
-
     surface = SurfaceLight,
     onSurface = TextPrimaryLight,
-
     error = ErrorLight,
     onError = Color.White,
 )
@@ -36,13 +34,10 @@ private val lightScheme = lightColorScheme(
 private val darkScheme = darkColorScheme(
     primary = BlueDark,
     onPrimary = Color.White,
-
     background = BackgroundDark,
     onBackground = TextPrimaryDark,
-
     surface = SurfaceDark,
     onSurface = TextPrimaryDark,
-
     error = ErrorDark,
     onError = Color.Black,
 )
@@ -77,14 +72,28 @@ fun ArkheTheme(
         WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !useDarkTheme
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        shapes = Shapes(
-            small = RoundedCornerShape(8.dp),
-            medium = RoundedCornerShape(16.dp),
-            large = RoundedCornerShape(24.dp)
-        ),
-        content = content
+    val trafficColors = TrafficLightColors(
+        stop = TrafficRed,
+        caution = TrafficYellow,
+        go = TrafficGreen
     )
+
+    CompositionLocalProvider(
+        LocalTrafficLightColors provides trafficColors
+    ) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            shapes = Shapes(
+                small = RoundedCornerShape(8.dp),
+                medium = RoundedCornerShape(16.dp),
+                large = RoundedCornerShape(24.dp)
+            ),
+            content = content
+        )
+    }
 }
+
+val MaterialTheme.trafficLights: TrafficLightColors
+    @Composable
+    get() = LocalTrafficLightColors.current

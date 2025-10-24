@@ -4,8 +4,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arkhe.menu.data.remote.api.SafeResourceResult
+import com.arkhe.menu.domain.model.auth.ActivationResponse
 import com.arkhe.menu.domain.repository.AuthRepository
 import com.arkhe.menu.domain.usecase.auth.AuthUseCases
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,8 +16,13 @@ import kotlinx.coroutines.launch
 sealed interface AuthUiState {
     object Idle : AuthUiState
     object Loading : AuthUiState
-    data class Success(val message: String, val type: SuccessType) : AuthUiState
-    data class Failed(val message: String, val errorSource: String? = null) : AuthUiState
+    data class Success(
+        val message: String,
+        val type: SuccessType,
+        val data: ActivationResponse? = null
+    ) : AuthUiState
+
+    data class Failed(val message: String) : AuthUiState
 }
 
 enum class SuccessType { ACTIVATION, SIGNEDIN }
@@ -39,6 +46,7 @@ class AuthViewModel(
     ) {
         viewModelScope.launch {
             _uiState.value = AuthUiState.Loading
+            delay(250L)
             val session = _sessionActivation.value
             authUseCases.activationStepUseCase(
                 step = step,
@@ -64,24 +72,27 @@ class AuthViewModel(
             ).collect { result ->
                 when (result) {
                     is SafeResourceResult.Success -> {
-                        result.data?.sessionActivation?.let { newSession ->
-                            _sessionActivation.value = newSession
+                        val message = result.data?.message ?: "Please try again later"
+                        if (result.data?.status?.equals("success", true) == true) {
+                            result.data.sessionActivation?.let { newSession ->
+                                _sessionActivation.value = newSession
+                            }
+                            _uiState.value = AuthUiState.Success(
+                                type = SuccessType.ACTIVATION,
+                                message = message,
+                                data = result.data
+                            )
+                        } else {
+                            _uiState.value = AuthUiState.Failed(message)
                         }
-
-                        _uiState.value = AuthUiState.Success(
-                            type = SuccessType.ACTIVATION,
-                            message = result.data?.message ?: "Success"
-                        )
                     }
 
                     is SafeResourceResult.Failure -> {
-                        _uiState.value =
-                            AuthUiState.Failed(result.message ?: "An unknown error occurred")
+                        val errorMessage = result.message ?: "Please try again later"
+                        _uiState.value = AuthUiState.Failed(errorMessage)
                     }
 
-                    is SafeResourceResult.Loading -> {
-                        _uiState.value = AuthUiState.Loading
-                    }
+                    is SafeResourceResult.Loading -> {}
                 }
             }
         }
@@ -114,11 +125,6 @@ class AuthViewModel(
         }
     }
 
-    /**
-     * Mereset UI state kembali ke Idle.
-     * Panggil fungsi ini setelah pesan error ditampilkan di UI
-     * agar tidak muncul terus-menerus.
-     */
     fun resetUiState() {
         _uiState.value = AuthUiState.Idle
     }

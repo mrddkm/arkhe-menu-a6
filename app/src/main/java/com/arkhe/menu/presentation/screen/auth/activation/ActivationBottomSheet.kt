@@ -1,9 +1,7 @@
 package com.arkhe.menu.presentation.screen.auth.activation
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
-import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -67,7 +65,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
-@SuppressLint("ObsoleteSdkInt")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ActivationBottomSheet(
@@ -89,26 +86,38 @@ fun ActivationBottomSheet(
     LaunchedEffect(uiState) {
         when (val currentState = uiState) {
             is AuthUiState.Success -> {
-                // viewModel.resetUiState() // Opsional: buat fungsi ini di ViewModel
-                when {
-                    currentState.message.contains("Verified successfully", ignoreCase = true) -> {
-                        state.onStepChange(2) // Pindah ke Step 2 (Kode Aktivasi)
+                state.onMessageChange(currentState.message)
+                currentState.data?.name?.let { userName ->
+                    state.onUserNameChange(userName)
+                }
+                val message = currentState.message.lowercase()
+                when (currentState.type) {
+                    SuccessType.ACTIVATION -> {
+                        when {
+                            message.contains("4-digit activation code") || message.contains("sent to your email") -> {
+                                state.onStepChange(2)
+                            }
+
+                            message.contains("proceed to create password") -> {
+                                state.onStepChange(3)
+                            }
+
+                            message.contains("proceed to device activation") -> {
+                                state.onStepChange(4)
+                            }
+
+                            message.contains("activation successfully") -> {
+                                onActivated()
+                                onDismiss()
+                            }
+                        }
                     }
 
-                    currentState.message.contains("Code verified", ignoreCase = true) -> {
-                        state.onStepChange(3) // Pindah ke Step 3 (Buat Password)
-                    }
-
-                    currentState.message.contains("Password created", ignoreCase = true) -> {
-                        state.onStepChange(4) // Pindah ke Step 4 (Buat PIN)
-                    }
+                    else -> Unit
                 }
             }
 
-            is AuthUiState.Failed -> {
-                Toast.makeText(state.context, currentState.message, Toast.LENGTH_LONG).show()
-                // viewModel.resetUiState() // Opsional: reset state agar tidak error terus-menerus
-            }
+            is AuthUiState.Failed -> {}
 
             else -> Unit
         }
@@ -174,46 +183,11 @@ fun ActivationBottomSheet(
                 .verticalScroll(rememberScrollState())
                 .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 32.dp)
         ) {
-            LaunchedEffect(uiState) {
-                when (uiState) {
-                    is AuthUiState.Success -> {
-                        val success = uiState as AuthUiState.Success
-
-                        when (success.type) {
-                            SuccessType.ACTIVATION -> {
-                                when {
-                                    success.message.contains("Activation", true) -> {
-                                        state.onStepChange(2)
-                                    }
-
-                                    success.message.contains("Code verified", true) -> {
-                                        state.onStepChange(3)
-                                    }
-
-                                    success.message.contains("Password", true) -> {
-                                        state.onStepChange(4)
-                                    }
-
-                                    success.message.contains("PIN saved", true) -> {
-                                        onActivated()
-                                        onDismiss()
-                                    }
-                                }
-                            }
-
-                            else -> Unit
-                        }
-                    }
-
-                    is AuthUiState.Failed -> {}
-
-                    else -> Unit
-                }
-            }
-
             when (state.step) {
                 1 -> ActivationContentStepOne(
                     state = state,
+                    uiState = uiState,
+                    authViewModel = authViewModel,
                     onDismiss = onDismiss,
                     onNext = {
                         state.scope.launch {
@@ -229,10 +203,13 @@ fun ActivationBottomSheet(
 
                 2 -> ActivationContentStepTwo(
                     state = state,
+                    uiState = uiState,
+                    authViewModel = authViewModel,
                     onVerify = {
                         state.scope.launch {
                             authViewModel.performActivationStep(
                                 step = ACT_ACTIVATION_CODE_STEP,
+                                userId = state.userId,
                                 activationCode = state.code
                             )
                         }
@@ -244,10 +221,13 @@ fun ActivationBottomSheet(
 
                 3 -> ActivationContentStepThree(
                     state = state,
+                    uiState = uiState,
+                    authViewModel = authViewModel,
                     onContinue = {
                         state.scope.launch {
                             authViewModel.performActivationStep(
                                 step = ACT_CREATE_PASSWORD_STEP,
+                                userId = state.userId,
                                 newPassword = state.password
                             )
                         }
@@ -259,6 +239,7 @@ fun ActivationBottomSheet(
 
                 4 -> ActivationContentStepFour(
                     state = state,
+                    uiState = uiState,
                     onFinish = {
                         state.scope.launch {
                             if (state.pin == state.confirmPin && state.pin.length == 4) {
@@ -271,10 +252,10 @@ fun ActivationBottomSheet(
                                     "product" to Build.PRODUCT,
                                     "osVersion" to Build.VERSION.RELEASE,
                                     "sdkLevel" to Build.VERSION.SDK_INT.toString(),
-                                    "securityPatch" to if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) Build.VERSION.SECURITY_PATCH else "N/A",
+                                    "securityPatch" to Build.VERSION.SECURITY_PATCH,
                                     "deviceType" to "smartphone",
-                                    "appVersionName" to "1.0.0", // Dapatkan dari BuildConfig
-                                    "appVersionCode" to "1" // Dapatkan dari BuildConfig
+                                    "appVersionName" to "1.0.0",
+                                    "appVersionCode" to "1"
                                 )
 
                                 authViewModel.performActivationStep(
@@ -303,14 +284,17 @@ fun rememberActivationState(): ActivationState {
     val scope = rememberCoroutineScope()
 
     var step by remember { mutableIntStateOf(1) }
-    var userId by remember { mutableStateOf("230504") }
-    var phone by remember { mutableStateOf("6285659988939") }
-    var email by remember { mutableStateOf("didik.muttaqien@gmail.com") }
+    var userId by remember { mutableStateOf("") }
+    var phone by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
     var code by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("Qwer@12") }
-    var confirmPassword by remember { mutableStateOf("Qwer@1") }
+    var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
     var pin by remember { mutableStateOf("") }
     var confirmPin by remember { mutableStateOf("") }
+
+    var successMessage by remember { mutableStateOf("") }
+    var userName by remember { mutableStateOf("") }
 
     return ActivationState(
         step = step, onStepChange = { step = it },
@@ -322,6 +306,8 @@ fun rememberActivationState(): ActivationState {
         confirmPassword = confirmPassword, onConfirmPasswordChange = { confirmPassword = it },
         pin = pin, onPinChange = { pin = it },
         confirmPin = confirmPin, onConfirmPinChange = { confirmPin = it },
+        userName = userName, onUserNameChange = { userName = it },
+        successMessage = successMessage, onMessageChange = { successMessage = it },
         scope = scope, context = context
     )
 }
@@ -349,6 +335,11 @@ data class ActivationState(
     val onPinChange: (String) -> Unit,
     val confirmPin: String,
     val onConfirmPinChange: (String) -> Unit,
+
+    val successMessage: String,
+    val onMessageChange: (String) -> Unit,
+    val userName: String,
+    val onUserNameChange: (String) -> Unit,
 
     val scope: CoroutineScope,
     val context: Context

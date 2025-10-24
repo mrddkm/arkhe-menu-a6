@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -49,18 +50,21 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.arkhe.menu.presentation.ui.components.LoadingGraySpinner
 import com.arkhe.menu.presentation.ui.components.edit.AnimatedNumericKeypad
 import com.arkhe.menu.presentation.ui.components.edit.PasswordRequirementsChecklist
 import com.arkhe.menu.presentation.ui.components.edit.validatePassword
-import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
+import com.arkhe.menu.presentation.ui.theme.trafficLights
+import com.arkhe.menu.presentation.viewmodel.AuthUiState
+import com.arkhe.menu.presentation.viewmodel.AuthViewModel
 import com.arkhe.menu.utils.Constants.MaxMinLength.MAX_LENGTH_PIN
 import com.arkhe.menu.utils.Constants.TextPlaceHolder.PLACE_HOLDER_MAIL
 import com.arkhe.menu.utils.Constants.TextPlaceHolder.PLACE_HOLDER_PHONE
@@ -76,6 +80,8 @@ import kotlinx.coroutines.delay
 @Composable
 fun ActivationContentStepOne(
     state: ActivationState,
+    uiState: AuthUiState,
+    authViewModel: AuthViewModel,
     onDismiss: () -> Unit,
     onNext: () -> Unit
 ) {
@@ -86,16 +92,42 @@ fun ActivationContentStepOne(
     LaunchedEffect(Unit) {
         focusUserId.requestFocus()
     }
+    val isLoading = uiState is AuthUiState.Loading
     Column(
         Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text("Please fill your information", style = MaterialTheme.typography.titleSmall)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(0.8f)
+                .padding(bottom = 4.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            Text(
+                text = "Please fill your information",
+                style = MaterialTheme.typography.titleSmall
+            )
+            if (uiState is AuthUiState.Failed) {
+                Text(
+                    text = uiState.message,
+                    color = MaterialTheme.trafficLights.stop,
+                    style = MaterialTheme.typography.bodySmall,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
         OutlinedTextField(
             value = state.userId,
-            onValueChange = { if (it.length <= 6) state.onUserIdChange(it) },
+            onValueChange = {
+                if (it.length <= 6) state.onUserIdChange(it)
+                if (uiState is AuthUiState.Failed) {
+                    authViewModel.resetUiState()
+                }
+            },
             label = { Text("Tripkeun ID") },
+            enabled = !isLoading,
             placeholder = {
                 Text(
                     text = PLACE_HOLDER_PRIMARY_USER_ID,
@@ -131,8 +163,14 @@ fun ActivationContentStepOne(
         )
         OutlinedTextField(
             value = state.phone,
-            onValueChange = { if (it.length <= 15) state.onPhoneChange(it) },
+            onValueChange = {
+                if (it.length <= 15) state.onPhoneChange(it)
+                if (uiState is AuthUiState.Failed) {
+                    authViewModel.resetUiState()
+                }
+            },
             label = { Text("Phone Number") },
+            enabled = !isLoading,
             placeholder = {
                 Text(
                     text = PLACE_HOLDER_PHONE,
@@ -168,8 +206,14 @@ fun ActivationContentStepOne(
         )
         OutlinedTextField(
             value = state.mail,
-            onValueChange = state.onEmailChange,
+            onValueChange = { newValue ->
+                state.onEmailChange(newValue)
+                if (uiState is AuthUiState.Failed) {
+                    authViewModel.resetUiState()
+                }
+            },
             label = { Text("Email") },
+            enabled = !isLoading,
             placeholder = {
                 Text(
                     text = PLACE_HOLDER_MAIL,
@@ -207,6 +251,7 @@ fun ActivationContentStepOne(
         ) {
             TextButton(
                 onClick = onDismiss,
+                enabled = !isLoading,
                 modifier = Modifier
                     .width(130.dp)
                     .height(40.dp)
@@ -215,25 +260,36 @@ fun ActivationContentStepOne(
             }
             Button(
                 onClick = onNext,
-                enabled = state.userId.isNotBlank() && state.phone.isNotBlank() && state.mail.isNotBlank(),
+                enabled = state.userId.isNotBlank() && state.phone.isNotBlank() && state.mail.isNotBlank() && uiState !is AuthUiState.Loading,
                 modifier = Modifier
                     .width(130.dp)
                     .height(40.dp)
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Text("Next")
-                    Spacer(Modifier.width(4.dp))
-                    Icon(
+                if (uiState is AuthUiState.Loading) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
                         modifier = Modifier
-                            .size(18.dp),
-                        imageVector = EvaIcons.Outline.ArrowIosForward,
-                        contentDescription = null
-                    )
+                            .fillMaxWidth()
+                    ) {
+                        LoadingGraySpinner(modifier = Modifier.fillMaxSize())
+                    }
+                } else {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        Text("Next")
+                        Spacer(Modifier.width(4.dp))
+                        Icon(
+                            modifier = Modifier
+                                .size(18.dp),
+                            imageVector = EvaIcons.Outline.ArrowIosForward,
+                            contentDescription = null
+                        )
+                    }
                 }
             }
         }
@@ -243,6 +299,8 @@ fun ActivationContentStepOne(
 @Composable
 fun ActivationContentStepTwo(
     state: ActivationState,
+    uiState: AuthUiState,
+    authViewModel: AuthViewModel,
     onVerify: () -> Unit,
     onBack: () -> Unit
 ) {
@@ -255,6 +313,16 @@ fun ActivationContentStepTwo(
     var code2 by remember { mutableStateOf("") }
     var code3 by remember { mutableStateOf("") }
     var code4 by remember { mutableStateOf("") }
+    val isLoading = uiState is AuthUiState.Loading
+    LaunchedEffect(uiState) {
+        if (uiState is AuthUiState.Failed) {
+            code1 = ""
+            code2 = ""
+            code3 = ""
+            code4 = ""
+            focus1.requestFocus()
+        }
+    }
     LaunchedEffect(Unit) {
         focus1.requestFocus()
     }
@@ -267,7 +335,38 @@ fun ActivationContentStepTwo(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text("Enter Activation Code", style = MaterialTheme.typography.titleSmall)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(0.8f)
+                .padding(bottom = 4.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            if (state.userName.isNotBlank()) {
+                Text(
+                    text = "Hello, ${state.userName}",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Normal,
+                    textAlign = TextAlign.Center
+                )
+            }
+            if (state.successMessage.isNotBlank()) {
+                Text(
+                    text = state.successMessage,
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Center
+                )
+            }
+            if (uiState is AuthUiState.Failed) {
+                Text(
+                    text = uiState.message,
+                    color = MaterialTheme.trafficLights.stop,
+                    style = MaterialTheme.typography.bodySmall,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
         Row(
             modifier = Modifier.fillMaxWidth(0.8f),
             horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
@@ -279,7 +378,11 @@ fun ActivationContentStepTwo(
                         code1 = it
                         if (it.isNotEmpty()) focus2.requestFocus()
                     }
+                    if (uiState is AuthUiState.Failed) {
+                        authViewModel.resetUiState()
+                    }
                 },
+                enabled = !isLoading,
                 shape = MaterialTheme.shapes.medium,
                 modifier = Modifier
                     .size(56.dp)
@@ -305,6 +408,7 @@ fun ActivationContentStepTwo(
                         focus1.requestFocus()
                     }
                 },
+                enabled = !isLoading,
                 shape = MaterialTheme.shapes.medium,
                 modifier = Modifier
                     .size(56.dp)
@@ -330,6 +434,7 @@ fun ActivationContentStepTwo(
                         focus2.requestFocus()
                     }
                 },
+                enabled = !isLoading,
                 shape = MaterialTheme.shapes.medium,
                 modifier = Modifier
                     .size(56.dp)
@@ -355,6 +460,7 @@ fun ActivationContentStepTwo(
                         focus3.requestFocus()
                     }
                 },
+                enabled = !isLoading,
                 shape = MaterialTheme.shapes.medium,
                 modifier = Modifier
                     .size(56.dp)
@@ -377,6 +483,7 @@ fun ActivationContentStepTwo(
         ) {
             TextButton(
                 onClick = onBack,
+                enabled = !isLoading,
                 modifier = Modifier
                     .width(130.dp)
                     .height(40.dp)
@@ -402,18 +509,29 @@ fun ActivationContentStepTwo(
                     .width(130.dp)
                     .height(40.dp)
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Text("Next")
-                    Spacer(Modifier.width(4.dp))
-                    Icon(
-                        imageVector = EvaIcons.Outline.ArrowIosForward,
-                        contentDescription = null,
+                if (isLoading) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
                         modifier = Modifier
-                            .size(18.dp)
-                    )
+                            .fillMaxWidth()
+                    ) {
+                        LoadingGraySpinner(modifier = Modifier.fillMaxSize())
+                    }
+                } else {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text("Verify")
+                        Spacer(Modifier.width(4.dp))
+                        Icon(
+                            imageVector = EvaIcons.Outline.ArrowIosForward,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(18.dp)
+                        )
+                    }
                 }
             }
         }
@@ -423,6 +541,8 @@ fun ActivationContentStepTwo(
 @Composable
 fun ActivationContentStepThree(
     state: ActivationState,
+    uiState: AuthUiState,
+    authViewModel: AuthViewModel,
     onContinue: () -> Unit,
     onBack: () -> Unit
 ) {
@@ -449,6 +569,7 @@ fun ActivationContentStepThree(
             state.confirmPassword.isNotEmpty() && state.password == state.confirmPassword
         }
     }
+    val isLoading = uiState is AuthUiState.Loading
 
     LaunchedEffect(Unit) { focusNew.requestFocus() }
 
@@ -457,16 +578,42 @@ fun ActivationContentStepThree(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text("Create Password", style = MaterialTheme.typography.titleSmall)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(0.8f)
+                .padding(bottom = 4.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            Text(
+                text = "Create Password",
+                style = MaterialTheme.typography.titleSmall
+            )
+            if (uiState is AuthUiState.Failed) {
+                Text(
+                    text = uiState.message,
+                    color = MaterialTheme.trafficLights.stop,
+                    style = MaterialTheme.typography.bodySmall,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
+        }
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             // ---------------------------
             // 🟢 Step 1: NEW PASSWORD
             // ---------------------------
             OutlinedTextField(
                 value = state.password,
-                onValueChange = state.onPasswordChange,
+                onValueChange = { newValue ->
+                    state.onPasswordChange(newValue)
+                    if (uiState is AuthUiState.Failed) {
+                        authViewModel.resetUiState()
+                    }
+                },
                 shape = MaterialTheme.shapes.medium,
                 label = { Text("Password") },
+                enabled = !isLoading,
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
                     .focusRequester(focusNew),
@@ -543,9 +690,15 @@ fun ActivationContentStepThree(
                     Spacer(Modifier.height(12.dp))
                     OutlinedTextField(
                         value = state.confirmPassword,
-                        onValueChange = state.onConfirmPasswordChange,
+                        onValueChange = { newValue ->
+                            state.onConfirmPasswordChange(newValue)
+                            if (uiState is AuthUiState.Failed) {
+                                authViewModel.resetUiState()
+                            }
+                        },
                         shape = MaterialTheme.shapes.medium,
                         label = { Text("Confirm Password") },
+                        enabled = !isLoading,
                         modifier = Modifier
                             .fillMaxWidth()
                             .focusRequester(focusConfirm),
@@ -575,7 +728,7 @@ fun ActivationContentStepThree(
 
                     Text(
                         text = when {
-                            state.confirmPassword.isEmpty() -> "Re-enter your new password"
+                            state.confirmPassword.isEmpty() -> "Re-enter your password"
                             passwordsMatch -> "Passwords match"
                             else -> "Passwords do not match"
                         },
@@ -592,6 +745,7 @@ fun ActivationContentStepThree(
         ) {
             TextButton(
                 onClick = onBack,
+                enabled = !isLoading,
                 modifier = Modifier
                     .width(130.dp)
                     .height(40.dp)
@@ -617,18 +771,29 @@ fun ActivationContentStepThree(
                     .width(130.dp)
                     .height(40.dp)
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Text("Next")
-                    Spacer(Modifier.width(4.dp))
-                    Icon(
-                        imageVector = EvaIcons.Outline.ArrowIosForward,
-                        contentDescription = null,
+                if (isLoading) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
                         modifier = Modifier
-                            .size(18.dp)
-                    )
+                            .fillMaxWidth()
+                    ) {
+                        LoadingGraySpinner(modifier = Modifier.fillMaxSize())
+                    }
+                } else {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text("Submit")
+                        Spacer(Modifier.width(4.dp))
+                        Icon(
+                            imageVector = EvaIcons.Outline.ArrowIosForward,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(18.dp)
+                        )
+                    }
                 }
             }
         }
@@ -646,6 +811,7 @@ fun ActivationContentStepThree(
 @Composable
 fun ActivationContentStepFour(
     state: ActivationState,
+    uiState: AuthUiState,
     onFinish: () -> Unit,
     onBack: () -> Unit
 ) {
@@ -658,12 +824,34 @@ fun ActivationContentStepFour(
     val pinMatch = state.pin == state.confirmPin && state.confirmPin.length == MAX_LENGTH_PIN
     val pinMismatch = state.confirmPin.length == MAX_LENGTH_PIN && state.pin != state.confirmPin
 
+    val isLoading = uiState is AuthUiState.Loading
+
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text("4-digit PIN", style = MaterialTheme.typography.titleSmall)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(0.8f)
+                .padding(bottom = 4.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            Text(
+                text = "4-digit PIN",
+                style = MaterialTheme.typography.titleSmall
+            )
+            if (uiState is AuthUiState.Failed) {
+                Text(
+                    text = uiState.message,
+                    color = MaterialTheme.trafficLights.stop,
+                    style = MaterialTheme.typography.bodySmall,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
+        }
         /*CREATE PIN SECTION*/
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -815,6 +1003,7 @@ fun ActivationContentStepFour(
         ) {
             TextButton(
                 onClick = onBack,
+                enabled = !isLoading,
                 modifier = Modifier
                     .width(130.dp)
                     .height(40.dp)
@@ -839,18 +1028,29 @@ fun ActivationContentStepFour(
                     .width(130.dp)
                     .height(40.dp)
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        imageVector = EvaIcons.Outline.CheckmarkCircle,
-                        contentDescription = null,
+                if (isLoading) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
                         modifier = Modifier
-                            .size(18.dp)
-                    )
-                    Spacer(Modifier.width(4.dp))
-                    Text("Finish")
+                            .fillMaxWidth()
+                    ) {
+                        LoadingGraySpinner(modifier = Modifier.fillMaxSize())
+                    }
+                } else {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            imageVector = EvaIcons.Outline.CheckmarkCircle,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(18.dp)
+                        )
+                        Spacer(Modifier.width(4.dp))
+                        Text("Submit")
+                    }
                 }
             }
         }
@@ -881,7 +1081,7 @@ fun ActivationStepTwoPreview() {
     }
 }*/
 
-@Preview(showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
 fun ActivationStepThreePreview() {
     ArkheTheme {
@@ -891,7 +1091,7 @@ fun ActivationStepThreePreview() {
             onBack = {}
         )
     }
-}
+}*/
 
 /*@Preview(showBackground = true)
 @Composable
