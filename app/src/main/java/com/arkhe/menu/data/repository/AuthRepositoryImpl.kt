@@ -73,13 +73,13 @@ class AuthRepositoryImpl(
                     if (responseData.status.equals("success", ignoreCase = true)) {
                         emit(SafeResourceResult.Success(responseData.toDomain()))
                     } else {
-                        emit(SafeResourceResult.Failure(responseData.message))
+                        emit(SafeResourceResult.Failed(responseData.message))
                     }
                 }
 
-                is SafeApiResult.Failure -> {
+                is SafeApiResult.Failed -> {
                     emit(
-                        SafeResourceResult.Failure(
+                        SafeResourceResult.Failed(
                             resultFromDataSource.exception.message ?: "An unknown error occurred"
                         )
                     )
@@ -102,8 +102,8 @@ class AuthRepositoryImpl(
                     emit(SafeResourceResult.Success(result.data.toDomain()))
                 }
 
-                is SafeApiResult.Failure -> {
-                    emit(SafeResourceResult.Failure(result.exception.message ?: "Sign-in failed"))
+                is SafeApiResult.Failed -> {
+                    emit(SafeResourceResult.Failed(result.exception.message ?: "Sign-in failed"))
                 }
 
                 is SafeApiResult.Loading -> {}

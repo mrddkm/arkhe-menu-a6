@@ -74,7 +74,7 @@ class AuthViewModel(
                         )
                     }
 
-                    is SafeResourceResult.Failure -> {
+                    is SafeResourceResult.Failed -> {
                         _uiState.value =
                             AuthUiState.Failed(result.message ?: "An unknown error occurred")
                     }
@@ -102,7 +102,7 @@ class AuthViewModel(
                             )
                         }
 
-                        is SafeResourceResult.Failure -> {
+                        is SafeResourceResult.Failed -> {
                             _uiState.value = AuthUiState.Failed(result.message ?: "Sign-in failed")
                         }
 

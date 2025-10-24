@@ -129,10 +129,10 @@ fun DocsContent(
                         }
                     }
 
-                    is SafeApiResult.Failure -> {
+                    is SafeApiResult.Failed -> {
                         ErrorUI(
                             message = stringResource(R.string.profile),
-                            exception = (profileState as SafeApiResult.Failure).exception as Exception,
+                            exception = (profileState as SafeApiResult.Failed).exception as Exception,
                             onRetry = { profileViewModel.refreshProfiles() }
                         )
                     }
@@ -235,10 +235,10 @@ fun DocsContent(
                             }
                         }
 
-                        is SafeApiResult.Failure -> {
+                        is SafeApiResult.Failed -> {
                             ErrorUI(
                                 message = stringResource(R.string.categories),
-                                exception = (categoriesState as SafeApiResult.Failure).exception as Exception,
+                                exception = (categoriesState as SafeApiResult.Failed).exception as Exception,
                                 onRetry = { categoryViewModel.refreshCategories() }
                             )
                         }
@@ -290,10 +290,10 @@ fun DocsContent(
                             }
                         }
 
-                        is SafeApiResult.Failure -> {
+                        is SafeApiResult.Failed -> {
                             ErrorUI(
                                 message = stringResource(R.string.products),
-                                exception = (productsState as SafeApiResult.Failure).exception as Exception,
+                                exception = (productsState as SafeApiResult.Failed).exception as Exception,
                                 onRetry = { productViewModel.refreshProducts() }
                             )
                         }

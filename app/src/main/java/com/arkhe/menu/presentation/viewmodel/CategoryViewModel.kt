@@ -57,7 +57,7 @@ class CategoryViewModel(
                         _categoriesState.value = categoriesResult
                     }
             } catch (e: Exception) {
-                _categoriesState.value = SafeApiResult.Failure(e)
+                _categoriesState.value = SafeApiResult.Failed(e)
             }
         }
     }
@@ -86,13 +86,13 @@ class CategoryViewModel(
                         _categoriesState.value = result
                     }
 
-                    is SafeApiResult.Failure -> {
+                    is SafeApiResult.Failed -> {
                         _categoriesState.value = result
                         handleTokenError(result.exception, forceRefresh)
                     }
                 }
             } catch (e: Exception) {
-                _categoriesState.value = SafeApiResult.Failure(e)
+                _categoriesState.value = SafeApiResult.Failed(e)
             }
         }
     }
@@ -131,7 +131,7 @@ class CategoryViewModel(
                             }
                         }
 
-                        is SafeApiResult.Failure -> {
+                        is SafeApiResult.Failed -> {
                             _categoriesState.value = categoriesResult
                         }
 
@@ -146,12 +146,12 @@ class CategoryViewModel(
                     }
                     isInitialized = true
                 } catch (e: Exception) {
-                    _categoriesState.value = SafeApiResult.Failure(e)
+                    _categoriesState.value = SafeApiResult.Failed(e)
                 }
             }
         } else {
             when (_categoriesState.value) {
-                is SafeApiResult.Failure -> {
+                is SafeApiResult.Failed -> {
                     loadCategories(forceRefresh = false)
                 }
 

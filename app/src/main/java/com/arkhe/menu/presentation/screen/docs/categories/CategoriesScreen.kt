@@ -86,7 +86,7 @@ fun CategoriesScreen(
                 )
             }
 
-            is SafeApiResult.Failure -> {
+            is SafeApiResult.Failed -> {
                 if (!lastSuccess.value.isNullOrEmpty()) {
                     LazyColumn(
                         state = listState,
@@ -128,7 +128,7 @@ fun CategoriesScreen(
                                 textAlign = TextAlign.Center
                             )
 
-                            (categoriesState as SafeApiResult.Failure).exception.message?.let {
+                            (categoriesState as SafeApiResult.Failed).exception.message?.let {
                                 Text(
                                     text = it,
                                     style = MaterialTheme.typography.bodyMedium,

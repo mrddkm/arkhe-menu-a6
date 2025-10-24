@@ -61,7 +61,7 @@ class CategoryRepositoryImpl(
                 SafeApiResult.Success(categories)
 
             } catch (e: Exception) {
-                SafeApiResult.Failure(e)
+                SafeApiResult.Failed(e)
             }
         }
     }
