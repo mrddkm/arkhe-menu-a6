@@ -1,6 +1,7 @@
 package com.arkhe.menu.data.repository
 
 import com.arkhe.menu.data.remote.api.ArkheApiService
+import com.arkhe.menu.data.remote.dto.ActivationResponseDto
 import com.arkhe.menu.data.remote.dto.CategoryInfoDto
 import com.arkhe.menu.data.remote.dto.CategoryRequestDto
 import com.arkhe.menu.data.remote.dto.CategoryResponseDto
@@ -10,7 +11,8 @@ import com.arkhe.menu.data.remote.dto.ProductRequestDto
 import com.arkhe.menu.data.remote.dto.ProductResponseDto
 import com.arkhe.menu.data.remote.dto.ProfileRequestDto
 import com.arkhe.menu.data.remote.dto.ProfileResponseDto
-import com.arkhe.menu.data.remote.dto.ActivationResponseDto
+import com.arkhe.menu.data.remote.dto.SignInRequestDto
+import com.arkhe.menu.data.remote.dto.SignInResponseDto
 import com.arkhe.menu.utils.Constants
 import io.ktor.client.HttpClient
 import io.ktor.client.request.forms.submitForm
@@ -79,6 +81,42 @@ class ArkheApiServiceImpl(
             appVersionName = appVersionName,
             appVersionCode = appVersionCode
         )
+    }
+
+    override suspend fun signIn(userId: String, password: String): SignInResponseDto {
+        // Di sini Anda akan memanggil endpoint sign-in yang sebenarnya.
+        // Logikanya akan sangat mirip dengan service 'activationService',
+        // kemungkinan Anda akan membuat 'signInService' atau langsung memanggil httpClient.
+
+        // Contoh implementasi langsung dengan httpClient:
+        return try {
+            val requestDto = SignInRequestDto(userId = userId, password = password)
+            val response: HttpResponse = httpClient.post {
+                url(Constants.URL_BASE) // Ganti dengan URL sign-in yang benar
+                // Sesuaikan parameter jika endpoint sign-in berbeda
+                parameter(Constants.PARAMETER_KEY, "sign_in_value")
+                setBody(requestDto)
+            }
+
+            // Parsing response seperti yang Anda lakukan di getProfiles
+            val responseText = response.bodyAsText()
+            if (response.status == HttpStatusCode.OK) {
+                json.decodeFromString<SignInResponseDto>(responseText)
+            } else {
+                // Buat response error default
+                SignInResponseDto(
+                    status = "error",
+                    message = "Sign-in failed: ${response.status}",
+                    data = null
+                )
+            }
+        } catch (e: Exception) {
+            SignInResponseDto(
+                status = "exception",
+                message = e.message ?: "An unknown error occurred",
+                data = null
+            )
+        }
     }
 
     override suspend fun getProfiles(sessionToken: String): ProfileResponseDto {

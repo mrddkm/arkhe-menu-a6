@@ -4,6 +4,7 @@ import com.arkhe.menu.data.remote.dto.CategoryResponseDto
 import com.arkhe.menu.data.remote.dto.ProductResponseDto
 import com.arkhe.menu.data.remote.dto.ProfileResponseDto
 import com.arkhe.menu.data.remote.dto.ActivationResponseDto
+import com.arkhe.menu.data.remote.dto.SignInResponseDto
 
 interface ArkheApiService {
     suspend fun performActivation(
@@ -28,6 +29,8 @@ interface ArkheApiService {
         appVersionName: String?,
         appVersionCode: String?
     ): ActivationResponseDto
+
+    suspend fun signIn(userId: String, password: String): SignInResponseDto
 
     suspend fun getProfiles(sessionToken: String): ProfileResponseDto
     suspend fun getCategories(sessionToken: String): CategoryResponseDto

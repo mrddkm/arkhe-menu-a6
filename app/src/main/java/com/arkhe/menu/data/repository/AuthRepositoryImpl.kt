@@ -7,6 +7,7 @@ import com.arkhe.menu.data.remote.RemoteDataSource
 import com.arkhe.menu.data.remote.api.SafeApiResult
 import com.arkhe.menu.data.remote.api.SafeResourceResult
 import com.arkhe.menu.domain.model.auth.ActivationResponse
+import com.arkhe.menu.domain.model.auth.SignInResponse
 import com.arkhe.menu.domain.repository.AuthRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -43,9 +44,8 @@ class AuthRepositoryImpl(
         appVersionCode: String?
     ): Flow<SafeResourceResult<ActivationResponse>> {
         return flow {
-            emit(SafeResourceResult.Loading)
+            emit(SafeResourceResult.Loading())
 
-            // 2. Panggil suspend function dari dalam 'flow' scope
             val resultFromDataSource = remoteDataSource.performActivation(
                 step = step,
                 userId = userId,
@@ -69,7 +69,6 @@ class AuthRepositoryImpl(
                 appVersionCode = appVersionCode
             )
 
-            // 3. Lakukan mapping seperti sebelumnya, lalu emit hasilnya
             when (resultFromDataSource) {
                 is SafeApiResult.Success -> {
                     emit(SafeResourceResult.Success(resultFromDataSource.data.toDomain()))
@@ -77,17 +76,35 @@ class AuthRepositoryImpl(
 
                 is SafeApiResult.Failure -> {
                     emit(
-                        SafeResourceResult.Failed(
+                        SafeResourceResult.Failure(
                             resultFromDataSource.exception.message ?: "An unknown error occurred"
                         )
                     )
                 }
 
-                is SafeApiResult.Loading -> { /* Tidak melakukan apa-apa */
-                }
+                is SafeApiResult.Loading -> {}
             }
         }
     }
+
+    override fun signIn(userId: String, password: String): Flow<SafeResourceResult<SignInResponse>> {
+        return flow {
+            emit(SafeResourceResult.Loading())
+            // Panggil remoteDataSource untuk sign-in (ini perlu dibuat)
+            val result = remoteDataSource.signIn(userId, password)
+            when (result) {
+                is SafeApiResult.Success -> {
+                    // Mapper .toDomain() untuk SignInResponseDto perlu dibuat
+                    emit(SafeResourceResult.Success(result.data.toDomain()))
+                }
+                is SafeApiResult.Failure -> {
+                    emit(SafeResourceResult.Failure(result.exception.message ?: "Sign-in failed"))
+                }
+                is SafeApiResult.Loading -> {}
+            }
+        }
+    }
+
 
     // ----------------- Local (PIN + Preferences) -----------------
     override suspend fun savePinHashed(pin: String) {

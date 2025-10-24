@@ -59,6 +59,12 @@ class RemoteDataSource(
         }
     }
 
+    suspend fun signIn(userId: String, password: String): SafeApiResult<SignInResponseDto> {
+        return safeApiCall {
+            apiService.signIn(userId, password)
+        }
+    }
+
     suspend fun getProfiles(sessionToken: String): SafeApiResult<ProfileResponseDto> {
         return safeApiCall {
             apiService.getProfiles(sessionToken)

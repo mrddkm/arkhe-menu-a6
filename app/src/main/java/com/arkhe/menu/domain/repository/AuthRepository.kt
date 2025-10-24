@@ -1,7 +1,8 @@
 package com.arkhe.menu.domain.repository
 
 import com.arkhe.menu.data.remote.api.SafeResourceResult
-import com.arkhe.menu.data.remote.dto.ActivationResponseDto
+import com.arkhe.menu.domain.model.auth.ActivationResponse
+import com.arkhe.menu.domain.model.auth.SignInResponse
 import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
@@ -26,7 +27,9 @@ interface AuthRepository {
         deviceType: String?,
         appVersionName: String?,
         appVersionCode: String?
-    ): Flow<SafeResourceResult<ActivationResponseDto>>
+    ): Flow<SafeResourceResult<ActivationResponse>>
+
+    fun signIn(userId: String, password: String): Flow<SafeResourceResult<SignInResponse>>
 
     /*Local secure PIN logic*/
     suspend fun savePinHashed(pin: String)

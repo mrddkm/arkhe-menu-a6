@@ -7,6 +7,7 @@ import com.arkhe.menu.domain.model.auth.ActivationResponse
 import com.arkhe.menu.domain.repository.AuthRepository
 import com.arkhe.menu.domain.usecase.auth.ActivationUseCase
 import com.arkhe.menu.domain.usecase.auth.ActivationUseCases
+import com.arkhe.menu.domain.usecase.auth.SignInUseCase
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -25,51 +26,70 @@ class AuthViewModelTest {
     @get:Rule
     val mainCoroutineRule = MainCoroutineRule()
 
-    // Deklarasikan mock untuk use case spesifik
     private lateinit var activationUseCase: ActivationUseCase
+    private lateinit var signInUseCase: SignInUseCase
     private lateinit var authRepository: AuthRepository
     private lateinit var viewModel: AuthViewModel
 
     private val fakeUserId = "testUser"
     private val fakePhone = "08123456789"
     private val fakeMail = "test@example.com"
-    private val stepVerification = "verification" // Sesuaikan dengan step yang Anda gunakan
+    private val stepVerification = "verification"
 
     @Before
     fun setUp() {
-        // Mock use case individu, lalu bungkus dalam data class
         activationUseCase = mockk()
-        val activationUseCases = ActivationUseCases(activationStepUseCase = activationUseCase)
+        signInUseCase = mockk()
+        val activationUseCases = ActivationUseCases(
+            activationStepUseCase = activationUseCase,
+            signInUseCase = signInUseCase
+
+        )
 
         authRepository = mockk(relaxed = true)
 
-        // Mock flow yang ada di repository
         coEvery { authRepository.isActivatedFlow } returns flowOf(false)
         coEvery { authRepository.isSignedInFlow } returns flowOf(false)
 
         viewModel = AuthViewModel(activationUseCases, authRepository)
     }
 
-    // --- TEST KASUS POSITIF ---
     @Test
     fun `performActivationStep - when use case returns Success - updates state to Success`() =
         runTest {
-            // ARRANGE: Siapkan data palsu yang akan dikembalikan oleh use case
+            // ARRANGE
             val successMessage = "Verification successful"
             val successResponse = ActivationResponse(status = "success", message = successMessage)
-            val successResult = flowOf(SafeResourceResult.Success(successResponse))
+            // Hasil dari UseCase adalah Flow yang berisi Loading, lalu Success
+            val successResult = flowOf(
+                SafeResourceResult.Loading(),
+                SafeResourceResult.Success(successResponse)
+            )
 
-            // Mock pemanggilan use case `activation`
+            // Mock pemanggilan use case `invoke`.
+            // 'any()' digunakan untuk menyederhanakan dan menghindari error jika parameter bertambah.
             every {
                 activationUseCase.invoke(
-                    step = stepVerification,
-                    userId = fakeUserId,
-                    mail = fakeMail,
-                    phone = fakePhone,
-                    activationCode = null,
-                    newPassword = null,
-                    sessionActivation = null,
-                    isPinActive = null
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any()
                 )
             } returns successResult
 
@@ -95,30 +115,44 @@ class AuthViewModelTest {
                 assertEquals(successMessage, (finalState as AuthUiState.Success).message)
                 assertEquals(SuccessType.ACTIVATION, finalState.type)
 
-                // Pastikan tidak ada emisi state lain
                 cancelAndIgnoreRemainingEvents()
             }
         }
 
-    // --- TEST KASUS NEGATIF ---
     @Test
-    fun `performActivationStep - when use case returns Error - updates state to Error`() =
+    fun `performActivationStep - when use case returns Failure - updates state to Failed`() =
         runTest {
             // ARRANGE
             val errorMessage = "User ID not found"
-            val failureResult = flowOf(SafeResourceResult.Failure<ActivationResponse>(errorMessage))
+            // Pastikan menggunakan nama 'Failure' yang benar sesuai dengan SafeResourceResult
+            val failureResult = flowOf(
+                SafeResourceResult.Loading(),
+                SafeResourceResult.Failure<ActivationResponse>(errorMessage)
+            )
 
-            // Mock pemanggilan use case `activation` untuk skenario gagal
+            // Mock pemanggilan use case `invoke` untuk skenario gagal
             every {
                 activationUseCase.invoke(
-                    step = stepVerification,
-                    userId = fakeUserId,
-                    mail = fakeMail,
-                    phone = fakePhone,
-                    activationCode = null,
-                    newPassword = null,
-                    sessionActivation = null,
-                    isPinActive = null
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any()
                 )
             } returns failureResult
 
@@ -138,7 +172,7 @@ class AuthViewModelTest {
                 // 2. State berubah menjadi Loading
                 assertEquals(AuthUiState.Loading, awaitItem())
 
-                // 3. State akhir adalah Error
+                // 3. State akhir adalah Failed
                 val finalState = awaitItem()
                 assertTrue(finalState is AuthUiState.Failed)
                 assertEquals(errorMessage, (finalState as AuthUiState.Failed).message)

@@ -1,6 +1,9 @@
 package com.arkhe.menu.presentation.screen.auth.activation
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Build
+import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -63,6 +66,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
+@SuppressLint("ObsoleteSdkInt")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ActivationBottomSheet(
@@ -77,6 +81,34 @@ fun ActivationBottomSheet(
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
+
+    LaunchedEffect(uiState) {
+        when (val currentState = uiState) {
+            is AuthUiState.Success -> {
+                // viewModel.resetUiState() // Opsional: buat fungsi ini di ViewModel
+                when {
+                    currentState.message.contains("verified successfully", ignoreCase = true) -> {
+                        state.onStepChange(2) // Pindah ke Step 2 (Kode Aktivasi)
+                    }
+
+                    currentState.message.contains("Code verified", ignoreCase = true) -> {
+                        state.onStepChange(3) // Pindah ke Step 3 (Buat Password)
+                    }
+
+                    currentState.message.contains("Password created", ignoreCase = true) -> {
+                        state.onStepChange(4) // Pindah ke Step 4 (Buat PIN)
+                    }
+                }
+            }
+
+            is AuthUiState.Failed -> {
+                Toast.makeText(state.context, currentState.message, Toast.LENGTH_LONG).show()
+                // viewModel.resetUiState() // Opsional: reset state agar tidak error terus-menerus
+            }
+
+            else -> Unit
+        }
+    }
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -226,10 +258,29 @@ fun ActivationBottomSheet(
                     onFinish = {
                         state.scope.launch {
                             if (state.pin == state.confirmPin && state.pin.length == 4) {
+                                val deviceInfo = mapOf(
+                                    "deviceId" to Build.ID,
+                                    "manufacturer" to Build.MANUFACTURER,
+                                    "brand" to Build.BRAND,
+                                    "model" to Build.MODEL,
+                                    "device" to Build.DEVICE,
+                                    "product" to Build.PRODUCT,
+                                    "osVersion" to Build.VERSION.RELEASE,
+                                    "sdkLevel" to Build.VERSION.SDK_INT.toString(),
+                                    "securityPatch" to if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) Build.VERSION.SECURITY_PATCH else "N/A",
+                                    "deviceType" to "smartphone",
+                                    "appVersionName" to "1.0.0", // Dapatkan dari BuildConfig
+                                    "appVersionCode" to "1" // Dapatkan dari BuildConfig
+                                )
+
                                 authViewModel.performActivationStep(
                                     step = ACT_ACTIVATION_STEP,
                                     isPinActive = true,
+                                    deviceInfo = deviceInfo
                                 )
+
+                                onActivated
+                                onDismiss
                             }
                         }
                     },
@@ -433,3 +484,4 @@ private fun getStepLabel(step: Int): String {
         else -> ""
     }
 }
+

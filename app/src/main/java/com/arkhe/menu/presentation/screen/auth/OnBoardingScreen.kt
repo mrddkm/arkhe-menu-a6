@@ -61,7 +61,10 @@ import com.arkhe.menu.data.local.preferences.Lang
 import com.arkhe.menu.data.local.preferences.ProfilePicturePrefs
 import com.arkhe.menu.domain.model.ThemeModels
 import com.arkhe.menu.presentation.navigation.NavigationRoute
+import com.arkhe.menu.presentation.screen.auth.activation.ActivationBottomSheet
+import com.arkhe.menu.presentation.screen.auth.lockscreen.PinLockBottomSheet
 import com.arkhe.menu.presentation.screen.auth.onboarding.OnBoardingUI
+import com.arkhe.menu.presentation.screen.auth.signin.SignInBottomSheet
 import com.arkhe.menu.presentation.ui.components.settings.PhotoProfile
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.ui.theme.montserratAlternatesFontFamily
@@ -240,9 +243,6 @@ fun OnboardingScreen(
     }
 
     OnBoardingUI(
-        showActivation = showActivationSheet,
-        showSignedIn = showSignedInSheet,
-        showPin = showPinSheet,
         showSettings = showSettings,
         currentThemeModel = currentThemeModel,
         onDismissAll = {
@@ -250,18 +250,37 @@ fun OnboardingScreen(
             showSignedInSheet = false
             showPinSheet = false
             showSettings = false
-        },
-        onActivated = {
-            showActivationSheet = false
-        },
-        onSignedIn = {
-            showSignedInSheet = false
-            onNavigateToMain()
-        },
-        onUnlocked = {
-            onNavigateToMain()
         }
     )
+
+    if (showActivationSheet) {
+        ActivationBottomSheet(
+            onDismiss = { showActivationSheet = false },
+            onActivated = {
+                showActivationSheet = false
+            },
+            authViewModel = authViewModel
+        )
+    }
+
+    if (showSignedInSheet) {
+        SignInBottomSheet(
+            onDismiss = { showSignedInSheet = false },
+            onSignedIn = { userId, password ->
+                authViewModel.signIn(userId, password)
+            }
+        )
+    }
+
+    if (showPinSheet) {
+        PinLockBottomSheet(
+            onDismiss = { showPinSheet = false },
+            onPinEntered = {
+                showPinSheet = false
+                onNavigateToMain()
+            }
+        )
+    }
 }
 
 @Composable

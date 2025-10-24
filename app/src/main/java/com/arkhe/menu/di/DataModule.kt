@@ -11,14 +11,14 @@ import com.arkhe.menu.data.local.security.SecurePinStorage
 import com.arkhe.menu.data.local.storage.ImageStorageManager
 import com.arkhe.menu.data.remote.RemoteDataSource
 import com.arkhe.menu.data.remote.api.ArkheApiService
+import com.arkhe.menu.data.repository.ActivationService
+import com.arkhe.menu.data.repository.ActivationServiceImpl
 import com.arkhe.menu.data.repository.ArkheApiServiceImpl
 import com.arkhe.menu.data.repository.AuthRepositoryImpl
 import com.arkhe.menu.data.repository.CategoryRepositoryImpl
 import com.arkhe.menu.data.repository.ProductRepositoryImpl
 import com.arkhe.menu.data.repository.ProfileRepositoryImpl
 import com.arkhe.menu.data.repository.ThemeRepositoryImpl
-import com.arkhe.menu.data.repository.ActivationService
-import com.arkhe.menu.data.repository.ActivationServiceImpl
 import com.arkhe.menu.domain.repository.AuthRepository
 import com.arkhe.menu.domain.repository.CategoryRepository
 import com.arkhe.menu.domain.repository.ILanguageRepository
@@ -143,7 +143,7 @@ val dataModule = module {
     single { SecurePinStorage(androidContext()) }
 
     /*Repositories*/
-    single<AuthRepository> { AuthRepositoryImpl(get(), get(), get(), get()) }
+    single<AuthRepository> { AuthRepositoryImpl(get(), get(), get()) }
     /*Use fake while backend not ready*/
     /*    single<AuthRepository> { FakeAuthRepository(get(), get()) }*/
     single<ILanguageRepository> { LanguageRepository(get()) }

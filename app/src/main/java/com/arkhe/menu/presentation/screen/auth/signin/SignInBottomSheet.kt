@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Abc
 import androidx.compose.material.icons.outlined.Password
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -31,6 +32,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -59,7 +61,10 @@ import com.arkhe.menu.di.domainModule
 import com.arkhe.menu.di.previewModule
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.ui.theme.montserratFontFamily
+import com.arkhe.menu.presentation.viewmodel.AuthUiState
+import com.arkhe.menu.presentation.viewmodel.AuthViewModel
 import com.arkhe.menu.presentation.viewmodel.LanguageViewModel
+import com.arkhe.menu.presentation.viewmodel.SuccessType
 import com.arkhe.menu.utils.Constants.MaxMinLength.MIN_LENGTH_PASSWORD
 import com.arkhe.menu.utils.Constants.MaxMinLength.MIN_LENGTH_USER_ID
 import com.arkhe.menu.utils.Constants.TextPlaceHolder.PLACE_HOLDER_OTHER_USER_ID
@@ -78,14 +83,39 @@ import org.koin.compose.KoinApplicationPreview
 @Composable
 fun SignInBottomSheet(
     onDismiss: () -> Unit,
+    authViewModel: AuthViewModel = koinViewModel(),
     onSignedIn: (String, String) -> Unit
 ) {
+    val uiState by authViewModel.uiState.collectAsState()
+
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
         confirmValueChange = { newValue ->
             newValue != SheetValue.Hidden
         }
     )
+
+    LaunchedEffect(uiState) {
+        when (val currentState = uiState) {
+            is AuthUiState.Success -> {
+                // Jika tipe sukses adalah SIGNEDIN, tutup sheet
+                if (currentState.type == SuccessType.SIGNEDIN) {
+                    onDismiss()
+                }
+            }
+            is AuthUiState.Failed -> {
+                // Tampilkan pesan error jika gagal
+                /*                Toast.makeText(
+                                    currentState.message,
+                                    Toast.LENGTH_LONG
+                                ).show()*/
+                // Reset state di ViewModel agar tidak error terus menerus
+                // viewModel.resetUiState()
+            }
+            else -> Unit
+        }
+    }
+
     ModalBottomSheet(
         onDismissRequest = { },
         sheetState = sheetState,
@@ -135,6 +165,7 @@ fun SignInBottomSheet(
             }
         }
         SignInContent(
+            uiState = uiState,
             onSignedIn = onSignedIn
         )
     }
@@ -142,6 +173,7 @@ fun SignInBottomSheet(
 
 @Composable
 fun SignInContent(
+    uiState: AuthUiState,
     state: SignInState = rememberSignInState(),
     langViewModel: LanguageViewModel = koinViewModel(),
     onSignedIn: (String, String) -> Unit
@@ -263,22 +295,30 @@ fun SignInContent(
             }
             Button(
                 onClick = { onSignedIn(state.userId.trim(), state.password) },
-                enabled = isValid,
+                enabled = isValid && uiState !is AuthUiState.Loading,
                 modifier = Modifier
                     .width(130.dp)
                     .height(40.dp)
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Text("Sign-in")
-                    Spacer(Modifier.width(4.dp))
-                    Icon(
-                        imageVector = EvaIcons.Outline.LogIn,
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp)
+                if (uiState is AuthUiState.Loading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        strokeWidth = 2.dp,
+                        color = MaterialTheme.colorScheme.onPrimary
                     )
+                } else {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text("Sign-in")
+                        Spacer(Modifier.width(4.dp))
+                        Icon(
+                            imageVector = EvaIcons.Outline.LogIn,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
                 }
             }
         }
@@ -326,6 +366,7 @@ fun SignInBottomSheetPreview() {
     ) {
         ArkheTheme {
             SignInContent(
+                uiState = AuthUiState.Idle,
                 onSignedIn = { _, _ -> }
             )
         }

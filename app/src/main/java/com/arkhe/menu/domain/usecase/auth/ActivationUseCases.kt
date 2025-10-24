@@ -2,6 +2,7 @@ package com.arkhe.menu.domain.usecase.auth
 
 import com.arkhe.menu.data.remote.api.SafeResourceResult
 import com.arkhe.menu.domain.model.auth.ActivationResponse
+import com.arkhe.menu.domain.model.auth.SignInResponse
 import com.arkhe.menu.domain.repository.AuthRepository
 import kotlinx.coroutines.flow.Flow
 
@@ -55,6 +56,18 @@ class ActivationUseCase(
     }
 }
 
+class SignInUseCase(
+    private val authRepository: AuthRepository
+) {
+    operator fun invoke(
+        userId: String,
+        password: String
+    ): Flow<SafeResourceResult<SignInResponse>> {
+        return authRepository.signIn(userId, password)
+    }
+}
+
 data class ActivationUseCases(
-    val activationStepUseCase: ActivationUseCase
+    val activationStepUseCase: ActivationUseCase,
+    val signInUseCase: SignInUseCase
 )

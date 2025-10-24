@@ -91,6 +91,35 @@ class AuthViewModel(
         }
     }
 
+// ... di dalam class AuthViewModel
+
+    fun signIn(userId: String, password: String) {
+        viewModelScope.launch {
+            _uiState.value = AuthUiState.Loading
+            // Panggil SignInUseCase yang baru
+            activationUseCases.signInUseCase(userId, password).collect { result ->
+                when (result) {
+                    is SafeResourceResult.Success -> {
+                        // Simpan status sign-in
+                        authRepository.setSignedIn(true)
+
+                        _uiState.value = AuthUiState.Success(
+                            type = SuccessType.SIGNEDIN,
+                            message = result.data?.message ?: "Sign-in successful"
+                        )
+                    }
+
+                    is SafeResourceResult.Failure -> {
+                        _uiState.value = AuthUiState.Failed(result.message ?: "Sign-in failed")
+                    }
+
+                    is SafeResourceResult.Loading -> {
+                        _uiState.value = AuthUiState.Loading
+                    }
+                }
+            }
+        }
+    }
 
     /*DELETE IF STABLE*/
     private val _uiState = MutableStateFlow<AuthUiState>(AuthUiState.Idle)
@@ -98,65 +127,6 @@ class AuthViewModel(
 
     val isActivatedFlow = authRepository.isActivatedFlow
     val isSignedInFlow = authRepository.isSignedInFlow
-
-    /*    private val _verificationState =
-            MutableStateFlow<SafeApiResult<Verification>>(SafeApiResult.Loading)
-        val verificationState: StateFlow<SafeApiResult<Verification>> = _verificationState.asStateFlow()*/
-
-    /*    fun requestVerification(userId: String, phone: String, mail: String) {
-            viewModelScope.launch {
-                _verificationState.value = SafeApiResult.Loading
-
-                val verificationResult = activationUseCases.verification(userId, phone, mail)
-
-                _verificationState.value = verificationResult
-            }
-        }*/
-
-    /*    fun verifyActivationCode(code: String) {
-            viewModelScope.launch {
-                _uiState.value = AuthUiState.Loading
-                val res = repo.verifyActivationCode(code)
-                _uiState.value = res.fold(
-                    onSuccess = { AuthUiState.Success(it, SuccessType.ACTIVATION) },
-                    onFailure = { AuthUiState.Error(it.message ?: "Invalid code") }
-                )
-            }
-        }*/
-
-    /*    fun createPassword(password: String) {
-            viewModelScope.launch {
-                _uiState.value = AuthUiState.Loading
-                val res = repo.createPassword(password)
-                _uiState.value = res.fold(
-                    onSuccess = { AuthUiState.Success(it, SuccessType.ACTIVATION) },
-                    onFailure = { AuthUiState.Error(it.message ?: "Weak password") }
-                )
-            }
-        }*/
-
-    /*    fun signedIn(userId: String, password: String) {
-            viewModelScope.launch {
-                _uiState.value = AuthUiState.Loading
-                val res = repo.signIn(userId, password)
-                _uiState.value = res.fold(
-                    onSuccess = {
-                        repo.setSignedIn(true)
-                        AuthUiState.Success(it, SuccessType.SIGNEDIN)
-                    },
-                    onFailure = { AuthUiState.Error(it.message ?: "SignIn failed") }
-                )
-            }
-        }*/
-
-    /*    fun savePin(pin: String) {
-            viewModelScope.launch {
-                repo.savePinHashed(pin)
-                repo.setActivated(true)
-                _uiState.value =
-                    AuthUiState.Success("PIN saved & activation complete", SuccessType.ACTIVATION)
-            }
-        }*/
 
     suspend fun unlockWithPin(pin: String): Boolean = authRepository.checkPin(pin)
     fun incrementPinAttempts() = viewModelScope.launch { authRepository.incrementPinAttempts() }
