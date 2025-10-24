@@ -3,9 +3,9 @@ package com.arkhe.menu.data.repository
 import android.util.Log
 import com.arkhe.menu.data.remote.dto.ActivationRequestDto
 import com.arkhe.menu.data.remote.dto.ActivationResponseDto
+import com.arkhe.menu.utils.Constants
 import com.arkhe.menu.utils.Constants.PARAMETER_KEY
 import com.arkhe.menu.utils.Constants.PARAMETER_VALUE_ACTIVATION_FLOW
-import com.arkhe.menu.utils.Constants.ResponseStatus.FAILED
 import com.arkhe.menu.utils.Constants.URL_BASE
 import io.ktor.client.HttpClient
 import io.ktor.client.request.parameter
@@ -84,23 +84,24 @@ class ActivationServiceImpl(
 
             when (response.status) {
                 HttpStatusCode.OK -> {
-                    if (responseText.trim().startsWith("{") || responseText.trim()
-                            .startsWith("[")
+                    if (
+                        responseText.trim().startsWith("{") ||
+                        responseText.trim().startsWith("[")
                     ) {
                         try {
                             json.decodeFromString<ActivationResponseDto>(responseText)
                         } catch (parseException: Exception) {
                             Log.e("ApiService", "JSON Parse Failed", parseException)
                             ActivationResponseDto(
-                                status = FAILED,
+                                status = Constants.ResponseStatus.FAILED,
                                 message = "JSON parsing failed: ${parseException.message}",
                                 data = null
                             )
                         }
                     } else {
                         ActivationResponseDto(
-                            status = FAILED,
-                            message = "Server returned non-JSON response: $responseText",
+                            status = Constants.ResponseStatus.FAILED,
+                            message = "You have reached your free Google API quota limit. Please wait 24 hours before retrying.",
                             data = null,
                         )
                     }
@@ -108,7 +109,7 @@ class ActivationServiceImpl(
 
                 else -> {
                     ActivationResponseDto(
-                        status = FAILED,
+                        status = Constants.ResponseStatus.FAILED,
                         message = "Status ${response.status}: $responseText",
                         data = null
                     )
@@ -116,7 +117,7 @@ class ActivationServiceImpl(
             }
         } catch (e: Exception) {
             ActivationResponseDto(
-                status = FAILED,
+                status = Constants.ResponseStatus.FAILED,
                 message = "Network error: ${e.message}",
                 data = null
             )

@@ -368,10 +368,10 @@ fun validatePassword(password: String): PasswordStrength {
     val score = listOf(hasLength, hasUpper, hasLower, hasDigit, hasSpecial).count { it }
 
     return when (score) {
-        in 0..2 -> PasswordStrength("Weak", Color.Red, score, false)
-        3, 4 -> PasswordStrength("Medium", Color(0xFFFFC107), score, false)
-        5 -> PasswordStrength("Strong", Color(0xFF00C853), score, true)
-        else -> PasswordStrength("Weak", Color.Red, score, false)
+        in 0..2 -> PasswordStrength("Weak", Color(0xFFFF3B30), score, false)
+        3, 4 -> PasswordStrength("Medium", Color(0xFFFFCC00), score, false)
+        5 -> PasswordStrength("Strong", Color(0xFF34C759), score, true)
+        else -> PasswordStrength("Weak", Color(0xFFFF3B30), score, false)
     }
 }
 

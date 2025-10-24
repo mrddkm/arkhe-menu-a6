@@ -73,6 +73,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.ui.theme.sourceCodeProFontFamily
+import com.arkhe.menu.presentation.ui.theme.trafficLights
 import com.arkhe.menu.utils.Constants.TextPlaceHolder.PLACE_HOLDER_MAIL
 import com.arkhe.menu.utils.Constants.TextPlaceHolder.PLACE_HOLDER_PHONE
 import compose.icons.EvaIcons
@@ -659,9 +660,9 @@ fun PasswordRequirementsChecklist(password: String) {
                         text = "•",
                         fontSize = MaterialTheme.typography.titleMedium.fontSize,
                         color = if (fulfilled)
-                            Color.Green.copy(alpha = 0.7f)
+                            MaterialTheme.trafficLights.go
                         else
-                            Color.Gray,
+                            MaterialTheme.trafficLights.caution,
                         modifier = Modifier.padding(end = 8.dp)
                     )
                     Text(

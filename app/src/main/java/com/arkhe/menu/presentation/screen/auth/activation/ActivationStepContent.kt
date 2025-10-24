@@ -75,7 +75,6 @@ import compose.icons.evaicons.outline.ArrowIosBack
 import compose.icons.evaicons.outline.ArrowIosForward
 import compose.icons.evaicons.outline.CheckmarkCircle
 import compose.icons.evaicons.outline.CloseCircle
-import kotlinx.coroutines.delay
 
 @Composable
 fun ActivationContentStepOne(
@@ -338,7 +337,7 @@ fun ActivationContentStepTwo(
         Column(
             modifier = Modifier
                 .fillMaxWidth(0.8f)
-                .padding(bottom = 4.dp),
+                .padding(bottom = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
@@ -558,7 +557,7 @@ fun ActivationContentStepThree(
     val focusNew = remember { FocusRequester() }
     val focusConfirm = remember { FocusRequester() }
 
-    val keyboardController = LocalSoftwareKeyboardController.current
+    /*val keyboardController = LocalSoftwareKeyboardController.current*/
 
     val allChecklistPassed by remember(state.password) {
         derivedStateOf { newStrength.score == 5 }
@@ -638,8 +637,7 @@ fun ActivationContentStepThree(
                 }
             )
 
-            /*Strength Bar & Checklist (visible while checklist NOT yet all passed)*/
-            AnimatedVisibility(visible = state.password.isNotEmpty() && !allChecklistPassed) {
+            AnimatedVisibility(visible = state.password.isNotEmpty()) {
                 Column(
                     modifier = Modifier.fillMaxWidth(0.8f),
                     verticalArrangement = Arrangement.spacedBy(6.dp)
@@ -665,7 +663,6 @@ fun ActivationContentStepThree(
                     Box(
                         modifier = Modifier.fillMaxWidth(),
                         contentAlignment = Alignment.Center
-
                     ) {
                         Text(
                             text = newStrength.label,
@@ -675,7 +672,9 @@ fun ActivationContentStepThree(
                         )
                     }
 
-                    PasswordRequirementsChecklist(password = state.password)
+                    AnimatedVisibility(visible = !allChecklistPassed) {
+                        PasswordRequirementsChecklist(password = state.password)
+                    }
                 }
             }
 
@@ -687,7 +686,7 @@ fun ActivationContentStepThree(
                     modifier = Modifier.fillMaxWidth(0.8f),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Spacer(Modifier.height(12.dp))
+                    /*Spacer(Modifier.height(6.dp))*/
                     OutlinedTextField(
                         value = state.confirmPassword,
                         onValueChange = { newValue ->
@@ -798,14 +797,13 @@ fun ActivationContentStepThree(
             }
         }
     }
-
-    LaunchedEffect(allChecklistPassed) {
-        if (allChecklistPassed) {
-            delay(150)
-            focusConfirm.requestFocus()
-            keyboardController?.show()
-        }
-    }
+    /*    LaunchedEffect(allChecklistPassed) {
+            if (allChecklistPassed) {
+                delay(150)
+                focusConfirm.requestFocus()
+                keyboardController?.show()
+            }
+        }*/
 }
 
 @Composable

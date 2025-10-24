@@ -283,7 +283,7 @@ fun rememberActivationState(): ActivationState {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    var step by remember { mutableIntStateOf(1) }
+    var step by remember { mutableIntStateOf(3) }
     var userId by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }

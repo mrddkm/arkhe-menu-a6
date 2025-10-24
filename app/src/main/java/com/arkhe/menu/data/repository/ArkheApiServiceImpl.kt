@@ -143,16 +143,8 @@ class ArkheApiServiceImpl(
                                 json.decodeFromString<ProfileResponseDto>(
                                     responseText
                                 )
-                            /*------LOG RESPONSE JSON Parsing SUCCESS
-                            asLogJsonResponseSuccess(TAG, parsedResponse)
-                            * */
-
                             parsedResponse
                         } catch (parseException: Exception) {
-                            /*------LOG RESPONSE JSON Parsing EXCEPTION
-                            asLogJsonResponseException(TAG, parseException)
-                            * */
-
                             ProfileResponseDto(
                                 status = "parse_error",
                                 message = "JSON parsing failed: ${parseException.message}. Raw response: $responseText",
@@ -161,13 +153,9 @@ class ArkheApiServiceImpl(
                             )
                         }
                     } else {
-                        /*------LOG RESPONSE non-JSON
-                        asLogNonJsonResponse(TAG)
-                        * */
-
                         ProfileResponseDto(
-                            status = "invalid_response",
-                            message = "Server returned non-JSON response: $responseText",
+                            status = Constants.ResponseStatus.FAILED,
+                            message = "You have reached your free Google API quota limit. Please wait 24 hours before retrying.",
                             data = emptyList(),
                             info = InfoDataDto.parseError()
                         )
@@ -178,16 +166,13 @@ class ArkheApiServiceImpl(
                 HttpStatusCode.MovedPermanently, /*301*/
                 HttpStatusCode.SeeOther -> { /*303*/
                     val location = response.headers["Location"]
-                    /*------LOG RESPONSE HttpStatusCode 303
-                    asLogResponseHttpStatusCode303(TAG, location, response, responseText)
-                    * */
 
                     /*Try to follow redirect manually if needed*/
                     if (location != null && location.isNotEmpty()) {
                         return followRedirectManually(location, requestDto)
                     } else {
                         ProfileResponseDto(
-                            status = "redirect_no_location",
+                            status = Constants.ResponseStatus.FAILED,
                             message = "Redirect without location header. Response: $responseText",
                             data = emptyList(),
                             info = InfoDataDto.networkError()
@@ -196,20 +181,12 @@ class ArkheApiServiceImpl(
                 }
 
                 HttpStatusCode.MethodNotAllowed -> { /*405*/
-                    /*------LOG RESPONSE HttpStatusCode 405
-                    asLogResponseHttpStatusCode405(TAG, response)
-                    * */
-
                     return retryWithAlternativeMethod(sessionToken)
                 }
 
                 else -> {
-                    /*------LOG RESPONSE Unexpected Status Codes
-                    asLogResponseUnexpectedHttpStatusCode(TAG, response)
-                    * */
-
                     ProfileResponseDto(
-                        status = "unexpected_status",
+                        status = Constants.ResponseStatus.FAILED,
                         message = "Status ${response.status}: $responseText",
                         data = emptyList(),
                         info = InfoDataDto.networkError()
@@ -217,12 +194,8 @@ class ArkheApiServiceImpl(
                 }
             }
         } catch (e: Exception) {
-            /*------LOG RESPONSE Network Exception
-            asLogNetworkException(TAG, e)
-            * */
-
             ProfileResponseDto(
-                status = "network_error",
+                status = Constants.ResponseStatus.FAILED,
                 message = "Network error: ${e.message}",
                 data = emptyList(),
                 info = InfoDataDto.networkError()
@@ -245,20 +218,18 @@ class ArkheApiServiceImpl(
             }
 
             val responseText = response.bodyAsText()
-            /*------LOG ALTERNATIVE METHOD
-            asLogResponseRetryWithAlternativeMethod(TAG, responseText)
-            * */
 
             when (response.status) {
                 HttpStatusCode.OK -> {
-                    if (responseText.trim().startsWith("{") || responseText.trim()
-                            .startsWith("[")
+                    if (
+                        responseText.trim().startsWith("{") ||
+                        responseText.trim().startsWith("[")
                     ) {
                         json.decodeFromString<ProfileResponseDto>(responseText)
                     } else {
                         ProfileResponseDto(
-                            status = "invalid_response",
-                            message = "Server returned non-JSON response: $responseText",
+                            status = Constants.ResponseStatus.FAILED,
+                            message = "You have reached your free Google API quota limit. Please wait 24 hours before retrying.",
                             data = emptyList(),
                             info = InfoDataDto.networkError()
                         )
@@ -267,7 +238,7 @@ class ArkheApiServiceImpl(
 
                 else -> {
                     ProfileResponseDto(
-                        status = "alternative_failed",
+                        status = Constants.ResponseStatus.FAILED,
                         message = "Alternative method also failed with status ${response.status}: $responseText",
                         data = emptyList(),
                         info = InfoDataDto.networkError()
@@ -275,12 +246,8 @@ class ArkheApiServiceImpl(
                 }
             }
         } catch (e: Exception) {
-            /*------LOG ALTERNATIVE METHOD EXCEPTION
-            asLogResponseRetryWithAlternativeMethodFailed(TAG, e)
-            * */
-
             ProfileResponseDto(
-                status = "alternative_error",
+                status = Constants.ResponseStatus.FAILED,
                 message = "Alternative method error: ${e.message}",
                 data = emptyList(),
                 info = InfoDataDto.networkError()
@@ -302,20 +269,18 @@ class ArkheApiServiceImpl(
             }
 
             val responseText = response.bodyAsText()
-            /*------LOG REDIRECT METHOD
-            asLogResponseFollowRedirectManually(TAG, location, response, responseText)
-            * */
 
             when (response.status) {
                 HttpStatusCode.OK -> {
-                    if (responseText.trim().startsWith("{") || responseText.trim()
-                            .startsWith("[")
+                    if (
+                        responseText.trim().startsWith("{") ||
+                        responseText.trim().startsWith("[")
                     ) {
                         json.decodeFromString<ProfileResponseDto>(responseText)
                     } else {
                         ProfileResponseDto(
-                            status = "redirect_invalid_response",
-                            message = "Redirect returned non-JSON response: $responseText",
+                            status = Constants.ResponseStatus.FAILED,
+                            message = "You have reached your free Google API quota limit. Please wait 24 hours before retrying.",
                             data = emptyList(),
                             info = InfoDataDto.networkError()
                         )
@@ -324,7 +289,7 @@ class ArkheApiServiceImpl(
 
                 else -> {
                     ProfileResponseDto(
-                        status = "redirect_failed",
+                        status = Constants.ResponseStatus.FAILED,
                         message = "Redirect failed with status ${response.status}: $responseText",
                         data = emptyList(),
                         info = InfoDataDto.networkError()
@@ -332,12 +297,8 @@ class ArkheApiServiceImpl(
                 }
             }
         } catch (e: Exception) {
-            /*------LOG REDIRECT METHOD FAILED
-            asLogResponseFollowRedirectManuallyFailed(TAG, e)
-            * */
-
             ProfileResponseDto(
-                status = "redirect_error",
+                status = Constants.ResponseStatus.FAILED,
                 message = "Manual redirect error: ${e.message}",
                 data = emptyList(),
                 info = InfoDataDto.networkError()
@@ -360,8 +321,9 @@ class ArkheApiServiceImpl(
 
             when (response.status) {
                 HttpStatusCode.OK -> {
-                    if (responseText.trim().startsWith("{") || responseText.trim()
-                            .startsWith("[")
+                    if (
+                        responseText.trim().startsWith("{") ||
+                        responseText.trim().startsWith("[")
                     ) {
                         try {
                             val parsedResponse =
@@ -369,7 +331,7 @@ class ArkheApiServiceImpl(
                             parsedResponse
                         } catch (parseException: Exception) {
                             CategoryResponseDto(
-                                status = "parse_error",
+                                status = Constants.ResponseStatus.FAILED,
                                 message = "JSON parsing failed: ${parseException.message}",
                                 data = emptyList(),
                                 info = CategoryInfoDto.parseError()
@@ -377,8 +339,8 @@ class ArkheApiServiceImpl(
                         }
                     } else {
                         CategoryResponseDto(
-                            status = "invalid_response",
-                            message = "Server returned non-JSON response: $responseText",
+                            status = Constants.ResponseStatus.FAILED,
+                            message = "You have reached your free Google API quota limit. Please wait 24 hours before retrying.",
                             data = emptyList(),
                             info = CategoryInfoDto.parseError()
                         )
@@ -387,7 +349,7 @@ class ArkheApiServiceImpl(
 
                 else -> {
                     CategoryResponseDto(
-                        status = "unexpected_status",
+                        status = Constants.ResponseStatus.FAILED,
                         message = "Status ${response.status}: $responseText",
                         data = emptyList(),
                         info = CategoryInfoDto.networkError()
@@ -396,7 +358,7 @@ class ArkheApiServiceImpl(
             }
         } catch (e: Exception) {
             CategoryResponseDto(
-                status = "network_error",
+                status = Constants.ResponseStatus.FAILED,
                 message = "Network error: ${e.message}",
                 data = emptyList(),
                 info = CategoryInfoDto.networkError()
@@ -422,8 +384,9 @@ class ArkheApiServiceImpl(
             val responseText = response.bodyAsText()
             when (response.status) {
                 HttpStatusCode.OK -> {
-                    if (responseText.trim().startsWith("{") || responseText.trim()
-                            .startsWith("[")
+                    if (
+                        responseText.trim().startsWith("{") ||
+                        responseText.trim().startsWith("[")
                     ) {
                         try {
                             val parsedResponse =
@@ -431,7 +394,7 @@ class ArkheApiServiceImpl(
                             parsedResponse
                         } catch (parseException: Exception) {
                             ProductResponseDto(
-                                status = "parse_error",
+                                status = Constants.ResponseStatus.FAILED,
                                 message = "JSON parsing failed: ${parseException.message}",
                                 data = emptyList(),
                                 info = ProductInfoDto.parseError()
@@ -439,8 +402,8 @@ class ArkheApiServiceImpl(
                         }
                     } else {
                         ProductResponseDto(
-                            status = "invalid_response",
-                            message = "Server returned non-JSON response: $responseText",
+                            status = Constants.ResponseStatus.FAILED,
+                            message = "You have reached your free Google API quota limit. Please wait 24 hours before retrying.",
                             data = emptyList(),
                             info = ProductInfoDto.parseError()
                         )
@@ -449,7 +412,7 @@ class ArkheApiServiceImpl(
 
                 else -> {
                     ProductResponseDto(
-                        status = "unexpected_status",
+                        status = Constants.ResponseStatus.FAILED,
                         message = "Status ${response.status}: $responseText",
                         data = emptyList(),
                         info = ProductInfoDto.networkError()
@@ -458,7 +421,7 @@ class ArkheApiServiceImpl(
             }
         } catch (e: Exception) {
             ProductResponseDto(
-                status = "network_error",
+                status = Constants.ResponseStatus.FAILED,
                 message = "Network error: ${e.message}",
                 data = emptyList(),
                 info = ProductInfoDto.networkError()
