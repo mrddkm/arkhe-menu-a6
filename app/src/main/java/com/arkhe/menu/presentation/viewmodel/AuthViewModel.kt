@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arkhe.menu.data.remote.api.SafeResourceResult
 import com.arkhe.menu.domain.repository.AuthRepository
-import com.arkhe.menu.domain.usecase.auth.ActivationUseCases
+import com.arkhe.menu.domain.usecase.auth.AuthUseCases
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,7 +21,7 @@ sealed interface AuthUiState {
 enum class SuccessType { ACTIVATION, SIGNEDIN }
 
 class AuthViewModel(
-    private val activationUseCases: ActivationUseCases,
+    private val authUseCases: AuthUseCases,
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
@@ -39,10 +39,8 @@ class AuthViewModel(
     ) {
         viewModelScope.launch {
             _uiState.value = AuthUiState.Loading
-
             val session = _sessionActivation.value
-
-            activationUseCases.activationStepUseCase(
+            authUseCases.activationStepUseCase(
                 step = step,
                 userId = userId,
                 mail = mail,
@@ -92,7 +90,7 @@ class AuthViewModel(
     fun signIn(sessionActivation: String, userId: String, password: String) {
         viewModelScope.launch {
             _uiState.value = AuthUiState.Loading
-            activationUseCases.signInUseCase(sessionActivation, userId, password)
+            authUseCases.signInUseCase(sessionActivation, userId, password)
                 .collect { result ->
                     when (result) {
                         is SafeResourceResult.Success -> {

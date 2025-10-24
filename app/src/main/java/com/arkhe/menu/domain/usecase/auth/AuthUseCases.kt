@@ -68,7 +68,7 @@ class SignInUseCase(
     }
 }
 
-data class ActivationUseCases(
+data class AuthUseCases(
     val activationStepUseCase: ActivationUseCase,
     val signInUseCase: SignInUseCase
 )

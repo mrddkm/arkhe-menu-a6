@@ -7,12 +7,14 @@ import com.arkhe.menu.domain.model.auth.ActivationResponse
 import com.arkhe.menu.domain.model.auth.SignInResponse
 import com.arkhe.menu.domain.repository.AuthRepository
 import com.arkhe.menu.domain.usecase.auth.ActivationUseCase
-import com.arkhe.menu.domain.usecase.auth.ActivationUseCases
+import com.arkhe.menu.domain.usecase.auth.AuthUseCases
 import com.arkhe.menu.domain.usecase.auth.SignInUseCase
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -48,7 +50,7 @@ class AuthViewModelTest {
 
         // --- PERBAIKAN UTAMA DI SINI ---    // Gunakan nama kelas wrapper yang benar: AuthUseCases
         // Bukan ActivationUseCases
-        val authUseCases = ActivationUseCases(
+        val authUseCases = AuthUseCases(
             activationStepUseCase = activationUseCase,
             signInUseCase = signInUseCase
         )
@@ -72,10 +74,11 @@ class AuthViewModelTest {
             // ARRANGE
             val successMessage = "Verification successful"
             val successResponse = ActivationResponse(status = "success", message = successMessage)
-            val successResult = flowOf(
-                SafeResourceResult.Loading(),
-                SafeResourceResult.Success(successResponse)
-            )
+            val successResult = flow {
+                emit(SafeResourceResult.Loading())
+                delay(1)
+                emit(SafeResourceResult.Success(successResponse))
+            }
             every {
                 activationUseCase.invoke(
                     any(),
@@ -101,7 +104,6 @@ class AuthViewModelTest {
                 )
             } returns successResult
 
-            // ACT & ASSERT
             viewModel.uiState.test {
                 assertEquals(AuthUiState.Idle, awaitItem()) // Awal
                 viewModel.performActivationStep(
@@ -110,8 +112,13 @@ class AuthViewModelTest {
                     phone = fakePhone,
                     mail = fakeMail
                 )
-                assertEquals(AuthUiState.Loading, awaitItem()) // Loading
-                val finalState = awaitItem() // Success
+
+                // 1. Cek state Loading awal
+                assertEquals(AuthUiState.Loading, awaitItem())
+
+                // 2. Langsung cek state akhir
+                val finalState = awaitItem()
+
                 assertTrue(finalState is AuthUiState.Success)
                 assertEquals(successMessage, (finalState as AuthUiState.Success).message)
                 assertEquals(SuccessType.ACTIVATION, finalState.type)
@@ -124,11 +131,13 @@ class AuthViewModelTest {
         runTest {
             // ARRANGE
             val errorMessage = "User ID not found"
-            // PERBAIKI: Gunakan nama Failure yang benar dari SafeResourceResult
-            val failureResult = flowOf(
-                SafeResourceResult.Loading(),
-                SafeResourceResult.Failure<ActivationResponse>(errorMessage)
-            )
+
+            val failureResult = flow {
+                emit(SafeResourceResult.Loading())
+                delay(1)
+                emit(SafeResourceResult.Failure<ActivationResponse>(errorMessage))
+            }
+
             every {
                 activationUseCase.invoke(
                     any(),
@@ -163,40 +172,50 @@ class AuthViewModelTest {
                     phone = fakePhone,
                     mail = fakeMail
                 )
-                assertEquals(AuthUiState.Loading, awaitItem()) // Loading
-                val finalState = awaitItem() // Failed
+
+                // 1. Cek state Loading awal
+                assertEquals(AuthUiState.Loading, awaitItem())
+
+                // 2. Langsung cek state akhir
+                val finalState = awaitItem()
+
                 assertTrue(finalState is AuthUiState.Failed)
                 assertEquals(errorMessage, (finalState as AuthUiState.Failed).message)
                 cancelAndIgnoreRemainingEvents()
             }
         }
 
-    // --- TAMBAHKAN TEST BARU UNTUK SIGN-IN ---
     @Test
     fun `signIn - when use case returns Success - updates state to Success and calls setSignedIn`() =
         runTest {
-            // ARRANGE
+            // ARRANGE (Biarkan seperti ini, sudah benar)
             val successMessage = "Sign-in successful"
             val successResponse = SignInResponse("success", successMessage)
-            val successFlow = flowOf(
-                SafeResourceResult.Loading(),
-                SafeResourceResult.Success(successResponse)
-            )
+            val successFlow = flow {
+                // Kita masih perlu emit Loading di sini untuk mensimulasikan repository
+                emit(SafeResourceResult.Loading())
+                delay(1)
+                emit(SafeResourceResult.Success(successResponse))
+            }
             every {
-                signInUseCase.invoke(
-                    fakeSessionActivation,
-                    fakeUserId,
-                    fakePassword
-                )
+                signInUseCase.invoke(fakeSessionActivation, fakeUserId, fakePassword)
             } returns successFlow
-            coEvery { authRepository.setSignedIn(true) } returns Unit // Mock fungsi suspend
+            coEvery { authRepository.setSignedIn(true) } returns Unit
 
-            // ACT & ASSERT
+            // ACT & ASSERT (PERBAIKI DI SINI)
             viewModel.uiState.test {
                 assertEquals(AuthUiState.Idle, awaitItem()) // Awal
                 viewModel.signIn(fakeSessionActivation, fakeUserId, fakePassword)
-                assertEquals(AuthUiState.Loading, awaitItem()) // Loading
-                val finalState = awaitItem() // Success
+
+                // 1. Cek state Loading yang di-set di awal fungsi signIn
+                assertEquals(AuthUiState.Loading, awaitItem())
+
+                // 2. Langsung cek state akhir.
+                // TestDispatcher akan menjalankan flow begitu cepat sehingga kita mungkin
+                // tidak akan menangkap emisi Loading dari dalam flow.
+                // awaitItem() akan langsung mendapatkan emisi 'Success'.
+                val finalState = awaitItem()
+
                 assertTrue(finalState is AuthUiState.Success)
                 assertEquals(successMessage, (finalState as AuthUiState.Success).message)
                 assertEquals(SuccessType.SIGNEDIN, finalState.type)
@@ -206,29 +225,33 @@ class AuthViewModelTest {
 
     @Test
     fun `signIn - when use case returns Failure - updates state to Failed`() = runTest {
-        // ARRANGE
+        // ARRANGE (Biarkan seperti ini, sudah benar)
         val errorMessage = "Invalid credentials"
-        val failureFlow = flowOf(
-            SafeResourceResult.Loading(),
-            SafeResourceResult.Failure<SignInResponse>(errorMessage)
-        )
+        val failureFlow = flow {
+            emit(SafeResourceResult.Loading())
+            delay(1)
+            emit(SafeResourceResult.Failure<SignInResponse>(errorMessage))
+        }
         every {
-            signInUseCase.invoke(
-                fakeSessionActivation,
-                fakeUserId,
-                fakePassword
-            )
+            signInUseCase.invoke(fakeSessionActivation, fakeUserId, fakePassword)
         } returns failureFlow
 
-        // ACT & ASSERT
+        // ACT & ASSERT (PERBAIKI DI SINI)
         viewModel.uiState.test {
             assertEquals(AuthUiState.Idle, awaitItem()) // Awal
             viewModel.signIn(fakeSessionActivation, fakeUserId, fakePassword)
-            assertEquals(AuthUiState.Loading, awaitItem()) // Loading
-            val finalState = awaitItem() // Failed
+
+            // 1. Cek state Loading yang di-set di awal fungsi signIn
+            assertEquals(AuthUiState.Loading, awaitItem())
+
+            // 2. Langsung cek state akhir.
+            // `awaitItem()` akan langsung mendapatkan emisi 'Failed'.
+            val finalState = awaitItem()
+
             assertTrue(finalState is AuthUiState.Failed)
             assertEquals(errorMessage, (finalState as AuthUiState.Failed).message)
             cancelAndIgnoreRemainingEvents()
         }
     }
+
 }

@@ -44,8 +44,6 @@ class AuthRepositoryImpl(
         appVersionCode: String?
     ): Flow<SafeResourceResult<ActivationResponse>> {
         return flow {
-            emit(SafeResourceResult.Loading())
-
             val resultFromDataSource = remoteDataSource.performActivation(
                 step = step,
                 userId = userId,
@@ -93,7 +91,6 @@ class AuthRepositoryImpl(
         password: String
     ): Flow<SafeResourceResult<SignInResponse>> {
         return flow {
-            emit(SafeResourceResult.Loading())
             val result = remoteDataSource.signIn(sessionActivation, userId, password)
             when (result) {
                 is SafeApiResult.Success -> {
