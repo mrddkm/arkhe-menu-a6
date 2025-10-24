@@ -78,9 +78,10 @@ class ActivationServiceImpl(
                 parameter(PARAMETER_KEY, PARAMETER_VALUE_ACTIVATION_FLOW)
                 setBody(requestJson)
             }
+            Log.d("ApiService", "API Request: $requestJson")
 
             val responseText = response.bodyAsText()
-            Log.d("ApiService", "Raw Verification Response: $responseText")
+            Log.d("ApiService", "API Response: $responseText")
 
             when (response.status) {
                 HttpStatusCode.OK -> {

@@ -1,7 +1,6 @@
 package com.arkhe.menu.presentation.screen.auth.activation
 
 import android.content.Context
-import android.os.Build
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -55,6 +54,7 @@ import com.arkhe.menu.utils.Constants.ActivationFlow.ACT_ACTIVATION_CODE_STEP
 import com.arkhe.menu.utils.Constants.ActivationFlow.ACT_ACTIVATION_STEP
 import com.arkhe.menu.utils.Constants.ActivationFlow.ACT_CREATE_PASSWORD_STEP
 import com.arkhe.menu.utils.Constants.ActivationFlow.ACT_VERIFICATION_STEP
+import com.arkhe.menu.utils.DeviceInfoUtil
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Fill
 import compose.icons.evaicons.Outline
@@ -73,6 +73,7 @@ fun ActivationBottomSheet(
     authViewModel: AuthViewModel = koinViewModel(),
     langViewModel: LanguageViewModel = koinViewModel()
 ) {
+    val context = LocalContext.current
     val state = rememberActivationState()
     val uiState by authViewModel.uiState.collectAsState()
 
@@ -237,23 +238,25 @@ fun ActivationBottomSheet(
                     onFinish = {
                         state.scope.launch {
                             if (state.pin == state.confirmPin && state.pin.length == 4) {
+                                val deviceInfoUtil = DeviceInfoUtil.getDeviceInfo(context)
                                 val deviceInfo = mapOf(
-                                    "deviceId" to Build.ID,
-                                    "manufacturer" to Build.MANUFACTURER,
-                                    "brand" to Build.BRAND,
-                                    "model" to Build.MODEL,
-                                    "device" to Build.DEVICE,
-                                    "product" to Build.PRODUCT,
-                                    "osVersion" to Build.VERSION.RELEASE,
-                                    "sdkLevel" to Build.VERSION.SDK_INT.toString(),
-                                    "securityPatch" to Build.VERSION.SECURITY_PATCH,
-                                    "deviceType" to "smartphone",
-                                    "appVersionName" to "1.0.0",
-                                    "appVersionCode" to "1"
+                                    "deviceId" to deviceInfoUtil["deviceId"]!!,
+                                    "manufacturer" to deviceInfoUtil["manufacturer"]!!,
+                                    "brand" to deviceInfoUtil["brand"]!!,
+                                    "model" to deviceInfoUtil["model"]!!,
+                                    "device" to deviceInfoUtil["device"]!!,
+                                    "product" to deviceInfoUtil["product"]!!,
+                                    "osVersion" to deviceInfoUtil["osVersion"]!!,
+                                    "sdkLevel" to deviceInfoUtil["sdkLevel"]!!,
+                                    "securityPatch" to deviceInfoUtil["securityPatch"]!!,
+                                    "deviceType" to deviceInfoUtil["deviceType"]!!,
+                                    "appVersionName" to deviceInfoUtil["appVersionName"]!!,
+                                    "appVersionCode" to deviceInfoUtil["appVersionCode"]!!
                                 )
 
                                 authViewModel.performActivationStep(
                                     step = ACT_ACTIVATION_STEP,
+                                    userId = state.userId,
                                     isPinActive = true,
                                     deviceInfo = deviceInfo
                                 )

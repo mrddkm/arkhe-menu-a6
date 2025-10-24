@@ -22,11 +22,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.arkhe.menu.data.local.preferences.Lang
 import com.arkhe.menu.presentation.viewmodel.LanguageViewModel
+import com.arkhe.menu.utils.DeviceInfoUtil
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
 import compose.icons.evaicons.outline.Close
@@ -106,7 +110,19 @@ fun AboutContent(
                 .padding(start = 16.dp, top = 0.dp, bottom = 0.dp, end = 16.dp),
             shape = MaterialTheme.shapes.medium
         ) {
-            WizardBottomSheetExample()
+            val context = LocalContext.current
+            val deviceInfo = DeviceInfoUtil.getDeviceInfo(context)
+            val deviceInfoString = deviceInfo.map { (key, value) ->
+                "$key: $value"
+            }.joinToString(separator = "\n")
+
+            Text(
+                text = deviceInfoString,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Normal,
+                fontFamily = FontFamily.Monospace,
+                lineHeight = 18.sp
+            )
         }
     }
 }
