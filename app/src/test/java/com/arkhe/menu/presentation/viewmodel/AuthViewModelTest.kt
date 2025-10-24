@@ -4,7 +4,7 @@ import app.cash.turbine.test
 import com.arkhe.menu.MainCoroutineRule
 import com.arkhe.menu.data.remote.api.SafeResourceResult
 import com.arkhe.menu.domain.model.auth.ActivationResponse
-import com.arkhe.menu.domain.model.auth.SignInResponse // <-- Tambahkan import ini
+import com.arkhe.menu.domain.model.auth.SignInResponse
 import com.arkhe.menu.domain.repository.AuthRepository
 import com.arkhe.menu.domain.usecase.auth.ActivationUseCase
 import com.arkhe.menu.domain.usecase.auth.ActivationUseCases
@@ -34,6 +34,7 @@ class AuthViewModelTest {
     private lateinit var viewModel: AuthViewModel
 
     // Variabel fake, sudah benar
+    private val fakeSessionActivation = "kasdjabdkj8yp987we"
     private val fakeUserId = "testUser"
     private val fakePassword = "password123" // <-- Tambahkan fake password
     private val fakePhone = "08123456789"
@@ -181,13 +182,19 @@ class AuthViewModelTest {
                 SafeResourceResult.Loading(),
                 SafeResourceResult.Success(successResponse)
             )
-            every { signInUseCase.invoke(fakeUserId, fakePassword) } returns successFlow
+            every {
+                signInUseCase.invoke(
+                    fakeSessionActivation,
+                    fakeUserId,
+                    fakePassword
+                )
+            } returns successFlow
             coEvery { authRepository.setSignedIn(true) } returns Unit // Mock fungsi suspend
 
             // ACT & ASSERT
             viewModel.uiState.test {
                 assertEquals(AuthUiState.Idle, awaitItem()) // Awal
-                viewModel.signIn(fakeUserId, fakePassword)
+                viewModel.signIn(fakeSessionActivation, fakeUserId, fakePassword)
                 assertEquals(AuthUiState.Loading, awaitItem()) // Loading
                 val finalState = awaitItem() // Success
                 assertTrue(finalState is AuthUiState.Success)
@@ -205,12 +212,18 @@ class AuthViewModelTest {
             SafeResourceResult.Loading(),
             SafeResourceResult.Failure<SignInResponse>(errorMessage)
         )
-        every { signInUseCase.invoke(fakeUserId, fakePassword) } returns failureFlow
+        every {
+            signInUseCase.invoke(
+                fakeSessionActivation,
+                fakeUserId,
+                fakePassword
+            )
+        } returns failureFlow
 
         // ACT & ASSERT
         viewModel.uiState.test {
             assertEquals(AuthUiState.Idle, awaitItem()) // Awal
-            viewModel.signIn(fakeUserId, fakePassword)
+            viewModel.signIn(fakeSessionActivation, fakeUserId, fakePassword)
             assertEquals(AuthUiState.Loading, awaitItem()) // Loading
             val finalState = awaitItem() // Failed
             assertTrue(finalState is AuthUiState.Failed)

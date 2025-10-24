@@ -60,10 +60,11 @@ class SignInUseCase(
     private val authRepository: AuthRepository
 ) {
     operator fun invoke(
+        sessionActivation: String,
         userId: String,
         password: String
     ): Flow<SafeResourceResult<SignInResponse>> {
-        return authRepository.signIn(userId, password)
+        return authRepository.signIn(sessionActivation, userId, password)
     }
 }
 

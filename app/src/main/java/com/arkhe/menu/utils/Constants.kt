@@ -13,6 +13,7 @@ object Constants {
 
     /*Action Params - Auth*/
     const val PARAMETER_VALUE_ACTIVATION_FLOW = "activation_flow"
+    const val PARAMETER_VALUE_SIGN_IN = "signin"
 
     /*Action Params*/
     const val PARAMETER_VALUE_PROFILES = "profiles"

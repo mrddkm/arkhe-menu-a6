@@ -40,10 +40,8 @@ class AuthViewModel(
         viewModelScope.launch {
             _uiState.value = AuthUiState.Loading
 
-            // Gunakan session yang sudah tersimpan untuk step selanjutnya
             val session = _sessionActivation.value
 
-            // Panggil UseCase (yang akan kita buat/modifikasi)
             activationUseCases.activationStepUseCase(
                 step = step,
                 userId = userId,
@@ -91,33 +89,30 @@ class AuthViewModel(
         }
     }
 
-// ... di dalam class AuthViewModel
-
-    fun signIn(userId: String, password: String) {
+    fun signIn(sessionActivation: String, userId: String, password: String) {
         viewModelScope.launch {
             _uiState.value = AuthUiState.Loading
-            // Panggil SignInUseCase yang baru
-            activationUseCases.signInUseCase(userId, password).collect { result ->
-                when (result) {
-                    is SafeResourceResult.Success -> {
-                        // Simpan status sign-in
-                        authRepository.setSignedIn(true)
+            activationUseCases.signInUseCase(sessionActivation, userId, password)
+                .collect { result ->
+                    when (result) {
+                        is SafeResourceResult.Success -> {
+                            authRepository.setSignedIn(true)
 
-                        _uiState.value = AuthUiState.Success(
-                            type = SuccessType.SIGNEDIN,
-                            message = result.data?.message ?: "Sign-in successful"
-                        )
-                    }
+                            _uiState.value = AuthUiState.Success(
+                                type = SuccessType.SIGNEDIN,
+                                message = result.data?.message ?: "Sign-in successful"
+                            )
+                        }
 
-                    is SafeResourceResult.Failure -> {
-                        _uiState.value = AuthUiState.Failed(result.message ?: "Sign-in failed")
-                    }
+                        is SafeResourceResult.Failure -> {
+                            _uiState.value = AuthUiState.Failed(result.message ?: "Sign-in failed")
+                        }
 
-                    is SafeResourceResult.Loading -> {
-                        _uiState.value = AuthUiState.Loading
+                        is SafeResourceResult.Loading -> {
+                            _uiState.value = AuthUiState.Loading
+                        }
                     }
                 }
-            }
         }
     }
 

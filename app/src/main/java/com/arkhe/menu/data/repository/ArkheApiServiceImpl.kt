@@ -83,27 +83,27 @@ class ArkheApiServiceImpl(
         )
     }
 
-    override suspend fun signIn(userId: String, password: String): SignInResponseDto {
-        // Di sini Anda akan memanggil endpoint sign-in yang sebenarnya.
-        // Logikanya akan sangat mirip dengan service 'activationService',
-        // kemungkinan Anda akan membuat 'signInService' atau langsung memanggil httpClient.
-
-        // Contoh implementasi langsung dengan httpClient:
+    override suspend fun signIn(
+        sessionActivation: String,
+        userId: String,
+        password: String
+    ): SignInResponseDto {
         return try {
-            val requestDto = SignInRequestDto(userId = userId, password = password)
+            val requestDto = SignInRequestDto(
+                sessionActivation = sessionActivation,
+                userId = userId,
+                password = password
+            )
             val response: HttpResponse = httpClient.post {
-                url(Constants.URL_BASE) // Ganti dengan URL sign-in yang benar
-                // Sesuaikan parameter jika endpoint sign-in berbeda
-                parameter(Constants.PARAMETER_KEY, "sign_in_value")
+                url(Constants.URL_BASE)
+                parameter(Constants.PARAMETER_KEY, Constants.PARAMETER_VALUE_SIGN_IN)
                 setBody(requestDto)
             }
 
-            // Parsing response seperti yang Anda lakukan di getProfiles
             val responseText = response.bodyAsText()
             if (response.status == HttpStatusCode.OK) {
                 json.decodeFromString<SignInResponseDto>(responseText)
             } else {
-                // Buat response error default
                 SignInResponseDto(
                     status = "error",
                     message = "Sign-in failed: ${response.status}",

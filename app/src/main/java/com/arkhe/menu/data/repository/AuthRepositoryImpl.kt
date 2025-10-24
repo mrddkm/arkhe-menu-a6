@@ -87,19 +87,23 @@ class AuthRepositoryImpl(
         }
     }
 
-    override fun signIn(userId: String, password: String): Flow<SafeResourceResult<SignInResponse>> {
+    override fun signIn(
+        sessionActivation: String,
+        userId: String,
+        password: String
+    ): Flow<SafeResourceResult<SignInResponse>> {
         return flow {
             emit(SafeResourceResult.Loading())
-            // Panggil remoteDataSource untuk sign-in (ini perlu dibuat)
-            val result = remoteDataSource.signIn(userId, password)
+            val result = remoteDataSource.signIn(sessionActivation, userId, password)
             when (result) {
                 is SafeApiResult.Success -> {
-                    // Mapper .toDomain() untuk SignInResponseDto perlu dibuat
                     emit(SafeResourceResult.Success(result.data.toDomain()))
                 }
+
                 is SafeApiResult.Failure -> {
                     emit(SafeResourceResult.Failure(result.exception.message ?: "Sign-in failed"))
                 }
+
                 is SafeApiResult.Loading -> {}
             }
         }

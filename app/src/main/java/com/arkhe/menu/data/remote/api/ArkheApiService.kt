@@ -1,9 +1,9 @@
 package com.arkhe.menu.data.remote.api
 
+import com.arkhe.menu.data.remote.dto.ActivationResponseDto
 import com.arkhe.menu.data.remote.dto.CategoryResponseDto
 import com.arkhe.menu.data.remote.dto.ProductResponseDto
 import com.arkhe.menu.data.remote.dto.ProfileResponseDto
-import com.arkhe.menu.data.remote.dto.ActivationResponseDto
 import com.arkhe.menu.data.remote.dto.SignInResponseDto
 
 interface ArkheApiService {
@@ -30,7 +30,11 @@ interface ArkheApiService {
         appVersionCode: String?
     ): ActivationResponseDto
 
-    suspend fun signIn(userId: String, password: String): SignInResponseDto
+    suspend fun signIn(
+        sessionActivation: String,
+        userId: String,
+        password: String
+    ): SignInResponseDto
 
     suspend fun getProfiles(sessionToken: String): ProfileResponseDto
     suspend fun getCategories(sessionToken: String): CategoryResponseDto

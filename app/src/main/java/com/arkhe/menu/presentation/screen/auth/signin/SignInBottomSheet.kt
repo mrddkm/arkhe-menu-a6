@@ -84,7 +84,7 @@ import org.koin.compose.KoinApplicationPreview
 fun SignInBottomSheet(
     onDismiss: () -> Unit,
     authViewModel: AuthViewModel = koinViewModel(),
-    onSignedIn: (String, String) -> Unit
+    onSignedIn: (String, String, String) -> Unit
 ) {
     val uiState by authViewModel.uiState.collectAsState()
 
@@ -98,11 +98,11 @@ fun SignInBottomSheet(
     LaunchedEffect(uiState) {
         when (val currentState = uiState) {
             is AuthUiState.Success -> {
-                // Jika tipe sukses adalah SIGNEDIN, tutup sheet
                 if (currentState.type == SuccessType.SIGNEDIN) {
                     onDismiss()
                 }
             }
+
             is AuthUiState.Failed -> {
                 // Tampilkan pesan error jika gagal
                 /*                Toast.makeText(
@@ -112,6 +112,7 @@ fun SignInBottomSheet(
                 // Reset state di ViewModel agar tidak error terus menerus
                 // viewModel.resetUiState()
             }
+
             else -> Unit
         }
     }
@@ -176,7 +177,7 @@ fun SignInContent(
     uiState: AuthUiState,
     state: SignInState = rememberSignInState(),
     langViewModel: LanguageViewModel = koinViewModel(),
-    onSignedIn: (String, String) -> Unit
+    onSignedIn: (String, String, String) -> Unit
 ) {
     val focusUserId = remember { FocusRequester() }
     val focusPassword = remember { FocusRequester() }
@@ -294,7 +295,13 @@ fun SignInContent(
                 }
             }
             Button(
-                onClick = { onSignedIn(state.userId.trim(), state.password) },
+                onClick = {
+                    onSignedIn(
+                        state.sessionActivation.trim(),
+                        state.userId.trim(),
+                        state.password.trim()
+                    )
+                },
                 enabled = isValid && uiState !is AuthUiState.Loading,
                 modifier = Modifier
                     .width(130.dp)
@@ -331,6 +338,7 @@ fun rememberSignInState(): SignInState {
     var password by remember { mutableStateOf("Qwer@123") }
 
     return SignInState(
+        sessionActivation = "",
         userId = userId,
         onUserIdChange = { newValue ->
             userId = newValue.trimStart()
@@ -342,6 +350,7 @@ fun rememberSignInState(): SignInState {
 }
 
 data class SignInState(
+    val sessionActivation: String,
     val userId: String,
     val onUserIdChange: (String) -> Unit,
     val password: String,
@@ -367,7 +376,7 @@ fun SignInBottomSheetPreview() {
         ArkheTheme {
             SignInContent(
                 uiState = AuthUiState.Idle,
-                onSignedIn = { _, _ -> }
+                onSignedIn = { _, _, _ -> }
             )
         }
     }

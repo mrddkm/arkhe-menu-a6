@@ -60,9 +60,13 @@ class RemoteDataSource(
         }
     }
 
-    suspend fun signIn(userId: String, password: String): SafeApiResult<SignInResponseDto> {
+    suspend fun signIn(
+        sessionActivation: String,
+        userId: String,
+        password: String
+    ): SafeApiResult<SignInResponseDto> {
         return safeApiCall {
-            apiService.signIn(userId, password)
+            apiService.signIn(sessionActivation, userId, password)
         }
     }
 

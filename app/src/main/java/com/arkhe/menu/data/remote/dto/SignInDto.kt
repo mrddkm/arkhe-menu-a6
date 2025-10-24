@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SignInRequestDto(
+    val sessionActivation: String,
     val userId: String,
     val password: String
 )
@@ -12,12 +13,5 @@ data class SignInRequestDto(
 data class SignInResponseDto(
     val status: String,
     val message: String,
-    val data: SignInDataDto? = null
-)
-
-@Serializable
-data class SignInDataDto(
-    val sessionToken: String? = null,
-    val userName: String? = null
-    // Tambahkan field lain yang dikembalikan oleh API sign-in
+    val data: User? = null
 )

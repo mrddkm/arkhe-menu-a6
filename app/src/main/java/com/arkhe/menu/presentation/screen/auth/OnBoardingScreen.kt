@@ -266,8 +266,8 @@ fun OnboardingScreen(
     if (showSignedInSheet) {
         SignInBottomSheet(
             onDismiss = { showSignedInSheet = false },
-            onSignedIn = { userId, password ->
-                authViewModel.signIn(userId, password)
+            onSignedIn = { sessionActivation, userId, password ->
+                authViewModel.signIn(sessionActivation, userId, password)
             }
         )
     }

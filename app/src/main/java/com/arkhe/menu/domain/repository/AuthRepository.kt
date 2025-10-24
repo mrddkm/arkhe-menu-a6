@@ -29,7 +29,11 @@ interface AuthRepository {
         appVersionCode: String?
     ): Flow<SafeResourceResult<ActivationResponse>>
 
-    fun signIn(userId: String, password: String): Flow<SafeResourceResult<SignInResponse>>
+    fun signIn(
+        sessionActivation: String,
+        userId: String,
+        password: String
+    ): Flow<SafeResourceResult<SignInResponse>>
 
     /*Local secure PIN logic*/
     suspend fun savePinHashed(pin: String)
