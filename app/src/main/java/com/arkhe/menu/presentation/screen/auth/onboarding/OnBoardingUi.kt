@@ -57,7 +57,7 @@ fun OnBoardingUI(
                 }
             }
 
-            is AuthUiState.Error -> {}
+            is AuthUiState.Failed -> {}
             else -> Unit
         }
     }

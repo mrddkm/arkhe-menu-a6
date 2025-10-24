@@ -35,6 +35,7 @@ object Constants {
 
     object ResponseStatus {
         const val SUCCESS = "success"
+        const val FAILED = "failed"
     }
 
     object Database {

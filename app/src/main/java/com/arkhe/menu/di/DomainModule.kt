@@ -41,7 +41,7 @@ val domainModule = module {
 
     single {
         ActivationUseCases(
-            activation = get()
+            activationStepUseCase = get()
         )
     }
 

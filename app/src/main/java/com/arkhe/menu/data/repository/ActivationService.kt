@@ -1,11 +1,8 @@
-package com.arkhe.menu.data.remote.api
+package com.arkhe.menu.data.repository
 
-import com.arkhe.menu.data.remote.dto.CategoryResponseDto
-import com.arkhe.menu.data.remote.dto.ProductResponseDto
-import com.arkhe.menu.data.remote.dto.ProfileResponseDto
 import com.arkhe.menu.data.remote.dto.ActivationResponseDto
 
-interface ArkheApiService {
+interface ActivationService {
     suspend fun performActivation(
         step: String,
         userId: String?,
@@ -28,11 +25,4 @@ interface ArkheApiService {
         appVersionName: String?,
         appVersionCode: String?
     ): ActivationResponseDto
-
-    suspend fun getProfiles(sessionToken: String): ProfileResponseDto
-    suspend fun getCategories(sessionToken: String): CategoryResponseDto
-    suspend fun getProducts(
-        sessionToken: String,
-        productCategoryId: String = "ALL"
-    ): ProductResponseDto
 }

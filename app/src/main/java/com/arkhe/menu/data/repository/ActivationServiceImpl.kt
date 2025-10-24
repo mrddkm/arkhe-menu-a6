@@ -1,10 +1,11 @@
 package com.arkhe.menu.data.repository
 
 import android.util.Log
-import com.arkhe.menu.data.remote.dto.VerificationRequestDto
-import com.arkhe.menu.data.remote.dto.VerificationResponseDto
+import com.arkhe.menu.data.remote.dto.ActivationRequestDto
+import com.arkhe.menu.data.remote.dto.ActivationResponseDto
 import com.arkhe.menu.utils.Constants.PARAMETER_KEY
 import com.arkhe.menu.utils.Constants.PARAMETER_VALUE_ACTIVATION_FLOW
+import com.arkhe.menu.utils.Constants.ResponseStatus.FAILED
 import com.arkhe.menu.utils.Constants.URL_BASE
 import io.ktor.client.HttpClient
 import io.ktor.client.request.parameter
@@ -16,9 +17,9 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
 import kotlinx.serialization.json.Json
 
-class VerificationServiceImpl(
+class ActivationServiceImpl(
     private val httpClient: HttpClient
-) : VerificationService {
+) : ActivationService {
 
     private val json = Json {
         ignoreUnknownKeys = true
@@ -26,18 +27,52 @@ class VerificationServiceImpl(
         coerceInputValues = true
     }
 
-    override suspend fun verification(
-        userId: String,
-        phone: String,
-        mail: String
-    ): VerificationResponseDto {
+    override suspend fun performActivation(
+        step: String,
+        userId: String?,
+        mail: String?,
+        phone: String?,
+        activationCode: String?,
+        newPassword: String?,
+        sessionActivation: String?,
+        isPinActive: Boolean?,
+        deviceId: String?,
+        manufacturer: String?,
+        brand: String?,
+        model: String?,
+        device: String?,
+        product: String?,
+        osVersion: String?,
+        sdkLevel: String?,
+        securityPatch: String?,
+        deviceType: String?,
+        appVersionName: String?,
+        appVersionCode: String?
+    ): ActivationResponseDto {
         return try {
-            val requestDto = VerificationRequestDto(
+            val requestDto = ActivationRequestDto(
+                step = step,
                 userId = userId,
+                mail = mail,
                 phone = phone,
-                mail = mail
+                activationCode = activationCode,
+                newPassword = newPassword,
+                sessionActivation = sessionActivation,
+                isPinActive = isPinActive,
+                deviceId = deviceId,
+                manufacturer = manufacturer,
+                brand = brand,
+                model = model,
+                device = device,
+                product = product,
+                osVersion = osVersion,
+                sdkLevel = sdkLevel,
+                securityPatch = securityPatch,
+                deviceType = deviceType,
+                appVersionName = appVersionName,
+                appVersionCode = appVersionCode
             )
-            val requestJson = json.encodeToString(VerificationRequestDto.serializer(), requestDto)
+            val requestJson = json.encodeToString(ActivationRequestDto.serializer(), requestDto)
             val response: HttpResponse = httpClient.post {
                 url(URL_BASE)
                 parameter(PARAMETER_KEY, PARAMETER_VALUE_ACTIVATION_FLOW)
@@ -53,18 +88,18 @@ class VerificationServiceImpl(
                             .startsWith("[")
                     ) {
                         try {
-                            json.decodeFromString<VerificationResponseDto>(responseText)
+                            json.decodeFromString<ActivationResponseDto>(responseText)
                         } catch (parseException: Exception) {
                             Log.e("ApiService", "JSON Parse Failed", parseException)
-                            VerificationResponseDto(
-                                status = "parse_error",
+                            ActivationResponseDto(
+                                status = FAILED,
                                 message = "JSON parsing failed: ${parseException.message}",
                                 data = null
                             )
                         }
                     } else {
-                        VerificationResponseDto(
-                            status = "invalid_response",
+                        ActivationResponseDto(
+                            status = FAILED,
                             message = "Server returned non-JSON response: $responseText",
                             data = null,
                         )
@@ -72,16 +107,16 @@ class VerificationServiceImpl(
                 }
 
                 else -> {
-                    VerificationResponseDto(
-                        status = "unexpected_status",
+                    ActivationResponseDto(
+                        status = FAILED,
                         message = "Status ${response.status}: $responseText",
                         data = null
                     )
                 }
             }
         } catch (e: Exception) {
-            VerificationResponseDto(
-                status = "network_error",
+            ActivationResponseDto(
+                status = FAILED,
                 message = "Network error: ${e.message}",
                 data = null
             )

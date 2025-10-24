@@ -2,11 +2,13 @@ package com.arkhe.menu.presentation.viewmodel
 
 import app.cash.turbine.test
 import com.arkhe.menu.MainCoroutineRule
-import com.arkhe.menu.data.remote.api.SafeApiResult
-import com.arkhe.menu.domain.model.auth.Verification
+import com.arkhe.menu.data.remote.api.SafeResourceResult
+import com.arkhe.menu.domain.model.auth.ActivationResponse
 import com.arkhe.menu.domain.repository.AuthRepository
+import com.arkhe.menu.domain.usecase.auth.ActivationUseCase
 import com.arkhe.menu.domain.usecase.auth.ActivationUseCases
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
@@ -23,20 +25,25 @@ class AuthViewModelTest {
     @get:Rule
     val mainCoroutineRule = MainCoroutineRule()
 
-    private lateinit var activationUseCases: ActivationUseCases
+    // Deklarasikan mock untuk use case spesifik
+    private lateinit var activationUseCase: ActivationUseCase
     private lateinit var authRepository: AuthRepository
     private lateinit var viewModel: AuthViewModel
 
     private val fakeUserId = "testUser"
     private val fakePhone = "08123456789"
     private val fakeMail = "test@example.com"
-    private val successVerification = Verification(userId = fakeUserId, name = "Test User")
+    private val stepVerification = "verification" // Sesuaikan dengan step yang Anda gunakan
 
     @Before
     fun setUp() {
-        activationUseCases = mockk()
+        // Mock use case individu, lalu bungkus dalam data class
+        activationUseCase = mockk()
+        val activationUseCases = ActivationUseCases(activationStepUseCase = activationUseCase)
+
         authRepository = mockk(relaxed = true)
 
+        // Mock flow yang ada di repository
         coEvery { authRepository.isActivatedFlow } returns flowOf(false)
         coEvery { authRepository.isSignedInFlow } returns flowOf(false)
 
@@ -45,22 +52,48 @@ class AuthViewModelTest {
 
     // --- TEST KASUS POSITIF ---
     @Test
-    fun `requestVerification - when use case returns Success - updates state to Success`() =
+    fun `performActivationStep - when use case returns Success - updates state to Success`() =
         runTest {
-            val successResult = SafeApiResult.Success(successVerification)
-            coEvery { activationUseCases.verification(any(), any(), any()) } returns successResult
+            // ARRANGE: Siapkan data palsu yang akan dikembalikan oleh use case
+            val successMessage = "Verification successful"
+            val successResponse = ActivationResponse(status = "success", message = successMessage)
+            val successResult = flowOf(SafeResourceResult.Success(successResponse))
 
-            viewModel.verificationState.test {
-                // PERBAIKAN: Panggil fungsi DULU
-                viewModel.requestVerification(fakeUserId, fakePhone, fakeMail)
+            // Mock pemanggilan use case `activation`
+            every {
+                activationUseCase.invoke(
+                    step = stepVerification,
+                    userId = fakeUserId,
+                    mail = fakeMail,
+                    phone = fakePhone,
+                    activationCode = null,
+                    newPassword = null,
+                    sessionActivation = null,
+                    isPinActive = null
+                )
+            } returns successResult
 
-                // 1. State awal saat mulai mengamati adalah 'Loading' dari inisialisasi ViewModel.
-                assertEquals(SafeApiResult.Loading, awaitItem())
+            // ACT & ASSERT
+            viewModel.uiState.test {
+                // 1. State awal adalah Idle
+                assertEquals(AuthUiState.Idle, awaitItem())
 
-                // 2. State berikutnya adalah 'Success' setelah fungsi selesai.
+                // Panggil fungsi di ViewModel
+                viewModel.performActivationStep(
+                    step = stepVerification,
+                    userId = fakeUserId,
+                    phone = fakePhone,
+                    mail = fakeMail
+                )
+
+                // 2. State berubah menjadi Loading
+                assertEquals(AuthUiState.Loading, awaitItem())
+
+                // 3. State akhir adalah Success
                 val finalState = awaitItem()
-                assertTrue(finalState is SafeApiResult.Success)
-                assertEquals(successVerification, (finalState as SafeApiResult.Success).data)
+                assertTrue(finalState is AuthUiState.Success)
+                assertEquals(successMessage, (finalState as AuthUiState.Success).message)
+                assertEquals(SuccessType.ACTIVATION, finalState.type)
 
                 // Pastikan tidak ada emisi state lain
                 cancelAndIgnoreRemainingEvents()
@@ -69,23 +102,46 @@ class AuthViewModelTest {
 
     // --- TEST KASUS NEGATIF ---
     @Test
-    fun `requestVerification - when use case returns Failure - updates state to Failure`() =
+    fun `performActivationStep - when use case returns Error - updates state to Error`() =
         runTest {
-            val errorMessage = "Network connection lost"
-            val failureResult = SafeApiResult.Failure(Exception(errorMessage))
-            coEvery { activationUseCases.verification(any(), any(), any()) } returns failureResult
+            // ARRANGE
+            val errorMessage = "User ID not found"
+            val failureResult = flowOf(SafeResourceResult.Failure<ActivationResponse>(errorMessage))
 
-            viewModel.verificationState.test {
-                // PERBAIKAN: Panggil fungsi DULU
-                viewModel.requestVerification(fakeUserId, fakePhone, fakeMail)
+            // Mock pemanggilan use case `activation` untuk skenario gagal
+            every {
+                activationUseCase.invoke(
+                    step = stepVerification,
+                    userId = fakeUserId,
+                    mail = fakeMail,
+                    phone = fakePhone,
+                    activationCode = null,
+                    newPassword = null,
+                    sessionActivation = null,
+                    isPinActive = null
+                )
+            } returns failureResult
 
-                // 1. State awal adalah 'Loading'.
-                assertEquals(SafeApiResult.Loading, awaitItem())
+            // ACT & ASSERT
+            viewModel.uiState.test {
+                // 1. State awal adalah Idle
+                assertEquals(AuthUiState.Idle, awaitItem())
 
-                // 2. State berikutnya adalah 'Failure' setelah fungsi selesai.
+                // Panggil fungsi di ViewModel
+                viewModel.performActivationStep(
+                    step = stepVerification,
+                    userId = fakeUserId,
+                    phone = fakePhone,
+                    mail = fakeMail
+                )
+
+                // 2. State berubah menjadi Loading
+                assertEquals(AuthUiState.Loading, awaitItem())
+
+                // 3. State akhir adalah Error
                 val finalState = awaitItem()
-                assertTrue(finalState is SafeApiResult.Failure)
-                assertEquals(errorMessage, (finalState as SafeApiResult.Failure).exception.message)
+                assertTrue(finalState is AuthUiState.Failed)
+                assertEquals(errorMessage, (finalState as AuthUiState.Failed).message)
 
                 cancelAndIgnoreRemainingEvents()
             }

@@ -5,115 +5,91 @@ import com.arkhe.menu.data.local.security.SecurePinStorage
 import com.arkhe.menu.data.mapper.toDomain
 import com.arkhe.menu.data.remote.RemoteDataSource
 import com.arkhe.menu.data.remote.api.SafeApiResult
-import com.arkhe.menu.domain.model.auth.Verification
+import com.arkhe.menu.data.remote.api.SafeResourceResult
+import com.arkhe.menu.domain.model.auth.ActivationResponse
 import com.arkhe.menu.domain.repository.AuthRepository
-import com.arkhe.menu.utils.Constants.ResponseStatus.SUCCESS
-import com.arkhe.menu.utils.Constants.URL_BASE
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.request.post
-import io.ktor.client.request.setBody
-import io.ktor.client.statement.HttpResponse
-import io.ktor.http.ContentType
-import io.ktor.http.contentType
 import kotlinx.coroutines.flow.Flow
-import kotlinx.serialization.Serializable
+import kotlinx.coroutines.flow.flow
 
-/**
- * Implementation using Ktor client for real backend requests.
- * Designed to connect to Google Apps Script (GAS) via OkHttp engine.
- */
 class AuthRepositoryImpl(
     private val remoteDataSource: RemoteDataSource,
-    private val client: HttpClient,
     private val authPreferences: AuthPreferences,
     private val securePinStorage: SecurePinStorage
 ) : AuthRepository {
 
-    @Serializable
-    private data class ApiResponse(val status: String, val message: String? = null)
-
     override val isActivatedFlow: Flow<Boolean> = authPreferences.isActivatedFlow
     override val isSignedInFlow: Flow<Boolean> = authPreferences.isSignedInFlow
 
-    override suspend fun verification(
-        userId: String,
-        phone: String,
-        mail: String
-    ): SafeApiResult<Verification> {
-        return when (
-            val remoteResult = remoteDataSource.verification(
+    override fun performActivationStep(
+        step: String,
+        userId: String?,
+        mail: String?,
+        phone: String?,
+        activationCode: String?,
+        newPassword: String?,
+        sessionActivation: String?,
+        isPinActive: Boolean?,
+        deviceId: String?,
+        manufacturer: String?,
+        brand: String?,
+        model: String?,
+        device: String?,
+        product: String?,
+        osVersion: String?,
+        sdkLevel: String?,
+        securityPatch: String?,
+        deviceType: String?,
+        appVersionName: String?,
+        appVersionCode: String?
+    ): Flow<SafeResourceResult<ActivationResponse>> {
+        return flow {
+            emit(SafeResourceResult.Loading)
+
+            // 2. Panggil suspend function dari dalam 'flow' scope
+            val resultFromDataSource = remoteDataSource.performActivation(
+                step = step,
                 userId = userId,
+                mail = mail,
                 phone = phone,
-                mail = mail
+                activationCode = activationCode,
+                newPassword = newPassword,
+                sessionActivation = sessionActivation,
+                isPinActive = isPinActive,
+                deviceId = deviceId,
+                manufacturer = manufacturer,
+                brand = brand,
+                model = model,
+                device = device,
+                product = product,
+                osVersion = osVersion,
+                sdkLevel = sdkLevel,
+                securityPatch = securityPatch,
+                deviceType = deviceType,
+                appVersionName = appVersionName,
+                appVersionCode = appVersionCode
             )
-        ) {
-            is SafeApiResult.Success -> {
-                if (remoteResult.data.status == SUCCESS && remoteResult.data.data != null) {
-                    try {
-                        SafeApiResult.Success(remoteResult.data.toDomain())
-                    } catch (_: Exception) {
-                        SafeApiResult.Failure(Exception(remoteResult.data.message))
-                    }
-                } else {
-                    SafeApiResult.Failure(Exception(remoteResult.data.message))
+
+            // 3. Lakukan mapping seperti sebelumnya, lalu emit hasilnya
+            when (resultFromDataSource) {
+                is SafeApiResult.Success -> {
+                    emit(SafeResourceResult.Success(resultFromDataSource.data.toDomain()))
+                }
+
+                is SafeApiResult.Failure -> {
+                    emit(
+                        SafeResourceResult.Failed(
+                            resultFromDataSource.exception.message ?: "An unknown error occurred"
+                        )
+                    )
+                }
+
+                is SafeApiResult.Loading -> { /* Tidak melakukan apa-apa */
                 }
             }
-
-            is SafeApiResult.Failure -> {
-                SafeApiResult.Failure(remoteResult.exception)
-            }
-
-            is SafeApiResult.Loading -> {
-                SafeApiResult.Loading
-            }
-        }
-    }
-
-    override suspend fun verifyActivationCode(code: String): Result<String> {
-        return try {
-            val response: HttpResponse = client.post(URL_BASE) {
-                contentType(ContentType.Application.Json)
-                setBody(mapOf("action" to "verifyCode", "code" to code))
-            }
-            val body: ApiResponse = response.body()
-            if (body.status == "ok") Result.success("Code verified")
-            else Result.failure(Exception(body.message ?: "Invalid code"))
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    override suspend fun createPassword(password: String): Result<String> {
-        return try {
-            val response: HttpResponse = client.post(URL_BASE) {
-                contentType(ContentType.Application.Json)
-                setBody(mapOf("action" to "createPassword", "password" to password))
-            }
-            val body: ApiResponse = response.body()
-            if (body.status == "ok") Result.success("Password created")
-            else Result.failure(Exception(body.message ?: "Create password failed"))
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    override suspend fun signIn(userId: String, password: String): Result<String> {
-        return try {
-            val response: HttpResponse = client.post(URL_BASE) {
-                contentType(ContentType.Application.Json)
-                setBody(mapOf("action" to "signIn", "userId" to userId, "password" to password))
-            }
-            val body: ApiResponse = response.body()
-            if (body.status == "ok") Result.success("Login success")
-            else Result.failure(Exception(body.message ?: "Login failed"))
-        } catch (e: Exception) {
-            Result.failure(e)
         }
     }
 
     // ----------------- Local (PIN + Preferences) -----------------
-
     override suspend fun savePinHashed(pin: String) {
         securePinStorage.saveHashedPin(pin)
     }

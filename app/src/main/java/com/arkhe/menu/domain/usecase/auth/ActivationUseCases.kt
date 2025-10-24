@@ -1,6 +1,6 @@
 package com.arkhe.menu.domain.usecase.auth
 
-import com.arkhe.menu.data.remote.api.Resource
+import com.arkhe.menu.data.remote.api.SafeResourceResult
 import com.arkhe.menu.domain.model.auth.ActivationResponse
 import com.arkhe.menu.domain.repository.AuthRepository
 import kotlinx.coroutines.flow.Flow
@@ -16,9 +16,21 @@ class ActivationUseCase(
         activationCode: String?,
         newPassword: String?,
         sessionActivation: String?,
-        isPinActive: Boolean?
-    ): Flow<Resource<ActivationResponse>> {
-        return authRepository.performActivation(
+        isPinActive: Boolean?,
+        deviceId: String?,
+        manufacturer: String?,
+        brand: String?,
+        model: String?,
+        device: String?,
+        product: String?,
+        osVersion: String?,
+        sdkLevel: String?,
+        securityPatch: String?,
+        deviceType: String?,
+        appVersionName: String?,
+        appVersionCode: String?
+    ): Flow<SafeResourceResult<ActivationResponse>> {
+        return authRepository.performActivationStep(
             step = step,
             userId = userId,
             mail = mail,
@@ -26,11 +38,23 @@ class ActivationUseCase(
             activationCode = activationCode,
             newPassword = newPassword,
             sessionActivation = sessionActivation,
-            isPinActive = isPinActive
+            isPinActive = isPinActive,
+            deviceId = deviceId,
+            manufacturer = manufacturer,
+            brand = brand,
+            model = model,
+            device = device,
+            product = product,
+            osVersion = osVersion,
+            sdkLevel = sdkLevel,
+            securityPatch = securityPatch,
+            deviceType = deviceType,
+            appVersionName = appVersionName,
+            appVersionCode = appVersionCode
         )
     }
 }
 
 data class ActivationUseCases(
-    val activation: ActivationUseCase
+    val activationStepUseCase: ActivationUseCase
 )

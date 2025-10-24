@@ -10,7 +10,7 @@ import com.arkhe.menu.data.remote.dto.ProductRequestDto
 import com.arkhe.menu.data.remote.dto.ProductResponseDto
 import com.arkhe.menu.data.remote.dto.ProfileRequestDto
 import com.arkhe.menu.data.remote.dto.ProfileResponseDto
-import com.arkhe.menu.data.remote.dto.VerificationResponseDto
+import com.arkhe.menu.data.remote.dto.ActivationResponseDto
 import com.arkhe.menu.utils.Constants
 import io.ktor.client.HttpClient
 import io.ktor.client.request.forms.submitForm
@@ -26,7 +26,7 @@ import kotlinx.serialization.json.Json
 
 class ArkheApiServiceImpl(
     private val httpClient: HttpClient,
-    private val verificationService: VerificationService
+    private val activationService: ActivationService
 ) : ArkheApiService {
 
     private val json = Json {
@@ -35,75 +35,51 @@ class ArkheApiServiceImpl(
         coerceInputValues = true
     }
 
-    override suspend fun verification(
-        userId: String,
-        phone: String,
-        mail: String
-    ): VerificationResponseDto {
-        return verificationService.verification(userId, phone, mail)
+    override suspend fun performActivation(
+        step: String,
+        userId: String?,
+        mail: String?,
+        phone: String?,
+        activationCode: String?,
+        newPassword: String?,
+        sessionActivation: String?,
+        isPinActive: Boolean?,
+        deviceId: String?,
+        manufacturer: String?,
+        brand: String?,
+        model: String?,
+        device: String?,
+        product: String?,
+        osVersion: String?,
+        sdkLevel: String?,
+        securityPatch: String?,
+        deviceType: String?,
+        appVersionName: String?,
+        appVersionCode: String?
+    ): ActivationResponseDto {
+        return activationService.performActivation(
+            step = step,
+            userId = userId,
+            mail = mail,
+            phone = phone,
+            activationCode = activationCode,
+            newPassword = newPassword,
+            sessionActivation = sessionActivation,
+            isPinActive = isPinActive,
+            deviceId = deviceId,
+            manufacturer = manufacturer,
+            brand = brand,
+            model = model,
+            device = device,
+            product = product,
+            osVersion = osVersion,
+            sdkLevel = sdkLevel,
+            securityPatch = securityPatch,
+            deviceType = deviceType,
+            appVersionName = appVersionName,
+            appVersionCode = appVersionCode
+        )
     }
-
-/*    override suspend fun verification(
-        userId: String,
-        phone: String,
-        mail: String
-    ): VerificationResponseDto {
-        return try {
-            val requestDto = VerificationRequestDto(
-                userId = userId,
-                phone = phone,
-                mail = mail
-            )
-            val requestJson = json.encodeToString(VerificationRequestDto.serializer(), requestDto)
-            val response: HttpResponse = httpClient.post {
-                url(URL_BASE)
-                parameter(PARAMETER_KEY, PARAMETER_VALUE_ACTIVATION_FLOW)
-                setBody(requestJson)
-            }
-
-            val responseText = response.bodyAsText()
-            Log.d("ApiService", "Raw Verification Response: $responseText")
-
-            when (response.status) {
-                HttpStatusCode.OK -> {
-                    if (responseText.trim().startsWith("{") || responseText.trim()
-                            .startsWith("[")
-                    ) {
-                        try {
-                            json.decodeFromString<VerificationResponseDto>(responseText)
-                        } catch (parseException: Exception) {
-                            Log.e("ApiService", "JSON Parse Failed", parseException)
-                            VerificationResponseDto(
-                                status = "parse_error",
-                                message = "JSON parsing failed: ${parseException.message}",
-                                data = null
-                            )
-                        }
-                    } else {
-                        VerificationResponseDto(
-                            status = "invalid_response",
-                            message = "Server returned non-JSON response: $responseText",
-                            data = null,
-                        )
-                    }
-                }
-
-                else -> {
-                    VerificationResponseDto(
-                        status = "unexpected_status",
-                        message = "Status ${response.status}: $responseText",
-                        data = null
-                    )
-                }
-            }
-        } catch (e: Exception) {
-            VerificationResponseDto(
-                status = "network_error",
-                message = "Network error: ${e.message}",
-                data = null
-            )
-        }
-    }*/
 
     override suspend fun getProfiles(sessionToken: String): ProfileResponseDto {
         return try {

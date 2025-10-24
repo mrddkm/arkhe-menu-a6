@@ -49,7 +49,10 @@ import com.arkhe.menu.presentation.viewmodel.AuthUiState
 import com.arkhe.menu.presentation.viewmodel.AuthViewModel
 import com.arkhe.menu.presentation.viewmodel.LanguageViewModel
 import com.arkhe.menu.presentation.viewmodel.SuccessType
-import com.arkhe.menu.utils.Constants
+import com.arkhe.menu.utils.Constants.ActivationFlow.ACT_ACTIVATION_CODE_STEP
+import com.arkhe.menu.utils.Constants.ActivationFlow.ACT_ACTIVATION_STEP
+import com.arkhe.menu.utils.Constants.ActivationFlow.ACT_CREATE_PASSWORD_STEP
+import com.arkhe.menu.utils.Constants.ActivationFlow.ACT_VERIFICATION_STEP
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Fill
 import compose.icons.evaicons.Outline
@@ -166,7 +169,7 @@ fun ActivationBottomSheet(
                         }
                     }
 
-                    is AuthUiState.Error -> {}
+                    is AuthUiState.Failed -> {}
 
                     else -> Unit
                 }
@@ -179,7 +182,7 @@ fun ActivationBottomSheet(
                     onNext = {
                         state.scope.launch {
                             authViewModel.performActivationStep(
-                                step = "verification",
+                                step = ACT_VERIFICATION_STEP,
                                 userId = state.userId,
                                 phone = state.phone,
                                 mail = state.mail
@@ -193,7 +196,7 @@ fun ActivationBottomSheet(
                     onVerify = {
                         state.scope.launch {
                             authViewModel.performActivationStep(
-                                step = Constants.ActivationFlow.ACT_ACTIVATION_CODE_STEP,
+                                step = ACT_ACTIVATION_CODE_STEP,
                                 activationCode = state.code
                             )
                         }
@@ -208,7 +211,7 @@ fun ActivationBottomSheet(
                     onContinue = {
                         state.scope.launch {
                             authViewModel.performActivationStep(
-                                step = Constants.ActivationFlow.ACT_CREATE_PASSWORD_STEP,
+                                step = ACT_CREATE_PASSWORD_STEP,
                                 newPassword = state.password
                             )
                         }
@@ -224,7 +227,7 @@ fun ActivationBottomSheet(
                         state.scope.launch {
                             if (state.pin == state.confirmPin && state.pin.length == 4) {
                                 authViewModel.performActivationStep(
-                                    step = Constants.ActivationFlow.ACT_ACTIVATION_STEP,
+                                    step = ACT_ACTIVATION_STEP,
                                     isPinActive = true,
                                 )
                             }

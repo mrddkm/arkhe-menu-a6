@@ -3,9 +3,7 @@ package com.arkhe.menu.presentation.viewmodel
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.arkhe.menu.data.remote.api.Resource
-import com.arkhe.menu.data.remote.api.SafeApiResult
-import com.arkhe.menu.domain.model.auth.Verification
+import com.arkhe.menu.data.remote.api.SafeResourceResult
 import com.arkhe.menu.domain.repository.AuthRepository
 import com.arkhe.menu.domain.usecase.auth.ActivationUseCases
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,14 +15,14 @@ sealed interface AuthUiState {
     object Idle : AuthUiState
     object Loading : AuthUiState
     data class Success(val message: String, val type: SuccessType) : AuthUiState
-    data class Error(val message: String) : AuthUiState
+    data class Failed(val message: String) : AuthUiState
 }
 
 enum class SuccessType { ACTIVATION, SIGNEDIN }
 
 class AuthViewModel(
     private val activationUseCases: ActivationUseCases,
-    private val repo: AuthRepository
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _sessionActivation = mutableStateOf<String?>(null)
@@ -36,7 +34,8 @@ class AuthViewModel(
         phone: String? = null,
         activationCode: String? = null,
         newPassword: String? = null,
-        isPinActive: Boolean? = null
+        isPinActive: Boolean? = null,
+        deviceInfo: Map<String, String>? = null
     ) {
         viewModelScope.launch {
             _uiState.value = AuthUiState.Loading
@@ -45,7 +44,7 @@ class AuthViewModel(
             val session = _sessionActivation.value
 
             // Panggil UseCase (yang akan kita buat/modifikasi)
-            activationUseCases.activation(
+            activationUseCases.activationStepUseCase(
                 step = step,
                 userId = userId,
                 mail = mail,
@@ -53,28 +52,38 @@ class AuthViewModel(
                 activationCode = activationCode,
                 newPassword = newPassword,
                 sessionActivation = session,
-                isPinActive = isPinActive
+                isPinActive = isPinActive,
+                deviceId = deviceInfo?.get("deviceId"),
+                manufacturer = deviceInfo?.get("manufacturer"),
+                brand = deviceInfo?.get("brand"),
+                model = deviceInfo?.get("model"),
+                device = deviceInfo?.get("device"),
+                product = deviceInfo?.get("product"),
+                osVersion = deviceInfo?.get("osVersion"),
+                sdkLevel = deviceInfo?.get("sdkLevel"),
+                securityPatch = deviceInfo?.get("securityPatch"),
+                deviceType = deviceInfo?.get("deviceType"),
+                appVersionName = deviceInfo?.get("appVersionName"),
+                appVersionCode = deviceInfo?.get("appVersionCode")
             ).collect { result ->
                 when (result) {
-                    is Resource.Success -> {
-                        // Simpan sessionActivation jika ada di response
+                    is SafeResourceResult.Success -> {
                         result.data?.sessionActivation?.let { newSession ->
                             _sessionActivation.value = newSession
                         }
 
                         _uiState.value = AuthUiState.Success(
                             type = SuccessType.ACTIVATION,
-                            // Sesuaikan message berdasarkan response dari API
                             message = result.data?.message ?: "Success"
                         )
                     }
 
-                    is Resource.Error -> {
+                    is SafeResourceResult.Failure -> {
                         _uiState.value =
-                            AuthUiState.Error(result.message ?: "An unknown error occurred")
+                            AuthUiState.Failed(result.message ?: "An unknown error occurred")
                     }
 
-                    is Resource.Loading -> {
+                    is SafeResourceResult.Loading -> {
                         _uiState.value = AuthUiState.Loading
                     }
                 }
@@ -87,12 +96,12 @@ class AuthViewModel(
     private val _uiState = MutableStateFlow<AuthUiState>(AuthUiState.Idle)
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
 
-    val isActivatedFlow = repo.isActivatedFlow
-    val isSignedInFlow = repo.isSignedInFlow
+    val isActivatedFlow = authRepository.isActivatedFlow
+    val isSignedInFlow = authRepository.isSignedInFlow
 
-    private val _verificationState =
-        MutableStateFlow<SafeApiResult<Verification>>(SafeApiResult.Loading)
-    val verificationState: StateFlow<SafeApiResult<Verification>> = _verificationState.asStateFlow()
+    /*    private val _verificationState =
+            MutableStateFlow<SafeApiResult<Verification>>(SafeApiResult.Loading)
+        val verificationState: StateFlow<SafeApiResult<Verification>> = _verificationState.asStateFlow()*/
 
     /*    fun requestVerification(userId: String, phone: String, mail: String) {
             viewModelScope.launch {
@@ -149,14 +158,14 @@ class AuthViewModel(
             }
         }*/
 
-    suspend fun unlockWithPin(pin: String): Boolean = repo.checkPin(pin)
-    fun incrementPinAttempts() = viewModelScope.launch { repo.incrementPinAttempts() }
-    fun resetPinAttempts() = viewModelScope.launch { repo.resetPinAttempts() }
-    suspend fun getPinAttempts(): Int = repo.getPinAttempts()
+    suspend fun unlockWithPin(pin: String): Boolean = authRepository.checkPin(pin)
+    fun incrementPinAttempts() = viewModelScope.launch { authRepository.incrementPinAttempts() }
+    fun resetPinAttempts() = viewModelScope.launch { authRepository.resetPinAttempts() }
+    suspend fun getPinAttempts(): Int = authRepository.getPinAttempts()
 
     fun deactivatedAuthState() {
         viewModelScope.launch {
-            repo.deactivatedAuthState()
+            authRepository.deactivatedAuthState()
             _uiState.value =
                 AuthUiState.Success("Deactivated complete", SuccessType.ACTIVATION)
         }
@@ -164,7 +173,7 @@ class AuthViewModel(
 
     fun signedOutAuthState() {
         viewModelScope.launch {
-            repo.signedOutAuthState()
+            authRepository.signedOutAuthState()
             _uiState.value =
                 AuthUiState.Success("SignedOut complete", SuccessType.SIGNEDIN)
         }
