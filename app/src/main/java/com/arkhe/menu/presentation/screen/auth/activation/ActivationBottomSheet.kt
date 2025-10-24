@@ -213,9 +213,6 @@ fun ActivationBottomSheet(
                                 activationCode = state.code
                             )
                         }
-                    },
-                    onBack = {
-                        state.onStepChange(1)
                     }
                 )
 
@@ -231,9 +228,6 @@ fun ActivationBottomSheet(
                                 newPassword = state.password
                             )
                         }
-                    },
-                    onBack = {
-                        state.onStepChange(2)
                     }
                 )
 
@@ -268,9 +262,6 @@ fun ActivationBottomSheet(
                                 onDismiss
                             }
                         }
-                    },
-                    onBack = {
-                        state.onStepChange(3)
                     }
                 )
             }
@@ -283,7 +274,7 @@ fun rememberActivationState(): ActivationState {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    var step by remember { mutableIntStateOf(3) }
+    var step by remember { mutableIntStateOf(1) }
     var userId by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }

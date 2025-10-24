@@ -71,7 +71,6 @@ import com.arkhe.menu.utils.Constants.TextPlaceHolder.PLACE_HOLDER_PHONE
 import com.arkhe.menu.utils.Constants.TextPlaceHolder.PLACE_HOLDER_PRIMARY_USER_ID
 import compose.icons.EvaIcons
 import compose.icons.evaicons.Outline
-import compose.icons.evaicons.outline.ArrowIosBack
 import compose.icons.evaicons.outline.ArrowIosForward
 import compose.icons.evaicons.outline.CheckmarkCircle
 import compose.icons.evaicons.outline.CloseCircle
@@ -300,8 +299,7 @@ fun ActivationContentStepTwo(
     state: ActivationState,
     uiState: AuthUiState,
     authViewModel: AuthViewModel,
-    onVerify: () -> Unit,
-    onBack: () -> Unit
+    onVerify: () -> Unit
 ) {
     val focus1 = remember { FocusRequester() }
     val focus2 = remember { FocusRequester() }
@@ -478,29 +476,8 @@ fun ActivationContentStepTwo(
         Spacer(Modifier.height(8.dp))
         Row(
             modifier = Modifier.fillMaxWidth(0.8f),
-            horizontalArrangement = Arrangement.SpaceEvenly
+            horizontalArrangement = Arrangement.Center
         ) {
-            TextButton(
-                onClick = onBack,
-                enabled = !isLoading,
-                modifier = Modifier
-                    .width(130.dp)
-                    .height(40.dp)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        imageVector = EvaIcons.Outline.ArrowIosBack,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(18.dp)
-                    )
-                    Spacer(Modifier.width(4.dp))
-                    Text("Back")
-                }
-            }
             Button(
                 onClick = onVerify,
                 enabled = code.length == 4,
@@ -542,8 +519,7 @@ fun ActivationContentStepThree(
     state: ActivationState,
     uiState: AuthUiState,
     authViewModel: AuthViewModel,
-    onContinue: () -> Unit,
-    onBack: () -> Unit
+    onContinue: () -> Unit
 ) {
     val newStrength by remember(state.password) {
         derivedStateOf {
@@ -556,8 +532,6 @@ fun ActivationContentStepThree(
     var confirmVisible by remember { mutableStateOf(false) }
     val focusNew = remember { FocusRequester() }
     val focusConfirm = remember { FocusRequester() }
-
-    /*val keyboardController = LocalSoftwareKeyboardController.current*/
 
     val allChecklistPassed by remember(state.password) {
         derivedStateOf { newStrength.score == 5 }
@@ -740,29 +714,8 @@ fun ActivationContentStepThree(
         Spacer(Modifier.height(8.dp))
         Row(
             modifier = Modifier.fillMaxWidth(0.8f),
-            horizontalArrangement = Arrangement.SpaceEvenly
+            horizontalArrangement = Arrangement.Center
         ) {
-            TextButton(
-                onClick = onBack,
-                enabled = !isLoading,
-                modifier = Modifier
-                    .width(130.dp)
-                    .height(40.dp)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        imageVector = EvaIcons.Outline.ArrowIosBack,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(18.dp)
-                    )
-                    Spacer(Modifier.width(4.dp))
-                    Text("Back")
-                }
-            }
             Button(
                 onClick = onContinue,
                 enabled = passwordsMatch,
@@ -797,21 +750,13 @@ fun ActivationContentStepThree(
             }
         }
     }
-    /*    LaunchedEffect(allChecklistPassed) {
-            if (allChecklistPassed) {
-                delay(150)
-                focusConfirm.requestFocus()
-                keyboardController?.show()
-            }
-        }*/
 }
 
 @Composable
 fun ActivationContentStepFour(
     state: ActivationState,
     uiState: AuthUiState,
-    onFinish: () -> Unit,
-    onBack: () -> Unit
+    onFinish: () -> Unit
 ) {
     val labelCreatePIN = "Create PIN"
     val labelConfirmPIN = "Confirm PIN"
@@ -976,7 +921,6 @@ fun ActivationContentStepFour(
                 }
             }
         }
-
         Spacer(Modifier.height(16.dp))
         AnimatedNumericKeypad(
             onDigit = { digit ->
@@ -997,28 +941,8 @@ fun ActivationContentStepFour(
         Spacer(Modifier.height(16.dp))
         Row(
             modifier = Modifier.fillMaxWidth(0.8f),
-            horizontalArrangement = Arrangement.SpaceEvenly
+            horizontalArrangement = Arrangement.Center
         ) {
-            TextButton(
-                onClick = onBack,
-                enabled = !isLoading,
-                modifier = Modifier
-                    .width(130.dp)
-                    .height(40.dp)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        imageVector = EvaIcons.Outline.ArrowIosBack,
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Spacer(Modifier.width(4.dp))
-                    Text("Back")
-                }
-            }
             Button(
                 onClick = onFinish,
                 enabled = pinMatch,
