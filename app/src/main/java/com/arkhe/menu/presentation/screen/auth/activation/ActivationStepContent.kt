@@ -26,6 +26,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Abc
 import androidx.compose.material.icons.outlined.Password
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -258,17 +259,23 @@ fun ActivationContentStepOne(
             }
             Button(
                 onClick = onNext,
-                enabled = state.userId.isNotBlank() && state.phone.isNotBlank() && state.mail.isNotBlank() && uiState !is AuthUiState.Loading,
+                enabled = state.userId.isNotBlank() &&
+                        state.phone.isNotBlank() &&
+                        state.mail.isNotBlank() &&
+                        uiState !is AuthUiState.Loading,
                 modifier = Modifier
                     .width(130.dp)
-                    .height(40.dp)
+                    .height(40.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+                    contentColor = MaterialTheme.colorScheme.primary
+                )
             ) {
                 if (uiState is AuthUiState.Loading) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth()
                     ) {
                         LoadingGraySpinner(modifier = Modifier.fillMaxSize())
                     }
@@ -276,14 +283,12 @@ fun ActivationContentStepOne(
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("Next")
+                        Text(text = "Next")
                         Spacer(Modifier.width(4.dp))
                         Icon(
-                            modifier = Modifier
-                                .size(18.dp),
+                            modifier = Modifier.size(18.dp),
                             imageVector = EvaIcons.Outline.ArrowIosForward,
                             contentDescription = null
                         )
@@ -483,14 +488,17 @@ fun ActivationContentStepTwo(
                 enabled = code.length == 4,
                 modifier = Modifier
                     .width(130.dp)
-                    .height(40.dp)
+                    .height(40.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+                    contentColor = MaterialTheme.colorScheme.primary
+                )
             ) {
                 if (isLoading) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth()
                     ) {
                         LoadingGraySpinner(modifier = Modifier.fillMaxSize())
                     }
@@ -499,13 +507,12 @@ fun ActivationContentStepTwo(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {
-                        Text("Verify")
+                        Text(text = "Verify")
                         Spacer(Modifier.width(4.dp))
                         Icon(
                             imageVector = EvaIcons.Outline.ArrowIosForward,
                             contentDescription = null,
-                            modifier = Modifier
-                                .size(18.dp)
+                            modifier = Modifier.size(18.dp)
                         )
                     }
                 }
@@ -721,14 +728,17 @@ fun ActivationContentStepThree(
                 enabled = passwordsMatch,
                 modifier = Modifier
                     .width(130.dp)
-                    .height(40.dp)
+                    .height(40.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+                    contentColor = MaterialTheme.colorScheme.primary
+                )
             ) {
                 if (isLoading) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth()
                     ) {
                         LoadingGraySpinner(modifier = Modifier.fillMaxSize())
                     }
@@ -737,13 +747,12 @@ fun ActivationContentStepThree(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {
-                        Text("Submit")
+                        Text(text = "Submit")
                         Spacer(Modifier.width(4.dp))
                         Icon(
                             imageVector = EvaIcons.Outline.ArrowIosForward,
                             contentDescription = null,
-                            modifier = Modifier
-                                .size(18.dp)
+                            modifier = Modifier.size(18.dp)
                         )
                     }
                 }
@@ -948,14 +957,17 @@ fun ActivationContentStepFour(
                 enabled = pinMatch,
                 modifier = Modifier
                     .width(130.dp)
-                    .height(40.dp)
+                    .height(40.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+                    contentColor = MaterialTheme.colorScheme.primary
+                )
             ) {
                 if (isLoading) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth()
                     ) {
                         LoadingGraySpinner(modifier = Modifier.fillMaxSize())
                     }
@@ -967,11 +979,10 @@ fun ActivationContentStepFour(
                         Icon(
                             imageVector = EvaIcons.Outline.CheckmarkCircle,
                             contentDescription = null,
-                            modifier = Modifier
-                                .size(18.dp)
+                            modifier = Modifier.size(18.dp)
                         )
                         Spacer(Modifier.width(4.dp))
-                        Text("Submit")
+                        Text(text = "Submit")
                     }
                 }
             }
