@@ -133,5 +133,6 @@ testing-android = [
     "androidx-junit",
     "androidx-espresso-core",
     "koin-test",
-    "koin-test-junit4"
+    "koin-test-junit4",
+    "turbine"
 ]

@@ -1,13 +1,17 @@
 package com.arkhe.menu.data.repository
 
+import androidx.room.Ignore
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.arkhe.menu.data.remote.api.SafeApiResult
+import app.cash.turbine.test
+import com.arkhe.menu.data.remote.api.SafeResourceResult
 import com.arkhe.menu.di.appModule
 import com.arkhe.menu.di.dataModule
 import com.arkhe.menu.di.domainModule
 import com.arkhe.menu.domain.repository.AuthRepository
+import com.arkhe.menu.utils.Constants
 import kotlinx.coroutines.runBlocking
+import org.junit.After
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -18,64 +22,105 @@ import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.test.KoinTest
 import org.koin.test.get
+import kotlin.time.Duration.Companion.seconds
 
 @RunWith(AndroidJUnit4::class)
 class AuthRepositoryIntegrationTest : KoinTest {
 
-    // --- PERBAIKAN UTAMA: Deklarasikan tanpa inisialisasi ---
     private lateinit var authRepository: AuthRepository
 
-    // @get:Rule tidak lagi diperlukan jika kita mengelola secara manual
-    // val koinTestRule = KoinTestRule.create { ... }
-
-    // --- KEMBALI MENGGUNAKAN @Before/@After SECARA EKSPLISIT ---
-    // Ini memberikan kontrol penuh atas kapan Koin dimulai dan dihentikan,
-    // menghindari race condition dengan 'by inject()'.
     @Before
     fun setUp() {
-        // Hentikan Koin yang mungkin sudah berjalan dari App class, untuk memulai dari awal yang bersih
         stopKoin()
-        // Mulai Koin secara manual dengan modul-modul yang diperlukan
         startKoin {
             androidContext(InstrumentationRegistry.getInstrumentation().targetContext)
             modules(appModule, dataModule, domainModule)
         }
-        // SEKARANG, setelah Koin pasti berjalan, dapatkan instance-nya
         authRepository = get()
     }
 
-    // --- TEST KASUS NYATA ---
+    @After
+    fun tearDown() {
+        stopKoin()
+    }
+
+    // --- TEST 1: SCENARIO POSITIF (SUCCESS) ---
     @Test
-    fun verification_whenHittingRealApiWithValidData_shouldReceiveResponse() =
-        runBlocking {
-            // ARRANGE
-            val testUserId = "000000"
-            val testPhone = "6285659988939"
-            val testMail = "didik.muttaqien@gmail.com"
+    fun verificationStep_withValidData_shouldReturnSuccess() = runBlocking {
+        // ARRANGE: Gunakan data yang Anda tahu akan berhasil
+        val testUserId = "230504" // <-- Data valid
+        val testPhone = "6285659988939"
+        val testMail = "didik.muttaqien@gmail.com"
 
-            // ACT
-            println("Integration Test: Sending real verification request...")
-            val result = authRepository.verification(testUserId, testPhone, testMail)
-            println("Integration Test: Received result: $result")
+        // ACT
+        val resultFlow = authRepository.performActivationStep(
+            step = Constants.ActivationFlow.ACT_VERIFICATION_STEP,
+            userId = testUserId,
+            phone = testPhone,
+            mail = testMail,
+            // ... parameter lain null ...
+            activationCode = null, newPassword = null, sessionActivation = null, isPinActive = null,
+            deviceId = null, manufacturer = null, brand = null, model = null, device = null,
+            product = null, osVersion = null, sdkLevel = null, securityPatch = null,
+            deviceType = null, appVersionName = null, appVersionCode = null
+        )
 
-            // ASSERT
-            assertNotNull("Result should not be null", result)
+        // ASSERT
+        resultFlow.test(timeout = 15.seconds) {
+            val result = awaitItem()
+            println("POSITIVE TEST - Received: $result")
 
-            when (result) {
-                is SafeApiResult.Success -> {
-                    println("Integration Test: Received SUCCESS")
-                    assertNotNull(result.data)
-                }
+            // Ekspektasi: Harus Success
+            assertTrue("Result should be Success, but was $result", result is SafeResourceResult.Success)
 
-                is SafeApiResult.Failure -> {
-                    println("Integration Test: Received FAILURE with exception: ${result.exception.message}")
-                    assertNotNull(result.exception.message)
-                }
+            val successResult = result as SafeResourceResult.Success
+            assertNotNull("Success data should not be null", successResult.data)
+            assertNotNull("On successful verification, userId must not be null", successResult.data?.userId)
 
-                is SafeApiResult.Loading -> {
-                    throw AssertionError("Result should not be Loading")
-                }
-            }
-            assertTrue("Test completed", true)
+            println("POSITIVE TEST - PASSED with User ID: ${successResult.data?.userId}")
+            awaitComplete()
         }
+    }
+
+    // --- TEST 2: SCENARIO NEGATIF (FAILURE) ---
+    @Ignore()
+    @Test
+    fun verificationStep_withInvalidData_shouldReturnFailure() = runBlocking {
+        // ARRANGE: Gunakan data yang Anda tahu akan gagal
+        val testUserId = "000000" // <-- Data tidak valid
+        val testPhone = "6285659988939"
+        val testMail = "didik.muttaqien@gmail.com"
+
+        // ACT
+        val resultFlow = authRepository.performActivationStep(
+            step = Constants.ActivationFlow.ACT_VERIFICATION_STEP,
+            userId = testUserId,
+            phone = testPhone,
+            mail = testMail,
+            // ... parameter lain null ...
+            activationCode = null, newPassword = null, sessionActivation = null, isPinActive = null,
+            deviceId = null, manufacturer = null, brand = null, model = null, device = null,
+            product = null, osVersion = null, sdkLevel = null, securityPatch = null,
+            deviceType = null, appVersionName = null, appVersionCode = null
+        )
+
+        // ASSERT
+        resultFlow.test(timeout = 15.seconds) {
+            val result = awaitItem()
+            println("NEGATIVE TEST - Received: $result")
+
+            // Ekspektasi: Harus Failure
+            assertTrue("Result should be Failure, but was $result", result is SafeResourceResult.Failure)
+
+            val failureResult = result as SafeResourceResult.Failure
+            assertNotNull("Failure message should not be null", failureResult.message)
+            assertTrue(
+                "Failure message should contain 'User ID not found'",
+                failureResult.message?.contains("User ID not found", ignoreCase = true) == true
+            )
+
+            println("NEGATIVE TEST - PASSED with message: ${failureResult.message}")
+            awaitComplete()
+        }
+    }
 }

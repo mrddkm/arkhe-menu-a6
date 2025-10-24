@@ -5,11 +5,11 @@ import com.arkhe.menu.domain.model.auth.ActivationResponse
 
 /*DTO to Domain (direct conversion)*/
 fun ActivationResponseDto.toDomain(): ActivationResponse {
-    val session = this.data?.sessionActivation
-
     return ActivationResponse(
         status = this.status,
         message = this.message,
-        sessionActivation = session
+        userId = this.data?.userId,
+        name = this.data?.name,
+        sessionActivation = this.data?.sessionActivation
     )
 }

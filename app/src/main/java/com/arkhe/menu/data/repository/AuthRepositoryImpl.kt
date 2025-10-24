@@ -69,7 +69,12 @@ class AuthRepositoryImpl(
 
             when (resultFromDataSource) {
                 is SafeApiResult.Success -> {
-                    emit(SafeResourceResult.Success(resultFromDataSource.data.toDomain()))
+                    val responseData = resultFromDataSource.data
+                    if (responseData.status.equals("success", ignoreCase = true)) {
+                        emit(SafeResourceResult.Success(responseData.toDomain()))
+                    } else {
+                        emit(SafeResourceResult.Failure(responseData.message))
+                    }
                 }
 
                 is SafeApiResult.Failure -> {
