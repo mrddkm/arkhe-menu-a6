@@ -108,6 +108,12 @@ fun ActivationBottomSheet(
                             }
 
                             message.contains("activation successfully") -> {
+                                authViewModel.savePin(state.pin)
+                                onActivated()
+                                onDismiss()
+                            }
+
+                            message.contains("pin saved") -> {
                                 onActivated()
                                 onDismiss()
                             }
@@ -238,31 +244,13 @@ fun ActivationBottomSheet(
                     onFinish = {
                         state.scope.launch {
                             if (state.pin == state.confirmPin && state.pin.length == 4) {
-                                val deviceInfoUtil = DeviceInfoUtil.getDeviceInfo(context)
-                                val deviceInfo = mapOf(
-                                    "deviceId" to deviceInfoUtil["deviceId"]!!,
-                                    "manufacturer" to deviceInfoUtil["manufacturer"]!!,
-                                    "brand" to deviceInfoUtil["brand"]!!,
-                                    "model" to deviceInfoUtil["model"]!!,
-                                    "device" to deviceInfoUtil["device"]!!,
-                                    "product" to deviceInfoUtil["product"]!!,
-                                    "osVersion" to deviceInfoUtil["osVersion"]!!,
-                                    "sdkLevel" to deviceInfoUtil["sdkLevel"]!!,
-                                    "securityPatch" to deviceInfoUtil["securityPatch"]!!,
-                                    "deviceType" to deviceInfoUtil["deviceType"]!!,
-                                    "appVersionName" to deviceInfoUtil["appVersionName"]!!,
-                                    "appVersionCode" to deviceInfoUtil["appVersionCode"]!!
-                                )
-
+                                val deviceInfo = DeviceInfoUtil.getDeviceInfo(context)
                                 authViewModel.performActivationStep(
                                     step = ACT_ACTIVATION_STEP,
                                     userId = state.userId,
                                     isPinActive = true,
                                     deviceInfo = deviceInfo
                                 )
-
-                                onActivated
-                                onDismiss
                             }
                         }
                     }

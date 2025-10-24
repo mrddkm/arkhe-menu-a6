@@ -31,8 +31,9 @@ class AuthViewModel(
     private val authUseCases: AuthUseCases,
     private val authRepository: AuthRepository
 ) : ViewModel() {
-
     private val _sessionActivation = mutableStateOf<String?>(null)
+    private val _uiState = MutableStateFlow<AuthUiState>(AuthUiState.Idle)
+    val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
 
     fun performActivationStep(
         step: String,
@@ -129,17 +130,17 @@ class AuthViewModel(
         _uiState.value = AuthUiState.Idle
     }
 
-    /*DELETE IF STABLE*/
-    private val _uiState = MutableStateFlow<AuthUiState>(AuthUiState.Idle)
-    val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
-
     val isActivatedFlow = authRepository.isActivatedFlow
     val isSignedInFlow = authRepository.isSignedInFlow
 
-    suspend fun unlockWithPin(pin: String): Boolean = authRepository.checkPin(pin)
-    fun incrementPinAttempts() = viewModelScope.launch { authRepository.incrementPinAttempts() }
-    fun resetPinAttempts() = viewModelScope.launch { authRepository.resetPinAttempts() }
-    suspend fun getPinAttempts(): Int = authRepository.getPinAttempts()
+    fun savePin(pin: String) {
+        viewModelScope.launch {
+            authRepository.savePinHashed(pin)
+            authRepository.setActivated(true)
+            _uiState.value =
+                AuthUiState.Success("PIN saved & activation complete", SuccessType.ACTIVATION)
+        }
+    }
 
     fun deactivatedAuthState() {
         viewModelScope.launch {
@@ -156,4 +157,16 @@ class AuthViewModel(
                 AuthUiState.Success("SignedOut complete", SuccessType.SIGNEDIN)
         }
     }
+
+    @Suppress("UNUSED")
+    suspend fun unlockWithPin(pin: String): Boolean = authRepository.checkPin(pin)
+
+    @Suppress("UNUSED")
+    fun incrementPinAttempts() = viewModelScope.launch { authRepository.incrementPinAttempts() }
+
+    @Suppress("UNUSED")
+    fun resetPinAttempts() = viewModelScope.launch { authRepository.resetPinAttempts() }
+
+    @Suppress("UNUSED")
+    suspend fun getPinAttempts(): Int = authRepository.getPinAttempts()
 }
