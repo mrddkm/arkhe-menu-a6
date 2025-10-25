@@ -19,7 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Abc
 import androidx.compose.material.icons.outlined.Password
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -51,6 +51,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -59,8 +60,10 @@ import com.arkhe.menu.di.appModule
 import com.arkhe.menu.di.dataModule
 import com.arkhe.menu.di.domainModule
 import com.arkhe.menu.di.previewModule
+import com.arkhe.menu.presentation.ui.components.LoadingGraySpinner
 import com.arkhe.menu.presentation.ui.theme.ArkheTheme
 import com.arkhe.menu.presentation.ui.theme.montserratFontFamily
+import com.arkhe.menu.presentation.ui.theme.trafficLights
 import com.arkhe.menu.presentation.viewmodel.AuthUiState
 import com.arkhe.menu.presentation.viewmodel.AuthViewModel
 import com.arkhe.menu.presentation.viewmodel.LanguageViewModel
@@ -84,7 +87,7 @@ import org.koin.compose.KoinApplicationPreview
 fun SignInBottomSheet(
     onDismiss: () -> Unit,
     authViewModel: AuthViewModel = koinViewModel(),
-    onSignedIn: (String, String, String) -> Unit
+    onSignedIn: (userId: String, password: String) -> Unit,
 ) {
     val uiState by authViewModel.uiState.collectAsState()
 
@@ -103,15 +106,7 @@ fun SignInBottomSheet(
                 }
             }
 
-            is AuthUiState.Failed -> {
-                // Tampilkan pesan error jika gagal
-                /*                Toast.makeText(
-                                    currentState.message,
-                                    Toast.LENGTH_LONG
-                                ).show()*/
-                // Reset state di ViewModel agar tidak error terus menerus
-                // viewModel.resetUiState()
-            }
+            is AuthUiState.Failed -> {}
 
             else -> Unit
         }
@@ -167,7 +162,10 @@ fun SignInBottomSheet(
         }
         SignInContent(
             uiState = uiState,
-            onSignedIn = onSignedIn
+            authViewModel = authViewModel,
+            onSignedIn = { userId, password ->
+                onSignedIn(userId, password)
+            }
         )
     }
 }
@@ -177,7 +175,8 @@ fun SignInContent(
     uiState: AuthUiState,
     state: SignInState = rememberSignInState(),
     langViewModel: LanguageViewModel = koinViewModel(),
-    onSignedIn: (String, String, String) -> Unit
+    authViewModel: AuthViewModel,
+    onSignedIn: (String, String) -> Unit
 ) {
     val focusUserId = remember { FocusRequester() }
     val focusPassword = remember { FocusRequester() }
@@ -193,7 +192,7 @@ fun SignInContent(
             state.userId.length >= MIN_LENGTH_USER_ID && state.password.length >= MIN_LENGTH_PASSWORD
         }
     }
-
+    val isLoading = uiState is AuthUiState.Loading
     Column(
         Modifier
             .fillMaxWidth()
@@ -201,17 +200,38 @@ fun SignInContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text(
-            text = langViewModel.getLocalized(Lang.SIGN_IN),
-            fontFamily = montserratFontFamily,
-            fontWeight = FontWeight.Bold,
-            fontSize = 24.sp
-        )
-        Spacer(Modifier.height(4.dp))
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(0.8f)
+                .padding(bottom = 4.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            Text(
+                text = langViewModel.getLocalized(Lang.SIGN_IN),
+                fontFamily = montserratFontFamily,
+                fontWeight = FontWeight.Bold,
+                fontSize = 24.sp
+            )
+            if (uiState is AuthUiState.Failed) {
+                Text(
+                    text = uiState.message,
+                    color = MaterialTheme.trafficLights.stop,
+                    style = MaterialTheme.typography.bodySmall,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
         OutlinedTextField(
             value = state.userId,
-            onValueChange = { state.onUserIdChange(it) },
+            onValueChange = {
+                state.onUserIdChange(it)
+                if (uiState is AuthUiState.Failed) {
+                    authViewModel.resetUiState()
+                }
+            },
             label = { Text("Account") },
+            enabled = !isLoading,
             placeholder = {
                 Text(
                     text = PLACE_HOLDER_OTHER_USER_ID,
@@ -249,9 +269,15 @@ fun SignInContent(
         if (state.userId.length >= MIN_LENGTH_USER_ID) {
             OutlinedTextField(
                 value = state.password,
-                onValueChange = state.onPasswordChange,
+                onValueChange = { newValue ->
+                    state.onPasswordChange(newValue)
+                    if (uiState is AuthUiState.Failed) {
+                        authViewModel.resetUiState()
+                    }
+                },
                 shape = MaterialTheme.shapes.medium,
                 label = { Text("Password") },
+                enabled = !isLoading,
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
                     .focusRequester(focusPassword),
@@ -297,7 +323,6 @@ fun SignInContent(
             Button(
                 onClick = {
                     onSignedIn(
-                        state.sessionActivation.trim(),
                         state.userId.trim(),
                         state.password.trim()
                     )
@@ -305,14 +330,20 @@ fun SignInContent(
                 enabled = isValid && uiState !is AuthUiState.Loading,
                 modifier = Modifier
                     .width(130.dp)
-                    .height(40.dp)
+                    .height(40.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+                    contentColor = MaterialTheme.colorScheme.primary
+                )
             ) {
                 if (uiState is AuthUiState.Loading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        strokeWidth = 2.dp,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        LoadingGraySpinner(modifier = Modifier.fillMaxSize())
+                    }
                 } else {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -338,7 +369,6 @@ fun rememberSignInState(): SignInState {
     var password by remember { mutableStateOf("Qwer@123") }
 
     return SignInState(
-        sessionActivation = "",
         userId = userId,
         onUserIdChange = { newValue ->
             userId = newValue.trimStart()
@@ -350,7 +380,6 @@ fun rememberSignInState(): SignInState {
 }
 
 data class SignInState(
-    val sessionActivation: String,
     val userId: String,
     val onUserIdChange: (String) -> Unit,
     val password: String,
@@ -376,7 +405,8 @@ fun SignInBottomSheetPreview() {
         ArkheTheme {
             SignInContent(
                 uiState = AuthUiState.Idle,
-                onSignedIn = { _, _, _ -> }
+                authViewModel = koinViewModel(),
+                onSignedIn = { _, _ -> }
             )
         }
     }

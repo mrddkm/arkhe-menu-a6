@@ -190,7 +190,19 @@ class AuthViewModelTest {
         runTest {
             // ARRANGE (Biarkan seperti ini, sudah benar)
             val successMessage = "Sign-in successful"
-            val successResponse = SignInResponse("success", successMessage)
+            val successResponse = SignInResponse(
+                status = "success",
+                message = successMessage,
+                sessionToken = "fake-token-123",
+                userId = fakeUserId,
+                profileId = "prof-1",
+                nickName = "Test",
+                initial = "T",
+                positionName = "Tester",
+                divisionName = "QA",
+                roles = listOf("user"),
+                sessionExpiredAt = "2025-12-31T23:59:59"
+            )
             val successFlow = flow {
                 // Kita masih perlu emit Loading di sini untuk mensimulasikan repository
                 emit(SafeResourceResult.Loading())
@@ -241,11 +253,7 @@ class AuthViewModelTest {
             assertEquals(AuthUiState.Idle, awaitItem()) // Awal
             viewModel.signIn(fakeSessionActivation, fakeUserId, fakePassword)
 
-            // 1. Cek state Loading yang di-set di awal fungsi signIn
             assertEquals(AuthUiState.Loading, awaitItem())
-
-            // 2. Langsung cek state akhir.
-            // `awaitItem()` akan langsung mendapatkan emisi 'Failed'.
             val finalState = awaitItem()
 
             assertTrue(finalState is AuthUiState.Failed)

@@ -266,8 +266,13 @@ fun OnboardingScreen(
     if (showSignedInSheet) {
         SignInBottomSheet(
             onDismiss = { showSignedInSheet = false },
-            onSignedIn = { sessionActivation, userId, password ->
-                authViewModel.signIn(sessionActivation, userId, password)
+            onSignedIn = { userId, password ->
+                val hardcodedSessionActivation = "spLfr4cnNNMGI0A4"
+                authViewModel.signIn(
+                    sessionActivation = hardcodedSessionActivation,
+                    userId = userId,
+                    password = password
+                )
             }
         )
     }

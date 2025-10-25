@@ -1,5 +1,6 @@
 package com.arkhe.menu.data.repository
 
+import android.util.Log
 import com.arkhe.menu.data.remote.api.ArkheApiService
 import com.arkhe.menu.data.remote.dto.ActivationResponseDto
 import com.arkhe.menu.data.remote.dto.CategoryInfoDto
@@ -94,25 +95,49 @@ class ArkheApiServiceImpl(
                 userId = userId,
                 password = password
             )
+            val requestJson = json.encodeToString(SignInRequestDto.serializer(), requestDto)
             val response: HttpResponse = httpClient.post {
                 url(Constants.URL_BASE)
                 parameter(Constants.PARAMETER_KEY, Constants.PARAMETER_VALUE_SIGN_IN)
-                setBody(requestDto)
+                setBody(requestJson)
             }
+            Log.d("ApiService", "API Request: $requestJson")
 
             val responseText = response.bodyAsText()
+            Log.d("ApiService", "API Response: $responseText")
+
             if (response.status == HttpStatusCode.OK) {
-                json.decodeFromString<SignInResponseDto>(responseText)
+                if (
+                    responseText.trim().startsWith("{") ||
+                    responseText.trim().startsWith("[")
+                ) {
+                    try {
+                        json.decodeFromString<SignInResponseDto>(responseText)
+                    } catch (parseException: Exception) {
+                        Log.e("ApiService", "JSON Parse Failed", parseException)
+                        SignInResponseDto(
+                            status = Constants.ResponseStatus.FAILED,
+                            message = "JSON parsing failed: ${parseException.message}",
+                            data = null
+                        )
+                    }
+                } else {
+                    SignInResponseDto(
+                        status = Constants.ResponseStatus.FAILED,
+                        message = "You have reached your free Google API quota limit. Please wait 24 hours before retrying.",
+                        data = null,
+                    )
+                }
             } else {
                 SignInResponseDto(
-                    status = "error",
+                    status = Constants.ResponseStatus.FAILED,
                     message = "Sign-in failed: ${response.status}",
                     data = null
                 )
             }
         } catch (e: Exception) {
             SignInResponseDto(
-                status = "exception",
+                status = Constants.ResponseStatus.FAILED,
                 message = e.message ?: "An unknown error occurred",
                 data = null
             )

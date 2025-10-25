@@ -285,7 +285,7 @@ fun ActivationContentStepOne(
                         horizontalArrangement = Arrangement.Center,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text(text = "Next")
+                        Text(text = "Submit")
                         Spacer(Modifier.width(4.dp))
                         Icon(
                             modifier = Modifier.size(18.dp),

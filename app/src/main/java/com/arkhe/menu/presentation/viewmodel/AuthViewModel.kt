@@ -4,7 +4,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arkhe.menu.data.remote.api.SafeResourceResult
-import com.arkhe.menu.domain.model.auth.ActivationResponse
 import com.arkhe.menu.domain.repository.AuthRepository
 import com.arkhe.menu.domain.usecase.auth.AuthUseCases
 import kotlinx.coroutines.delay
@@ -17,9 +16,9 @@ sealed interface AuthUiState {
     object Idle : AuthUiState
     object Loading : AuthUiState
     data class Success(
-        val message: String,
         val type: SuccessType,
-        val data: ActivationResponse? = null
+        val message: String,
+        val data: Any? = null
     ) : AuthUiState
 
     data class Failed(val message: String) : AuthUiState
@@ -106,16 +105,22 @@ class AuthViewModel(
                 .collect { result ->
                     when (result) {
                         is SafeResourceResult.Success -> {
-                            authRepository.setSignedIn(true)
-
-                            _uiState.value = AuthUiState.Success(
-                                type = SuccessType.SIGNEDIN,
-                                message = result.data?.message ?: "Sign-in successful"
-                            )
+                            val message = result.data?.message ?: "Please try again later"
+                            if (result.data?.status?.equals("success", true) == true) {
+                                authRepository.setSignedIn(true)
+                                _uiState.value = AuthUiState.Success(
+                                    type = SuccessType.SIGNEDIN,
+                                    message = message,
+                                    data = result.data
+                                )
+                            } else {
+                                _uiState.value = AuthUiState.Failed(message)
+                            }
                         }
 
                         is SafeResourceResult.Failure -> {
-                            _uiState.value = AuthUiState.Failed(result.message ?: "Sign-in failed")
+                            val errorMessage = result.message ?: "Please try again later"
+                            _uiState.value = AuthUiState.Failed(errorMessage)
                         }
 
                         is SafeResourceResult.Loading -> {
@@ -138,7 +143,10 @@ class AuthViewModel(
             authRepository.savePinHashed(pin)
             authRepository.setActivated(true)
             _uiState.value =
-                AuthUiState.Success("PIN saved & activation complete", SuccessType.ACTIVATION)
+                AuthUiState.Success(
+                    type = SuccessType.ACTIVATION,
+                    message = "PIN saved & activation complete",
+                )
         }
     }
 
@@ -146,7 +154,10 @@ class AuthViewModel(
         viewModelScope.launch {
             authRepository.deactivatedAuthState()
             _uiState.value =
-                AuthUiState.Success("Deactivated complete", SuccessType.ACTIVATION)
+                AuthUiState.Success(
+                    type = SuccessType.ACTIVATION,
+                    message = "Deactivated complete",
+                )
         }
     }
 
@@ -154,7 +165,10 @@ class AuthViewModel(
         viewModelScope.launch {
             authRepository.signedOutAuthState()
             _uiState.value =
-                AuthUiState.Success("SignedOut complete", SuccessType.SIGNEDIN)
+                AuthUiState.Success(
+                    type = SuccessType.SIGNEDIN,
+                    message = "SignedOut complete",
+                )
         }
     }
 

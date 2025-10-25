@@ -45,6 +45,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arkhe.menu.data.local.preferences.Lang
+import com.arkhe.menu.domain.model.auth.ActivationResponse
 import com.arkhe.menu.presentation.ui.components.HeaderTitleSecondary
 import com.arkhe.menu.presentation.viewmodel.AuthUiState
 import com.arkhe.menu.presentation.viewmodel.AuthViewModel
@@ -88,7 +89,7 @@ fun ActivationBottomSheet(
         when (val currentState = uiState) {
             is AuthUiState.Success -> {
                 state.onMessageChange(currentState.message)
-                currentState.data?.name?.let { userName ->
+                (currentState.data as? ActivationResponse)?.name?.let { userName ->
                     state.onUserNameChange(userName)
                 }
                 val message = currentState.message.lowercase()

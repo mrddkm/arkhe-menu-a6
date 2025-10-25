@@ -71,11 +71,17 @@ class AuthRepositoryIntegrationTest : KoinTest {
             println("POSITIVE TEST - Received: $result")
 
             // Ekspektasi: Harus Success
-            assertTrue("Result should be Success, but was $result", result is SafeResourceResult.Success)
+            assertTrue(
+                "Result should be Success, but was $result",
+                result is SafeResourceResult.Success
+            )
 
             val successResult = result as SafeResourceResult.Success
             assertNotNull("Success data should not be null", successResult.data)
-            assertNotNull("On successful verification, userId must not be null", successResult.data?.userId)
+            assertNotNull(
+                "On successful verification, userId must not be null",
+                successResult.data?.userId
+            )
 
             println("POSITIVE TEST - PASSED with User ID: ${successResult.data?.userId}")
             awaitComplete()
@@ -110,7 +116,10 @@ class AuthRepositoryIntegrationTest : KoinTest {
             println("NEGATIVE TEST - Received: $result")
 
             // Ekspektasi: Harus Failure
-            assertTrue("Result should be Failure, but was $result", result is SafeResourceResult.Failure)
+            assertTrue(
+                "Result should be Failure, but was $result",
+                result is SafeResourceResult.Failure
+            )
 
             val failureResult = result as SafeResourceResult.Failure
             assertNotNull("Failure message should not be null", failureResult.message)
@@ -120,6 +129,90 @@ class AuthRepositoryIntegrationTest : KoinTest {
             )
 
             println("NEGATIVE TEST - PASSED with message: ${failureResult.message}")
+            awaitComplete()
+        }
+    }
+
+    // FILE: .../data/repository/AuthRepositoryIntegrationTest.kt
+
+// ... (kode @RunWith, class, setUp, tearDown, dan test untuk verificationStep sudah ada)
+
+    // --- TEST 3: SIGN-IN SCENARIO POSITIF (SUCCESS) ---
+    @Test
+    fun signIn_withValidCredentials_shouldReturnSuccess() = runBlocking {
+        // ARRANGE: Gunakan data yang Anda tahu akan berhasil
+        // Anda mungkin perlu mendapatkan sessionActivation yang valid terlebih dahulu,
+        // untuk sementara kita hardcode seperti di app.
+        val testSessionActivation = "pUIhTqgAJzSas8Ek" // Nilai hardcoded
+        val testUserId = "230504"                       // User ID valid
+        val testPassword = "eKjeJiI8+Glyl1a39DBljxHkkwumB0dKGMDKJ3m1sMA="                  // Password valid untuk user ID di atas
+
+        // ACT
+        val resultFlow = authRepository.signIn(
+            sessionActivation = testSessionActivation,
+            userId = testUserId,
+            password = testPassword
+        )
+
+        // ASSERT
+        resultFlow.test(timeout = 15.seconds) {
+            // Kita mungkin akan menerima Loading state jika diimplementasikan di flow
+            val result = awaitItem()
+            println("SIGN-IN POSITIVE TEST - Received: $result")
+
+            // Ekspektasi: Harus Success
+            assertTrue(
+                "Result should be Success, but was $result",
+                result is SafeResourceResult.Success
+            )
+
+            val successResult = result as SafeResourceResult.Success
+            assertNotNull("Success data should not be null", successResult.data)
+            assertNotNull(
+                "On successful sign-in, sessionToken must not be null",
+                successResult.data?.sessionToken
+            )
+
+            println("SIGN-IN POSITIVE TEST - PASSED with Session Token: ${successResult.data?.sessionToken}")
+            awaitComplete()
+        }
+    }
+
+    // --- TEST 4: SIGN-IN SCENARIO NEGATIF (FAILURE) ---
+    @Test
+    fun signIn_withInvalidCredentials_shouldReturnFailure() = runBlocking {
+        // ARRANGE: Gunakan data yang Anda tahu akan gagal
+        val testSessionActivation = "spLfr4cnNNMGI0A4" // Session bisa saja valid
+        val testUserId = "230504"                       // User ID valid
+        val testPassword = "WrongPassword123"          // Password SALAH
+
+        // ACT
+        val resultFlow = authRepository.signIn(
+            sessionActivation = testSessionActivation,
+            userId = testUserId,
+            password = testPassword
+        )
+
+        // ASSERT
+        resultFlow.test(timeout = 15.seconds) {
+            val result = awaitItem()
+            println("SIGN-IN NEGATIVE TEST - Received: $result")
+
+            // Ekspektasi: Harus Failure
+            assertTrue(
+                "Result should be Failure, but was $result",
+                result is SafeResourceResult.Failure
+            )
+
+            val failureResult = result as SafeResourceResult.Failure
+            assertNotNull("Failure message should not be null", failureResult.message)
+            // Sesuaikan pesan error ini dengan pesan yang sebenarnya dikembalikan oleh API Anda
+            assertTrue(
+                "Failure message should indicate invalid credentials",
+                failureResult.message?.contains("Invalid password", ignoreCase = true) == true
+            )
+
+            println("SIGN-IN NEGATIVE TEST - PASSED with message: ${failureResult.message}")
             awaitComplete()
         }
     }

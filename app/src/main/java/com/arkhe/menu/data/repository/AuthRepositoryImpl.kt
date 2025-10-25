@@ -9,6 +9,7 @@ import com.arkhe.menu.data.remote.api.SafeResourceResult
 import com.arkhe.menu.domain.model.auth.ActivationResponse
 import com.arkhe.menu.domain.model.auth.SignInResponse
 import com.arkhe.menu.domain.repository.AuthRepository
+import com.arkhe.menu.utils.CryptoUtils
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -96,7 +97,8 @@ class AuthRepositoryImpl(
         password: String
     ): Flow<SafeResourceResult<SignInResponse>> {
         return flow {
-            val result = remoteDataSource.signIn(sessionActivation, userId, password)
+            val hashedPassword = CryptoUtils.hashPassword(password)
+            val result = remoteDataSource.signIn(sessionActivation, userId, hashedPassword)
             when (result) {
                 is SafeApiResult.Success -> {
                     emit(SafeResourceResult.Success(result.data.toDomain()))
